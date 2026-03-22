@@ -46,8 +46,12 @@ drafts/lyrics_draft.md に以下を出力する:
 
 【次にやること（優先順）】
 
-STEP 1: LALAL.AIでSunoの音源を分離する
-  → drums.wav / bass.wav / chord.wav を取り出す
+STEP 1: Moises.aiでSunoの音源を分離する
+  → moises.ai にアクセスしてアカウント作成
+  → SunoのMP3をアップロード
+  → 4分離（Vocal/Drums/Bass/Other）を選択
+  → ダウンロードしてStudio Oneに読み込む
+  → 詳細手順: drafts/moises_guide.md を参照
 
 STEP 2: Studio Oneで新規プロジェクトを開く
   → Sunoの drums.wav・bass.wav をトラックに読み込む
