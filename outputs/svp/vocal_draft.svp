@@ -1,0 +1,3597 @@
+{
+  "vendor": "Dreamtonics",
+  "version": 110,
+  "time": {
+    "meter": [
+      {
+        "index": 0,
+        "numerator": 4,
+        "denominator": 4
+      }
+    ],
+    "tempo": [
+      {
+        "position": 0,
+        "bpm": 152
+      }
+    ]
+  },
+  "library": [],
+  "tracks": [
+    {
+      "name": "Mai - NuWord",
+      "dispOrder": 0,
+      "dispColor": "ff7db235",
+      "renderEnabled": true,
+      "mixer": {
+        "gainDecibel": 0.0,
+        "pan": 0.0,
+        "mute": false,
+        "solo": false,
+        "display": true
+      },
+      "mainRef": {
+        "isInstrumental": false,
+        "blickAbsPos": 0,
+        "blickDuration": 316108800,
+        "database": {
+          "name": "Mai",
+          "language": "japanese",
+          "phoneset": "romaji"
+        },
+        "dictionary": "",
+        "voice": {
+          "tF0Left": 0.0,
+          "tF0Right": 0.0,
+          "dF0Left": 0.0,
+          "dF0Right": 0.0,
+          "dF0Vbr": 0.2,
+          "fF0Vbr": 5.5,
+          "paramLoudness": 0.0,
+          "paramTension": 0.0,
+          "paramBreathiness": 0.2,
+          "paramGender": 0.0
+        },
+        "notes": [
+          {
+            "onset": 11289600,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "朝",
+            "attributes": {}
+          },
+          {
+            "onset": 11854080,
+            "duration": 564480,
+            "pitch": 63,
+            "lyrics": "靄",
+            "attributes": {}
+          },
+          {
+            "onset": 12418560,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 12983040,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "中",
+            "attributes": {}
+          },
+          {
+            "onset": 13547520,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 14112000,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "目",
+            "attributes": {}
+          },
+          {
+            "onset": 14676480,
+            "duration": 564480,
+            "pitch": 70,
+            "lyrics": "を",
+            "attributes": {}
+          },
+          {
+            "onset": 15240960,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "覚",
+            "attributes": {}
+          },
+          {
+            "onset": 15805440,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 16369920,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "した",
+            "attributes": {}
+          },
+          {
+            "onset": 16934400,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "ど",
+            "attributes": {}
+          },
+          {
+            "onset": 17447563,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 17960726,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 18473889,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 18987052,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 19500215,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "続",
+            "attributes": {}
+          },
+          {
+            "onset": 20013378,
+            "duration": 513163,
+            "pitch": 70,
+            "lyrics": "く",
+            "attributes": {}
+          },
+          {
+            "onset": 20526541,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "木",
+            "attributes": {}
+          },
+          {
+            "onset": 21039704,
+            "duration": 513163,
+            "pitch": 70,
+            "lyrics": "立",
+            "attributes": {}
+          },
+          {
+            "onset": 21552867,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 22066030,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "道",
+            "attributes": {}
+          },
+          {
+            "onset": 22579200,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "鳥",
+            "attributes": {}
+          },
+          {
+            "onset": 23143680,
+            "duration": 564480,
+            "pitch": 63,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 23708160,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "声",
+            "attributes": {}
+          },
+          {
+            "onset": 24272640,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "だ",
+            "attributes": {}
+          },
+          {
+            "onset": 24837120,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "け",
+            "attributes": {}
+          },
+          {
+            "onset": 25401600,
+            "duration": 564480,
+            "pitch": 70,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 25966080,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "響",
+            "attributes": {}
+          },
+          {
+            "onset": 26530560,
+            "duration": 564480,
+            "pitch": 70,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 27095040,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 27659520,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "いる",
+            "attributes": {}
+          },
+          {
+            "onset": 28224000,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 28737163,
+            "duration": 513163,
+            "pitch": 63,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 29250326,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 29763489,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "ら",
+            "attributes": {}
+          },
+          {
+            "onset": 30276652,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "始",
+            "attributes": {}
+          },
+          {
+            "onset": 30789815,
+            "duration": 513163,
+            "pitch": 70,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 31302978,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 31816141,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "気",
+            "attributes": {}
+          },
+          {
+            "onset": 32329304,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 32842467,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "して",
+            "attributes": {}
+          },
+          {
+            "onset": 33355630,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "いた",
+            "attributes": {}
+          },
+          {
+            "onset": 33868800,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "靴",
+            "attributes": {}
+          },
+          {
+            "onset": 34433280,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "紐",
+            "attributes": {}
+          },
+          {
+            "onset": 34997760,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "を",
+            "attributes": {}
+          },
+          {
+            "onset": 35562240,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "結",
+            "attributes": {}
+          },
+          {
+            "onset": 36126720,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "ぶ",
+            "attributes": {}
+          },
+          {
+            "onset": 36691200,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "指",
+            "attributes": {}
+          },
+          {
+            "onset": 37255680,
+            "duration": 564480,
+            "pitch": 70,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 37820160,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "震",
+            "attributes": {}
+          },
+          {
+            "onset": 38384640,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 38949120,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 39513600,
+            "duration": 627200,
+            "pitch": 61,
+            "lyrics": "それ",
+            "attributes": {}
+          },
+          {
+            "onset": 40140800,
+            "duration": 627200,
+            "pitch": 63,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 40768000,
+            "duration": 627200,
+            "pitch": 65,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 41395200,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "顔",
+            "attributes": {}
+          },
+          {
+            "onset": 42022400,
+            "duration": 627200,
+            "pitch": 70,
+            "lyrics": "を",
+            "attributes": {}
+          },
+          {
+            "onset": 42649600,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "上",
+            "attributes": {}
+          },
+          {
+            "onset": 43276800,
+            "duration": 627200,
+            "pitch": 70,
+            "lyrics": "げ",
+            "attributes": {}
+          },
+          {
+            "onset": 43904000,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 44531200,
+            "duration": 627200,
+            "pitch": 73,
+            "lyrics": "瞬間",
+            "attributes": {}
+          },
+          {
+            "onset": 45158400,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "木",
+            "attributes": {}
+          },
+          {
+            "onset": 45671563,
+            "duration": 513163,
+            "pitch": 63,
+            "lyrics": "漏",
+            "attributes": {}
+          },
+          {
+            "onset": 46184726,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 46697889,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "日",
+            "attributes": {}
+          },
+          {
+            "onset": 47211052,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 47724215,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "降",
+            "attributes": {}
+          },
+          {
+            "onset": 48237378,
+            "duration": 513163,
+            "pitch": 70,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 48750541,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "肩",
+            "attributes": {}
+          },
+          {
+            "onset": 49263704,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 49776867,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "上",
+            "attributes": {}
+          },
+          {
+            "onset": 50290030,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 50803200,
+            "duration": 627200,
+            "pitch": 61,
+            "lyrics": "全",
+            "attributes": {}
+          },
+          {
+            "onset": 51430400,
+            "duration": 627200,
+            "pitch": 63,
+            "lyrics": "部",
+            "attributes": {}
+          },
+          {
+            "onset": 52057600,
+            "duration": 627200,
+            "pitch": 65,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 52684800,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "始",
+            "attributes": {}
+          },
+          {
+            "onset": 53312000,
+            "duration": 627200,
+            "pitch": 66,
+            "lyrics": "まっ",
+            "attributes": {}
+          },
+          {
+            "onset": 53939200,
+            "duration": 627200,
+            "pitch": 70,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 54566400,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "気",
+            "attributes": {}
+          },
+          {
+            "onset": 55193600,
+            "duration": 627200,
+            "pitch": 66,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 55820800,
+            "duration": 627200,
+            "pitch": 61,
+            "lyrics": "した",
+            "attributes": {}
+          },
+          {
+            "onset": 56448000,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "本",
+            "attributes": {}
+          },
+          {
+            "onset": 57153600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "当",
+            "attributes": {}
+          },
+          {
+            "onset": 57859200,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 58564800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 59270400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 59976000,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 60681600,
+            "duration": 1411200,
+            "pitch": 63,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 62092800,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "声",
+            "attributes": {}
+          },
+          {
+            "onset": 62798400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 63504000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "揺",
+            "attributes": {}
+          },
+          {
+            "onset": 64209600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 64915200,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 65620800,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 66326400,
+            "duration": 1411200,
+            "pitch": 63,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 67737600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 68443200,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 69148800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 69854400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 70560000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "高",
+            "attributes": {}
+          },
+          {
+            "onset": 71265600,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "鳴",
+            "attributes": {}
+          },
+          {
+            "onset": 71971200,
+            "duration": 1411200,
+            "pitch": 70,
+            "lyrics": "りは",
+            "attributes": {}
+          },
+          {
+            "onset": 73382400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "嘘",
+            "attributes": {}
+          },
+          {
+            "onset": 74088000,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "じゃ",
+            "attributes": {}
+          },
+          {
+            "onset": 74793600,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 75499200,
+            "duration": 705600,
+            "pitch": 63,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 76204800,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 77616000,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "ら",
+            "attributes": {}
+          },
+          {
+            "onset": 79027200,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 79732800,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 80438400,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 81144000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "だ",
+            "attributes": {}
+          },
+          {
+            "onset": 81849600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "見",
+            "attributes": {}
+          },
+          {
+            "onset": 82555200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "ぬ",
+            "attributes": {}
+          },
+          {
+            "onset": 82908000,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "場",
+            "attributes": {}
+          },
+          {
+            "onset": 83260800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "所",
+            "attributes": {}
+          },
+          {
+            "onset": 83966400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "へ",
+            "attributes": {}
+          },
+          {
+            "onset": 84672000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "答",
+            "attributes": {}
+          },
+          {
+            "onset": 85024800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 85377600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "は",
+            "attributes": {}
+          },
+          {
+            "onset": 85730400,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "道",
+            "attributes": {}
+          },
+          {
+            "onset": 86083200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 86436000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "先",
+            "attributes": {}
+          },
+          {
+            "onset": 86788800,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 87141600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "し",
+            "attributes": {}
+          },
+          {
+            "onset": 87494400,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 87847200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 88200000,
+            "duration": 2116800,
+            "pitch": 61,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 90316800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "恐",
+            "attributes": {}
+          },
+          {
+            "onset": 90669600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 91022400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 91728000,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 92433600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "全",
+            "attributes": {}
+          },
+          {
+            "onset": 92786400,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "部",
+            "attributes": {}
+          },
+          {
+            "onset": 93139200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "抱",
+            "attributes": {}
+          },
+          {
+            "onset": 93492000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 93844800,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 94197600,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 94550400,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 95961600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "世",
+            "attributes": {}
+          },
+          {
+            "onset": 96314400,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "界",
+            "attributes": {}
+          },
+          {
+            "onset": 96667200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "へ",
+            "attributes": {}
+          },
+          {
+            "onset": 97020000,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "飛",
+            "attributes": {}
+          },
+          {
+            "onset": 97372800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "び",
+            "attributes": {}
+          },
+          {
+            "onset": 97725600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "込",
+            "attributes": {}
+          },
+          {
+            "onset": 98078400,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "め",
+            "attributes": {}
+          },
+          {
+            "onset": 98784000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "今",
+            "attributes": {}
+          },
+          {
+            "onset": 99136800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 99489600,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 99842400,
+            "duration": 1058400,
+            "pitch": 61,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 100900800,
+            "duration": 352800,
+            "pitch": 61,
+            "lyrics": "ら",
+            "attributes": {}
+          },
+          {
+            "onset": 101606400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 102312000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 103017600,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "名",
+            "attributes": {}
+          },
+          {
+            "onset": 103723200,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "前",
+            "attributes": {}
+          },
+          {
+            "onset": 104428800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 105134400,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 105840000,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 106545600,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "声",
+            "attributes": {}
+          },
+          {
+            "onset": 106898400,
+            "duration": 1058400,
+            "pitch": 61,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 107251200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "誰",
+            "attributes": {}
+          },
+          {
+            "onset": 107604000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 107956800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 108309600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "届",
+            "attributes": {}
+          },
+          {
+            "onset": 108662400,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "く",
+            "attributes": {}
+          },
+          {
+            "onset": 109015200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 109368000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 109720800,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "叫",
+            "attributes": {}
+          },
+          {
+            "onset": 110073600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "び",
+            "attributes": {}
+          },
+          {
+            "onset": 110426400,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "続",
+            "attributes": {}
+          },
+          {
+            "onset": 110779200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "け",
+            "attributes": {}
+          },
+          {
+            "onset": 111132000,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 112896000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "森",
+            "attributes": {}
+          },
+          {
+            "onset": 113248800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 113601600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "背",
+            "attributes": {}
+          },
+          {
+            "onset": 113954400,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "中",
+            "attributes": {}
+          },
+          {
+            "onset": 114307200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "を",
+            "attributes": {}
+          },
+          {
+            "onset": 114660000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "押",
+            "attributes": {}
+          },
+          {
+            "onset": 115012800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "し",
+            "attributes": {}
+          },
+          {
+            "onset": 115365600,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 115718400,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 116071200,
+            "duration": 2469600,
+            "pitch": 61,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 118540800,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "ニュー",
+            "attributes": {},
+            "phonemes": "n' y u u"
+          },
+          {
+            "onset": 119246400,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "ワー",
+            "attributes": {},
+            "phonemes": "w a a"
+          },
+          {
+            "onset": 119952000,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "ル",
+            "attributes": {},
+            "phonemes": "r u"
+          },
+          {
+            "onset": 120657600,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "ド",
+            "attributes": {},
+            "phonemes": "d o"
+          },
+          {
+            "onset": 121363200,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 122068800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 122774400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "今",
+            "attributes": {}
+          },
+          {
+            "onset": 123480000,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "日",
+            "attributes": {}
+          },
+          {
+            "onset": 124185600,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "から",
+            "attributes": {}
+          },
+          {
+            "onset": 124185600,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "あ",
+            "attributes": {}
+          },
+          {
+            "onset": 124750080,
+            "duration": 564480,
+            "pitch": 63,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 125314560,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "日",
+            "attributes": {}
+          },
+          {
+            "onset": 125879040,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "描",
+            "attributes": {}
+          },
+          {
+            "onset": 126443520,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 127008000,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 127572480,
+            "duration": 564480,
+            "pitch": 70,
+            "lyrics": "夢",
+            "attributes": {}
+          },
+          {
+            "onset": 128136960,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 128701440,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "地",
+            "attributes": {}
+          },
+          {
+            "onset": 129265920,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "図",
+            "attributes": {}
+          },
+          {
+            "onset": 129830400,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "ペー",
+            "attributes": {}
+          },
+          {
+            "onset": 130394880,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "ジ",
+            "attributes": {}
+          },
+          {
+            "onset": 130959360,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 131523840,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "増",
+            "attributes": {}
+          },
+          {
+            "onset": 132088320,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 132652800,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 133217280,
+            "duration": 564480,
+            "pitch": 70,
+            "lyrics": "ボ",
+            "attributes": {}
+          },
+          {
+            "onset": 133781760,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "ロ",
+            "attributes": {}
+          },
+          {
+            "onset": 134346240,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "ボ",
+            "attributes": {}
+          },
+          {
+            "onset": 134910720,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "ロで",
+            "attributes": {}
+          },
+          {
+            "onset": 135475200,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "それ",
+            "attributes": {}
+          },
+          {
+            "onset": 135988363,
+            "duration": 513163,
+            "pitch": 63,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 136501526,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 137014689,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "捨",
+            "attributes": {}
+          },
+          {
+            "onset": 137527852,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 138041015,
+            "duration": 513163,
+            "pitch": 70,
+            "lyrics": "ず",
+            "attributes": {}
+          },
+          {
+            "onset": 138554178,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 139067341,
+            "duration": 513163,
+            "pitch": 70,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 139580504,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 140093667,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 140606830,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "いる",
+            "attributes": {}
+          },
+          {
+            "onset": 141120000,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "それ",
+            "attributes": {}
+          },
+          {
+            "onset": 141684480,
+            "duration": 564480,
+            "pitch": 63,
+            "lyrics": "だ",
+            "attributes": {}
+          },
+          {
+            "onset": 142248960,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "け",
+            "attributes": {}
+          },
+          {
+            "onset": 142813440,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 143377920,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "もう",
+            "attributes": {}
+          },
+          {
+            "onset": 143942400,
+            "duration": 564480,
+            "pitch": 70,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 144506880,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 145071360,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "気",
+            "attributes": {}
+          },
+          {
+            "onset": 145635840,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 146200320,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "した",
+            "attributes": {}
+          },
+          {
+            "onset": 146764800,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "靴",
+            "attributes": {}
+          },
+          {
+            "onset": 147329280,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "紐",
+            "attributes": {}
+          },
+          {
+            "onset": 147893760,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "を",
+            "attributes": {}
+          },
+          {
+            "onset": 148458240,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "結",
+            "attributes": {}
+          },
+          {
+            "onset": 149022720,
+            "duration": 564480,
+            "pitch": 65,
+            "lyrics": "ぶ",
+            "attributes": {}
+          },
+          {
+            "onset": 149587200,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "指",
+            "attributes": {}
+          },
+          {
+            "onset": 150151680,
+            "duration": 564480,
+            "pitch": 70,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 150716160,
+            "duration": 564480,
+            "pitch": 68,
+            "lyrics": "震",
+            "attributes": {}
+          },
+          {
+            "onset": 151280640,
+            "duration": 564480,
+            "pitch": 66,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 151845120,
+            "duration": 564480,
+            "pitch": 61,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 152409600,
+            "duration": 627200,
+            "pitch": 61,
+            "lyrics": "それ",
+            "attributes": {}
+          },
+          {
+            "onset": 153036800,
+            "duration": 627200,
+            "pitch": 63,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 153664000,
+            "duration": 627200,
+            "pitch": 65,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 154291200,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "顔",
+            "attributes": {}
+          },
+          {
+            "onset": 154918400,
+            "duration": 627200,
+            "pitch": 70,
+            "lyrics": "を",
+            "attributes": {}
+          },
+          {
+            "onset": 155545600,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "上",
+            "attributes": {}
+          },
+          {
+            "onset": 156172800,
+            "duration": 627200,
+            "pitch": 70,
+            "lyrics": "げ",
+            "attributes": {}
+          },
+          {
+            "onset": 156800000,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 157427200,
+            "duration": 627200,
+            "pitch": 73,
+            "lyrics": "瞬間",
+            "attributes": {}
+          },
+          {
+            "onset": 158054400,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "木",
+            "attributes": {}
+          },
+          {
+            "onset": 158567563,
+            "duration": 513163,
+            "pitch": 63,
+            "lyrics": "漏",
+            "attributes": {}
+          },
+          {
+            "onset": 159080726,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 159593889,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "日",
+            "attributes": {}
+          },
+          {
+            "onset": 160107052,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 160620215,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "降",
+            "attributes": {}
+          },
+          {
+            "onset": 161133378,
+            "duration": 513163,
+            "pitch": 70,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 161646541,
+            "duration": 513163,
+            "pitch": 68,
+            "lyrics": "肩",
+            "attributes": {}
+          },
+          {
+            "onset": 162159704,
+            "duration": 513163,
+            "pitch": 66,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 162672867,
+            "duration": 513163,
+            "pitch": 65,
+            "lyrics": "上",
+            "attributes": {}
+          },
+          {
+            "onset": 163186030,
+            "duration": 513163,
+            "pitch": 61,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 163699200,
+            "duration": 627200,
+            "pitch": 61,
+            "lyrics": "全",
+            "attributes": {}
+          },
+          {
+            "onset": 164326400,
+            "duration": 627200,
+            "pitch": 63,
+            "lyrics": "部",
+            "attributes": {}
+          },
+          {
+            "onset": 164953600,
+            "duration": 627200,
+            "pitch": 65,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 165580800,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "始",
+            "attributes": {}
+          },
+          {
+            "onset": 166208000,
+            "duration": 627200,
+            "pitch": 66,
+            "lyrics": "まっ",
+            "attributes": {}
+          },
+          {
+            "onset": 166835200,
+            "duration": 627200,
+            "pitch": 70,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 167462400,
+            "duration": 627200,
+            "pitch": 68,
+            "lyrics": "気",
+            "attributes": {}
+          },
+          {
+            "onset": 168089600,
+            "duration": 627200,
+            "pitch": 66,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 168716800,
+            "duration": 627200,
+            "pitch": 61,
+            "lyrics": "した",
+            "attributes": {}
+          },
+          {
+            "onset": 169344000,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "本",
+            "attributes": {}
+          },
+          {
+            "onset": 170049600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "当",
+            "attributes": {}
+          },
+          {
+            "onset": 170755200,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 171460800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 172166400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 172872000,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 173577600,
+            "duration": 1411200,
+            "pitch": 63,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 174988800,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "声",
+            "attributes": {}
+          },
+          {
+            "onset": 175694400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 176400000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "揺",
+            "attributes": {}
+          },
+          {
+            "onset": 177105600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 177811200,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 178516800,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 179222400,
+            "duration": 1411200,
+            "pitch": 63,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 180633600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 181339200,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 182044800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 182750400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 183456000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "高",
+            "attributes": {}
+          },
+          {
+            "onset": 184161600,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "鳴",
+            "attributes": {}
+          },
+          {
+            "onset": 184867200,
+            "duration": 1411200,
+            "pitch": 70,
+            "lyrics": "りは",
+            "attributes": {}
+          },
+          {
+            "onset": 186278400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "嘘",
+            "attributes": {}
+          },
+          {
+            "onset": 186984000,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "じゃ",
+            "attributes": {}
+          },
+          {
+            "onset": 187689600,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 188395200,
+            "duration": 705600,
+            "pitch": 63,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 189100800,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 190512000,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "ら",
+            "attributes": {}
+          },
+          {
+            "onset": 191923200,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 192628800,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 193334400,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 194040000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "だ",
+            "attributes": {}
+          },
+          {
+            "onset": 194745600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "見",
+            "attributes": {}
+          },
+          {
+            "onset": 195451200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "ぬ",
+            "attributes": {}
+          },
+          {
+            "onset": 195804000,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "場",
+            "attributes": {}
+          },
+          {
+            "onset": 196156800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "所",
+            "attributes": {}
+          },
+          {
+            "onset": 196862400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "へ",
+            "attributes": {}
+          },
+          {
+            "onset": 197568000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "答",
+            "attributes": {}
+          },
+          {
+            "onset": 197920800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 198273600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "は",
+            "attributes": {}
+          },
+          {
+            "onset": 198626400,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "道",
+            "attributes": {}
+          },
+          {
+            "onset": 198979200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 199332000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "先",
+            "attributes": {}
+          },
+          {
+            "onset": 199684800,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 200037600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "し",
+            "attributes": {}
+          },
+          {
+            "onset": 200390400,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 200743200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 201096000,
+            "duration": 2116800,
+            "pitch": 61,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 203212800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "恐",
+            "attributes": {}
+          },
+          {
+            "onset": 203565600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 203918400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 204624000,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 205329600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "全",
+            "attributes": {}
+          },
+          {
+            "onset": 205682400,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "部",
+            "attributes": {}
+          },
+          {
+            "onset": 206035200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "抱",
+            "attributes": {}
+          },
+          {
+            "onset": 206388000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 206740800,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 207093600,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 207446400,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 208857600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "世",
+            "attributes": {}
+          },
+          {
+            "onset": 209210400,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "界",
+            "attributes": {}
+          },
+          {
+            "onset": 209563200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "へ",
+            "attributes": {}
+          },
+          {
+            "onset": 209916000,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "飛",
+            "attributes": {}
+          },
+          {
+            "onset": 210268800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "び",
+            "attributes": {}
+          },
+          {
+            "onset": 210621600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "込",
+            "attributes": {}
+          },
+          {
+            "onset": 210974400,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "め",
+            "attributes": {}
+          },
+          {
+            "onset": 211680000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "今",
+            "attributes": {}
+          },
+          {
+            "onset": 212032800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 212385600,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 212738400,
+            "duration": 1058400,
+            "pitch": 61,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 213796800,
+            "duration": 352800,
+            "pitch": 61,
+            "lyrics": "ら",
+            "attributes": {}
+          },
+          {
+            "onset": 214502400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 215208000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 215913600,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "名",
+            "attributes": {}
+          },
+          {
+            "onset": 216619200,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "前",
+            "attributes": {}
+          },
+          {
+            "onset": 217324800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 218030400,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 218736000,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 219441600,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "声",
+            "attributes": {}
+          },
+          {
+            "onset": 219794400,
+            "duration": 1058400,
+            "pitch": 61,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 220147200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "誰",
+            "attributes": {}
+          },
+          {
+            "onset": 220500000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 220852800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 221205600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "届",
+            "attributes": {}
+          },
+          {
+            "onset": 221558400,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "く",
+            "attributes": {}
+          },
+          {
+            "onset": 221911200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 222264000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 222616800,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "叫",
+            "attributes": {}
+          },
+          {
+            "onset": 222969600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "び",
+            "attributes": {}
+          },
+          {
+            "onset": 223322400,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "続",
+            "attributes": {}
+          },
+          {
+            "onset": 223675200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "け",
+            "attributes": {}
+          },
+          {
+            "onset": 224028000,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 225792000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "森",
+            "attributes": {}
+          },
+          {
+            "onset": 226144800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 226497600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "背",
+            "attributes": {}
+          },
+          {
+            "onset": 226850400,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "中",
+            "attributes": {}
+          },
+          {
+            "onset": 227203200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "を",
+            "attributes": {}
+          },
+          {
+            "onset": 227556000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "押",
+            "attributes": {}
+          },
+          {
+            "onset": 227908800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "し",
+            "attributes": {}
+          },
+          {
+            "onset": 228261600,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 228614400,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 228967200,
+            "duration": 2469600,
+            "pitch": 61,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 231436800,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "ニュー",
+            "attributes": {},
+            "phonemes": "n' y u u"
+          },
+          {
+            "onset": 232142400,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "ワー",
+            "attributes": {},
+            "phonemes": "w a a"
+          },
+          {
+            "onset": 232848000,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "ル",
+            "attributes": {},
+            "phonemes": "r u"
+          },
+          {
+            "onset": 233553600,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "ド",
+            "attributes": {},
+            "phonemes": "d o"
+          },
+          {
+            "onset": 234259200,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 234964800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 235670400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "今",
+            "attributes": {}
+          },
+          {
+            "onset": 236376000,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "日",
+            "attributes": {}
+          },
+          {
+            "onset": 237081600,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "から",
+            "attributes": {}
+          },
+          {
+            "onset": 237081600,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "本",
+            "attributes": {}
+          },
+          {
+            "onset": 237787200,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "当",
+            "attributes": {}
+          },
+          {
+            "onset": 238492800,
+            "duration": 1411200,
+            "pitch": 66,
+            "lyrics": "は",
+            "attributes": {}
+          },
+          {
+            "onset": 239904000,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "怖",
+            "attributes": {}
+          },
+          {
+            "onset": 240609600,
+            "duration": 1058400,
+            "pitch": 61,
+            "lyrics": "かっ",
+            "attributes": {}
+          },
+          {
+            "onset": 241668000,
+            "duration": 352800,
+            "pitch": 63,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 242726400,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "そ",
+            "attributes": {}
+          },
+          {
+            "onset": 243079200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 243432000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 243784800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 244137600,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 244843200,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 245548800,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 246960000,
+            "duration": 705600,
+            "pitch": 61,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 247665600,
+            "duration": 705600,
+            "pitch": 63,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 248371200,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "森",
+            "attributes": {}
+          },
+          {
+            "onset": 248724000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 249076800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "声",
+            "attributes": {}
+          },
+          {
+            "onset": 249429600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 249782400,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "聴",
+            "attributes": {}
+          },
+          {
+            "onset": 250135200,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 250488000,
+            "duration": 352800,
+            "pitch": 63,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 250840800,
+            "duration": 2469600,
+            "pitch": 61,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 254016000,
+            "duration": 705600,
+            "pitch": 61,
+            "lyrics": "行",
+            "attributes": {}
+          },
+          {
+            "onset": 254721600,
+            "duration": 705600,
+            "pitch": 63,
+            "lyrics": "け",
+            "attributes": {}
+          },
+          {
+            "onset": 255427200,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "と",
+            "attributes": {}
+          },
+          {
+            "onset": 256132800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "言",
+            "attributes": {}
+          },
+          {
+            "onset": 256838400,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "っ",
+            "attributes": {}
+          },
+          {
+            "onset": 257544000,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 258249600,
+            "duration": 1058400,
+            "pitch": 61,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 259308000,
+            "duration": 352800,
+            "pitch": 61,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 259660800,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 260366400,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 261072000,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 261777600,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "だ",
+            "attributes": {}
+          },
+          {
+            "onset": 262483200,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "見",
+            "attributes": {}
+          },
+          {
+            "onset": 263188800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "ぬ",
+            "attributes": {}
+          },
+          {
+            "onset": 263541600,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "場",
+            "attributes": {}
+          },
+          {
+            "onset": 263894400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "所",
+            "attributes": {}
+          },
+          {
+            "onset": 264600000,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "へ",
+            "attributes": {}
+          },
+          {
+            "onset": 265305600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "答",
+            "attributes": {}
+          },
+          {
+            "onset": 265658400,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 266011200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "は",
+            "attributes": {}
+          },
+          {
+            "onset": 266364000,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "道",
+            "attributes": {}
+          },
+          {
+            "onset": 266716800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "の",
+            "attributes": {}
+          },
+          {
+            "onset": 267069600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "先",
+            "attributes": {}
+          },
+          {
+            "onset": 267422400,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 267775200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "し",
+            "attributes": {}
+          },
+          {
+            "onset": 268128000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 268480800,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 268833600,
+            "duration": 2116800,
+            "pitch": 61,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 270950400,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "恐",
+            "attributes": {}
+          },
+          {
+            "onset": 271303200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 271656000,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 272361600,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 273067200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "全",
+            "attributes": {}
+          },
+          {
+            "onset": 273420000,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "部",
+            "attributes": {}
+          },
+          {
+            "onset": 273772800,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "抱",
+            "attributes": {}
+          },
+          {
+            "onset": 274125600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "え",
+            "attributes": {}
+          },
+          {
+            "onset": 274478400,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "た",
+            "attributes": {}
+          },
+          {
+            "onset": 274831200,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 275184000,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 276595200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "世",
+            "attributes": {}
+          },
+          {
+            "onset": 276948000,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "界",
+            "attributes": {}
+          },
+          {
+            "onset": 277300800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "へ",
+            "attributes": {}
+          },
+          {
+            "onset": 277653600,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "飛",
+            "attributes": {}
+          },
+          {
+            "onset": 278006400,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "び",
+            "attributes": {}
+          },
+          {
+            "onset": 278359200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "込",
+            "attributes": {}
+          },
+          {
+            "onset": 278712000,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "め",
+            "attributes": {}
+          },
+          {
+            "onset": 279417600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "今",
+            "attributes": {}
+          },
+          {
+            "onset": 279770400,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 280123200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "こ",
+            "attributes": {}
+          },
+          {
+            "onset": 280476000,
+            "duration": 1058400,
+            "pitch": 61,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 281534400,
+            "duration": 352800,
+            "pitch": 61,
+            "lyrics": "ら",
+            "attributes": {}
+          },
+          {
+            "onset": 282240000,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 282945600,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 283651200,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "名",
+            "attributes": {}
+          },
+          {
+            "onset": 284356800,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "前",
+            "attributes": {}
+          },
+          {
+            "onset": 285062400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "も",
+            "attributes": {}
+          },
+          {
+            "onset": 285768000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "な",
+            "attributes": {}
+          },
+          {
+            "onset": 286473600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 287179200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "声",
+            "attributes": {}
+          },
+          {
+            "onset": 287532000,
+            "duration": 1058400,
+            "pitch": 61,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 287884800,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "誰",
+            "attributes": {}
+          },
+          {
+            "onset": 288237600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "か",
+            "attributes": {}
+          },
+          {
+            "onset": 288590400,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "に",
+            "attributes": {}
+          },
+          {
+            "onset": 288943200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "届",
+            "attributes": {}
+          },
+          {
+            "onset": 289296000,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "く",
+            "attributes": {}
+          },
+          {
+            "onset": 289648800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "ま",
+            "attributes": {}
+          },
+          {
+            "onset": 290001600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "で",
+            "attributes": {}
+          },
+          {
+            "onset": 290354400,
+            "duration": 352800,
+            "pitch": 73,
+            "lyrics": "叫",
+            "attributes": {}
+          },
+          {
+            "onset": 290707200,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "び",
+            "attributes": {}
+          },
+          {
+            "onset": 291060000,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "続",
+            "attributes": {}
+          },
+          {
+            "onset": 291412800,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "け",
+            "attributes": {}
+          },
+          {
+            "onset": 291765600,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 293529600,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "森",
+            "attributes": {}
+          },
+          {
+            "onset": 293882400,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 294235200,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "背",
+            "attributes": {}
+          },
+          {
+            "onset": 294588000,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "中",
+            "attributes": {}
+          },
+          {
+            "onset": 294940800,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "を",
+            "attributes": {}
+          },
+          {
+            "onset": 295293600,
+            "duration": 352800,
+            "pitch": 70,
+            "lyrics": "押",
+            "attributes": {}
+          },
+          {
+            "onset": 295646400,
+            "duration": 352800,
+            "pitch": 68,
+            "lyrics": "し",
+            "attributes": {}
+          },
+          {
+            "onset": 295999200,
+            "duration": 352800,
+            "pitch": 66,
+            "lyrics": "て",
+            "attributes": {}
+          },
+          {
+            "onset": 296352000,
+            "duration": 352800,
+            "pitch": 65,
+            "lyrics": "い",
+            "attributes": {}
+          },
+          {
+            "onset": 296704800,
+            "duration": 2469600,
+            "pitch": 61,
+            "lyrics": "る",
+            "attributes": {}
+          },
+          {
+            "onset": 299174400,
+            "duration": 705600,
+            "pitch": 73,
+            "lyrics": "ニュー",
+            "attributes": {},
+            "phonemes": "n' y u u"
+          },
+          {
+            "onset": 299880000,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "ワー",
+            "attributes": {},
+            "phonemes": "w a a"
+          },
+          {
+            "onset": 300585600,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "ル",
+            "attributes": {},
+            "phonemes": "r u"
+          },
+          {
+            "onset": 301291200,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "ド",
+            "attributes": {},
+            "phonemes": "d o"
+          },
+          {
+            "onset": 301996800,
+            "duration": 705600,
+            "pitch": 70,
+            "lyrics": "走",
+            "attributes": {}
+          },
+          {
+            "onset": 302702400,
+            "duration": 705600,
+            "pitch": 68,
+            "lyrics": "れ",
+            "attributes": {}
+          },
+          {
+            "onset": 303408000,
+            "duration": 705600,
+            "pitch": 66,
+            "lyrics": "今",
+            "attributes": {}
+          },
+          {
+            "onset": 304113600,
+            "duration": 705600,
+            "pitch": 65,
+            "lyrics": "日",
+            "attributes": {}
+          },
+          {
+            "onset": 304819200,
+            "duration": 1411200,
+            "pitch": 61,
+            "lyrics": "から",
+            "attributes": {}
+          },
+          {
+            "onset": 304819200,
+            "duration": 1411200,
+            "pitch": 68,
+            "lyrics": "森",
+            "attributes": {}
+          },
+          {
+            "onset": 306230400,
+            "duration": 1411200,
+            "pitch": 66,
+            "lyrics": "が",
+            "attributes": {}
+          },
+          {
+            "onset": 310464000,
+            "duration": 2822400,
+            "pitch": 61,
+            "lyrics": "待",
+            "attributes": {}
+          }
+        ],
+        "parameters": {
+          "pitchDelta": {
+            "mode": "cubic",
+            "points": []
+          },
+          "vibratoEnv": {
+            "mode": "cubic",
+            "points": []
+          },
+          "loudness": {
+            "mode": "cubic",
+            "points": []
+          },
+          "tension": {
+            "mode": "cubic",
+            "points": []
+          },
+          "breathiness": {
+            "mode": "cubic",
+            "points": []
+          },
+          "voicing": {
+            "mode": "cubic",
+            "points": []
+          },
+          "gender": {
+            "mode": "cubic",
+            "points": []
+          }
+        }
+      }
+    }
+  ],
+  "renderConfig": {
+    "destination": "./outputs/",
+    "filename": "NuWord_vocal_draft",
+    "numChannels": 1,
+    "aspirationFormat": "noAspiration",
+    "bitDepth": 24,
+    "sampleRate": 44100,
+    "exportMixDown": false
+  }
+}
