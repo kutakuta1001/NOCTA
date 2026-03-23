@@ -11,13 +11,13 @@
 
 ### Style of Music（Sunoのstyle欄にコピペ）
 ```
-J-pop, anime opening, 152bpm, C# major, female vocal, piano, synth, strings, tight drums, nature ambience, uplifting, adventurous, dynamic, drop chorus
+electronic pop, vocaloid-style, electro-pop, 152bpm, C# major, female vocal, aggressive synth, heavy synth bass, punchy kick, distorted synth lead, piano, uplifting, adventurous, dynamic, drop chorus
 ```
 
 ### 仮歌詞（Sunoのlyrics欄にコピペ）
 ```
 [Intro]
-(forest ambience, piano arpeggio, quiet)
+(electronic intro, heavy synth, 8-bit elements, no guitar)
 
 [Verse]
 朝靄の中で 目を覚ました
