@@ -5,6 +5,91 @@
 
 ---
 
+## 構成確認用プロンプト（2026-03-23 追加）
+※ chord_draft.mid のセクション構成を音で確認するためのプロンプトです。
+※ Sunoの Custom Mode でセクションタグを使い、構成を明示しています。
+
+### Style of Music（Sunoのstyle欄にコピペ）
+```
+J-pop, anime opening, 152bpm, C# major, female vocal, piano, synth, strings, tight drums, nature ambience, uplifting, adventurous, dynamic, drop chorus
+```
+
+### 仮歌詞（Sunoのlyrics欄にコピペ）
+```
+[Intro]
+(forest ambience, piano arpeggio, quiet)
+
+[Verse]
+朝靄の中で 目を覚ました
+どこまでも続く 木立の道
+鳥の声だけが 響いている
+ここから始まる 気がしていた
+
+[Pre-Chorus]
+本当にいいのか 声が揺れている
+でもこの高鳴りは 嘘じゃないから
+
+[Chorus]
+走れ まだ見ぬ場所へ
+答えは道の先にしかない
+恐れるな 全部抱えたまま
+世界へ飛び込め 今ここから
+
+[Verse]
+あの日描いた 夢の地図
+ページが増えて ボロボロで
+それでも捨てずに ここにいる
+それだけで もういい気がした
+
+[Pre-Chorus]
+本当にいいのか 声が揺れている
+でもこの高鳴りは 嘘じゃないから
+
+[Chorus]
+走れ まだ見ぬ場所へ
+答えは道の先にしかない
+恐れるな 全部抱えたまま
+世界へ飛び込め 今ここから
+
+[Bridge]
+(piano only, quiet, emotional)
+本当は怖かった
+それでも ここにいる
+森の声が聴こえた
+行けと言っている
+
+[Chorus]
+走れ まだ見ぬ場所へ
+答えは道の先にしかない
+恐れるな 全部抱えたまま
+世界へ飛び込め 今ここから
+走れ 名前もない声で
+誰かに届くまで 叫び続ける
+森が背中を押している
+ニューワールド 走れ 今日から
+
+[Outro]
+(piano arpeggio, forest ambience, fade out)
+```
+
+### セクション対応表（chord_draft.midとの対応）
+| Sunoのタグ | chord_draft.midのマーカー |
+|---|---|
+| [Intro] | INTRO |
+| [Verse] | VERSE_A1 / A2 |
+| [Pre-Chorus] | VERSE_B1 / B2 |
+| [Chorus] | CHORUS1_LOUD / CHORUS2_LOUD |
+| [Bridge] | DROP_CHORUS_QUIET |
+| [Chorus]（最後） | FINAL_CHORUS_MAX |
+| [Outro] | OUTRO |
+
+### Sunoでの生成のコツ
+- 2〜3パターン生成して、セクションの切れ目が明確なものを選ぶ
+- [Bridge] が静かに落ちて最後の[Chorus]で盛り上がるものが理想
+- 気に入った音源はMoises.aiで分離してStudio Oneに読み込む
+
+---
+
 ## 案A: 「森林のテクスチャーを音響設計に埋め込む」
 
 ### Style of Music（Sunoのstyle欄にコピペ）
