@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>送信完了 — NOCTA</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Noto+Sans+JP:wght@400;500&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#05050F;color:#E8E8F4;font-family:'Inter','Noto Sans JP',sans-serif;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(circle at 50% 40%,rgba(57,255,106,0.08) 0%,rgba(200,162,255,0.05) 40%,transparent 70%);
+  pointer-events:none;}
+.card{text-align:center;padding:60px 48px;max-width:480px;width:90%;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(57,255,106,0.18);
+  border-radius:24px;
+  box-shadow:0 0 80px rgba(57,255,106,0.08);}
+.check{font-size:48px;margin-bottom:24px;animation:pop 0.6s cubic-bezier(0.175,0.885,0.32,1.275);}
+@keyframes pop{0%{transform:scale(0);}100%{transform:scale(1);}}
+.logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:5px;
+  color:#E8E8F4;margin-bottom:32px;}
+.logo span{display:inline-block;width:24px;height:1.5px;
+  background:linear-gradient(90deg,#39FF6A,#C4942A);vertical-align:middle;margin-left:6px;margin-bottom:3px;}
+h1{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;
+  background:linear-gradient(135deg,#C8A2FF,#39FF6A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:16px;}
+p{font-family:'Noto Sans JP',sans-serif;font-size:14px;color:#8A8A9E;line-height:2;margin-bottom:32px;}
+.back-btn{display:inline-flex;align-items:center;gap:8px;
+  padding:14px 36px;border-radius:9999px;
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;text-decoration:none;
+  border:1.5px solid #39FF6A;color:#39FF6A;
+  background:rgba(57,255,106,0.06);
+  transition:all 0.3s ease;}
+.back-btn:hover{background:#39FF6A;color:#05050F;box-shadow:0 0 40px rgba(57,255,106,0.4);}
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+</style>
+</head>
+<body>
+<div class="card" style="position:relative;z-index:1;">
+  <div class="check">✦</div>
+  <div class="logo">NOCTA<span></span></div>
+  <h1>送信完了しました</h1>
+  <p>お問い合わせありがとうございます。<br>
+     内容を確認のうえ、<strong style="color:#E8E8F4;">2営業日以内</strong>にご返信いたします。<br><br>
+     引き続きNOCTAをよろしくお願いします。</p>
+  <a href="/" class="back-btn">← サイトに戻る</a>
+</div>
+</body>
+</html>

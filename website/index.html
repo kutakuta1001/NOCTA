@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOCTA — Music Entertainment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg:        '#05050F',
+                            bg2:       '#0A0A16',
+                            primary:   '#C8A2FF',
+                            secondary: '#C4942A',
+                            highlight: '#E8D0FF',
+                            text:      '#E8E8F4',
+                            sub:       '#8A8A9E',
+                            gold:      '#C4942A',
+                            vgreen:    '#39FF6A',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Syne', 'Space Grotesk', 'sans-serif'],
+                        brand:   ['Syne', 'sans-serif'],
+                        body:    ['Inter', 'sans-serif'],
+                        jp:      ['Noto Sans JP', 'sans-serif'],
+                        display: ['Bebas Neue', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glow-purple': '0 0 50px rgba(200,162,255,0.35)',
+                        'glow-cyan':   '0 0 50px rgba(196,148,42,0.30)',
+                        'glow-pink':   '0 0 50px rgba(232,208,255,0.30)',
+                        'glow-gold':   '0 0 50px rgba(196,148,42,0.40)',
+                        'glow-vgreen': '0 0 50px rgba(57,255,106,0.45)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --blur-glass:   blur(20px);
+            --border-glass: 1px solid rgba(255,255,255,0.08);
+            --color-gold: #C4942A;
+            --color-lavender: #C8A2FF;
+            --color-vgreen: #39FF6A;
+        }
+
+        * { scrollbar-width: thin; scrollbar-color: #39FF6A transparent; }
+        *::-webkit-scrollbar { width: 4px; }
+        *::-webkit-scrollbar-thumb { background: #39FF6A; border-radius: 9999px; }
+        *::-webkit-scrollbar-track { background: transparent; }
+
+        body { background-color: #05050F; color: #F0F0F8; overflow-x: hidden; }
+
+        /* Glass */
+        .glass {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border: var(--border-glass);
+        }
+        .glass-hover:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.14);
+        }
+
+        /* Gradient text */
+        .text-gradient {
+            background: linear-gradient(135deg, #C8A2FF 0%, #39FF6A 45%, #C4942A 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .text-gradient-alt {
+            background: linear-gradient(90deg, #C4942A, #C8A2FF, #39FF6A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(36px);
+            transition: opacity 0.9s cubic-bezier(0.4,0,0.2,1),
+                        transform 0.9s cubic-bezier(0.4,0,0.2,1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.12s; }
+        .reveal-delay-2 { transition-delay: 0.24s; }
+        .reveal-delay-3 { transition-delay: 0.36s; }
+        .reveal-delay-4 { transition-delay: 0.48s; }
+
+        /* Particle canvas */
+        #particle-canvas {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        /* Noise overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* Scrolling line animation */
+        @keyframes scrollLine {
+            0%   { transform: scaleY(0); transform-origin: top; }
+            49%  { transform: scaleY(1); transform-origin: top; }
+            50%  { transform: scaleY(1); transform-origin: bottom; }
+            100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+        .scroll-line { animation: scrollLine 2.2s ease-in-out infinite; }
+
+        /* Orbit rings */
+        @keyframes spinSlow  { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
+        @keyframes spinSlowR { from { transform: rotate(0deg); }   to { transform: rotate(-360deg); } }
+        .orbit-1 { animation: spinSlow  80s linear infinite; }
+        .orbit-2 { animation: spinSlowR 50s linear infinite; }
+        .orbit-3 { animation: spinSlow  30s linear infinite; }
+
+        /* Count-up numbers */
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(48px, 6vw, 72px);
+            line-height: 1;
+            background: linear-gradient(135deg, #C4942A, #C8A2FF, #39FF6A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tag label */
+        .section-tag {
+            display: inline-flex; align-items: center; gap: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: #C4942A; margin-bottom: 20px;
+        }
+        .section-tag::before {
+            content: ''; width: 24px; height: 1px;
+            background: #C4942A; flex-shrink: 0;
+        }
+
+        /* Filter pill */
+        .filter-pill {
+            padding: 9px 22px; border-radius: 9999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #8A8A9E; background: transparent;
+        }
+        .filter-pill:hover, .filter-pill.active {
+            background: #39FF6A; color: #05050F;
+            border-color: #39FF6A;
+            box-shadow: 0 0 28px rgba(57,255,106,0.55);
+        }
+
+        /* Work card hover */
+        .work-card { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease; }
+        .work-card:hover { transform: translateY(-8px); box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 40px rgba(196,148,42,0.16); }
+        .work-card .thumb-overlay {
+            opacity: 0; transition: opacity 0.3s ease;
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .work-card:hover .thumb-overlay { opacity: 1; }
+        .play-circle {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+        }
+        /* SVG play triangle */
+        .play-triangle {
+            width: 0; height: 0;
+            border-style: solid;
+            border-width: 9px 0 9px 16px;
+            border-color: transparent transparent transparent #fff;
+            margin-left: 4px;
+        }
+
+        /* Service card */
+        .service-card {
+            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.3s ease, box-shadow 0.4s ease;
+        }
+        .service-card:hover { transform: translateY(-6px); }
+        .service-card.c-purple:hover { border-color: rgba(200,162,255,0.5); box-shadow: 0 0 60px rgba(200,162,255,0.18); }
+        .service-card.c-cyan:hover   { border-color: rgba(196,148,42,0.5);  box-shadow: 0 0 60px rgba(196,148,42,0.18); }
+        .service-card.c-pink:hover   { border-color: rgba(57,255,106,0.5);  box-shadow: 0 0 60px rgba(57,255,106,0.18); }
+        .service-card.c-gold:hover   { border-color: rgba(196,148,42,0.6);  box-shadow: 0 0 60px rgba(196,148,42,0.20); }
+
+        /* Top accent bar on card hover */
+        .card-top-bar {
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .service-card:hover .card-top-bar { opacity: 1; }
+        .bar-purple { background: linear-gradient(90deg, transparent, #C8A2FF, transparent); }
+        .bar-cyan   { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
+        .bar-pink   { background: linear-gradient(90deg, transparent, #39FF6A, transparent); }
+        .bar-gold   { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
+
+        /* Contact form */
+        .form-field {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: #F0F0F8;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .form-field:focus {
+            border-color: #C8A2FF;
+            box-shadow: 0 0 0 3px rgba(200,162,255,0.14);
+            background: rgba(200,162,255,0.06);
+        }
+        .form-field::placeholder { color: rgba(255,255,255,0.18); }
+        .form-field option { background: #1a1a2e; }
+
+        /* Submit button */
+        .btn-submit {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #C4942A, #C8A2FF, #39FF6A);
+            color: #fff; border: none; border-radius: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 32px rgba(196,148,42,0.35), 0 0 20px rgba(200,162,255,0.2);
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 60px rgba(196,148,42,0.5), 0 0 30px rgba(200,162,255,0.35);
+        }
+
+        /* CTA buttons */
+        .btn-primary-cta {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 15px 40px; border-radius: 9999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase;
+            background: transparent;
+            color: #fff;
+            border: 2px solid #C8A2FF;
+            box-shadow: 0 0 30px rgba(200,162,255,0.35);
+            transition: all 0.3s ease;
+        }
+        .btn-primary-cta:hover {
+            background: #C8A2FF;
+            box-shadow: 0 0 60px rgba(200,162,255,0.6);
+            color: #05050F;
+            transform: translateY(-2px);
+        }
+        .btn-glass-cta {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 15px 40px; border-radius: 9999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+        .btn-glass-cta:hover {
+            background: rgba(255,255,255,0.10);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Thumb gradients */
+        .thumb-1 { background: linear-gradient(135deg, #1a0a2e, #3d1480); }
+        .thumb-2 { background: linear-gradient(135deg, #001a2e, #004d60); }
+        .thumb-3 { background: linear-gradient(135deg, #2e001a, #6b0035); }
+        .thumb-4 { background: linear-gradient(135deg, #000a2e, #001480); }
+        .thumb-5 { background: linear-gradient(135deg, #001a0a, #003d1a); }
+        .thumb-6 { background: linear-gradient(135deg, #2e1a00, #6b4000); }
+
+        /* Social link */
+        .social-link {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 20px; border-radius: 12px;
+            border: var(--border-glass);
+            background: rgba(255,255,255,0.03);
+            transition: all 0.3s ease;
+        }
+        .social-link:hover {
+            background: rgba(255,255,255,0.07);
+            transform: translateX(6px);
+            border-color: rgba(255,255,255,0.14);
+        }
+        .social-platform {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px; font-weight: 700;
+            color: #F0F0F8;
+        }
+        .social-desc {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 11px; color: #8A8A9E; margin-top: 1px;
+        }
+
+        /* Footer */
+        footer a:hover { color: #F0F0F8; }
+        /* ===== VOCALOID / SUBCULTURE ADDITIONS ===== */
+
+        /* Cute badge pill */
+        .cute-badge {
+            display: inline-flex; align-items: center;
+            padding: 5px 14px; border-radius: 9999px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px; font-weight: 700;
+            letter-spacing: 1px;
+            border: 1px solid;
+            backdrop-filter: blur(8px);
+            background: rgba(255,255,255,0.03);
+            transition: all 0.3s ease;
+        }
+        .cute-badge:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+        /* Vgreen glow */
+        .vgreen-glow { box-shadow: 0 0 40px rgba(57,255,106,0.35); }
+        .sakura-glow { box-shadow: 0 0 40px rgba(57,255,106,0.35); }
+
+        /* Floating star decoration */
+        @keyframes starFloat {
+            0%,100% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            50%      { transform: translateY(-12px) rotate(180deg); opacity: 1; }
+        }
+        @keyframes starFloat2 {
+            0%,100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 0.4; }
+            50%      { transform: translateY(-18px) rotate(-180deg) scale(1.3); opacity: 0.8; }
+        }
+        .star-float-1 { animation: starFloat  4s ease-in-out infinite; }
+        .star-float-2 { animation: starFloat2 6s ease-in-out infinite; animation-delay: 1.5s; }
+        .star-float-3 { animation: starFloat  5s ease-in-out infinite; animation-delay: 3s; }
+
+        /* Neon green text */
+        .text-vgreen { color: #39FF6A; }
+        .text-sakura { color: #39FF6A; }
+
+        /* Vocaloid highlight bar */
+        .vocaloid-bar {
+            display: inline-block;
+            padding: 2px 10px;
+            background: rgba(57,255,106,0.1);
+            border-left: 2px solid #39FF6A;
+            border-radius: 0 4px 4px 0;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 1px;
+            color: #39FF6A;
+        }
+
+        /* Cute underline wave */
+        .cute-underline {
+            text-decoration: underline;
+            text-decoration-color: #39FF6A;
+            text-underline-offset: 4px;
+            text-decoration-thickness: 2px;
+        }
+
+        /* Holographic shimmer on hero heading */
+        @keyframes shimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position:  200% center; }
+        }
+        .shimmer-text {
+            background: linear-gradient(90deg, #C8A2FF, #39FF6A, #C4942A, #C8A2FF, #39FF6A);
+            background-size: 200% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            animation: shimmer 6s linear infinite;
+        }
+
+        /* Vocaloid card accent */
+        .vocaloid-card-tag {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 9px; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            color: #39FF6A;
+            background: rgba(57,255,106,0.1);
+            border: 1px solid rgba(57,255,106,0.25);
+            padding: 3px 10px; border-radius: 4px;
+        }
+
+        /* Section divider with dots */
+        .dot-divider {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin: 0 auto 16px;
+        }
+        .dot-divider span {
+            width: 4px; height: 4px; border-radius: 50%;
+        }
+
+    </style>
+</head>
+
+<body class="font-jp antialiased">
+
+<!-- =============================================
+     NAVIGATION
+     ============================================= -->
+<header id="navbar" class="fixed top-0 w-full z-50 transition-all duration-400">
+    <nav class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+
+            <!-- Logo -->
+            <a href="#hero" class="font-brand text-2xl tracking-[6px] text-white hover:text-brand-secondary font-extrabold transition-colors duration-300">
+                NOCTA
+            </a>
+
+            <!-- Desktop links -->
+            <div class="hidden md:flex items-center gap-10 font-heading text-[12px] tracking-[2px] uppercase">
+                <a href="#about"    class="text-brand-sub hover:text-white transition-colors duration-300">About</a>
+                <a href="#works"    class="text-brand-sub hover:text-white transition-colors duration-300">Works</a>
+                <a href="#services" class="text-brand-sub hover:text-white transition-colors duration-300">Services</a>
+                <a href="#contact"
+                   class="px-6 py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-brand-secondary/60 hover:shadow-glow-gold">
+                    Contact
+                </a>
+            </div>
+
+            <!-- Mobile hamburger -->
+            <button id="hamburger" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="メニュー">
+                <span class="w-6 h-[1.5px] bg-brand-text rounded block transition-all duration-300" id="hb-1"></span>
+                <span class="w-6 h-[1.5px] bg-brand-text rounded block transition-all duration-300" id="hb-2"></span>
+                <span class="w-6 h-[1.5px] bg-brand-text rounded block transition-all duration-300" id="hb-3"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden glass border-t border-white/8">
+        <div class="max-w-[1200px] mx-auto px-6 py-6 flex flex-col gap-5 font-heading text-[13px] tracking-widest uppercase">
+            <a href="#about"    class="text-brand-sub hover:text-white transition-colors">About</a>
+            <a href="#works"    class="text-brand-sub hover:text-white transition-colors">Works</a>
+            <a href="#services" class="text-brand-sub hover:text-white transition-colors">Services</a>
+            <a href="#contact"  class="text-brand-primary">Contact</a>
+        </div>
+    </div>
+</header>
+
+
+<!-- =============================================
+     01. HERO
+     ============================================= -->
+<section id="hero" class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+
+    <!-- Particle canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- SVG Waveform bg -->
+    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none z-[1]">
+        <svg class="w-full h-full" viewBox="0 0 1000 500" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="gw1" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%"   stop-color="#C8A2FF"/>
+                    <stop offset="35%"  stop-color="#39FF6A"/>
+                    <stop offset="70%"  stop-color="#C4942A"/>
+                    <stop offset="100%" stop-color="#C8A2FF"/>
+                </linearGradient>
+                <linearGradient id="gw2" x1="100%" y1="0%" x2="0%" y2="0%">
+                    <stop offset="0%"   stop-color="#C4942A"/>
+                    <stop offset="100%" stop-color="#C8A2FF"/>
+                </linearGradient>
+            </defs>
+            <path d="M0,250 C150,100 350,400 500,250 C650,100 850,400 1000,250"
+                  fill="none" stroke="url(#gw1)" stroke-width="2" opacity="0.6">
+                <animate attributeName="d" dur="12s" repeatCount="indefinite"
+                    values="
+                        M0,250 C150,100 350,400 500,250 C650,100 850,400 1000,250;
+                        M0,250 C150,400 350,100 500,250 C650,400 850,100 1000,250;
+                        M0,250 C150,100 350,400 500,250 C650,100 850,400 1000,250"/>
+            </path>
+            <path d="M0,250 C200,170 300,330 500,250 C700,170 800,330 1000,250"
+                  fill="none" stroke="url(#gw2)" stroke-width="1" opacity="0.35">
+                <animate attributeName="d" dur="18s" repeatCount="indefinite"
+                    values="
+                        M0,250 C200,170 300,330 500,250 C700,170 800,330 1000,250;
+                        M0,250 C200,330 300,170 500,250 C700,330 800,170 1000,250;
+                        M0,250 C200,170 300,330 500,250 C700,170 800,330 1000,250"/>
+            </path>
+            <path d="M0,250 C100,200 200,300 500,250 C800,200 900,300 1000,250"
+                  fill="none" stroke="url(#gw1)" stroke-width="0.8" opacity="0.2">
+                <animate attributeName="d" dur="8s" repeatCount="indefinite"
+                    values="
+                        M0,250 C100,200 200,300 500,250 C800,200 900,300 1000,250;
+                        M0,250 C100,300 200,200 500,250 C800,300 900,200 1000,250;
+                        M0,250 C100,200 200,300 500,250 C800,200 900,300 1000,250"/>
+            </path>
+        </svg>
+    </div>
+
+    <!-- Glow blobs -->
+    <div class="absolute -top-1/4 -left-1/4 w-[700px] h-[700px] rounded-full pointer-events-none z-[1]"
+         style="background:radial-gradient(circle, rgba(200,162,255,0.10) 0%, rgba(57,255,106,0.05) 50%, transparent 70%); filter:blur(80px);"></div>
+    <div class="absolute -bottom-1/4 -right-1/4 w-[600px] h-[600px] rounded-full pointer-events-none z-[1]"
+         style="background:radial-gradient(circle, rgba(57,255,106,0.10) 0%, transparent 70%); filter:blur(80px);"></div>
+
+    <!-- Hero content -->
+    <div class="relative z-10 text-center px-6 max-w-[1000px] mx-auto">
+        <div class="reveal active">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 glass rounded-full px-5 py-2 mb-10 font-heading text-[11px] font-semibold tracking-[2px] uppercase" style="color:#C4942A;">
+                <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:#39FF6A"></span>
+                Music Entertainment — Est. 2026
+            </div>
+
+            <!-- Main heading -->
+            <h1 class="font-display text-[14vw] md:text-[10vw] lg:text-[120px] leading-[0.88] tracking-wide text-white mb-3"
+                style="text-shadow: 0 0 80px rgba(200,162,255,0.35);">
+                WHERE AI
+            </h1>
+            <h1 class="font-display text-[14vw] md:text-[10vw] lg:text-[120px] leading-[0.88] tracking-wide shimmer-text mb-10">
+                MEETS SOUL
+            </h1>
+
+            <p class="font-jp text-base md:text-xl text-brand-sub font-light tracking-[0.3em] mb-8">
+                AIと人間の感性が融合する、新しい音楽の形
+            </p>
+            <div style="display:flex;justify-content:center;gap:8px;margin-bottom:32px;flex-wrap:wrap;">
+                <span class="cute-badge" style="border-color:rgba(57,255,106,0.4);color:#39FF6A;">✦ VOCALOID</span>
+                <span class="cute-badge" style="border-color:rgba(200,162,255,0.4);color:#C8A2FF;">✦ AI Singer</span>
+                <span class="cute-badge" style="border-color:rgba(57,255,106,0.35);color:#39FF6A;">✦ Original Music</span>
+                <span class="cute-badge" style="border-color:rgba(196,148,42,0.4);color:#C4942A;">✦ PV Production</span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-center gap-5">
+                <a href="#works"   class="btn-primary-cta">Works を見る</a>
+                <a href="#contact" class="btn-glass-cta">お問い合わせ</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating stars decoration -->
+    <div class="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
+        <div class="star-float-1 absolute" style="top:20%;left:8%;font-size:14px;color:#39FF6A;opacity:0.5;">✦</div>
+        <div class="star-float-2 absolute" style="top:35%;right:10%;font-size:10px;color:#39FF6A;opacity:0.6;">★</div>
+        <div class="star-float-3 absolute" style="top:65%;left:15%;font-size:8px;color:#C8A2FF;opacity:0.5;">✦</div>
+        <div class="star-float-1 absolute" style="top:15%;right:25%;font-size:12px;color:#C4942A;opacity:0.4;">✧</div>
+        <div class="star-float-2 absolute" style="bottom:25%;right:8%;font-size:16px;color:#39FF6A;opacity:0.35;">✦</div>
+        <div class="star-float-3 absolute" style="bottom:30%;left:6%;font-size:9px;color:#C8A2FF;opacity:0.5;">★</div>
+        <div class="star-float-1 absolute" style="top:50%;left:3%;font-size:11px;color:#39FF6A;opacity:0.3;">✧</div>
+        <div class="star-float-2 absolute" style="top:10%;left:50%;font-size:7px;color:#39FF6A;opacity:0.4;">✦</div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
+        <span class="font-heading text-[9px] tracking-[3px] uppercase text-brand-sub">Scroll</span>
+        <div class="w-px h-14 bg-gradient-to-b from-brand-primary to-transparent scroll-line"></div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     STATS BAR
+     ============================================= -->
+<div class="border-y border-white/5 bg-white/[0.015] backdrop-blur-sm">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div class="reveal">
+                <div class="stat-num" data-count="300">0</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">制作楽曲数</div>
+            </div>
+            <div class="reveal reveal-delay-1">
+                <div class="stat-num" data-count="120">0</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">映像制作本数</div>
+            </div>
+            <div class="reveal reveal-delay-2">
+                <div class="stat-num" data-count="50">0</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">タイアップ実績</div>
+            </div>
+            <div class="reveal reveal-delay-3">
+                <div class="font-display text-[clamp(48px,6vw,72px)] leading-none text-vgreen" style="font-family:'Bebas Neue',sans-serif;line-height:1;">∞</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">可能性</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- =============================================
+     02. ABOUT
+     ============================================= -->
+<section id="about" class="py-32 relative z-10">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+
+            <!-- Text -->
+            <div class="order-2 lg:order-1">
+                <p class="section-tag reveal">About</p>
+                <h2 class="font-jp text-[clamp(34px,5vw,54px)] font-bold text-white leading-tight mb-8 reveal reveal-delay-1">
+                    創造と革新が交わる、<br>
+                    <span class="text-gradient">新しい音楽の会社</span>
+                </h2>
+                <p class="font-jp text-brand-sub text-[15px] leading-[2.1] mb-10 reveal reveal-delay-2">
+                    私たちは、最新テクノロジーと人間のクリエイティビティを融合させ、
+                    オリジナル楽曲の制作からPV映像、デジタルマーケティング、
+                    メディアPRまでを一貫して手掛ける音楽エンタメカンパニーです。
+                    <br><br>
+                    <span style="color:#39FF6A;font-weight:700;">ボーカロイド・AI歌声合成</span>を積極的に活用し、
+                    人間とバーチャルシンガーが共存するサブカルチャー文化から、
+                    メインストリームへ新しい波を生み出します。
+                    <br><br>
+                    スピード・品質・一貫性——この3つを同時に実現することで、
+                    アーティストやブランドの可能性を最大限に引き出します。
+                </p>
+
+                <div class="flex flex-col gap-4 reveal reveal-delay-3">
+                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
+                        <div class="w-px h-12 bg-gradient-to-b from-[#C8A2FF] to-transparent flex-shrink-0 mt-1"></div>
+                        <div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300">革新（Innovation）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed">テクノロジーの力で、音楽業界の常識を更新し続ける。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
+                        <div class="w-px h-12 bg-gradient-to-b from-[#C4942A] to-transparent flex-shrink-0 mt-1"></div>
+                        <div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300">創造（Creation）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed">人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group" style="border-color:rgba(57,255,106,0.15);">
+                        <div class="w-px h-12 bg-gradient-to-b from-[#39FF6A] to-transparent flex-shrink-0 mt-1"></div>
+                        <div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-[#39FF6A] transition-colors duration-300">歌声合成（Synthesis）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed">ボーカロイドをはじめとするAI歌声技術で、唯一無二の音楽表現を実現。</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
+                        <div class="w-px h-12 bg-gradient-to-b from-[#C8A2FF] to-transparent flex-shrink-0 mt-1"></div>
+                        <div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300">解放（Freedom）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed">規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual -->
+            <div class="order-1 lg:order-2 flex items-center justify-center reveal reveal-delay-2">
+                <div class="relative w-full max-w-[420px] aspect-square">
+                    <!-- Glow center -->
+                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div class="w-32 h-32 rounded-full"
+                             style="background: radial-gradient(circle, rgba(196,148,42,0.22), rgba(200,162,255,0.10) 50%, transparent 70%); filter: blur(30px);"></div>
+                    </div>
+
+                    <!-- Orbit rings -->
+                    <div class="absolute inset-0 rounded-full border border-white/5 orbit-1"></div>
+                    <div class="absolute inset-6 rounded-full border border-brand-primary/15 orbit-2"></div>
+                    <div class="absolute inset-14 rounded-full border border-brand-secondary/15 orbit-3"></div>
+
+                    <!-- SVG connecting lines & nodes -->
+                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
+                        <!-- Outer dotted ring -->
+                        <circle cx="50" cy="50" r="38" fill="none"
+                                stroke="rgba(255,255,255,0.06)" stroke-dasharray="2 5"/>
+                        <!-- Lines center → nodes -->
+                        <line x1="50" y1="50" x2="50" y2="12"  stroke="#C8A2FF" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="77" y2="23"  stroke="#C8A2FF" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="88" y2="50"  stroke="#C8A2FF" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="77" y2="77"  stroke="#C8A2FF" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="50" y2="88"  stroke="#C8A2FF" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="23" y2="77"  stroke="#C8A2FF" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="12" y2="50"  stroke="#C8A2FF" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="23" y2="23"  stroke="#C8A2FF" stroke-width="0.4" opacity="0.6"/>
+                        <!-- Nodes -->
+                        <circle cx="50" cy="12" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.0s" repeatCount="indefinite"/></circle>
+                        <circle cx="77" cy="23" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.4s" repeatCount="indefinite"/></circle>
+                        <circle cx="88" cy="50" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
+                        <circle cx="77" cy="77" r="2.5" fill="#FF3D9A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.2s" repeatCount="indefinite"/></circle>
+                        <circle cx="50" cy="88" r="2.5" fill="#FF3D9A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" repeatCount="indefinite"/></circle>
+                        <circle cx="23" cy="77" r="2.5" fill="#FF3D9A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.8s" repeatCount="indefinite"/></circle>
+                        <circle cx="12" cy="50" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.1s" repeatCount="indefinite"/></circle>
+                        <circle cx="23" cy="23" r="2.5" fill="#C8A2FF" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.9s" repeatCount="indefinite"/></circle>
+                    </svg>
+
+                    <!-- Center node -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                                w-20 h-20 rounded-full border-2 border-brand-primary
+                                bg-brand-bg flex flex-col items-center justify-center z-20"
+                         style="box-shadow: 0 0 40px rgba(196,148,42,0.45), 0 0 20px rgba(200,162,255,0.3);">
+                        <span class="font-display text-[22px] leading-none text-gradient">SOUL</span>
+                    </div>
+
+                    <!-- Floating accent dots -->
+                    <div class="absolute top-1/4 left-1/4 w-1 h-1 rounded-full bg-brand-highlight animate-ping" style="animation-duration:2s;"></div>
+                    <div class="absolute top-2/3 left-1/3 w-1.5 h-1.5 rounded-full bg-brand-highlight animate-ping" style="animation-duration:2.8s; animation-delay:0.6s;"></div>
+                    <div class="absolute top-1/3 left-3/4 w-1 h-1 rounded-full bg-brand-secondary animate-ping" style="animation-duration:2.3s; animation-delay:1s;"></div>
+                    <div class="absolute top-3/4 left-2/3 w-1 h-1 rounded-full bg-brand-primary animate-ping" style="animation-duration:1.9s; animation-delay:0.3s;"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     03. WORKS / PORTFOLIO
+     ============================================= -->
+<section id="works" class="py-32 relative z-10 bg-black/30 border-y border-white/5">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="text-center mb-16 reveal">
+            <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">PORTFOLIO</h2>
+            <p class="font-jp text-brand-sub text-[15px] tracking-wider">AIと感性が生んだ、作品たち</p>
+
+            <!-- Filter pills -->
+            <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
+                <button class="filter-pill active" data-filter="all">All</button>
+                <button class="filter-pill" data-filter="music">Music</button>
+                <button class="filter-pill" data-filter="pv">PV / MV</button>
+                <button class="filter-pill" data-filter="content">Content</button>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="works-grid">
+
+            <!-- Card 1 -->
+            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal" data-cat="pv">
+                <div class="relative aspect-video overflow-hidden">
+                    <div class="thumb-1 w-full h-full flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <circle cx="24" cy="24" r="22" stroke="rgba(200,162,255,0.6)" stroke-width="1"/>
+                            <path d="M20 16 L34 24 L20 32 Z" fill="rgba(200,162,255,0.75)"/>
+                        </svg>
+                    </div>
+                    <div class="thumb-overlay">
+                        <div class="play-circle"><div class="play-triangle"></div></div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-heading font-bold text-[17px] text-white">Neon Cascade</h3>
+                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-primary/20 text-brand-primary tracking-wider">PV</span>
+                    </div>
+                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">シネマティック映像とシンセウェーブが融合した未来的MV。視覚と音楽が一体となった体験を追求。</p>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal reveal-delay-1" data-cat="music" style="transition-delay:0.1s">
+                <div class="relative aspect-video overflow-hidden">
+                    <div class="thumb-2 w-full h-full flex items-center justify-center">
+                        <svg width="48" height="12" viewBox="0 0 48 12" fill="none">
+                            <path d="M0,6 Q4,1 8,6 Q12,11 16,6 Q20,1 24,6 Q28,11 32,6 Q36,1 40,6 Q44,11 48,6" stroke="rgba(0,245,255,0.7)" stroke-width="1.5" fill="none"/>
+                        </svg>
+                    </div>
+                    <div class="thumb-overlay">
+                        <div class="play-circle"><div class="play-triangle"></div></div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-heading font-bold text-[17px] text-white">Solitude.exe</h3>
+                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-secondary/20 text-brand-secondary tracking-wider">Music</span>
+                    </div>
+                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">深夜のためのアンビエントトラック。静寂の中に宿る、内省的なサウンドスケープ。</p>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal reveal-delay-2" data-cat="content" style="transition-delay:0.2s">
+                <div class="relative aspect-video overflow-hidden">
+                    <div class="thumb-3 w-full h-full flex items-center justify-center">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <rect x="8" y="8" width="32" height="32" rx="4" stroke="rgba(255,61,154,0.6)" stroke-width="1"/>
+                            <rect x="16" y="16" width="16" height="16" rx="2" fill="rgba(255,61,154,0.3)"/>
+                        </svg>
+                    </div>
+                    <div class="thumb-overlay">
+                        <div class="play-circle"><div class="play-triangle"></div></div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-heading font-bold text-[17px] text-white">Brand Film — NEXUS</h3>
+                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-highlight/20 text-brand-highlight tracking-wider">Content</span>
+                    </div>
+                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">タイアップブランドのためのショートフィルム。世界観からサウンドまで一気通貫で制作。</p>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal" data-cat="music">
+                <div class="relative aspect-video overflow-hidden">
+                    <div class="thumb-4 w-full h-full flex items-center justify-center">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <circle cx="24" cy="24" r="10" stroke="rgba(0,100,255,0.6)" stroke-width="1"/>
+                            <circle cx="24" cy="24" r="18" stroke="rgba(0,100,255,0.3)" stroke-width="0.8" stroke-dasharray="3 4"/>
+                            <circle cx="24" cy="24" r="4" fill="rgba(0,100,255,0.8)"/>
+                        </svg>
+                    </div>
+                    <div class="thumb-overlay">
+                        <div class="play-circle"><div class="play-triangle"></div></div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-heading font-bold text-[17px] text-white">Void Protocol</h3>
+                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-primary/20 text-brand-primary tracking-wider">Music</span>
+                    </div>
+                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">ダーク・テクノとアンビエントが交差する、没入感の高いコンセプトアルバムより。</p>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal reveal-delay-1" data-cat="pv" style="transition-delay:0.1s">
+                <div class="relative aspect-video overflow-hidden">
+                    <div class="thumb-5 w-full h-full flex items-center justify-center">
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                            <path d="M24,8 L40,16 L40,32 L24,40 L8,32 L8,16 Z" stroke="rgba(0,180,80,0.6)" stroke-width="1" fill="rgba(0,180,80,0.08)"/>
+                        </svg>
+                    </div>
+                    <div class="thumb-overlay">
+                        <div class="play-circle"><div class="play-triangle"></div></div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-heading font-bold text-[17px] text-white">Organic Syntax</h3>
+                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-primary/20 text-brand-primary tracking-wider">PV</span>
+                    </div>
+                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">自然とデジタルが交差するボタニカル映像作品。生命の律動をビジュアルで表現。</p>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal reveal-delay-2" data-cat="content" style="transition-delay:0.2s">
+                <div class="relative aspect-video overflow-hidden">
+                    <div class="thumb-6 w-full h-full flex items-center justify-center">
+                        <svg width="48" height="32" viewBox="0 0 48 32" fill="none">
+                            <rect x="0" y="14" width="48" height="4" rx="2" fill="rgba(255,140,0,0.3)"/>
+                            <rect x="0" y="8" width="32" height="3" rx="1.5" fill="rgba(255,140,0,0.2)"/>
+                            <rect x="0" y="21" width="40" height="3" rx="1.5" fill="rgba(255,140,0,0.2)"/>
+                        </svg>
+                    </div>
+                    <div class="thumb-overlay">
+                        <div class="play-circle"><div class="play-triangle"></div></div>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-heading font-bold text-[17px] text-white">Viral Campaign — IGNIS</h3>
+                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-highlight/20 text-brand-highlight tracking-wider">Content</span>
+                    </div>
+                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">SNSキャンペーン総合プロデュース。楽曲・映像・投稿コンテンツを統合した戦略的展開。</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     04. SERVICES
+     ============================================= -->
+<section id="services" class="py-32 relative z-10">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="mb-16 reveal">
+            <p class="section-tag">Services</p>
+            <h2 class="font-jp text-[clamp(34px,5vw,56px)] font-bold text-white leading-tight mb-4">
+                音楽を生み出し、<br><span class="text-gradient">世界に届ける</span>
+            </h2>
+            <p class="font-jp text-brand-sub text-[15px] leading-loose max-w-xl">
+                楽曲制作からメディア展開まで、すべてを一気通貫でご提供します。
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Service 1 -->
+            <div class="service-card c-purple glass rounded-2xl p-8 border border-white/5 relative overflow-hidden reveal">
+                <div class="card-top-bar bar-purple"></div>
+                <div class="mb-6">
+                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C8A2FF">01</div>
+                    <h3 class="font-heading font-bold text-[22px] text-white mb-3">楽曲制作</h3>
+                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5">
+                        トレンド分析から作曲・編曲・歌詞制作まで。
+                        ジャンル・ムード・ターゲット層に最適化された
+                        楽曲を高速かつ高品質に制作します。
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">作曲・編曲</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">歌詞制作</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">ボーカル演出</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">サウンドデザイン</span>
+                </div>
+            </div>
+
+            <!-- Service 2 -->
+            <div class="service-card c-cyan glass rounded-2xl p-8 border border-white/5 relative overflow-hidden reveal reveal-delay-1">
+                <div class="card-top-bar bar-cyan"></div>
+                <div class="mb-6">
+                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C4942A">02</div>
+                    <h3 class="font-heading font-bold text-[22px] text-white mb-3">PV・映像制作</h3>
+                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5">
+                        世界観コンセプトの設計から絵コンテ、
+                        最先端の映像生成技術を駆使したビジュアル制作まで。
+                        シネマティックな映像表現をスピーディに実現します。
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">コンセプト設計</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">絵コンテ</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">映像制作</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">カラーグレーディング</span>
+                </div>
+            </div>
+
+            <!-- Service 3 -->
+            <div class="service-card c-pink glass rounded-2xl p-8 border border-white/5 relative overflow-hidden reveal reveal-delay-2">
+                <div class="card-top-bar bar-pink"></div>
+                <div class="mb-6">
+                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#39FF6A">03</div>
+                    <h3 class="font-heading font-bold text-[22px] text-white mb-3">デジタルマーケティング</h3>
+                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5">
+                        X・Instagram・TikTok・YouTubeの各プラットフォームに
+                        最適化されたコンテンツ戦略と制作・運用を
+                        リリーススケジュールと連動して展開します。
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">SNS戦略</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">広告クリエイティブ</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">コンテンツ制作</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">SEO対応</span>
+                </div>
+            </div>
+
+            <!-- Service 4 -->
+            <div class="service-card c-gold glass rounded-2xl p-8 border border-white/5 relative overflow-hidden reveal reveal-delay-3">
+                <div class="card-top-bar bar-gold"></div>
+                <div class="mb-6">
+                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#FFA032">04</div>
+                    <h3 class="font-heading font-bold text-[22px] text-white mb-3">PR・メディア展開</h3>
+                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5">
+                        プレスリリース作成からメディアリスト構築、
+                        取材対応の準備まで。リリースのインパクトを
+                        最大化するPR戦略を一貫してサポートします。
+                    </p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">プレスリリース</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">メディア対応</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">インフルエンサー連携</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">危機管理</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     05. NEWS
+     ============================================= -->
+<section id="news" class="py-32 relative z-10 bg-black/30 border-y border-white/5">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="text-center mb-16 reveal">
+            <p class="section-tag justify-center">News & Press</p>
+            <h2 class="font-display text-[clamp(48px,7vw,90px)] text-white tracking-[3px]">LATEST NEWS</h2>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-6">
+
+            <!-- Featured -->
+            <div class="glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer group reveal
+                        transition-all duration-400 hover:-translate-y-2 hover:border-brand-secondary/30"
+                 style="transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.3s ease;">
+                <div class="relative h-52 bg-gradient-to-br from-[#0d001a] via-[#1a004d] to-[#000d2e]
+                            overflow-hidden flex items-center justify-center">
+                    <svg class="opacity-30 group-hover:opacity-50 transition-opacity duration-500"
+                         width="120" height="40" viewBox="0 0 120 40">
+                        <path d="M0,20 Q15,5 30,20 Q45,35 60,20 Q75,5 90,20 Q105,35 120,20"
+                              fill="none" stroke="url(#gw1)" stroke-width="2">
+                            <animate attributeName="d" dur="6s" repeatCount="indefinite"
+                                values="M0,20 Q15,5 30,20 Q45,35 60,20 Q75,5 90,20 Q105,35 120,20;
+                                        M0,20 Q15,35 30,20 Q45,5 60,20 Q75,35 90,20 Q105,5 120,20;
+                                        M0,20 Q15,5 30,20 Q45,35 60,20 Q75,5 90,20 Q105,35 120,20"/>
+                        </path>
+                    </svg>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0F]/90 to-transparent"></div>
+                </div>
+                <div class="p-8">
+                    <div class="font-heading text-[11px] font-semibold tracking-[2px] mb-3" style="color:#C4942A">2026.03.21</div>
+                    <h3 class="font-heading font-bold text-[20px] text-white leading-snug mb-3">
+                        音楽エンタメカンパニー、正式始動。<br>
+                        楽曲制作からPR展開まで一気通貫サービスを開始。
+                    </h3>
+                    <p class="font-jp text-brand-sub text-[13px] leading-relaxed">
+                        最新テクノロジーと人間のクリエイティビティを融合した新しいプロダクション体制を構築。
+                        今後のプロジェクト受付を正式に開始します。
+                    </p>
+                </div>
+            </div>
+
+            <!-- List -->
+            <div class="flex flex-col gap-4 reveal reveal-delay-1">
+                <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
+                            transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.03.15</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">第1弾楽曲「Neon Cascade」のPV映像が完成</div>
+                </div>
+                <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
+                            transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.02.28</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">タイアップ・コラボ依頼の受付を開始しました</div>
+                </div>
+                <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
+                            transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.02.10</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">創業期の制作プロセスについて、ブログを公開</div>
+                </div>
+                <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
+                            transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.01.20</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">メディア各社向けのプレス資料を公開</div>
+                </div>
+                <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
+                            transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.01.05</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">ブランドビジュアルアイデンティティを策定・公開</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     06. CONTACT
+     ============================================= -->
+<section id="contact" class="py-32 relative z-10 overflow-hidden">
+
+    <!-- Glow bg -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none"
+         style="background:radial-gradient(circle, rgba(200,162,255,0.07) 0%, transparent 70%); filter:blur(60px);"></div>
+
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-20 items-start">
+
+            <!-- Info -->
+            <div>
+                <p class="section-tag reveal">Contact</p>
+                <h2 class="font-jp text-[clamp(30px,4.5vw,48px)] font-bold text-white leading-tight mb-5 reveal reveal-delay-1">
+                    一緒に、<span class="text-gradient">未来の音楽</span>を<br>作りませんか
+                </h2>
+                <p class="font-jp text-brand-sub text-[14px] leading-[2.2] mb-10 reveal reveal-delay-2">
+                    楽曲制作・PV制作・マーケティング・PRなど、<br>
+                    アイデア段階でもお気軽にご相談ください。
+                </p>
+
+                <div class="flex flex-col gap-3 reveal reveal-delay-3">
+                    <div class="social-link">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#F0F0F8">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform">X (Twitter)</div>
+                            <div class="social-desc">最新情報をいち早く</div>
+                        </div>
+                    </div>
+                    <div class="social-link">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F0F0F8" stroke-width="1.5">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <circle cx="12" cy="12" r="4"/>
+                                <circle cx="17.5" cy="6.5" r="1" fill="#F0F0F8" stroke="none"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform">Instagram</div>
+                            <div class="social-desc">ビジュアル・制作舞台裏</div>
+                        </div>
+                    </div>
+                    <div class="social-link">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#F0F0F8">
+                                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform">YouTube</div>
+                            <div class="social-desc">MV・コンテンツ全公開</div>
+                        </div>
+                    </div>
+                    <div class="social-link">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#F0F0F8">
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform">Spotify</div>
+                            <div class="social-desc">楽曲ストリーミング</div>
+                        </div>
+                    </div>
+                    <div class="social-link" style="border-color:rgba(57,255,106,0.15);">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#39FF6A">
+                                <path d="M2 5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2 0v10h16V5H4zm2 2h12v2H6V7zm0 4h8v2H6v-2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform" style="color:#39FF6A;">ニコニコ動画</div>
+                            <div class="social-desc">ボカロ・自作曲を投稿</div>
+                        </div>
+                    </div>
+                    <div class="social-link" style="border-color:rgba(57,255,106,0.15);">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#39FF6A">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform" style="color:#39FF6A;">Piapro</div>
+                            <div class="social-desc">ボカロ楽曲・イラスト共有</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="glass rounded-2xl p-9 border border-white/8 reveal reveal-delay-2">
+                <form
+                    id="nocta-contact-form"
+                    name="contact"
+                    method="POST"
+                    data-netlify="true"
+                    data-netlify-honeypot="bot-field"
+                    action="/success"
+                >
+                    <!-- Netlify hidden fields -->
+                    <input type="hidden" name="form-name" value="contact"/>
+                    <p class="hidden" style="display:none;">
+                        <input name="bot-field"/>
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">お名前 *</label>
+                            <input class="form-field" type="text" name="name" placeholder="山田 太郎" required/>
+                        </div>
+                        <div>
+                            <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">会社名</label>
+                            <input class="form-field" type="text" name="company" placeholder="株式会社〇〇"/>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">メールアドレス *</label>
+                        <input class="form-field" type="email" name="email" placeholder="hello@example.com" required/>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">ご依頼の種別</label>
+                        <select class="form-field" name="service">
+                            <option value="">選択してください</option>
+                            <option value="music">楽曲制作</option>
+                            <option value="pv">PV・映像制作</option>
+                            <option value="marketing">マーケティング支援</option>
+                            <option value="pr">PR・メディア展開</option>
+                            <option value="collab">タイアップ・コラボ</option>
+                            <option value="media">取材・メディア掲載</option>
+                            <option value="other">その他</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">メッセージ *</label>
+                        <textarea class="form-field min-h-[120px] resize-y"
+                                  name="message"
+                                  placeholder="プロジェクトの内容・ご要望をお気軽にご記入ください"
+                                  required></textarea>
+                    </div>
+                    <button class="btn-submit" type="submit" id="submitBtn">送信する</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     FOOTER
+     ============================================= -->
+<footer class="border-t border-white/5 bg-[#05050F] py-16">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-14">
+            <div>
+                <div class="font-display text-xl tracking-[4px] text-white mb-4">NOCTA</div>
+                <p class="font-jp text-brand-sub text-[13px] leading-relaxed max-w-xs">
+                    AIと人間の感性が融合する、<br>
+                    新しい音楽エンタメカンパニー。<br>
+                    あなたのビジョンを現実にします。
+                </p>
+            </div>
+            <div>
+                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Services</div>
+                <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
+                    <a href="#services" class="hover:text-white transition-colors duration-200">楽曲制作</a>
+                    <a href="#services" class="hover:text-white transition-colors duration-200">PV・映像制作</a>
+                    <a href="#services" class="hover:text-white transition-colors duration-200">デジタルMKT</a>
+                    <a href="#services" class="hover:text-white transition-colors duration-200">PR支援</a>
+                </div>
+            </div>
+            <div>
+                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Company</div>
+                <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
+                    <a href="#about"   class="hover:text-white transition-colors duration-200">About</a>
+                    <a href="#works"   class="hover:text-white transition-colors duration-200">Works</a>
+                    <a href="#news"    class="hover:text-white transition-colors duration-200">News</a>
+                    <a href="#contact" class="hover:text-white transition-colors duration-200">Contact</a>
+                </div>
+            </div>
+            <div>
+                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Connect</div>
+                <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
+                    <a href="#" class="hover:text-white transition-colors duration-200">X (Twitter)</a>
+                    <a href="#" class="hover:text-white transition-colors duration-200">Instagram</a>
+                    <a href="#" class="hover:text-white transition-colors duration-200">YouTube</a>
+                    <a href="#" class="hover:text-white transition-colors duration-200">Spotify</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="font-heading text-[11px] text-brand-sub tracking-wide">✦ © 2026 NOCTA. All rights reserved.</div>
+            <div class="font-heading text-[11px] text-brand-sub tracking-wide" style="color:#39FF6A">♪ Music × Creativity × VOCALOID × Soul ♪</div>
+        </div>
+
+    </div>
+</footer>
+
+
+<!-- =============================================
+     JAVASCRIPT
+     ============================================= -->
+<script>
+/* ---- Particle Canvas ---- */
+(function () {
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+    const COLS = ['rgba(57,255,106,', 'rgba(200,162,255,', 'rgba(196,148,42,'];
+
+    function resize() {
+        W = canvas.width  = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+    }
+
+    function Particle() {
+        this.reset();
+    }
+    Particle.prototype.reset = function () {
+        this.x    = Math.random() * W;
+        this.y    = Math.random() * H;
+        this.r    = Math.random() * 1.6 + 0.3;
+        this.vx   = (Math.random() - 0.5) * 0.38;
+        this.vy   = (Math.random() - 0.5) * 0.38;
+        this.col  = COLS[Math.floor(Math.random() * COLS.length)];
+        this.a    = Math.random() * 0.55 + 0.1;
+        this.life = 0;
+        this.max  = Math.random() * 350 + 180;
+    };
+    Particle.prototype.update = function () {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life++;
+        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H || this.life > this.max) {
+            this.reset();
+        }
+    };
+    Particle.prototype.draw = function () {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.col + this.a + ')';
+        ctx.fill();
+    };
+
+    function drawGrid() {
+        ctx.strokeStyle = 'rgba(196,148,42,0.035)';
+        ctx.lineWidth = 0.5;
+        const s = 70;
+        for (let x = 0; x < W; x += s) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        }
+        for (let y = 0; y < H; y += s) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+        }
+    }
+
+    function drawLinks() {
+        for (let i = 0; i < particles.length; i++) {
+            for (let j = i + 1; j < particles.length; j++) {
+                const dx = particles[i].x - particles[j].x;
+                const dy = particles[i].y - particles[j].y;
+                const d  = Math.sqrt(dx * dx + dy * dy);
+                if (d < 110) {
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = 'rgba(196,148,42,' + (0.08 * (1 - d / 110)) + ')';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, W, H);
+        drawGrid();
+        drawLinks();
+        particles.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(animate);
+    }
+
+    resize();
+    for (let i = 0; i < 110; i++) particles.push(new Particle());
+    animate();
+    window.addEventListener('resize', resize);
+})();
+
+
+/* ---- Navbar scroll ---- */
+(function () {
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', function () {
+        if (window.scrollY > 60) {
+            nav.style.cssText = 'background:rgba(10,10,15,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07);';
+        } else {
+            nav.style.cssText = '';
+        }
+    });
+})();
+
+
+/* ---- Hamburger ---- */
+(function () {
+    const btn  = document.getElementById('hamburger');
+    const menu = document.getElementById('mobile-menu');
+    const hb1  = document.getElementById('hb-1');
+    const hb2  = document.getElementById('hb-2');
+    const hb3  = document.getElementById('hb-3');
+    let open   = false;
+    btn.addEventListener('click', function () {
+        open = !open;
+        menu.classList.toggle('hidden', !open);
+        hb1.style.transform = open ? 'translateY(6.5px) rotate(45deg)'  : '';
+        hb2.style.opacity   = open ? '0' : '1';
+        hb3.style.transform = open ? 'translateY(-6.5px) rotate(-45deg)' : '';
+    });
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+        open = false; menu.classList.add('hidden');
+        hb1.style.transform = ''; hb2.style.opacity = '1'; hb3.style.transform = '';
+    }));
+})();
+
+
+/* ---- Scroll Reveal ---- */
+(function () {
+    const els = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); }
+        });
+    }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => obs.observe(el));
+})();
+
+
+/* ---- Count-up ---- */
+(function () {
+    const nums = document.querySelectorAll('[data-count]');
+    const obs  = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            const target = parseInt(e.target.getAttribute('data-count'));
+            const dur    = 1400;
+            const start  = performance.now();
+            function tick(now) {
+                const p = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1 - p, 3);
+                e.target.textContent = Math.round(ease * target);
+                if (p < 1) requestAnimationFrame(tick);
+                else e.target.textContent = target + '+';
+            }
+            requestAnimationFrame(tick);
+            obs.unobserve(e.target);
+        });
+    }, { threshold: 0.5 });
+    nums.forEach(n => obs.observe(n));
+})();
+
+
+/* ---- Works Filter ---- */
+(function () {
+    const pills = document.querySelectorAll('.filter-pill');
+    const cards = document.querySelectorAll('#works-grid [data-cat]');
+    pills.forEach(pill => {
+        pill.addEventListener('click', function () {
+            pills.forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            const f = this.getAttribute('data-filter');
+            cards.forEach(card => {
+                const show = f === 'all' || card.getAttribute('data-cat') === f;
+                if (show) {
+                    card.style.display = '';
+                    requestAnimationFrame(() => {
+                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = '';
+                    });
+                } else {
+                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(12px)';
+                    setTimeout(() => { card.style.display = 'none'; }, 320);
+                }
+            });
+        });
+    });
+})();
+
+
+/* ---- Smooth scroll ---- */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function (e) {
+        const el = document.querySelector(this.getAttribute('href'));
+        if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+    });
+});
+
+
+/* ---- Netlify Form submit ---- */
+const noctaForm = document.getElementById('nocta-contact-form');
+if (noctaForm) {
+    noctaForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('submitBtn');
+        const formData = new FormData(noctaForm);
+
+        // バリデーション
+        const name    = formData.get('name')    || '';
+        const email   = formData.get('email')   || '';
+        const message = formData.get('message') || '';
+        if (!name.trim() || !email.trim() || !message.trim()) {
+            btn.textContent = '必須項目を入力してください';
+            btn.style.background = 'linear-gradient(135deg,#C4942A,#8b6914)';
+            setTimeout(() => {
+                btn.textContent = '送信する';
+                btn.style.background = '';
+            }, 2500);
+            return;
+        }
+
+        // 送信中ステート
+        btn.textContent = '送信中...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+
+        fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(formData).toString()
+        })
+        .then(response => {
+            if (response.ok) {
+                // 送信成功
+                btn.textContent = '✦ 送信完了しました';
+                btn.style.background = 'linear-gradient(135deg,#39FF6A,#00b894)';
+                btn.style.color = '#05050F';
+                btn.style.boxShadow = '0 0 40px rgba(57,255,106,0.5)';
+                btn.style.opacity = '1';
+                noctaForm.reset();
+                setTimeout(() => {
+                    btn.textContent = '送信する';
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    btn.style.boxShadow = '';
+                    btn.disabled = false;
+                }, 5000);
+            } else {
+                throw new Error('送信失敗');
+            }
+        })
+        .catch(() => {
+            btn.textContent = '送信エラー — 再度お試しください';
+            btn.style.background = 'linear-gradient(135deg,#ff4444,#cc0000)';
+            btn.style.opacity = '1';
+            btn.disabled = false;
+            setTimeout(() => {
+                btn.textContent = '送信する';
+                btn.style.background = '';
+            }, 3500);
+        });
+    });
+}
+</script>
+</body>
+</html>

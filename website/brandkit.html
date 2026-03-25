@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOCTA — Brand Kit v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   NOCTA Brand Variables — 4-Color System (v2)
+   BG #05050F / Lavender #C8A2FF / Neon Lime #39FF6A / Gold #C4942A
+   ============================================================ */
+:root {
+  --bg:        #05050F;
+  --bg2:       #0A0A16;
+  --bg3:       #111128;
+  --lavender:  #C8A2FF;
+  --lime:      #39FF6A;
+  --gold:      #C4942A;
+  --gold-lt:   #E8C05A;
+  --text:      #E8E8F4;
+  --sub:       #8A8A9E;
+  --glass:     rgba(255,255,255,0.04);
+  --glass-bdr: 1px solid rgba(255,255,255,0.09);
+  --glass-bdr-lime: 1px solid rgba(57,255,106,0.18);
+  --glass-bdr-lav:  1px solid rgba(200,162,255,0.18);
+  --glass-bdr-gold: 1px solid rgba(196,148,42,0.22);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans JP',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;opacity:0.3;
+}
+
+/* ---- Layout ---- */
+.page{max-width:1100px;margin:0 auto;padding:60px 40px 120px;}
+
+/* ---- Section header ---- */
+.sec-label{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;
+}
+.sec-label::before{content:'';width:20px;height:1px;background:var(--gold);}
+.sec-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(26px,3.5vw,40px);font-weight:800;
+  color:var(--text);margin-bottom:36px;
+}
+.section{margin-bottom:96px;}
+
+/* ---- Glass card ---- */
+.glass{background:var(--glass);border:var(--glass-bdr);border-radius:16px;}
+.glass-lime{background:rgba(57,255,106,0.03);border:var(--glass-bdr-lime);}
+.glass-lav {background:rgba(200,162,255,0.03);border:var(--glass-bdr-lav);}
+.glass-gold{background:rgba(196,148,42,0.04);border:var(--glass-bdr-gold);}
+
+/* ---- Color swatch ---- */
+.palette-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:32px;}
+.swatch{border-radius:12px;overflow:hidden;border:var(--glass-bdr);min-width:130px;flex:1;}
+.swatch-color{height:76px;}
+.swatch-info{background:var(--bg2);padding:12px 14px;}
+.swatch-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.swatch-hex{font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--sub);letter-spacing:1px;}
+.swatch-role{font-family:'Space Grotesk',sans-serif;font-size:9px;color:var(--sub);letter-spacing:0.5px;margin-top:2px;}
+
+/* ---- Usage cards ---- */
+.usage-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:36px;}
+.usage-card{border-radius:12px;border:var(--glass-bdr);background:var(--glass);padding:18px 16px;}
+.usage-title{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+.usage-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.usage-desc{font-size:12px;color:var(--sub);line-height:1.75;}
+
+/* ---- Logo panels ---- */
+.logo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-bottom:36px;}
+.logo-panel{border-radius:14px;border:var(--glass-bdr);padding:40px 28px;display:flex;align-items:center;justify-content:center;}
+.logo-wrap{text-align:center;}
+.logo-text{font-family:'Syne',sans-serif;font-size:40px;font-weight:800;letter-spacing:8px;text-transform:uppercase;}
+.logo-underline{width:36px;height:2px;margin:7px auto 0;}
+.logo-tagline{font-family:'Space Grotesk',sans-serif;font-size:8px;font-weight:700;letter-spacing:4px;text-transform:uppercase;margin-top:6px;opacity:0.5;}
+
+/* ---- Biz card ---- */
+.card-showcase{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;margin-bottom:36px;}
+@media(max-width:700px){.card-showcase{grid-template-columns:1fr;}}
+.card-label{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:12px;}
+.biz-card{width:343px;height:207px;border-radius:8px;position:relative;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.06);
+  transition:transform 0.4s ease,box-shadow 0.4s ease;}
+.biz-card:hover{transform:translateY(-6px) rotate(-0.4deg);box-shadow:0 36px 80px rgba(0,0,0,0.7),0 0 40px rgba(57,255,106,0.12);}
+.card-noise{position:absolute;inset:0;opacity:0.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;}
+.card-grid{position:absolute;inset:0;z-index:0;opacity:0.05;
+  background-image:linear-gradient(to right,rgba(57,255,106,0.6) 1px,transparent 1px),linear-gradient(to bottom,rgba(57,255,106,0.6) 1px,transparent 1px);
+  background-size:34px 34px;}
+.card-glow-lime{position:absolute;top:-30px;right:-30px;width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(57,255,106,0.10) 0%,transparent 70%);filter:blur(28px);z-index:0;}
+.card-glow-lav{position:absolute;bottom:-30px;left:-30px;width:140px;height:140px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,162,255,0.10) 0%,transparent 70%);filter:blur(24px);z-index:0;}
+.card-bottom-line{position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,#39FF6A 30%,#C4942A 60%,transparent);z-index:2;}
+.card-front-content{position:relative;z-index:1;padding:26px 28px;height:100%;display:flex;flex-direction:column;justify-content:space-between;}
+.card-logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:6px;color:var(--text);}
+.card-logo-underline{width:28px;height:1.5px;background:linear-gradient(90deg,var(--lime),var(--gold));margin-top:5px;}
+.card-tagline{font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:3px;text-transform:uppercase;color:var(--sub);margin-top:4px;}
+.card-divider{width:28px;height:1px;background:linear-gradient(90deg,var(--lime),transparent);}
+.card-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--text);margin-bottom:3px;}
+.card-role{font-family:'Space Grotesk',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lime);}
+
+/* Back */
+.biz-card.back{background:linear-gradient(135deg,#0A0A16,#08081A);}
+.card-back-content{position:relative;z-index:1;padding:26px 28px;height:100%;display:flex;flex-direction:column;justify-content:space-between;}
+.card-big-bg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:'Syne',sans-serif;font-size:52px;font-weight:800;letter-spacing:10px;
+  color:rgba(57,255,106,0.05);text-transform:uppercase;white-space:nowrap;z-index:0;pointer-events:none;}
+.card-contact-row{display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;font-size:9px;color:var(--sub);}
+.card-contact-dot{width:3px;height:3px;border-radius:50%;background:var(--lime);flex-shrink:0;}
+.card-qr{width:38px;height:38px;border-radius:4px;border:1px solid rgba(57,255,106,0.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk',sans-serif;font-size:6px;letter-spacing:1px;color:rgba(57,255,106,0.35);}
+.card-back-top{display:flex;justify-content:space-between;align-items:flex-start;}
+
+/* ---- Spec notes ---- */
+.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;}
+.spec-card{background:var(--glass);border:var(--glass-bdr);border-radius:10px;padding:14px 16px;}
+.spec-label{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--lime);margin-bottom:5px;}
+.spec-val{font-size:11px;color:var(--sub);line-height:1.7;}
+
+/* ---- Web header ---- */
+.header-showcase{border-radius:14px;border:var(--glass-bdr);overflow:hidden;margin-bottom:28px;}
+.header-bar{background:rgba(5,5,15,0.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,0.05);padding:0 36px;height:68px;
+  display:flex;align-items:center;justify-content:space-between;gap:32px;}
+.h-logo{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;letter-spacing:5px;color:var(--text);text-decoration:none;position:relative;}
+.h-logo::after{content:'';position:absolute;bottom:-2px;left:0;right:0;height:1.5px;
+  background:linear-gradient(90deg,var(--lime),var(--gold));transform:scaleX(0.45);transform-origin:left;transition:transform 0.3s;}
+.h-logo:hover::after{transform:scaleX(1);}
+.h-nav{display:flex;align-items:center;gap:32px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.h-nav a{color:var(--sub);text-decoration:none;transition:color 0.2s;}
+.h-nav a:hover,.h-nav a.active{color:var(--text);}
+.h-cta{padding:9px 22px;border-radius:9999px;font-family:'Space Grotesk',sans-serif;
+  font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  border:1.5px solid var(--gold);color:var(--gold);background:transparent;
+  cursor:pointer;transition:all 0.3s;text-decoration:none;white-space:nowrap;}
+.h-cta:hover{background:var(--gold);color:var(--bg);box-shadow:0 0 28px rgba(196,148,42,0.4);}
+.header-hero{height:180px;background:linear-gradient(160deg,#05050F,#0D0B20);
+  display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.header-hero-text{font-family:'Syne',sans-serif;font-size:clamp(28px,3.5vw,44px);font-weight:800;
+  color:rgba(232,232,244,0.9);letter-spacing:3px;position:relative;z-index:1;text-align:center;}
+.header-hero-text em{font-style:normal;
+  background:linear-gradient(90deg,var(--lavender),var(--lime));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.header-hero svg{position:absolute;inset:0;width:100%;height:100%;opacity:0.15;}
+
+/* Header variants */
+.hv-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;}
+@media(max-width:600px){.hv-grid{grid-template-columns:1fr;}}
+.hv-box{border-radius:12px;border:var(--glass-bdr);overflow:hidden;}
+.hv-bar{height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;gap:16px;}
+.hv-bar.scrolled{background:rgba(5,5,15,0.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.05);}
+.hv-bar.transp{background:transparent;border-bottom:1px solid rgba(255,255,255,0.04);}
+.hv-bg-dark{background:#0A0A16;height:52px;}
+.hv-bg-img{background:linear-gradient(160deg,#0D0520,#05050F);height:52px;}
+.hv-logo{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;letter-spacing:4px;color:var(--text);}
+.hv-nav{display:flex;gap:20px;font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.hv-nav span{color:var(--sub);}
+.hv-nav span.a{color:var(--text);}
+.hv-btn{padding:6px 14px;border-radius:9999px;font-family:'Space Grotesk',sans-serif;
+  font-size:9px;font-weight:700;letter-spacing:1px;border:1.5px solid;white-space:nowrap;}
+.hv-btn.gold{border-color:var(--gold);color:var(--gold);background:transparent;}
+.hv-btn.lime{border-color:var(--lime);color:var(--lime);background:transparent;}
+.hv-btn.filled{border-color:var(--lavender);color:var(--bg);background:var(--lavender);}
+
+/* ---- SNS icons ---- */
+.sns-flex{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px;align-items:flex-start;}
+.sns-item{text-align:center;}
+.sns-icon{border-radius:16px;background:linear-gradient(135deg,#08081A,#0F0D22);
+  border:1px solid rgba(57,255,106,0.12);display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;transition:transform 0.3s,box-shadow 0.3s;cursor:pointer;}
+.sns-icon:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(57,255,106,0.18);}
+.sns-icon::before{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(circle at 70% 30%,rgba(57,255,106,0.07),transparent 60%);}
+.sns-grid-ov{position:absolute;inset:0;z-index:0;opacity:0.04;
+  background-image:linear-gradient(to right,rgba(57,255,106,1) 1px,transparent 1px),
+                   linear-gradient(to bottom,rgba(57,255,106,1) 1px,transparent 1px);
+  background-size:18px 18px;}
+.sns-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.sns-logo-text{font-family:'Syne',sans-serif;font-weight:800;text-transform:uppercase;color:var(--text);}
+.sns-line{height:1.5px;background:linear-gradient(90deg,transparent,var(--lime),transparent);}
+.sns-size{font-family:'Space Grotesk',sans-serif;font-size:9px;color:var(--sub);margin-top:7px;letter-spacing:1px;}
+.sns-name{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;color:var(--text);margin-top:3px;letter-spacing:1px;}
+
+/* ---- Typography specimen ---- */
+.type-box{display:flex;flex-direction:column;gap:10px;padding:28px 30px;border-radius:14px;border:var(--glass-bdr);background:var(--glass);margin-bottom:32px;}
+.type-row{border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:10px;}
+.type-row:last-child{border-bottom:none;padding-bottom:0;}
+.type-role{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:4px;}
+.t-brand  {font-family:'Syne',sans-serif;font-size:38px;font-weight:800;letter-spacing:8px;color:var(--text);}
+.t-h1     {font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
+.t-body   {font-family:'Inter',sans-serif;font-size:14px;font-weight:400;color:var(--sub);line-height:1.8;}
+.t-jp     {font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:500;color:var(--text);letter-spacing:0.1em;}
+.t-lime   {font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--lime);}
+.t-gold   {font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);}
+
+/* ---- Page header ---- */
+.kit-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:72px;gap:20px;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.kit-title-label{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--lime);margin-bottom:6px;}
+.kit-title-main{font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,44px);font-weight:800;color:var(--text);letter-spacing:7px;text-transform:uppercase;}
+.kit-meta{text-align:right;font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--sub);letter-spacing:2px;}
+.kit-meta strong{display:block;font-size:13px;color:var(--gold);}
+
+/* ---- Footer ---- */
+.kit-footer{margin-top:64px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.06);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  font-family:'Space Grotesk',sans-serif;font-size:10px;color:var(--sub);letter-spacing:2px;}
+.kit-footer .lime{color:var(--lime);}
+.kit-footer .gold{color:var(--gold);}
+
+/* ============================================================
+   FLYER STYLES
+   ============================================================ */
+/* A5縦 flyer: 148mm × 210mm → scale ×3.3 → 488px × 693px */
+.flyer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;margin-bottom:36px;}
+.flyer-wrap{}
+.flyer{
+  width:380px;max-width:100%;
+  aspect-ratio:148/210;
+  border-radius:12px;position:relative;overflow:hidden;
+  box-shadow:0 24px 70px rgba(0,0,0,0.65);
+  transition:transform 0.4s ease,box-shadow 0.4s ease;
+}
+.flyer:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 40px 90px rgba(0,0,0,0.75);}
+.flyer-noise{position:absolute;inset:0;opacity:0.04;z-index:1;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* --- Flyer 1: NEON WAVE --- */
+.flyer-1{background:linear-gradient(165deg,#03030C 0%,#080818 50%,#060612 100%);}
+.f1-grid{position:absolute;inset:0;z-index:0;opacity:0.06;
+  background-image:linear-gradient(to right,rgba(57,255,106,0.8) 1px,transparent 1px),
+                   linear-gradient(to bottom,rgba(57,255,106,0.8) 1px,transparent 1px);
+  background-size:28px 28px;}
+.f1-glow-top{position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(57,255,106,0.18) 0%,transparent 70%);filter:blur(40px);z-index:0;}
+.f1-glow-bot{position:absolute;bottom:-40px;right:-40px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,162,255,0.12) 0%,transparent 70%);filter:blur(36px);z-index:0;}
+.f1-content{position:relative;z-index:2;padding:32px 28px;height:100%;display:flex;flex-direction:column;justify-content:space-between;}
+.f1-top-badge{display:inline-flex;align-items:center;gap:7px;
+  font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--lime);background:rgba(57,255,106,0.08);border:1px solid rgba(57,255,106,0.25);
+  padding:5px 12px;border-radius:9999px;margin-bottom:24px;}
+.f1-top-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--lime);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.f1-main-logo{font-family:'Syne',sans-serif;font-size:54px;font-weight:800;letter-spacing:6px;
+  color:var(--text);line-height:1;margin-bottom:4px;}
+.f1-logo-bar{width:50px;height:2px;background:linear-gradient(90deg,var(--lime),var(--gold));margin-bottom:12px;}
+.f1-tagline{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--sub);}
+.f1-wave-area{flex:1;display:flex;align-items:center;justify-content:center;position:relative;margin:20px 0;}
+.f1-event-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;
+  background:linear-gradient(135deg,var(--lavender),var(--lime));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.2;margin-bottom:8px;}
+.f1-event-sub{font-family:'Noto Sans JP',sans-serif;font-size:12px;color:var(--sub);line-height:1.7;}
+.f1-bottom{border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;
+  display:flex;justify-content:space-between;align-items:flex-end;}
+.f1-date{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--lime);line-height:1;}
+.f1-date-sub{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:2px;color:var(--sub);margin-top:3px;}
+.f1-venue{text-align:right;}
+.f1-venue-name{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;color:var(--text);}
+.f1-venue-sub{font-family:'Space Grotesk',sans-serif;font-size:9px;color:var(--sub);margin-top:2px;}
+
+/* --- Flyer 2: HOLOGRAPHIC DARK --- */
+.flyer-2{background:linear-gradient(165deg,#040410 0%,#0A0824 50%,#05050F 100%);}
+.f2-holo{position:absolute;inset:0;z-index:0;
+  background:
+    repeating-linear-gradient(45deg,rgba(57,255,106,0.015) 0px,rgba(57,255,106,0.015) 1px,transparent 1px,transparent 20px),
+    repeating-linear-gradient(-45deg,rgba(200,162,255,0.015) 0px,rgba(200,162,255,0.015) 1px,transparent 1px,transparent 20px);}
+.f2-glow-center{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,162,255,0.14) 0%,rgba(57,255,106,0.06) 40%,transparent 70%);
+  filter:blur(50px);z-index:0;}
+.f2-glow-gold{position:absolute;bottom:60px;right:30px;
+  width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(196,148,42,0.12) 0%,transparent 70%);filter:blur(30px);z-index:0;}
+.f2-content{position:relative;z-index:2;padding:32px 28px;height:100%;display:flex;flex-direction:column;}
+.f2-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:auto;}
+.f2-logo-small{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:5px;color:var(--text);}
+.f2-season-tag{font-family:'Space Grotesk',sans-serif;font-size:8px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--gold);background:rgba(196,148,42,0.1);
+  border:1px solid rgba(196,148,42,0.25);padding:4px 10px;border-radius:4px;}
+.f2-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 0;}
+.f2-circle{width:110px;height:110px;border-radius:50%;
+  border:1px solid rgba(57,255,106,0.25);
+  background:radial-gradient(circle,rgba(57,255,106,0.06),transparent 70%);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;position:relative;}
+.f2-circle::before{content:'';position:absolute;inset:-6px;border-radius:50%;
+  border:1px solid rgba(200,162,255,0.15);}
+.f2-circle-text{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:4px;
+  background:linear-gradient(135deg,var(--lavender),var(--lime));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.f2-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);
+  letter-spacing:1px;line-height:1.3;margin-bottom:10px;}
+.f2-subtitle{font-family:'Noto Sans JP',sans-serif;font-size:11px;color:var(--sub);line-height:1.7;}
+.f2-bottom{border-top:1px solid rgba(255,255,255,0.06);padding-top:14px;}
+.f2-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.f2-tag{font-family:'Space Grotesk',sans-serif;font-size:8px;font-weight:700;letter-spacing:1px;
+  padding:3px 10px;border-radius:9999px;background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);color:var(--sub);}
+.f2-tag.lime{border-color:rgba(57,255,106,0.3);color:var(--lime);background:rgba(57,255,106,0.06);}
+.f2-tag.lav{border-color:rgba(200,162,255,0.3);color:var(--lavender);background:rgba(200,162,255,0.06);}
+.f2-tag.gold{border-color:rgba(196,148,42,0.3);color:var(--gold);background:rgba(196,148,42,0.06);}
+.f2-url{font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:2px;color:var(--sub);}
+
+/* --- Flyer 3: MINIMAL GOLD --- */
+.flyer-3{background:#05050F;border:1px solid rgba(196,148,42,0.18);}
+.f3-corner-tl{position:absolute;top:0;left:0;width:60px;height:60px;z-index:1;
+  border-top:2px solid var(--gold);border-left:2px solid var(--gold);border-radius:0 0 8px 0;}
+.f3-corner-br{position:absolute;bottom:0;right:0;width:60px;height:60px;z-index:1;
+  border-bottom:2px solid var(--gold);border-right:2px solid var(--gold);border-radius:8px 0 0 0;}
+.f3-lime-strip{position:absolute;left:0;top:0;bottom:0;width:3px;z-index:1;
+  background:linear-gradient(to bottom,transparent,var(--lime) 30%,var(--lime) 70%,transparent);}
+.f3-content{position:relative;z-index:2;padding:36px 32px;height:100%;display:flex;flex-direction:column;}
+.f3-label{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:20px;}
+.f3-logo{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;letter-spacing:8px;
+  color:var(--text);line-height:1;margin-bottom:3px;}
+.f3-logo-sub{font-family:'Space Grotesk',sans-serif;font-size:8px;letter-spacing:4px;
+  text-transform:uppercase;color:var(--sub);margin-bottom:0;}
+.f3-gold-line{width:40px;height:1px;background:var(--gold);margin:14px 0;}
+.f3-center{flex:1;display:flex;flex-direction:column;justify-content:center;}
+.f3-event{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--text);
+  line-height:1.3;margin-bottom:8px;}
+.f3-event-en{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:var(--lime);margin-bottom:14px;}
+.f3-desc{font-family:'Noto Sans JP',sans-serif;font-size:11px;color:var(--sub);line-height:1.9;}
+.f3-bottom{margin-top:auto;padding-top:16px;border-top:1px solid rgba(196,148,42,0.15);}
+.f3-info-row{display:flex;justify-content:space-between;align-items:flex-end;}
+.f3-date-big{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--gold);line-height:1;}
+.f3-date-label{font-family:'Space Grotesk',sans-serif;font-size:8px;letter-spacing:2px;color:var(--sub);margin-top:2px;}
+.f3-right-info{text-align:right;}
+.f3-right-label{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;color:var(--text);}
+.f3-right-sub{font-family:'Space Grotesk',sans-serif;font-size:9px;color:var(--sub);margin-top:3px;}
+
+/* ---- Responsive ---- */
+@media(max-width:640px){
+  .page{padding:40px 20px 80px;}
+  .card-showcase{grid-template-columns:1fr;}
+  .biz-card{width:100%;height:auto;aspect-ratio:91/55;}
+  .flyer-grid{grid-template-columns:1fr;}
+  .flyer{width:100%;max-width:380px;margin:0 auto;}
+  .hv-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ======= PAGE HEADER ======= -->
+<div class="kit-header">
+  <div>
+    <div class="kit-title-label">✦ Brand Kit v2 — 4-Color System</div>
+    <div class="kit-title-main">NOCTA</div>
+  </div>
+  <div class="kit-meta">
+    <strong>v2.0</strong>
+    BG / Lavender / Lime / Gold<br>2026 Identity
+  </div>
+</div>
+
+<!-- ======= 01. COLOR PALETTE ======= -->
+<div class="section">
+  <p class="sec-label">01</p>
+  <h2 class="sec-title">4色カラーパレット</h2>
+
+  <div class="palette-row">
+    <div class="swatch">
+      <div class="swatch-color" style="background:#05050F;border:1px solid rgba(255,255,255,0.08);"></div>
+      <div class="swatch-info">
+        <div class="swatch-name">Deep Space</div>
+        <div class="swatch-hex">#05050F</div>
+        <div class="swatch-role">Primary Background</div>
+      </div>
+    </div>
+    <div class="swatch" style="border-color:rgba(200,162,255,0.25);">
+      <div class="swatch-color" style="background:#C8A2FF;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name" style="color:#C8A2FF;">Soft Lavender</div>
+        <div class="swatch-hex">#C8A2FF</div>
+        <div class="swatch-role">Main Accent / Gradient</div>
+      </div>
+    </div>
+    <div class="swatch" style="border-color:rgba(57,255,106,0.3);">
+      <div class="swatch-color" style="background:#39FF6A;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name" style="color:#39FF6A;">Neon Lime ✦</div>
+        <div class="swatch-hex">#39FF6A</div>
+        <div class="swatch-role">VOCALOID / Sub Accent</div>
+      </div>
+    </div>
+    <div class="swatch" style="border-color:rgba(196,148,42,0.3);">
+      <div class="swatch-color" style="background:#C4942A;"></div>
+      <div class="swatch-info">
+        <div class="swatch-name" style="color:#C4942A;">Nocta Gold ★</div>
+        <div class="swatch-hex">#C4942A</div>
+        <div class="swatch-role">One-Point / Premium</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="usage-grid">
+    <div class="usage-card glass-lav">
+      <div class="usage-title"><span class="usage-dot" style="background:#C8A2FF;"></span>Lavender — アクセント</div>
+      <div class="usage-desc">グラデーション・ホバー・ロゴ装飾・フォームフォーカス。ブランドの主軸カラー。</div>
+    </div>
+    <div class="usage-card glass-lime">
+      <div class="usage-title"><span class="usage-dot" style="background:#39FF6A;"></span>Neon Lime — VOCALOID</div>
+      <div class="usage-desc">セクションタグ・バッジ・スクロールバー・フィルターピル・SNSタグ。ネオン感の演出。</div>
+    </div>
+    <div class="usage-card glass-gold">
+      <div class="usage-title"><span class="usage-dot" style="background:#C4942A;"></span>Gold — ワンポイント</div>
+      <div class="usage-desc">CTAボタンボーダー・名刺アクセントライン・フライヤー装飾・フッター文字。高級感。</div>
+    </div>
+    <div class="usage-card">
+      <div class="usage-title"><span class="usage-dot" style="background:#E8E8F4;"></span>White — テキスト</div>
+      <div class="usage-desc">#E8E8F4 ベーステキスト。#8A8A9E サブテキスト。この2色はUIグレーとして機能上維持。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= 02. LOGO ======= -->
+<div class="section">
+  <p class="sec-label">02</p>
+  <h2 class="sec-title">ロゴバリエーション</h2>
+  <div class="logo-grid">
+    <div>
+      <div class="card-label">Dark — 基本形</div>
+      <div class="logo-panel" style="background:#05050F;">
+        <div class="logo-wrap">
+          <div class="logo-text" style="color:#E8E8F4;">NOCTA</div>
+          <div class="logo-underline" style="background:linear-gradient(90deg,#39FF6A,#C4942A);"></div>
+          <div class="logo-tagline" style="color:#8A8A9E;">WHERE AI MEETS SOUL</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card-label">Neon Lime — VOCALOID版</div>
+      <div class="logo-panel" style="background:#05050F;border-color:rgba(57,255,106,0.15);">
+        <div class="logo-wrap">
+          <div class="logo-text" style="color:#39FF6A;text-shadow:0 0 30px rgba(57,255,106,0.5);">NOCTA</div>
+          <div class="logo-underline" style="background:linear-gradient(90deg,#39FF6A,#C8A2FF);"></div>
+          <div class="logo-tagline" style="color:#39FF6A;opacity:0.45;">WHERE AI MEETS SOUL</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card-label">Gradient — キービジュアル用</div>
+      <div class="logo-panel" style="background:linear-gradient(135deg,#0A0520,#100825);border-color:rgba(200,162,255,0.15);">
+        <div class="logo-wrap">
+          <div class="logo-text" style="background:linear-gradient(90deg,#C8A2FF,#39FF6A,#C4942A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">NOCTA</div>
+          <div class="logo-underline" style="background:linear-gradient(90deg,#C8A2FF,#39FF6A,#C4942A);"></div>
+          <div class="logo-tagline" style="color:#8A8A9E;">WHERE AI MEETS SOUL</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card-label">Light — 白背景用</div>
+      <div class="logo-panel" style="background:#F0F0F8;">
+        <div class="logo-wrap">
+          <div class="logo-text" style="color:#05050F;">NOCTA</div>
+          <div class="logo-underline" style="background:linear-gradient(90deg,#39FF6A,#C4942A);"></div>
+          <div class="logo-tagline" style="color:#8A8A9E;">WHERE AI MEETS SOUL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= 03. BUSINESS CARD ======= -->
+<div class="section">
+  <p class="sec-label">03</p>
+  <h2 class="sec-title">名刺デザイン</h2>
+  <p style="font-size:12px;color:var(--sub);margin-bottom:24px;font-family:'Space Grotesk',sans-serif;letter-spacing:0.5px;">
+    91mm × 55mm（実寸）　マットコート350g/m² + ライムグリーン×ゴールドUV加工推奨
+  </p>
+
+  <div class="card-showcase">
+    <!-- FRONT -->
+    <div>
+      <div class="card-label">表面（Front）</div>
+      <div class="biz-card" style="background:linear-gradient(135deg,#05050F 0%,#0D0C20 60%,#12101F 100%);">
+        <div class="card-noise"></div>
+        <div class="card-grid"></div>
+        <div class="card-glow-lime"></div>
+        <div class="card-glow-lav"></div>
+        <div class="card-bottom-line"></div>
+        <div class="card-front-content">
+          <div>
+            <div class="card-logo">NOCTA</div>
+            <div class="card-logo-underline"></div>
+            <div class="card-tagline">Music Entertainment</div>
+          </div>
+          <div>
+            <div class="card-divider" style="margin-bottom:10px;"></div>
+            <div class="card-name">山田 太郎 / Taro Yamada</div>
+            <div class="card-role">Creative Director</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BACK -->
+    <div>
+      <div class="card-label">裏面（Back）</div>
+      <div class="biz-card back">
+        <div class="card-noise"></div>
+        <div class="card-grid"></div>
+        <div class="card-bottom-line"></div>
+        <div class="card-big-bg">NOCTA</div>
+        <div class="card-back-content">
+          <div class="card-back-top">
+            <div>
+              <div class="card-logo" style="font-size:18px;letter-spacing:5px;">NOCTA</div>
+              <div class="card-tagline" style="margin-top:3px;">Where AI Meets Soul</div>
+            </div>
+            <div class="card-qr">QR</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div class="card-contact-row"><div class="card-contact-dot"></div>hello@nocta.co</div>
+            <div class="card-contact-row"><div class="card-contact-dot"></div>nocta.co / @nocta_music</div>
+            <div class="card-contact-row"><div class="card-contact-dot"></div>Tokyo, Japan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-grid">
+    <div class="spec-card"><div class="spec-label">用紙</div><div class="spec-val">マットコート 350g/m²<br>角丸 R3mm</div></div>
+    <div class="spec-card"><div class="spec-label">加工</div><div class="spec-val">表面全面マットPP<br>ライム＆ゴールドラインUV</div></div>
+    <div class="spec-card"><div class="spec-label">フォント</div><div class="spec-val">Syne ExtraBold 800<br>Space Grotesk 700</div></div>
+    <div class="spec-card"><div class="spec-label">印刷</div><div class="spec-val">CMYK + 特色（金）<br>入稿形式：PDF/X-4</div></div>
+  </div>
+</div>
+
+<!-- ======= 04. FLYER ======= -->
+<div class="section">
+  <p class="sec-label">04</p>
+  <h2 class="sec-title">フライヤー 3パターン</h2>
+  <p style="font-size:12px;color:var(--sub);margin-bottom:28px;font-family:'Space Grotesk',sans-serif;letter-spacing:0.5px;">
+    A5縦（148×210mm）　各用途別デザイン
+  </p>
+
+  <div class="flyer-grid">
+
+    <!-- FLYER 1: NEON WAVE -->
+    <div class="flyer-wrap">
+      <div class="card-label" style="margin-bottom:12px;">Pattern 1 — Neon Wave<br><span style="font-size:9px;color:var(--sub);">イベント・ライブ告知</span></div>
+      <div class="flyer flyer-1">
+        <div class="flyer-noise"></div>
+        <div class="f1-grid"></div>
+        <div class="f1-glow-top"></div>
+        <div class="f1-glow-bot"></div>
+        <!-- SVG wave decoration -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:0.18;pointer-events:none;" viewBox="0 0 380 540" preserveAspectRatio="none">
+          <path d="M0,270 C80,180 160,360 240,270 C320,180 360,360 380,270" fill="none" stroke="#39FF6A" stroke-width="1.5">
+            <animate attributeName="d" dur="10s" repeatCount="indefinite"
+              values="M0,270 C80,180 160,360 240,270 C320,180 360,360 380,270;
+                      M0,270 C80,360 160,180 240,270 C320,360 360,180 380,270;
+                      M0,270 C80,180 160,360 240,270 C320,180 360,360 380,270"/>
+          </path>
+          <path d="M0,270 C60,220 140,320 240,270 C340,220 360,320 380,270" fill="none" stroke="#C8A2FF" stroke-width="0.8" opacity="0.6">
+            <animate attributeName="d" dur="14s" repeatCount="indefinite"
+              values="M0,270 C60,220 140,320 240,270 C340,220 360,320 380,270;
+                      M0,270 C60,320 140,220 240,270 C340,320 360,220 380,270;
+                      M0,270 C60,220 140,320 240,270 C340,220 360,320 380,270"/>
+          </path>
+        </svg>
+        <div class="f1-content">
+          <div>
+            <div class="f1-top-badge">✦ NEW RELEASE</div>
+            <div class="f1-main-logo">NOCTA</div>
+            <div class="f1-logo-bar"></div>
+            <div class="f1-tagline">Where AI Meets Soul</div>
+          </div>
+          <div class="f1-wave-area">
+            <div>
+              <div class="f1-event-title">NEON NIGHT<br>Vol.01</div>
+              <div class="f1-event-sub">最新AIシンセサイズ楽曲を収録した<br>ファーストデジタルリリース</div>
+            </div>
+          </div>
+          <div class="f1-bottom">
+            <div>
+              <div class="f1-date">2026.05</div>
+              <div class="f1-date-sub">Release Date</div>
+            </div>
+            <div class="f1-venue">
+              <div class="f1-venue-name">nocta.co</div>
+              <div class="f1-venue-sub">All Streaming Platforms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLYER 2: HOLOGRAPHIC -->
+    <div class="flyer-wrap">
+      <div class="card-label" style="margin-bottom:12px;">Pattern 2 — Holographic<br><span style="font-size:9px;color:var(--sub);">アルバム・EP告知</span></div>
+      <div class="flyer flyer-2">
+        <div class="flyer-noise"></div>
+        <div class="f2-holo"></div>
+        <div class="f2-glow-center"></div>
+        <div class="f2-glow-gold"></div>
+        <div class="f2-content">
+          <div class="f2-top">
+            <div class="f2-logo-small">NOCTA</div>
+            <div class="f2-season-tag">2026 SPRING</div>
+          </div>
+          <div class="f2-center">
+            <div class="f2-circle">
+              <div class="f2-circle-text">01</div>
+            </div>
+            <div class="f2-title">SYNTHETIC<br>SOUL EP</div>
+            <div class="f2-subtitle">ボーカロイド×生楽器が融合した<br>5曲入りデビューEP</div>
+          </div>
+          <div class="f2-bottom">
+            <div class="f2-tags">
+              <span class="f2-tag lime">✦ VOCALOID</span>
+              <span class="f2-tag lav">AI Singer</span>
+              <span class="f2-tag gold">Original</span>
+              <span class="f2-tag">Electronic</span>
+              <span class="f2-tag">J-Pop</span>
+            </div>
+            <div class="f2-url">nocta.co / @nocta_music</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLYER 3: MINIMAL GOLD -->
+    <div class="flyer-wrap">
+      <div class="card-label" style="margin-bottom:12px;">Pattern 3 — Minimal Gold<br><span style="font-size:9px;color:var(--sub);">コラボ・PR向け高級路線</span></div>
+      <div class="flyer flyer-3">
+        <div class="flyer-noise"></div>
+        <div class="f3-corner-tl"></div>
+        <div class="f3-corner-br"></div>
+        <div class="f3-lime-strip"></div>
+        <div class="f3-content">
+          <div>
+            <div class="f3-label">Music Entertainment</div>
+            <div class="f3-logo">NOCTA</div>
+            <div class="f3-logo-sub">Where AI Meets Soul</div>
+            <div class="f3-gold-line"></div>
+          </div>
+          <div class="f3-center">
+            <div class="f3-event-en">Collaboration Works</div>
+            <div class="f3-event">楽曲制作・PV・<br>マーケティングまで<br>一気通貫でご提供</div>
+            <div style="height:16px;"></div>
+            <div class="f3-desc">オリジナル楽曲の制作から<br>PV映像、SNSマーケティング、<br>メディアPRまで。<br>アーティストの可能性を<br>最大限に引き出します。</div>
+          </div>
+          <div class="f3-bottom">
+            <div class="f3-info-row">
+              <div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:2px;color:var(--sub);margin-bottom:3px;">CONTACT</div>
+                <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--gold);">hello@nocta.co</div>
+              </div>
+              <div class="f3-right-info">
+                <div class="f3-right-label">nocta.co</div>
+                <div class="f3-right-sub">@nocta_music</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Flyer spec notes -->
+  <div class="spec-grid">
+    <div class="spec-card"><div class="spec-label">サイズ</div><div class="spec-val">A5縦 148×210mm<br>塗り足し3mm込み</div></div>
+    <div class="spec-card"><div class="spec-label">用紙</div><div class="spec-val">コート135g/m²<br>または光沢マット紙</div></div>
+    <div class="spec-card"><div class="spec-label">加工推奨</div><div class="spec-val">P1: 全面マット+ライムUV<br>P2: ホログラムPP<br>P3: 金箔押し</div></div>
+    <div class="spec-card"><div class="spec-label">入稿</div><div class="spec-val">PDF/X-4<br>解像度350dpi以上</div></div>
+  </div>
+</div>
+
+<!-- ======= 05. WEB HEADER ======= -->
+<div class="section">
+  <p class="sec-label">05</p>
+  <h2 class="sec-title">Webヘッダー</h2>
+
+  <div class="card-label" style="margin-bottom:12px;">フルモックアップ</div>
+  <div class="header-showcase">
+    <div class="header-bar">
+      <a class="h-logo" href="#">NOCTA</a>
+      <nav class="h-nav">
+        <a href="#" class="active">About</a>
+        <a href="#">Works</a>
+        <a href="#">Services</a>
+        <a href="#">News</a>
+      </nav>
+      <a href="#" class="h-cta">Contact</a>
+    </div>
+    <div class="header-hero">
+      <svg viewBox="0 0 1200 180" preserveAspectRatio="none">
+        <path d="M0,90 C200,40 400,140 600,90 C800,40 1000,140 1200,90" fill="none" stroke="rgba(57,255,106,0.3)" stroke-width="1.5"/>
+        <path d="M0,90 C150,60 350,120 600,90 C850,60 1050,120 1200,90" fill="none" stroke="rgba(200,162,255,0.2)" stroke-width="1"/>
+      </svg>
+      <div class="header-hero-text">WHERE AI <em>MEETS</em> SOUL</div>
+    </div>
+  </div>
+
+  <div class="card-label" style="margin-bottom:12px;">バリエーション</div>
+  <div class="hv-grid">
+    <div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:8px;">① スクロール後（半透明）</div>
+      <div class="hv-box">
+        <div class="hv-bg-dark"></div>
+        <div class="hv-bar scrolled">
+          <div class="hv-logo">NOCTA</div>
+          <div class="hv-nav"><span class="a">About</span><span>Works</span><span>Services</span></div>
+          <div class="hv-btn gold">Contact</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sub);margin-bottom:8px;">② 画像背景上（透明）</div>
+      <div class="hv-box">
+        <div class="hv-bg-img"></div>
+        <div class="hv-bar transp" style="margin-top:-52px;">
+          <div class="hv-logo">NOCTA</div>
+          <div class="hv-nav"><span class="a">About</span><span>Works</span><span>Services</span></div>
+          <div class="hv-btn lime">Contact</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= 06. SNS ICONS ======= -->
+<div class="section">
+  <p class="sec-label">06</p>
+  <h2 class="sec-title">SNSアイコン</h2>
+  <div class="sns-flex">
+    <!-- X -->
+    <div class="sns-item">
+      <div class="sns-icon" style="width:130px;height:130px;border-radius:18px;">
+        <div class="sns-grid-ov"></div>
+        <div class="sns-inner">
+          <div class="sns-logo-text" style="font-size:28px;letter-spacing:4px;">NOCTA</div>
+          <div class="sns-line" style="width:48px;"></div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:2px;color:var(--sub);margin-top:2px;text-transform:uppercase;">Music</div>
+        </div>
+      </div>
+      <div class="sns-size">500×500px</div>
+      <div class="sns-name">X / Twitter</div>
+    </div>
+    <!-- IG -->
+    <div class="sns-item">
+      <div class="sns-icon" style="width:130px;height:130px;border-radius:50%;">
+        <div class="sns-grid-ov" style="border-radius:50%;"></div>
+        <div class="sns-inner">
+          <div class="sns-logo-text" style="font-size:24px;letter-spacing:3px;">NOCTA</div>
+          <div class="sns-line" style="width:40px;"></div>
+        </div>
+      </div>
+      <div class="sns-size">500×500px</div>
+      <div class="sns-name">Instagram</div>
+    </div>
+    <!-- YT Banner -->
+    <div class="sns-item">
+      <div class="sns-icon" style="width:220px;height:124px;border-radius:10px;">
+        <div class="sns-grid-ov"></div>
+        <div style="position:absolute;bottom:-20px;right:-20px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(196,148,42,0.10),transparent 70%);filter:blur(20px);z-index:0;"></div>
+        <div class="sns-inner">
+          <div class="sns-logo-text" style="font-size:26px;letter-spacing:6px;">NOCTA</div>
+          <div class="sns-line" style="width:60px;"></div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:8px;letter-spacing:2px;color:var(--sub);text-transform:uppercase;margin-top:2px;">Music Entertainment</div>
+        </div>
+      </div>
+      <div class="sns-size">2560×1440px</div>
+      <div class="sns-name">YouTube バナー</div>
+    </div>
+    <!-- Spotify -->
+    <div class="sns-item">
+      <div class="sns-icon" style="width:130px;height:130px;border-radius:18px;border-color:rgba(196,148,42,0.15);">
+        <div class="sns-grid-ov"></div>
+        <div style="position:absolute;top:-15px;left:-15px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(200,162,255,0.09),transparent 70%);filter:blur(18px);z-index:0;"></div>
+        <div class="sns-inner">
+          <div class="sns-logo-text" style="font-size:22px;letter-spacing:3px;color:var(--gold);">NOCTA</div>
+          <div class="sns-line" style="width:40px;background:linear-gradient(90deg,transparent,var(--gold),transparent);"></div>
+        </div>
+      </div>
+      <div class="sns-size">640×640px</div>
+      <div class="sns-name">Spotify</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= 07. TYPOGRAPHY ======= -->
+<div class="section">
+  <p class="sec-label">07</p>
+  <h2 class="sec-title">タイポグラフィ</h2>
+  <div class="type-box">
+    <div class="type-row">
+      <div class="type-role">Brand / Logo — Syne ExtraBold 800</div>
+      <div class="t-brand">NOCTA</div>
+    </div>
+    <div class="type-row">
+      <div class="type-role">Heading — Syne Bold 700</div>
+      <div class="t-h1">WHERE AI MEETS SOUL</div>
+    </div>
+    <div class="type-row">
+      <div class="type-role">Body — Inter Regular 400</div>
+      <div class="t-body">Music entertainment company blending the latest technology with human creativity to deliver original music, PVs, digital marketing, and PR.</div>
+    </div>
+    <div class="type-row">
+      <div class="type-role">Japanese — Noto Sans JP Medium 500</div>
+      <div class="t-jp">AIと人間の感性が融合する、新しい音楽エンタメカンパニー。</div>
+    </div>
+    <div class="type-row">
+      <div class="type-role">Lime Tag — Space Grotesk Bold 700</div>
+      <div class="t-lime">✦ VOCALOID &nbsp;·&nbsp; AI Singer &nbsp;·&nbsp; Original Music</div>
+    </div>
+    <div class="type-row">
+      <div class="type-role">Gold Label — Space Grotesk Bold 700</div>
+      <div class="t-gold">Music Entertainment — Est. 2026</div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= FOOTER ======= -->
+<div class="kit-footer">
+  <div>© 2026 <span class="lime">NOCTA</span>. Brand Kit v2.0 — Confidential</div>
+  <div><span class="gold">★</span> <span class="lime">Music × Creativity × VOCALOID × Soul</span> <span class="gold">★</span></div>
+</div>
+
+</div><!-- /page -->
+</body>
+</html>

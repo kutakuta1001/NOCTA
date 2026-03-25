@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NOCTA Brand Assets — Final</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#05050F;color:#E8E8F4;font-family:'Space Grotesk','Noto Sans JP',sans-serif;padding:48px 32px;line-height:1.6;}
+h1.page-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:#8A8A9E;margin-bottom:64px;display:flex;align-items:center;gap:16px;}
+h1.page-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.06);}
+.section{margin-bottom:72px;}
+.sec-label{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#C4942A;margin-bottom:28px;display:flex;align-items:center;gap:12px;}
+.sec-label::before{content:'';width:20px;height:1px;background:#C4942A;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:20px;}
+.card-label{font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#8A8A9E;text-align:center;}
+/* ── Logo SVG containers ── */
+.logo-dark  {background:#05050F;}
+.logo-light {background:#F0F0F8;}
+.logo-gold  {background:linear-gradient(135deg,#1a1200,#2e1f00);}
+/* ── Biz Card ── */
+.bizcard{width:340px;height:206px;border-radius:12px;position:relative;overflow:hidden;flex-shrink:0;}
+.bizcard-front{background:linear-gradient(135deg,#05050F 0%,#0d0d1f 60%,#0a0a16 100%);border:1px solid rgba(196,148,42,0.25);}
+.bizcard-back{background:linear-gradient(145deg,#07050F 0%,#0a0816 100%);border:1px solid rgba(200,162,255,0.15);}
+/* ── SNS icon ── */
+.sns-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.sns-icon{width:80px;height:80px;border-radius:16px;display:flex;align-items:center;justify-content:center;position:relative;}
+.sns-name{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#8A8A9E;}
+/* ── Color palette ── */
+.swatch-row{display:flex;gap:16px;flex-wrap:wrap;}
+.swatch{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.swatch-circle{width:64px;height:64px;border-radius:50%;border:1px solid rgba(255,255,255,0.1);}
+.swatch-hex{font-family:'Space Grotesk',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;color:#8A8A9E;}
+.swatch-name{font-family:'Space Grotesk',sans-serif;font-size:9px;color:#5a5a6e;}
+/* ── Divider ── */
+.divider{height:1px;background:rgba(255,255,255,0.05);margin:60px 0;}
+/* ── Typography ── */
+.typo-row{display:flex;flex-direction:column;gap:16px;}
+.typo-item{display:flex;align-items:baseline;gap:24px;padding:20px 24px;background:rgba(255,255,255,0.02);border-radius:10px;border-left:2px solid rgba(196,148,42,0.4);}
+</style>
+</head>
+<body>
+
+<h1 class="page-title">NOCTA — Brand Assets Final</h1>
+
+<!-- ══════════════════════════════════
+     A. COLOR PALETTE
+══════════════════════════════════ -->
+<section class="section">
+  <p class="sec-label">01 — Color Palette</p>
+  <div class="swatch-row">
+    <div class="swatch">
+      <div class="swatch-circle" style="background:#05050F;border-color:rgba(255,255,255,0.15);"></div>
+      <div class="swatch-hex">#05050F</div>
+      <div class="swatch-name">Deep Space</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background:#C8A2FF;box-shadow:0 0 20px rgba(200,162,255,0.4);"></div>
+      <div class="swatch-hex">#C8A2FF</div>
+      <div class="swatch-name">Soft Lavender</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background:#39FF6A;box-shadow:0 0 20px rgba(57,255,106,0.4);"></div>
+      <div class="swatch-hex">#39FF6A</div>
+      <div class="swatch-name">Neon Lime</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background:#C4942A;box-shadow:0 0 20px rgba(196,148,42,0.4);"></div>
+      <div class="swatch-hex">#C4942A</div>
+      <div class="swatch-name">Nocta Gold</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background:#E8E8F4;"></div>
+      <div class="swatch-hex">#E8E8F4</div>
+      <div class="swatch-name">Lunair White</div>
+    </div>
+    <div class="swatch">
+      <div class="swatch-circle" style="background:#8A8A9E;"></div>
+      <div class="swatch-hex">#8A8A9E</div>
+      <div class="swatch-name">Stellar Grey</div>
+    </div>
+  </div>
+  <div style="margin-top:28px;padding:16px 20px;background:rgba(196,148,42,0.06);border:1px solid rgba(196,148,42,0.2);border-radius:10px;font-size:12px;color:#8A8A9E;line-height:2;">
+    <strong style="color:#C4942A;">Gold #C4942A</strong> の使用ルール：CTA ボタン / Section タグ / ニュース日付 / About ビジュアルノード / フッターコピーライト / Service 02・04 のアクセントカラー
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════
+     B. LOGO VARIATIONS
+══════════════════════════════════ -->
+<section class="section">
+  <p class="sec-label">02 — Logo Variations</p>
+  <div class="grid-3">
+
+    <!-- Logo A: Dark BG (Primary) -->
+    <div class="card logo-dark">
+      <svg width="220" height="80" viewBox="0 0 220 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGradA" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#C8A2FF"/>
+            <stop offset="50%"  stop-color="#39FF6A"/>
+            <stop offset="100%" stop-color="#C4942A"/>
+          </linearGradient>
+          <linearGradient id="lineGradA" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#C4942A"/>
+            <stop offset="100%" stop-color="#C8A2FF"/>
+          </linearGradient>
+        </defs>
+        <!-- N mark -->
+        <text x="10" y="58" font-family="'Bebas Neue',sans-serif" font-size="52"
+              letter-spacing="8" fill="url(#logoGradA)">NOCTA</text>
+        <!-- Gold underline -->
+        <rect x="10" y="64" width="200" height="1.5" fill="url(#lineGradA)" opacity="0.7"/>
+        <!-- Tagline -->
+        <text x="10" y="76" font-family="'Space Grotesk',sans-serif" font-size="8"
+              letter-spacing="3.5" fill="#8A8A9E">WHERE AI MEETS SOUL</text>
+        <!-- Gold dot -->
+        <circle cx="207" cy="76" r="2" fill="#C4942A"/>
+      </svg>
+      <div class="card-label">Primary — Dark BG</div>
+    </div>
+
+    <!-- Logo B: Light BG -->
+    <div class="card logo-light">
+      <svg width="220" height="80" viewBox="0 0 220 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGradB" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#7B3FC4"/>
+            <stop offset="50%"  stop-color="#1a9e40"/>
+            <stop offset="100%" stop-color="#b07d1a"/>
+          </linearGradient>
+          <linearGradient id="lineGradB" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stop-color="#C4942A"/>
+            <stop offset="100%" stop-color="#7B3FC4"/>
+          </linearGradient>
+        </defs>
+        <text x="10" y="58" font-family="'Bebas Neue',sans-serif" font-size="52"
+              letter-spacing="8" fill="url(#logoGradB)">NOCTA</text>
+        <rect x="10" y="64" width="200" height="1.5" fill="url(#lineGradB)" opacity="0.6"/>
+        <text x="10" y="76" font-family="'Space Grotesk',sans-serif" font-size="8"
+              letter-spacing="3.5" fill="#6a6a7e">WHERE AI MEETS SOUL</text>
+        <circle cx="207" cy="76" r="2" fill="#C4942A"/>
+      </svg>
+      <div class="card-label">Light BG Version</div>
+    </div>
+
+    <!-- Logo C: Gold Edition -->
+    <div class="card logo-gold">
+      <svg width="220" height="80" viewBox="0 0 220 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGradC" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%"   stop-color="#F5D78E"/>
+            <stop offset="40%"  stop-color="#C4942A"/>
+            <stop offset="80%"  stop-color="#E8C060"/>
+            <stop offset="100%" stop-color="#9e7218"/>
+          </linearGradient>
+          <filter id="goldGlow">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <text x="10" y="58" font-family="'Bebas Neue',sans-serif" font-size="52"
+              letter-spacing="8" fill="url(#logoGradC)" filter="url(#goldGlow)">NOCTA</text>
+        <rect x="10" y="64" width="200" height="1" fill="#C4942A" opacity="0.8"/>
+        <text x="10" y="76" font-family="'Space Grotesk',sans-serif" font-size="8"
+              letter-spacing="3.5" fill="#C4942A" opacity="0.7">WHERE AI MEETS SOUL</text>
+        <circle cx="207" cy="76" r="2" fill="#F5D78E"/>
+      </svg>
+      <div class="card-label">Gold Premium Edition</div>
+    </div>
+
+  </div>
+
+  <!-- Logo Symbol / Mark -->
+  <div style="margin-top:20px;" class="grid-3">
+    <div class="card" style="background:rgba(255,255,255,0.02);">
+      <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="markGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#C8A2FF"/>
+            <stop offset="100%" stop-color="#39FF6A"/>
+          </linearGradient>
+          <linearGradient id="markGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#39FF6A"/>
+            <stop offset="100%" stop-color="#C4942A"/>
+          </linearGradient>
+        </defs>
+        <!-- Outer ring -->
+        <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(196,148,42,0.3)" stroke-width="0.8"/>
+        <!-- Inner dashed -->
+        <circle cx="40" cy="40" r="28" fill="none" stroke="rgba(200,162,255,0.2)" stroke-width="0.6" stroke-dasharray="3 5"/>
+        <!-- N letter mark -->
+        <text x="50%" y="52%" font-family="'Bebas Neue',sans-serif" font-size="36"
+              text-anchor="middle" dominant-baseline="middle"
+              fill="url(#markGrad1)">N</text>
+        <!-- Gold accent dot -->
+        <circle cx="62" cy="18" r="3.5" fill="#C4942A" opacity="0.9"/>
+        <circle cx="18" cy="62" r="2" fill="#39FF6A" opacity="0.7"/>
+      </svg>
+      <div class="card-label">Symbol Mark — Color</div>
+    </div>
+    <div class="card" style="background:#E8E8F4;">
+      <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(196,148,42,0.4)" stroke-width="0.8"/>
+        <circle cx="40" cy="40" r="28" fill="none" stroke="rgba(100,60,180,0.2)" stroke-width="0.6" stroke-dasharray="3 5"/>
+        <text x="50%" y="52%" font-family="'Bebas Neue',sans-serif" font-size="36"
+              text-anchor="middle" dominant-baseline="middle" fill="#1a0a2e">N</text>
+        <circle cx="62" cy="18" r="3.5" fill="#C4942A" opacity="0.9"/>
+      </svg>
+      <div class="card-label">Symbol Mark — Light</div>
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,#0a0500,#1a0d00);">
+      <svg width="80" height="80" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="goldMark" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#F5D78E"/>
+            <stop offset="100%" stop-color="#9e7218"/>
+          </linearGradient>
+          <filter id="glow2"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(196,148,42,0.4)" stroke-width="0.8"/>
+        <circle cx="40" cy="40" r="28" fill="none" stroke="rgba(196,148,42,0.15)" stroke-width="0.6" stroke-dasharray="3 5"/>
+        <text x="50%" y="52%" font-family="'Bebas Neue',sans-serif" font-size="36"
+              text-anchor="middle" dominant-baseline="middle"
+              fill="url(#goldMark)" filter="url(#glow2)">N</text>
+        <circle cx="62" cy="18" r="3.5" fill="#F5D78E" opacity="0.9"/>
+      </svg>
+      <div class="card-label">Symbol Mark — Gold</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════
+     C. BUSINESS CARD — 91×55 mm
+══════════════════════════════════ -->
+<section class="section">
+  <p class="sec-label">03 — Business Card  <span style="font-size:9px;color:#5a5a6e;font-weight:400;text-transform:none;letter-spacing:0;">91 × 55 mm</span></p>
+  <div class="grid-2">
+
+    <!-- Front -->
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+      <div class="card-label" style="margin-bottom:4px;">FRONT</div>
+      <div class="bizcard bizcard-front" style="padding:24px 28px;">
+        <!-- Corner gold accent -->
+        <div style="position:absolute;top:0;left:0;width:60px;height:60px;overflow:hidden;pointer-events:none;">
+          <div style="position:absolute;top:0;left:0;width:1px;height:40px;background:linear-gradient(to bottom,#C4942A,transparent);"></div>
+          <div style="position:absolute;top:0;left:0;height:1px;width:40px;background:linear-gradient(to right,#C4942A,transparent);"></div>
+        </div>
+        <div style="position:absolute;bottom:0;right:0;width:60px;height:60px;overflow:hidden;pointer-events:none;">
+          <div style="position:absolute;bottom:0;right:0;width:1px;height:40px;background:linear-gradient(to top,#C4942A,transparent);"></div>
+          <div style="position:absolute;bottom:0;right:0;height:1px;width:40px;background:linear-gradient(to left,#C4942A,transparent);"></div>
+        </div>
+        <!-- Logo -->
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:6px;
+                    background:linear-gradient(90deg,#C8A2FF,#39FF6A,#C4942A);
+                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+                    line-height:1;margin-bottom:4px;">NOCTA</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:7px;letter-spacing:2.5px;color:#8A8A9E;margin-bottom:20px;">MUSIC ENTERTAINMENT</div>
+        <!-- Name area -->
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:#E8E8F4;letter-spacing:0.5px;">山田 太郎</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:8px;letter-spacing:2px;color:#C4942A;text-transform:uppercase;margin-top:3px;">Creative Director</div>
+        <!-- Gold separator -->
+        <div style="width:32px;height:1px;background:linear-gradient(90deg,#C4942A,transparent);margin:12px 0;"></div>
+        <!-- Contact -->
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:8px;color:#8A8A9E;line-height:2;">
+          hello@nocta.co&nbsp;&nbsp;nocta.netlify.app
+        </div>
+      </div>
+    </div>
+
+    <!-- Back -->
+    <div style="display:flex;flex-direction:column;gap:12px;align-items:center;">
+      <div class="card-label" style="margin-bottom:4px;">BACK</div>
+      <div class="bizcard bizcard-back" style="display:flex;align-items:center;justify-content:center;">
+        <!-- Orbit visual -->
+        <svg width="180" height="170" viewBox="0 0 180 170" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="bcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#C8A2FF" stop-opacity="0.5"/>
+              <stop offset="50%" stop-color="#39FF6A" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#C4942A" stop-opacity="0.5"/>
+            </linearGradient>
+          </defs>
+          <!-- Rings -->
+          <circle cx="90" cy="85" r="70" fill="none" stroke="rgba(196,148,42,0.12)" stroke-width="0.8"/>
+          <circle cx="90" cy="85" r="52" fill="none" stroke="rgba(200,162,255,0.1)" stroke-width="0.6" stroke-dasharray="3 6"/>
+          <circle cx="90" cy="85" r="35" fill="none" stroke="rgba(57,255,106,0.08)" stroke-width="0.6"/>
+          <!-- Lines -->
+          <line x1="90" y1="85" x2="90" y2="15" stroke="rgba(196,148,42,0.3)" stroke-width="0.5"/>
+          <line x1="90" y1="85" x2="151" y2="50" stroke="rgba(200,162,255,0.3)" stroke-width="0.5"/>
+          <line x1="90" y1="85" x2="151" y2="120" stroke="rgba(57,255,106,0.3)" stroke-width="0.5"/>
+          <line x1="90" y1="85" x2="90" y2="155" stroke="rgba(196,148,42,0.2)" stroke-width="0.5"/>
+          <line x1="90" y1="85" x2="29" y2="120" stroke="rgba(200,162,255,0.2)" stroke-width="0.5"/>
+          <line x1="90" y1="85" x2="29" y2="50" stroke="rgba(57,255,106,0.2)" stroke-width="0.5"/>
+          <!-- Nodes -->
+          <circle cx="90" cy="15" r="3" fill="#C4942A" opacity="0.9"/>
+          <circle cx="151" cy="50" r="2.5" fill="#C8A2FF" opacity="0.8"/>
+          <circle cx="151" cy="120" r="2.5" fill="#39FF6A" opacity="0.8"/>
+          <circle cx="90" cy="155" r="2.5" fill="#C4942A" opacity="0.7"/>
+          <circle cx="29" cy="120" r="2" fill="#C8A2FF" opacity="0.7"/>
+          <circle cx="29" cy="50" r="2" fill="#39FF6A" opacity="0.7"/>
+          <!-- Center -->
+          <circle cx="90" cy="85" r="18" fill="rgba(5,5,15,0.9)" stroke="rgba(196,148,42,0.4)" stroke-width="1"/>
+          <text x="90" y="90" font-family="'Bebas Neue',sans-serif" font-size="16"
+                text-anchor="middle" fill="url(#bcGrad)">SOUL</text>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Spec note -->
+  <div style="margin-top:16px;padding:14px 18px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:2px solid rgba(196,148,42,0.3);font-size:11px;color:#8A8A9E;line-height:2;">
+    📐 印刷仕様：91 × 55 mm (標準名刺サイズ) ／ 解像度: 350dpi ／ カラーモード: CMYK ／ 用紙: マット加工コート紙推奨<br>
+    ✦ 金箔風コーナーラインは実際の印刷では<strong style="color:#C4942A;">ゴールドインク</strong>または<strong style="color:#C4942A;">箔押し加工</strong>で表現
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════
+     D. SNS ICON SET — 500×500px
+══════════════════════════════════ -->
+<section class="section">
+  <p class="sec-label">04 — SNS Icon Set  <span style="font-size:9px;color:#5a5a6e;font-weight:400;text-transform:none;letter-spacing:0;">500 × 500 px equivalent</span></p>
+  <div class="grid-4" style="grid-template-columns:repeat(6,1fr);">
+
+    <!-- X (Twitter) -->
+    <div class="sns-wrap">
+      <div class="sns-icon" style="background:linear-gradient(135deg,#0d0d1a,#1a1a2e);border:1px solid rgba(200,162,255,0.25);box-shadow:0 0 24px rgba(200,162,255,0.12);">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="#C8A2FF">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      </div>
+      <div class="sns-name">X</div>
+    </div>
+
+    <!-- Instagram -->
+    <div class="sns-wrap">
+      <div class="sns-icon" style="background:linear-gradient(135deg,#1a0a2e,#2e0050);border:1px solid rgba(200,162,255,0.2);box-shadow:0 0 24px rgba(200,162,255,0.10);">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C8A2FF" stroke-width="1.5">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="#C8A2FF" stroke="none"/>
+        </svg>
+      </div>
+      <div class="sns-name">Instagram</div>
+    </div>
+
+    <!-- YouTube -->
+    <div class="sns-wrap">
+      <div class="sns-icon" style="background:linear-gradient(135deg,#1a0505,#2e0a0a);border:1px solid rgba(196,148,42,0.25);box-shadow:0 0 24px rgba(196,148,42,0.10);">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="#C4942A">
+          <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z"/>
+        </svg>
+      </div>
+      <div class="sns-name">YouTube</div>
+    </div>
+
+    <!-- Spotify -->
+    <div class="sns-wrap">
+      <div class="sns-icon" style="background:linear-gradient(135deg,#001a08,#002e10);border:1px solid rgba(57,255,106,0.25);box-shadow:0 0 24px rgba(57,255,106,0.10);">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="#39FF6A">
+          <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+        </svg>
+      </div>
+      <div class="sns-name">Spotify</div>
+    </div>
+
+    <!-- ニコニコ動画 -->
+    <div class="sns-wrap">
+      <div class="sns-icon" style="background:linear-gradient(135deg,#001a08,#00150a);border:1px solid rgba(57,255,106,0.3);box-shadow:0 0 28px rgba(57,255,106,0.15);">
+        <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- NicoNico smiling face -->
+          <circle cx="20" cy="20" r="18" fill="rgba(57,255,106,0.08)" stroke="#39FF6A" stroke-width="1"/>
+          <!-- Eyes -->
+          <ellipse cx="14" cy="16" rx="3" ry="3.5" fill="#39FF6A" opacity="0.9"/>
+          <ellipse cx="26" cy="16" rx="3" ry="3.5" fill="#39FF6A" opacity="0.9"/>
+          <!-- Smile -->
+          <path d="M12 24 Q20 31 28 24" stroke="#39FF6A" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <!-- Inner highlight -->
+          <ellipse cx="13" cy="14.5" rx="1" ry="1.5" fill="rgba(255,255,255,0.6)"/>
+          <ellipse cx="25" cy="14.5" rx="1" ry="1.5" fill="rgba(255,255,255,0.6)"/>
+        </svg>
+      </div>
+      <div class="sns-name">ニコニコ</div>
+    </div>
+
+    <!-- Piapro -->
+    <div class="sns-wrap">
+      <div class="sns-icon" style="background:linear-gradient(135deg,#050a1a,#0a0d20);border:1px solid rgba(200,162,255,0.3);box-shadow:0 0 28px rgba(200,162,255,0.12);">
+        <svg width="38" height="38" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Piapro style music note + heart -->
+          <circle cx="20" cy="20" r="18" fill="rgba(200,162,255,0.06)" stroke="#C8A2FF" stroke-width="0.8"/>
+          <!-- Quarter note -->
+          <line x1="20" y1="12" x2="20" y2="26" stroke="#C8A2FF" stroke-width="2.5" stroke-linecap="round"/>
+          <ellipse cx="17.5" cy="26.5" rx="4" ry="2.8" fill="#C8A2FF" opacity="0.9"/>
+          <!-- Flag -->
+          <path d="M20 12 Q30 14 28 21" stroke="#C4942A" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <!-- Small gold star -->
+          <circle cx="28" cy="21" r="2" fill="#C4942A" opacity="0.9"/>
+        </svg>
+      </div>
+      <div class="sns-name">Piapro</div>
+    </div>
+
+  </div>
+
+  <!-- Usage spec -->
+  <div style="margin-top:20px;padding:14px 18px;background:rgba(255,255,255,0.02);border-radius:8px;border-left:2px solid rgba(57,255,106,0.3);font-size:11px;color:#8A8A9E;line-height:2;">
+    📱 SNSアイコン仕様：500 × 500 px / PNG形式 / 角丸 16px ／ 各SNSのプロフィール・ハイライトカバー・リンクボタン用<br>
+    ✦ ニコニコ・Piapro はサブカルチャー特化 → <strong style="color:#39FF6A;">Neon Lime</strong> と <strong style="color:#C8A2FF;">Lavender</strong> でボカロ感を演出
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════
+     E. WEB HEADER MOCKUP
+══════════════════════════════════ -->
+<section class="section">
+  <p class="sec-label">05 — Web Header Mockup</p>
+  <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,0.07);">
+    <!-- Header bar -->
+    <div style="background:rgba(5,5,15,0.95);backdrop-filter:blur(20px);padding:0 40px;height:72px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <!-- Logo -->
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:6px;
+                  background:linear-gradient(90deg,#C8A2FF,#39FF6A,#C4942A);
+                  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">NOCTA</div>
+      <!-- Nav -->
+      <div style="display:flex;align-items:center;gap:32px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;">
+        <span style="color:#8A8A9E;">About</span>
+        <span style="color:#8A8A9E;">Works</span>
+        <span style="color:#8A8A9E;">Services</span>
+        <span style="padding:10px 24px;border-radius:9999px;border:1.5px solid rgba(196,148,42,0.5);color:#C4942A;background:rgba(196,148,42,0.06);box-shadow:0 0 20px rgba(196,148,42,0.15);">Contact</span>
+      </div>
+    </div>
+    <!-- Hero preview -->
+    <div style="background:linear-gradient(135deg,#05050F 0%,#080514 50%,#05050F 100%);padding:60px 40px;position:relative;overflow:hidden;min-height:200px;">
+      <!-- Glow blobs -->
+      <div style="position:absolute;top:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(200,162,255,0.07),transparent 70%);filter:blur(40px);pointer-events:none;"></div>
+      <div style="position:absolute;bottom:-40px;right:-40px;width:250px;height:250px;background:radial-gradient(circle,rgba(57,255,106,0.06),transparent 70%);filter:blur(40px);pointer-events:none;"></div>
+      <!-- Content -->
+      <div style="position:relative;z-index:1;text-align:center;">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#C4942A;margin-bottom:12px;">✦ Music Entertainment — Est. 2026 ✦</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:4px;color:white;line-height:0.9;margin-bottom:4px;text-shadow:0 0 60px rgba(196,148,42,0.25);">WHERE AI</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:64px;letter-spacing:4px;line-height:0.9;margin-bottom:20px;
+                    background:linear-gradient(90deg,#C8A2FF,#39FF6A,#C4942A,#C8A2FF);
+                    background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">MEETS SOUL</div>
+        <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+          <span style="padding:4px 12px;border-radius:9999px;border:1px solid rgba(57,255,106,0.35);color:#39FF6A;font-size:9px;font-weight:700;letter-spacing:1px;">✦ VOCALOID</span>
+          <span style="padding:4px 12px;border-radius:9999px;border:1px solid rgba(200,162,255,0.35);color:#C8A2FF;font-size:9px;font-weight:700;letter-spacing:1px;">✦ AI Singer</span>
+          <span style="padding:4px 12px;border-radius:9999px;border:1px solid rgba(196,148,42,0.35);color:#C4942A;font-size:9px;font-weight:700;letter-spacing:1px;">✦ PV Production</span>
+        </div>
+        <div style="display:flex;justify-content:center;gap:16px;">
+          <span style="padding:10px 28px;border-radius:9999px;border:1.5px solid #C8A2FF;color:#C8A2FF;font-size:10px;font-weight:700;letter-spacing:1px;box-shadow:0 0 20px rgba(200,162,255,0.25);">Works を見る</span>
+          <span style="padding:10px 28px;border-radius:9999px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;font-size:10px;font-weight:700;letter-spacing:1px;">お問い合わせ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════
+     F. TYPOGRAPHY GUIDE
+══════════════════════════════════ -->
+<section class="section">
+  <p class="sec-label">06 — Typography</p>
+  <div class="typo-row">
+    <div class="typo-item">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:4px;
+                  background:linear-gradient(135deg,#C8A2FF,#C4942A);
+                  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;">Aa</div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#E8E8F4;">Bebas Neue</div>
+        <div style="font-size:10px;color:#8A8A9E;margin-top:4px;">Display / Logo / Hero — 大見出し・ロゴ・数字表示</div>
+      </div>
+    </div>
+    <div class="typo-item" style="border-left-color:rgba(200,162,255,0.4);">
+      <div style="font-family:'Syne',sans-serif;font-size:36px;font-weight:800;
+                  background:linear-gradient(135deg,#C8A2FF,#39FF6A);
+                  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;">Aa</div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#E8E8F4;">Syne ExtraBold 800</div>
+        <div style="font-size:10px;color:#8A8A9E;margin-top:4px;">Brand / Heading — ブランドロゴ・セクション見出し</div>
+      </div>
+    </div>
+    <div class="typo-item" style="border-left-color:rgba(57,255,106,0.4);">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;color:#39FF6A;line-height:1;">Aa</div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#E8E8F4;">Space Grotesk</div>
+        <div style="font-size:10px;color:#8A8A9E;margin-top:4px;">UI / Tag / Label — ナビ・バッジ・ラベル・ボタン</div>
+      </div>
+    </div>
+    <div class="typo-item" style="border-left-color:rgba(138,138,158,0.3);">
+      <div style="font-family:'Noto Sans JP',sans-serif;font-size:28px;font-weight:400;color:#E8E8F4;line-height:1;">ああ</div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#E8E8F4;">Noto Sans JP</div>
+        <div style="font-size:10px;color:#8A8A9E;margin-top:4px;">Body JP — 本文・説明文・日本語テキスト全般</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════
+     G. GOLD USAGE GUIDE
+══════════════════════════════════ -->
+<section class="section">
+  <p class="sec-label">07 — Gold Accent Usage Guide</p>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+    <div style="padding:20px;background:rgba(196,148,42,0.05);border:1px solid rgba(196,148,42,0.2);border-radius:12px;">
+      <div style="font-size:11px;font-weight:700;color:#C4942A;letter-spacing:1px;margin-bottom:10px;">✦ PRIMARY USE</div>
+      <ul style="font-size:11px;color:#8A8A9E;line-height:2.2;list-style:none;padding:0;">
+        <li>• Section タグ（"About" "Services" 等）</li>
+        <li>• CTA ボタン（Contact / Works を見る）</li>
+        <li>• ニュース日付表示</li>
+        <li>• Service 02・04 の番号ラベル</li>
+      </ul>
+    </div>
+    <div style="padding:20px;background:rgba(196,148,42,0.05);border:1px solid rgba(196,148,42,0.15);border-radius:12px;">
+      <div style="font-size:11px;font-weight:700;color:#C4942A;letter-spacing:1px;margin-bottom:10px;">✦ ACCENT USE</div>
+      <ul style="font-size:11px;color:#8A8A9E;line-height:2.2;list-style:none;padding:0;">
+        <li>• About ビジュアルのノードドット</li>
+        <li>• 名刺コーナーライン</li>
+        <li>• フッターコピーライト文字</li>
+        <li>• Submitボタンのグラデーション起点</li>
+      </ul>
+    </div>
+    <div style="padding:20px;background:rgba(196,148,42,0.05);border:1px solid rgba(196,148,42,0.12);border-radius:12px;">
+      <div style="font-size:11px;font-weight:700;color:#C4942A;letter-spacing:1px;margin-bottom:10px;">✦ AVOID</div>
+      <ul style="font-size:11px;color:#8A8A9E;line-height:2.2;list-style:none;padding:0;">
+        <li>• 本文テキスト全体への使用</li>
+        <li>• Neon Lime と隣接・混在</li>
+        <li>• 4色以上同時使用のグラデーション</li>
+        <li>• ネオンライムより目立つ面積での使用</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
