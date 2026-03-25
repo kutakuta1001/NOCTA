@@ -415,6 +415,20 @@
             width: 4px; height: 4px; border-radius: 50%;
         }
 
+        /* YouTube Modal */
+        #yt-modal {
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        #yt-modal .yt-frame-wrap {
+            position: relative; width: 100%; padding-top: 56.25%;
+        }
+        #yt-modal iframe {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            border-radius: 12px;
+        }
+
     </style>
 </head>
 
@@ -582,16 +596,16 @@
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div class="reveal">
-                <div class="stat-num" data-count="300">0</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">制作楽曲数</div>
+                <div class="stat-num">0</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">公開楽曲数</div>
             </div>
             <div class="reveal reveal-delay-1">
-                <div class="stat-num" data-count="120">0</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">映像制作本数</div>
+                <div class="stat-num">0</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">公開PV本数</div>
             </div>
             <div class="reveal reveal-delay-2">
-                <div class="stat-num" data-count="50">0</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">タイアップ実績</div>
+                <div class="stat-num">1</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">制作中の楽曲</div>
             </div>
             <div class="reveal reveal-delay-3">
                 <div class="font-display text-[clamp(48px,6vw,72px)] leading-none text-vgreen" style="font-family:'Bebas Neue',sans-serif;line-height:1;">∞</div>
@@ -740,140 +754,8 @@
             </div>
         </div>
 
-        <!-- Grid -->
+        <!-- Grid — works-data.js から JS でレンダリング -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="works-grid">
-
-            <!-- Card 1 -->
-            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal" data-cat="pv">
-                <div class="relative aspect-video overflow-hidden">
-                    <div class="thumb-1 w-full h-full flex items-center justify-center transition-transform duration-700 group-hover:scale-110">
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                            <circle cx="24" cy="24" r="22" stroke="rgba(200,162,255,0.6)" stroke-width="1"/>
-                            <path d="M20 16 L34 24 L20 32 Z" fill="rgba(200,162,255,0.75)"/>
-                        </svg>
-                    </div>
-                    <div class="thumb-overlay">
-                        <div class="play-circle"><div class="play-triangle"></div></div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-heading font-bold text-[17px] text-white">Neon Cascade</h3>
-                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-primary/20 text-brand-primary tracking-wider">PV</span>
-                    </div>
-                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">シネマティック映像とシンセウェーブが融合した未来的MV。視覚と音楽が一体となった体験を追求。</p>
-                </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal reveal-delay-1" data-cat="music" style="transition-delay:0.1s">
-                <div class="relative aspect-video overflow-hidden">
-                    <div class="thumb-2 w-full h-full flex items-center justify-center">
-                        <svg width="48" height="12" viewBox="0 0 48 12" fill="none">
-                            <path d="M0,6 Q4,1 8,6 Q12,11 16,6 Q20,1 24,6 Q28,11 32,6 Q36,1 40,6 Q44,11 48,6" stroke="rgba(0,245,255,0.7)" stroke-width="1.5" fill="none"/>
-                        </svg>
-                    </div>
-                    <div class="thumb-overlay">
-                        <div class="play-circle"><div class="play-triangle"></div></div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-heading font-bold text-[17px] text-white">Solitude.exe</h3>
-                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-secondary/20 text-brand-secondary tracking-wider">Music</span>
-                    </div>
-                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">深夜のためのアンビエントトラック。静寂の中に宿る、内省的なサウンドスケープ。</p>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal reveal-delay-2" data-cat="content" style="transition-delay:0.2s">
-                <div class="relative aspect-video overflow-hidden">
-                    <div class="thumb-3 w-full h-full flex items-center justify-center">
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                            <rect x="8" y="8" width="32" height="32" rx="4" stroke="rgba(255,61,154,0.6)" stroke-width="1"/>
-                            <rect x="16" y="16" width="16" height="16" rx="2" fill="rgba(255,61,154,0.3)"/>
-                        </svg>
-                    </div>
-                    <div class="thumb-overlay">
-                        <div class="play-circle"><div class="play-triangle"></div></div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-heading font-bold text-[17px] text-white">Brand Film — NEXUS</h3>
-                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-highlight/20 text-brand-highlight tracking-wider">Content</span>
-                    </div>
-                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">タイアップブランドのためのショートフィルム。世界観からサウンドまで一気通貫で制作。</p>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal" data-cat="music">
-                <div class="relative aspect-video overflow-hidden">
-                    <div class="thumb-4 w-full h-full flex items-center justify-center">
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                            <circle cx="24" cy="24" r="10" stroke="rgba(0,100,255,0.6)" stroke-width="1"/>
-                            <circle cx="24" cy="24" r="18" stroke="rgba(0,100,255,0.3)" stroke-width="0.8" stroke-dasharray="3 4"/>
-                            <circle cx="24" cy="24" r="4" fill="rgba(0,100,255,0.8)"/>
-                        </svg>
-                    </div>
-                    <div class="thumb-overlay">
-                        <div class="play-circle"><div class="play-triangle"></div></div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-heading font-bold text-[17px] text-white">Void Protocol</h3>
-                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-primary/20 text-brand-primary tracking-wider">Music</span>
-                    </div>
-                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">ダーク・テクノとアンビエントが交差する、没入感の高いコンセプトアルバムより。</p>
-                </div>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal reveal-delay-1" data-cat="pv" style="transition-delay:0.1s">
-                <div class="relative aspect-video overflow-hidden">
-                    <div class="thumb-5 w-full h-full flex items-center justify-center">
-                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                            <path d="M24,8 L40,16 L40,32 L24,40 L8,32 L8,16 Z" stroke="rgba(0,180,80,0.6)" stroke-width="1" fill="rgba(0,180,80,0.08)"/>
-                        </svg>
-                    </div>
-                    <div class="thumb-overlay">
-                        <div class="play-circle"><div class="play-triangle"></div></div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-heading font-bold text-[17px] text-white">Organic Syntax</h3>
-                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-primary/20 text-brand-primary tracking-wider">PV</span>
-                    </div>
-                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">自然とデジタルが交差するボタニカル映像作品。生命の律動をビジュアルで表現。</p>
-                </div>
-            </div>
-
-            <!-- Card 6 -->
-            <div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal reveal-delay-2" data-cat="content" style="transition-delay:0.2s">
-                <div class="relative aspect-video overflow-hidden">
-                    <div class="thumb-6 w-full h-full flex items-center justify-center">
-                        <svg width="48" height="32" viewBox="0 0 48 32" fill="none">
-                            <rect x="0" y="14" width="48" height="4" rx="2" fill="rgba(255,140,0,0.3)"/>
-                            <rect x="0" y="8" width="32" height="3" rx="1.5" fill="rgba(255,140,0,0.2)"/>
-                            <rect x="0" y="21" width="40" height="3" rx="1.5" fill="rgba(255,140,0,0.2)"/>
-                        </svg>
-                    </div>
-                    <div class="thumb-overlay">
-                        <div class="play-circle"><div class="play-triangle"></div></div>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-heading font-bold text-[17px] text-white">Viral Campaign — IGNIS</h3>
-                        <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded bg-brand-highlight/20 text-brand-highlight tracking-wider">Content</span>
-                    </div>
-                    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">SNSキャンペーン総合プロデュース。楽曲・映像・投稿コンテンツを統合した戦略的展開。</p>
-                </div>
-            </div>
 
         </div>
     </div>
@@ -1085,7 +967,8 @@
                 </p>
 
                 <div class="flex flex-col gap-3 reveal reveal-delay-3">
-                    <div class="social-link">
+                    <!-- TODO: href に X アカウント URL を設定 例: https://x.com/nocta_music -->
+                    <a href="#" class="social-link">
                         <div class="w-8 flex-shrink-0 flex items-center justify-center">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="#F0F0F8">
                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -1095,64 +978,19 @@
                             <div class="social-platform">X (Twitter)</div>
                             <div class="social-desc">最新情報をいち早く</div>
                         </div>
-                    </div>
-                    <div class="social-link">
-                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F0F0F8" stroke-width="1.5">
-                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                                <circle cx="12" cy="12" r="4"/>
-                                <circle cx="17.5" cy="6.5" r="1" fill="#F0F0F8" stroke="none"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="social-platform">Instagram</div>
-                            <div class="social-desc">ビジュアル・制作舞台裏</div>
-                        </div>
-                    </div>
-                    <div class="social-link">
+                    </a>
+                    <!-- TODO: href に note アカウント URL を設定 例: https://note.com/nocta_music -->
+                    <a href="#" class="social-link">
                         <div class="w-8 flex-shrink-0 flex items-center justify-center">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="#F0F0F8">
-                                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z"/>
+                                <path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 5v2h12V7H6zm0 4v2h12v-2H6zm0 4v2h8v-2H6z"/>
                             </svg>
                         </div>
                         <div>
-                            <div class="social-platform">YouTube</div>
-                            <div class="social-desc">MV・コンテンツ全公開</div>
+                            <div class="social-platform">note</div>
+                            <div class="social-desc">制作ブログ・ライナーノーツ</div>
                         </div>
-                    </div>
-                    <div class="social-link">
-                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#F0F0F8">
-                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="social-platform">Spotify</div>
-                            <div class="social-desc">楽曲ストリーミング</div>
-                        </div>
-                    </div>
-                    <div class="social-link" style="border-color:rgba(57,255,106,0.15);">
-                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#39FF6A">
-                                <path d="M2 5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm2 0v10h16V5H4zm2 2h12v2H6V7zm0 4h8v2H6v-2z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="social-platform" style="color:#39FF6A;">ニコニコ動画</div>
-                            <div class="social-desc">ボカロ・自作曲を投稿</div>
-                        </div>
-                    </div>
-                    <div class="social-link" style="border-color:rgba(57,255,106,0.15);">
-                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#39FF6A">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="social-platform" style="color:#39FF6A;">Piapro</div>
-                            <div class="social-desc">ボカロ楽曲・イラスト共有</div>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
 
@@ -1251,10 +1089,10 @@
             <div>
                 <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Connect</div>
                 <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
+                    <!-- TODO: href に X URL を設定 -->
                     <a href="#" class="hover:text-white transition-colors duration-200">X (Twitter)</a>
-                    <a href="#" class="hover:text-white transition-colors duration-200">Instagram</a>
-                    <a href="#" class="hover:text-white transition-colors duration-200">YouTube</a>
-                    <a href="#" class="hover:text-white transition-colors duration-200">Spotify</a>
+                    <!-- TODO: href に note URL を設定 -->
+                    <a href="#" class="hover:text-white transition-colors duration-200">note</a>
                 </div>
             </div>
         </div>
@@ -1269,8 +1107,29 @@
 
 
 <!-- =============================================
+     YOUTUBE MODAL
+     ============================================= -->
+<div id="yt-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"
+     onclick="if(event.target===this)closeYouTube()">
+    <div class="relative w-full max-w-[900px]">
+        <button onclick="closeYouTube()"
+                class="absolute -top-9 right-0 font-heading text-[11px] tracking-[2px] uppercase text-brand-sub hover:text-white transition-colors duration-200">
+            ESC / CLOSE ✕
+        </button>
+        <div class="yt-frame-wrap">
+            <iframe id="yt-iframe"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+
+<!-- =============================================
      JAVASCRIPT
      ============================================= -->
+<script src="works-data.js"></script>
 <script>
 /* ---- Particle Canvas ---- */
 (function () {
@@ -1429,34 +1288,7 @@
 })();
 
 
-/* ---- Works Filter ---- */
-(function () {
-    const pills = document.querySelectorAll('.filter-pill');
-    const cards = document.querySelectorAll('#works-grid [data-cat]');
-    pills.forEach(pill => {
-        pill.addEventListener('click', function () {
-            pills.forEach(p => p.classList.remove('active'));
-            this.classList.add('active');
-            const f = this.getAttribute('data-filter');
-            cards.forEach(card => {
-                const show = f === 'all' || card.getAttribute('data-cat') === f;
-                if (show) {
-                    card.style.display = '';
-                    requestAnimationFrame(() => {
-                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                        card.style.opacity = '1';
-                        card.style.transform = '';
-                    });
-                } else {
-                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(12px)';
-                    setTimeout(() => { card.style.display = 'none'; }, 320);
-                }
-            });
-        });
-    });
-})();
+/* Works Filter は works-data.js のレンダリング IIFE 内で処理 */
 
 
 /* ---- Smooth scroll ---- */
@@ -1465,6 +1297,105 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         const el = document.querySelector(this.getAttribute('href'));
         if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
     });
+});
+
+
+/* ---- Works: データ配列からカードをレンダリング ---- */
+(function () {
+    const grid = document.getElementById('works-grid');
+    if (!grid || typeof NOCTA_WORKS === 'undefined') return;
+
+    grid.innerHTML = NOCTA_WORKS.map(function (w, i) {
+        const col   = i % 3;
+        const delay = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
+        const dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
+        const hasVideo = !!w.youtubeId;
+        const cursor   = hasVideo ? 'cursor-pointer' : 'cursor-default';
+        const onclick  = hasVideo
+            ? ' onclick="openYouTube(\'' + w.youtubeId + '\',\'' + w.title.replace(/'/g, "\\'") + '\')"'
+            : '';
+
+        return [
+            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 ' + cursor + ' reveal' + delay + '"',
+            '     data-cat="' + w.cat + '"' + dstyle + onclick + '>',
+            '  <div class="relative aspect-video overflow-hidden">',
+            '    <div class="' + w.thumbClass + ' w-full h-full flex items-center justify-center">',
+            '      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">',
+            '        <circle cx="24" cy="24" r="22" stroke="rgba(200,162,255,0.35)" stroke-width="1"/>',
+            '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(200,162,255,0.55)"/>',
+            '      </svg>',
+            '    </div>',
+            hasVideo
+                ? '    <div class="thumb-overlay"><div class="play-circle"><div class="play-triangle"></div></div></div>'
+                : '',
+            '  </div>',
+            '  <div class="p-6">',
+            '    <div class="flex justify-between items-start mb-2">',
+            '      <h3 class="font-heading font-bold text-[17px] text-white">' + w.title + '</h3>',
+            '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + w.badgeColorClass + ' tracking-wider">' + w.badge + '</span>',
+            '    </div>',
+            '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">' + w.descJa + '</p>',
+            '  </div>',
+            '</div>'
+        ].join('\n');
+    }).join('\n');
+
+    // 新しく挿入された要素に Scroll Reveal を適用
+    const obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); }
+        });
+    }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+    grid.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
+
+    // Works Filter を再バインド（新しいカードに対して）
+    const pills = document.querySelectorAll('.filter-pill');
+    const cards = grid.querySelectorAll('[data-cat]');
+    pills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+            pills.forEach(function (p) { p.classList.remove('active'); });
+            this.classList.add('active');
+            const f = this.getAttribute('data-filter');
+            cards.forEach(function (card) {
+                const show = f === 'all' || card.getAttribute('data-cat') === f;
+                if (show) {
+                    card.style.display = '';
+                    requestAnimationFrame(function () {
+                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = '';
+                    });
+                } else {
+                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(12px)';
+                    setTimeout(function () { card.style.display = 'none'; }, 320);
+                }
+            });
+        });
+    });
+})();
+
+
+/* ---- YouTube Modal ---- */
+function openYouTube(id, title) {
+    var modal  = document.getElementById('yt-modal');
+    var iframe = document.getElementById('yt-iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeYouTube() {
+    var modal  = document.getElementById('yt-modal');
+    var iframe = document.getElementById('yt-iframe');
+    iframe.src = '';
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeYouTube();
 });
 
 
