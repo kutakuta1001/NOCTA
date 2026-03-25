@@ -1,3 +1,11 @@
+【重要】このコマンドを実行する前に
+/brainstorm phase3 を先に実行してください。
+brainstorm_phase3.md が存在しない場合は
+「先に /brainstorm phase3 を実行してください」
+と案内して処理を止めてください。
+
+---
+
 PV制作を並列で実行してください。
 
 concept-director と visual-prompter を Agent Teams で起動し、以下を並列実行してください:
