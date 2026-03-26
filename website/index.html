@@ -1171,6 +1171,33 @@
 
 
 <!-- =============================================
+     VISUAL MODAL (LIGHTBOX)
+     ============================================= -->
+<div id="visual-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"
+     onclick="if(event.target===this)closeVisual()">
+    <div class="absolute inset-0 bg-black/85 backdrop-blur-sm" onclick="closeVisual()"></div>
+    <div class="relative w-full max-w-[900px] z-10">
+        <button onclick="closeVisual()"
+                class="absolute -top-9 right-0 font-heading text-[11px] tracking-[2px] uppercase text-brand-sub hover:text-white transition-colors duration-200">
+            ESC / CLOSE ✕
+        </button>
+        <img id="visual-modal-img" src="" alt=""
+             class="w-full rounded-2xl object-contain max-h-[70vh] bg-black/40">
+        <div class="mt-4">
+            <div class="flex items-center gap-3 mb-2">
+                <span id="visual-modal-badge"
+                      class="text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider"></span>
+                <h3 id="visual-modal-title"
+                    class="font-heading font-bold text-[17px] text-white"></h3>
+            </div>
+            <p id="visual-modal-desc"
+               class="font-jp text-[13px] text-brand-sub leading-relaxed"></p>
+        </div>
+    </div>
+</div>
+
+
+<!-- =============================================
      JAVASCRIPT
      ============================================= -->
 <script src="works-data.js"></script>
