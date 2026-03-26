@@ -26,6 +26,17 @@ website/
 └── index.html       ← 修正: Visual セクション + ライトボックス追加
 ```
 
+### `<script>` ロード順序
+
+`index.html` の `<script src="works-data.js"></script>`（line 1132付近）の**直後**に追加する:
+
+```html
+<script src="works-data.js"></script>
+<script src="visual-data.js"></script>  ← ここに追加
+```
+
+Visual グリッドのレンダリングスクリプトはこの後に記述する。
+
 ---
 
 ## データ構造（`visual-data.js`）
@@ -90,6 +101,14 @@ Works セクション（`#works`）の直下に配置する。
 - `youtubeId` の代わりに `cloudinaryUrl` を `data-img` 属性としてカードに持たせる
 - `youtubeId: null` のカードと同様に、クリックイベントでライトボックスを起動する
 
+### フィルターピルの active クラス
+
+既存 Works と同じ `active` CSS クラスを使用する（`.filter-pill.active`）。初期状態は All ピルに `active` を付与。切り替え時は全ピルから `active` を除去し、クリックされたピルに付与する。
+
+### 空配列時の表示
+
+`NOCTA_VISUALS` が空の場合はグリッドを非表示にし、Visual セクション自体を `display: none` にする。セクション見出しが孤立して表示されることを防ぐ。
+
 ---
 
 ## ライトボックスモーダル（`#visual-modal`）
@@ -116,6 +135,10 @@ YouTube モーダル（`#yt-modal`）とは別の独立したモーダル。
 </div>
 ```
 
+### 説明文の表示ルール
+
+ライトボックスの `#visual-modal-desc` には `descJa` を表示する。言語切り替え機能が将来実装された場合は Works セクションと同じ仕組みに従う（現時点では日本語固定）。
+
 ### 操作
 
 | 操作 | 動作 |
@@ -130,7 +153,9 @@ YouTube モーダル（`#yt-modal`）とは別の独立したモーダル。
 ## 画像追加フロー
 
 1. Cloudinary にアップロード → `cloudinaryUrl` と `thumbUrl` を取得
-   - `thumbUrl` は `cloudinaryUrl` の `/upload/` の後に `w_600/` を挿入するだけ
+   - `thumbUrl` は `cloudinaryUrl` の `/upload/` の直後に `w_600/` を挿入するだけ
+   - 例: `https://res.cloudinary.com/xxx/image/upload/v123/sample.jpg`
+     → `https://res.cloudinary.com/xxx/image/upload/w_600/v123/sample.jpg`
 2. `visual-data.js` の `NOCTA_VISUALS` 配列の**先頭**に1オブジェクト追加
 3. `git add website/visual-data.js`
 4. `git commit -m "feat(visual): [タイトル] を追加"`
