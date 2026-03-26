@@ -1689,6 +1689,86 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         grid.querySelectorAll('.reveal').forEach(function (el) { appsObserver.observe(el); });
     })();
 
+    /* ---- Blog: データ配列からカードをレンダリング ---- */
+    (function () {
+        var section = document.getElementById('blog');
+        var grid = document.getElementById('blog-grid');
+        if (!grid || typeof NOCTA_BLOG === 'undefined') return;
+
+        // 空配列時はセクションごと非表示
+        if (NOCTA_BLOG.length === 0) {
+            if (section) section.style.display = 'none';
+            return;
+        }
+
+        grid.innerHTML = NOCTA_BLOG.map(function (b, i) {
+            var col      = i % 3;
+            var delay    = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
+            var dstyle   = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
+            var thumbNum = (i % 6) + 1;
+            var badgeClass = b.cat === 'music'
+                ? 'bg-brand-primary/20 text-brand-primary'
+                : 'bg-brand-secondary/20 text-brand-secondary';
+            var badge = b.cat === 'music' ? 'Music' : 'Essay';
+            var slug  = b.slug.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            var onclick = ' onclick="window.open(\'blog/post.html?slug=' + slug + '\', \'_blank\')"';
+
+            return [
+                '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"',
+                '     data-bcat="' + b.cat + '"' + dstyle + onclick + '>',
+                '  <div class="relative aspect-video overflow-hidden">',
+                '    <div class="thumb-' + thumbNum + ' w-full h-full flex items-end p-4">',
+                '      <span class="font-heading text-[11px] tracking-[2px] uppercase text-white/50">' + b.date + '</span>',
+                '    </div>',
+                '    <div class="thumb-overlay"></div>',
+                '  </div>',
+                '  <div class="p-6">',
+                '    <div class="flex justify-between items-start mb-2">',
+                '      <h3 class="font-heading font-bold text-[17px] text-white">' + b.title + '</h3>',
+                '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + badgeClass + ' tracking-wider">' + badge + '</span>',
+                '    </div>',
+                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed line-clamp-2">' + b.excerpt + '</p>',
+                '  </div>',
+                '</div>'
+            ].join('\n');
+        }).join('\n');
+
+        // Scroll Reveal（obs / obs2 / appsObserver は使用済みのため blogObserver を使用）
+        var blogObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('active'); blogObserver.unobserve(e.target); }
+            });
+        }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+        grid.querySelectorAll('.reveal').forEach(function (el) { blogObserver.observe(el); });
+
+        // Blog フィルター（.bfilter-pill[data-bfilter] と カード[data-bcat] を照合）
+        var bpills = document.querySelectorAll('.bfilter-pill');
+        var bcards = grid.querySelectorAll('[data-bcat]');
+        bpills.forEach(function (pill) {
+            pill.addEventListener('click', function () {
+                bpills.forEach(function (p) { p.classList.remove('active'); });
+                this.classList.add('active');
+                var f = this.getAttribute('data-bfilter');
+                bcards.forEach(function (card) {
+                    var show = f === 'all' || card.getAttribute('data-bcat') === f;
+                    if (show) {
+                        card.style.display = '';
+                        requestAnimationFrame(function () {
+                            card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                            card.style.opacity = '1';
+                            card.style.transform = '';
+                        });
+                    } else {
+                        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(12px)';
+                        setTimeout(function () { card.style.display = 'none'; }, 320);
+                    }
+                });
+            });
+        });
+    })();
+
 /* ---- Visual Lightbox ---- */
 function openVisual(imgUrl, title, badge, badgeClass, desc) {
     var modal = document.getElementById('visual-modal');
