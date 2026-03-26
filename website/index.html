@@ -170,6 +170,25 @@
             border-color: #39FF6A;
             box-shadow: 0 0 28px rgba(57,255,106,0.55);
         }
+        /* Visual フィルターピル（Works の .filter-pill と独立） */
+        .vfilter-pill {
+            padding: 0.35rem 1.1rem;
+            border-radius: 9999px;
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #8A8A9E;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: transparent;
+            border: none;
+        }
+        .vfilter-pill:hover, .vfilter-pill.active {
+            background: rgba(200,162,255,0.12);
+            color: #C8A2FF;
+        }
 
         /* Work card hover */
         .work-card { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease; }
@@ -757,6 +776,31 @@
         <!-- Grid — works-data.js から JS でレンダリング -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="works-grid">
 
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     04.5 VISUAL PORTFOLIO
+     ============================================= -->
+<section id="visual" class="py-32 relative z-10 border-b border-white/5">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="text-center mb-16 reveal">
+            <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">VISUAL</h2>
+            <p class="font-jp text-brand-sub text-[15px] tracking-wider">Art & Photography</p>
+
+            <!-- Filter pills — Works の .filter-pill と分離するため .vfilter-pill を使用 -->
+            <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
+                <button class="vfilter-pill active" data-vfilter="all">All</button>
+                <button class="vfilter-pill" data-vfilter="art">Art</button>
+                <button class="vfilter-pill" data-vfilter="photo">Photo</button>
+            </div>
+        </div>
+
+        <!-- Grid — visual-data.js から JS でレンダリング -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid">
         </div>
     </div>
 </section>
