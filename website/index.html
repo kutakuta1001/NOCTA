@@ -1201,6 +1201,7 @@
      JAVASCRIPT
      ============================================= -->
 <script src="works-data.js"></script>
+<script src="visual-data.js"></script>
 <script>
 /* ---- Particle Canvas ---- */
 (function () {
@@ -1448,6 +1449,106 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 })();
 
 
+/* ---- Visual: データ配列からカードをレンダリング ---- */
+(function () {
+    var section = document.getElementById('visual');
+    var grid = document.getElementById('visual-grid');
+    if (!grid || typeof NOCTA_VISUALS === 'undefined') return;
+
+    // 空配列時はセクションごと非表示
+    if (NOCTA_VISUALS.length === 0) {
+        if (section) section.style.display = 'none';
+        return;
+    }
+
+    grid.innerHTML = NOCTA_VISUALS.map(function (v, i) {
+        var col    = i % 3;
+        var delay  = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
+        var dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
+        var onclick = ' onclick="openVisual(' +
+            '\'' + v.cloudinaryUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+            '\'' + v.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+            '\'' + v.badge + '\',' +
+            '\'' + v.badgeColorClass + '\',' +
+            '\'' + v.descJa.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' +
+            ')"';
+
+        return [
+            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"',
+            '     data-vcat="' + v.cat + '"' + dstyle + onclick + '>',
+            '  <div class="relative aspect-video overflow-hidden">',
+            '    <img src="' + v.thumbUrl + '" alt="' + v.title.replace(/"/g, '&quot;') + '"',
+            '         class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">',
+            '    <div class="thumb-overlay"></div>',
+            '  </div>',
+            '  <div class="p-6">',
+            '    <div class="flex justify-between items-start mb-2">',
+            '      <h3 class="font-heading font-bold text-[17px] text-white">' + v.title + '</h3>',
+            '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + v.badgeColorClass + ' tracking-wider">' + v.badge + '</span>',
+            '    </div>',
+            '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">' + v.descJa + '</p>',
+            '  </div>',
+            '</div>'
+        ].join('\n');
+    }).join('\n');
+
+    // Scroll Reveal を適用
+    var obs2 = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('active'); obs2.unobserve(e.target); }
+        });
+    }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+    grid.querySelectorAll('.reveal').forEach(function (el) { obs2.observe(el); });
+
+    // Visual フィルター
+    var vpills = document.querySelectorAll('.vfilter-pill');
+    var vcards = grid.querySelectorAll('[data-vcat]');
+    vpills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+            vpills.forEach(function (p) { p.classList.remove('active'); });
+            this.classList.add('active');
+            var f = this.getAttribute('data-vfilter');
+            vcards.forEach(function (card) {
+                var show = f === 'all' || card.getAttribute('data-vcat') === f;
+                if (show) {
+                    card.style.display = '';
+                    requestAnimationFrame(function () {
+                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = '';
+                    });
+                } else {
+                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(12px)';
+                    setTimeout(function () { card.style.display = 'none'; }, 320);
+                }
+            });
+        });
+    });
+})();
+
+/* ---- Visual Lightbox ---- */
+function openVisual(imgUrl, title, badge, badgeClass, desc) {
+    var modal = document.getElementById('visual-modal');
+    document.getElementById('visual-modal-img').src = imgUrl;
+    document.getElementById('visual-modal-title').textContent = title;
+    var badgeEl = document.getElementById('visual-modal-badge');
+    badgeEl.textContent = badge;
+    badgeEl.className = 'text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider ' + badgeClass;
+    document.getElementById('visual-modal-desc').textContent = desc;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeVisual() {
+    var modal = document.getElementById('visual-modal');
+    if (!modal) return;
+    document.getElementById('visual-modal-img').src = '';
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
 /* ---- YouTube Modal ---- */
 function openYouTube(id, title) {
     var modal  = document.getElementById('yt-modal');
@@ -1466,7 +1567,7 @@ function closeYouTube() {
 }
 
 document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeYouTube();
+    if (e.key === 'Escape') { closeYouTube(); closeVisual(); }
 });
 
 
