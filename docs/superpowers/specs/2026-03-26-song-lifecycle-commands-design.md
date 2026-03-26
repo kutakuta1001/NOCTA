@@ -54,18 +54,19 @@
 **処理フロー**:
 1. `git branch` で `song/*` パターンのブランチを一覧取得
 2. 現在チェックアウト中のブランチを特定（★マーク）
-3. 各ブランチの `context.md` から「現在のフェーズ」を読み取る
-4. 各ブランチの `handoff.md` から最終行（直近の状態）を取得
-5. 表形式で出力
+3. 各ブランチについて `git show song/[曲名]:context.md` で「現在のフェーズ」を取得（ブランチ切り替えなし）
+4. 各ブランチについて `git show song/[曲名]:handoff.md` の最終行（直近の状態）を取得
+5. 各ブランチの `git log -1 --format="%ar" song/[曲名]` で最終更新日時を取得
+6. 表形式で出力
 
 **出力例**:
 ```
-┌─────────────┬───────────────┬──────────────────────────────┐
-│ 曲名        │ フェーズ      │ 直近の状態                   │
-├─────────────┼───────────────┼──────────────────────────────┤
-│ ★NuWord     │ フェーズ2-C   │ SVP生成済み。ゲート⑤待ち     │
-│  NextSong   │ フェーズ1     │ トレンド分析中               │
-└─────────────┴───────────────┴──────────────────────────────┘
+┌─────────────┬───────────────┬──────────────────────────────┬────────────┐
+│ 曲名        │ フェーズ      │ 直近の状態                   │ 最終更新   │
+├─────────────┼───────────────┼──────────────────────────────┼────────────┤
+│ ★NuWord     │ フェーズ2-C   │ SVP生成済み。ゲート⑤待ち     │ 2時間前    │
+│  NextSong   │ フェーズ1     │ トレンド分析中               │ 3日前      │
+└─────────────┴───────────────┴──────────────────────────────┴────────────┘
 ★ = 現在作業中
 ```
 
@@ -79,7 +80,9 @@
 **前提**: `song/[曲名]` ブランチが存在すること
 
 **処理フロー**:
-1. 未コミットの変更があれば `git stash` して保存
+1. 未コミットの変更がある場合は `git stash push -u -m "song-switch: [元のブランチ名] [日時]"` で保存
+   （`-u` オプションで未追跡ファイルも含める）
+   stash成功後「[元のブランチ名]の変更を一時保存しました。`git stash list` で確認できます」と案内
 2. `git checkout song/[曲名]` を実行
 3. `context.md` と `handoff.md` を読み込む
 4. `/music-status` 相当のステータスを表示
@@ -87,7 +90,7 @@
 
 **エラー処理**:
 - ブランチが存在しない場合: 「song/[曲名] ブランチが見つかりません。曲名を確認してください」
-- stash 失敗時: 「未コミットの変更があります。先に git commit または git stash を実行してください」
+- stash 失敗時: 「変更を保存できませんでした。先に `git status` で状態を確認してください」
 
 ---
 
@@ -96,12 +99,14 @@
 **前提**: フェーズ5（`/phase5-golive`）が完了していること
 
 **処理フロー**:
-1. `outputs/approved/` フォルダにファイルが存在するか確認
+1. `outputs/approved/go_live_checklist.md` が存在するか確認
+   - 存在しない場合: 「`/phase5-golive` を先に実行してください」と案内してabort
+   - 存在する場合: `⚠️` マークの行数を確認し、ゼロでなければ「⚠️ [N]件の未解決項目があります。`/phase5-golive` で確認してください」と案内してabort
 2. `handoff.md` に完了記録を1行追記
    - 例: `NuWord 完成。YouTube公開済み。HP反映待ち。`
 3. 完成チェックリストを表示:
    - outputs/approved/ に最終音源があるか
-   - outputs/svp/ に最終SVPがあるか
+   - outputs/svp/ に最終SVPがあるか（参照用アーカイブとして保持）
    - YouTube 動画IDが確定しているか
 4. YouTube動画IDを入力するよう案内
 5. `/hp-add-work [曲名] [YouTubeID]` の実行を促す
@@ -117,24 +122,29 @@
 - `website/works-data.js` が存在すること
 
 **処理フロー**:
-1. `git checkout main`
-2. `website/works-data.js` の `NOCTA_WORKS` 配列先頭に新エントリを追加:
+0. YouTubeID のバリデーション: 11文字の英数字・ハイフン・アンダースコアのみ許可。
+   不正な場合: 「YouTubeIDの形式が正しくありません（例: dQw4w9WgXcQ）」と案内してabort
+1. 未コミットの変更がないことを確認。ある場合: 「先に `song/[曲名]` ブランチで変更をコミットしてください」と案内してabort
+2. `git checkout main`
+3. `website/works-data.js` の `NOCTA_WORKS` 配列先頭に新エントリを追加:
    ```js
    {
      title: "[曲名]",
      cat: "music",
      youtubeId: "[YouTubeID]",
-     thumbClass: "thumb-1",
+     thumbClass: "thumb-1",  // thumb-1〜thumb-6 から選択可能。後で変更してください
      badge: "Music",
      badgeColorClass: "bg-brand-primary/20 text-brand-primary",
-     descJa: "（CEOが入力）",
-     descEn: "（CEOが入力）"
+     descJa: "（曲の説明を入力してください）",
+     descEn: "（English description here）"
    }
    ```
-3. `website/index.html` の Stats Bar「公開楽曲数」の更新箇所を明示してCEOに手動更新を案内
-4. `git add website/works-data.js`
-5. `git commit -m "feat(website): [曲名] を Works に追加"`
-6. `git push origin main`
+4. `website/index.html` の Stats Bar「公開楽曲数」の更新箇所を明示してCEOに手動更新を案内
+5. 追加内容を表示して「この内容で main にプッシュしてサイトを更新しますか？（yes/no）」と確認
+6. CEO が yes と答えた場合のみ:
+   `git add website/works-data.js`
+   `git commit -m "feat(website): [曲名] を Works に追加"`
+   `git push origin main`
 7. 「Netlify が自動デプロイを開始します。1〜2分後にサイトを確認してください」と案内
 
 **制約 (R-02準拠)**:
