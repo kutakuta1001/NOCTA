@@ -1,10 +1,11 @@
 楽曲の完成処理を行ってください。
 
-対象の曲名: $ARGUMENTS（省略時は現在のブランチ名から取得）
+対象の曲名: $ARGUMENTS（省略時は現在のブランチ名の `song/` プレフィックスを除いた部分を使用）
 
 以下の手順で実行してください:
 
 1. 現在のブランチが `song/$ARGUMENTS` であることを確認する
+   $ARGUMENTS が省略された場合は `git branch --show-current` でブランチ名を取得し、`song/` で始まらない場合は「song/* ブランチに切り替えてから実行してください（/song-switch [曲名]）」と案内してabortする
    異なる場合は「先に /song-switch $ARGUMENTS を実行してください」と案内してabortする
 
 2. `outputs/approved/go_live_checklist.md` が存在するか確認する
@@ -13,7 +14,7 @@
    ゼロでない場合: 「⚠️ [N]件の未解決項目があります。/phase5-golive で確認してください」と案内してabortする
 
 3. `handoff.md` に1行追記する:
-   例: `$ARGUMENTS 完成。YouTube公開済み。HP反映待ち。`
+   例: `$ARGUMENTS 完成。HP反映待ち。`
 
 4. 以下のチェックリストを表示する:
 
