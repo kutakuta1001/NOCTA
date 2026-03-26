@@ -189,6 +189,24 @@
             background: rgba(200,162,255,0.12);
             color: #C8A2FF;
         }
+        .bfilter-pill {
+            padding: 0.35rem 1.1rem;
+            border-radius: 9999px;
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #8A8A9E;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: transparent;
+            border: none;
+        }
+        .bfilter-pill:hover, .bfilter-pill.active {
+            background: rgba(200,162,255,0.12);
+            color: #C8A2FF;
+        }
 
         /* Work card hover */
         .work-card { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease; }
@@ -471,6 +489,7 @@
                 <a href="#works"    class="text-brand-sub hover:text-white transition-colors duration-300">Works</a>
                 <a href="#visual"   class="text-brand-sub hover:text-white transition-colors duration-300">Visual</a>
                 <a href="#apps"     class="text-brand-sub hover:text-white transition-colors duration-300">Tools</a>
+                            <a href="#blog" class="text-brand-sub hover:text-white transition-colors duration-300">Blog</a>
                 <a href="#services" class="text-brand-sub hover:text-white transition-colors duration-300">Services</a>
                 <a href="#contact"
                    class="px-6 py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-brand-secondary/60 hover:shadow-glow-gold">
@@ -494,6 +513,7 @@
             <a href="#works"    class="text-brand-sub hover:text-white transition-colors">Works</a>
             <a href="#visual"   class="text-brand-sub hover:text-white transition-colors">Visual</a>
             <a href="#apps"     class="text-brand-sub hover:text-white transition-colors">Tools</a>
+                    <a href="#blog" class="text-brand-sub hover:text-white transition-colors">Blog</a>
             <a href="#services" class="text-brand-sub hover:text-white transition-colors">Services</a>
             <a href="#contact"  class="text-brand-primary">Contact</a>
         </div>
@@ -826,6 +846,30 @@
             </div>
         </section>
 
+        <!-- =============================================
+             04.7 BLOG
+             ============================================= -->
+        <section id="blog" class="py-32 relative z-10 border-b border-white/5">
+            <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+                <div class="text-center mb-16 reveal">
+                    <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">BLOG</h2>
+                    <p class="font-jp text-brand-sub text-[15px] tracking-wider">Music & Essays</p>
+
+                    <!-- Filter pills — .bfilter-pill は .filter-pill / .vfilter-pill と独立 -->
+                    <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
+                        <button class="bfilter-pill active" data-bfilter="all">All</button>
+                        <button class="bfilter-pill" data-bfilter="music">Music</button>
+                        <button class="bfilter-pill" data-bfilter="essay">Essay</button>
+                    </div>
+                </div>
+
+                <!-- Grid — blog-data.js から JS でレンダリング -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="blog-grid">
+                </div>
+            </div>
+        </section>
+
 
 <!-- =============================================
      04. SERVICES
@@ -1149,6 +1193,7 @@
                     <a href="#works"   class="hover:text-white transition-colors duration-200">Works</a>
                     <a href="#visual"  class="hover:text-white transition-colors duration-200">Visual</a>
                     <a href="#apps"    class="hover:text-white transition-colors duration-200">Tools</a>
+                        <a href="#blog" class="hover:text-white transition-colors duration-200">Blog</a>
                     <a href="#news"    class="hover:text-white transition-colors duration-200">News</a>
                     <a href="#contact" class="hover:text-white transition-colors duration-200">Contact</a>
                 </div>
@@ -1260,6 +1305,7 @@
 <script src="works-data.js"></script>
 <script src="visual-data.js"></script>
 <script src="apps-data.js"></script>
+        <script src="blog-data.js"></script>
 <script>
 /* ---- Particle Canvas ---- */
 (function () {
