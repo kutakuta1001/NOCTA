@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | NOCTA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg:        '#05050F',
+                            bg2:       '#0A0A16',
+                            primary:   '#C8A2FF',
+                            secondary: '#C4942A',
+                            highlight: '#E8D0FF',
+                            text:      '#E8E8F4',
+                            sub:       '#8A8A9E',
+                            gold:      '#C4942A',
+                            vgreen:    '#39FF6A',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Syne', 'Space Grotesk', 'sans-serif'],
+                        brand:   ['Syne', 'sans-serif'],
+                        body:    ['Inter', 'sans-serif'],
+                        jp:      ['Noto Sans JP', 'sans-serif'],
+                        display: ['Bebas Neue', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #05050F;
+            color: #F0F0F8;
+            overflow-x: hidden;
+        }
+        /* Noise overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+        /* Blog content styles */
+        .blog-content h2 {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #F0F0F8;
+            margin: 2.5rem 0 0.75rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+        .blog-content p {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 0.9375rem;
+            color: #8A8A9E;
+            line-height: 2.1;
+            margin-bottom: 1.5rem;
+        }
+        .blog-content strong {
+            color: #E8E8F4;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 px-6 lg:px-10 py-4 flex justify-between items-center border-b border-white/5"
+            style="background: rgba(5,5,15,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+        <a href="../index.html"
+           class="font-display text-[20px] tracking-[4px] uppercase text-white hover:opacity-70 transition-opacity duration-200">
+            NOCTA
+        </a>
+        <a href="../index.html#blog"
+           class="font-heading text-[11px] tracking-[2px] uppercase text-brand-sub hover:text-white transition-colors duration-200">
+            ← Back
+        </a>
+    </header>
+
+    <!-- Main -->
+    <main class="max-w-[720px] mx-auto px-6 pt-32 pb-24" id="post-content">
+        <!-- JS で記事を挿入 -->
+    </main>
+
+    <script src="../blog-data.js"></script>
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var slug   = params.get('slug');
+            var post   = null;
+
+            if (slug && typeof NOCTA_BLOG !== 'undefined') {
+                for (var i = 0; i < NOCTA_BLOG.length; i++) {
+                    if (NOCTA_BLOG[i].slug === slug) { post = NOCTA_BLOG[i]; break; }
+                }
+            }
+
+            var container = document.getElementById('post-content');
+
+            if (!post) {
+                container.innerHTML = '<p class="font-jp text-brand-sub text-center py-32">記事が見つかりません。</p>';
+                return;
+            }
+
+            // <title> を更新
+            document.title = post.title + ' | NOCTA';
+
+            var badgeClass = post.cat === 'music'
+                ? 'bg-[rgba(200,162,255,0.15)] text-[#C8A2FF]'
+                : 'bg-[rgba(196,148,42,0.15)] text-[#C4942A]';
+            var badge = post.cat === 'music' ? 'Music' : 'Essay';
+
+            container.innerHTML =
+                '<div class="mb-10">' +
+                    '<div class="flex items-center gap-3 mb-4">' +
+                        '<span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider ' + badgeClass + '">' + badge + '</span>' +
+                        '<span class="font-heading text-[11px] tracking-[2px] uppercase text-brand-sub">' + post.date + '</span>' +
+                    '</div>' +
+                    '<h1 class="font-display text-[clamp(28px,5vw,52px)] text-white leading-tight tracking-wider mb-6">' +
+                        post.title +
+                    '</h1>' +
+                    '<hr class="border-white/10">' +
+                '</div>' +
+                '<div class="blog-content">' + post.contentHtml + '</div>';
+        })();
+    </script>
+
+</body>
+</html>
