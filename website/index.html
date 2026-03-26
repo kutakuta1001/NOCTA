@@ -1754,6 +1754,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                     if (show) {
                         card.style.display = '';
                         requestAnimationFrame(function () {
+                            card.style.transitionDelay = '0s';
                             card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
                             card.style.opacity = '1';
                             card.style.transform = '';
