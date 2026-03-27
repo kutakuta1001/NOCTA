@@ -861,6 +861,7 @@
                         <button class="bfilter-pill active" data-bfilter="all">All</button>
                         <button class="bfilter-pill" data-bfilter="music">Music</button>
                         <button class="bfilter-pill" data-bfilter="essay">Essay</button>
+                        <button class="bfilter-pill" data-bfilter="book">Book</button>
                     </div>
                 </div>
 
@@ -1712,8 +1713,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             var thumbNum = (i % 6) + 1;
             var badgeClass = b.cat === 'music'
                 ? 'bg-brand-primary/20 text-brand-primary'
+                : b.cat === 'book'
+                ? 'bg-brand-vgreen/20 text-brand-vgreen'
                 : 'bg-brand-secondary/20 text-brand-secondary';
-            var badge = b.cat === 'music' ? 'Music' : 'Essay';
+            var badge = b.cat === 'music' ? 'Music' : b.cat === 'book' ? 'Book' : 'Essay';
             var slug  = b.slug.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
             var onclick = ' onclick="window.open(\'blog/post.html?slug=' + slug + '\', \'_blank\')"';
 

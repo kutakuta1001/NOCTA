@@ -124,8 +124,10 @@
 
             var badgeClass = post.cat === 'music'
                 ? 'bg-[rgba(200,162,255,0.15)] text-[#C8A2FF]'
+                : post.cat === 'book'
+                ? 'bg-[rgba(57,255,106,0.15)] text-[#39FF6A]'
                 : 'bg-[rgba(196,148,42,0.15)] text-[#C4942A]';
-            var badge = post.cat === 'music' ? 'Music' : 'Essay';
+            var badge = post.cat === 'music' ? 'Music' : post.cat === 'book' ? 'Book' : 'Essay';
 
             container.innerHTML =
                 '<div class="mb-10">' +
