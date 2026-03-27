@@ -98,6 +98,10 @@
     <script src="../blog-data.js"></script>
     <script>
         (function () {
+            function esc(s) {
+                return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
             var params = new URLSearchParams(window.location.search);
             var slug   = params.get('slug');
             var post   = null;
@@ -116,7 +120,7 @@
             }
 
             // <title> を更新
-            document.title = post.title + ' | NOCTA';
+            document.title = post.title + ' | NOCTA'; // textContent なので エスケープ不要
 
             var badgeClass = post.cat === 'music'
                 ? 'bg-[rgba(200,162,255,0.15)] text-[#C8A2FF]'
@@ -127,10 +131,10 @@
                 '<div class="mb-10">' +
                     '<div class="flex items-center gap-3 mb-4">' +
                         '<span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider ' + badgeClass + '">' + badge + '</span>' +
-                        '<span class="font-heading text-[11px] tracking-[2px] uppercase text-brand-sub">' + post.date + '</span>' +
+                        '<span class="font-heading text-[11px] tracking-[2px] uppercase text-brand-sub">' + esc(post.date) + '</span>' +
                     '</div>' +
                     '<h1 class="font-display text-[clamp(28px,5vw,52px)] text-white leading-tight tracking-wider mb-6">' +
-                        post.title +
+                        esc(post.title) +
                     '</h1>' +
                     '<hr class="border-white/10">' +
                 '</div>' +

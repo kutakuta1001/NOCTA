@@ -1691,6 +1691,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
     /* ---- Blog: データ配列からカードをレンダリング ---- */
     (function () {
+        function esc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
         var section = document.getElementById('blog');
         var grid = document.getElementById('blog-grid');
         if (!grid || typeof NOCTA_BLOG === 'undefined') return;
@@ -1718,16 +1722,16 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                 '     data-bcat="' + b.cat + '"' + dstyle + onclick + '>',
                 '  <div class="relative aspect-video overflow-hidden">',
                 '    <div class="thumb-' + thumbNum + ' w-full h-full flex items-end p-4">',
-                '      <span class="font-heading text-[11px] tracking-[2px] uppercase text-white/50">' + b.date + '</span>',
+                '      <span class="font-heading text-[11px] tracking-[2px] uppercase text-white/50">' + esc(b.date) + '</span>',
                 '    </div>',
                 '    <div class="thumb-overlay"></div>',
                 '  </div>',
                 '  <div class="p-6">',
                 '    <div class="flex justify-between items-start mb-2">',
-                '      <h3 class="font-heading font-bold text-[17px] text-white">' + b.title + '</h3>',
+                '      <h3 class="font-heading font-bold text-[17px] text-white">' + esc(b.title) + '</h3>',
                 '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + badgeClass + ' tracking-wider">' + badge + '</span>',
                 '    </div>',
-                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed line-clamp-2">' + b.excerpt + '</p>',
+                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed line-clamp-2">' + esc(b.excerpt) + '</p>',
                 '  </div>',
                 '</div>'
             ].join('\n');
