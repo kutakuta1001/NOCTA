@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The First Flower ～いい人生とは～</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@300;400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tff: {
+                            bg:      '#faf7f2',
+                            dark:    '#1a1410',
+                            text:    '#2a2218',
+                            sub:     '#7a6a58',
+                            accent:  '#8b6a3e',
+                            gold:    '#c4942a',
+                            warm:    '#e8d5b8',
+                        }
+                    },
+                    fontFamily: {
+                        serif:   ['Cormorant Garamond', 'Noto Serif JP', 'serif'],
+                        jp:      ['Noto Sans JP', 'sans-serif'],
+                        jpserif: ['Noto Serif JP', 'serif'],
+                        display: ['Bebas Neue', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            background: #faf7f2;
+            color: #2a2218;
+            overflow-x: hidden;
+        }
+
+        /* ── Photo section base ── */
+        .photo-section {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .photo-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 10, 5, 0.52);
+        }
+        .photo-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Hero ── */
+        /* 写真を追加するときは background-image: url('img/hero.jpg'); に変更してください */
+        .hero-bg {
+            background: linear-gradient(160deg,
+                #0d0820 0%,
+                #2a0f45 25%,
+                #5a2a00 60%,
+                #8b5a10 80%,
+                #c4942a 100%
+            );
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* ── Profile ── */
+        /* 写真を追加するときは background-image: url('img/profile-bg.jpg'); に変更してください */
+        .profile-bg {
+            background: linear-gradient(135deg,
+                #f0e8f5 0%,
+                #f8e4d8 30%,
+                #e8d8f0 60%,
+                #f5ead5 100%
+            );
+        }
+
+        /* ── Quotes Stream ── */
+        /* 写真を追加するときは background-image: url('img/quotes-bg.jpg'); に変更してください */
+        .quotes-bg {
+            background: linear-gradient(160deg,
+                #0a1a08 0%,
+                #152a12 40%,
+                #0a1518 80%,
+                #050f0a 100%
+            );
+        }
+
+        /* ── Blog ── */
+        /* 写真を追加するときは background-image: url('img/blog-bg.jpg'); に変更してください */
+        .blog-bg {
+            background: linear-gradient(160deg,
+                #0d1a28 0%,
+                #1a2d42 40%,
+                #243850 70%,
+                #1a2a38 100%
+            );
+        }
+
+        /* ── Infinite scroll marquee ── */
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            gap: 0;
+        }
+        .marquee-inner {
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+        }
+        .marquee-left  { animation: scroll-left  60s linear infinite; }
+        .marquee-right { animation: scroll-right 70s linear infinite; }
+
+        @keyframes scroll-left {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+        @keyframes scroll-right {
+            from { transform: translateX(-50%); }
+            to   { transform: translateX(0); }
+        }
+        .marquee-track:hover { animation-play-state: paused; }
+
+        .quote-card {
+            flex-shrink: 0;
+            width: 380px;
+            padding: 24px 32px;
+            margin-right: 16px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+        .quote-card .q-text {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.88);
+            line-height: 1.9;
+            margin-bottom: 12px;
+        }
+        .quote-card .q-source {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.8rem;
+            color: rgba(196,148,42,0.9);
+            letter-spacing: 0.06em;
+        }
+
+        /* ── Profile photo placeholders ── */
+        .profile-photo-placeholder {
+            background: linear-gradient(135deg, #c8a2ff22, #c4942a22);
+            border: 1px solid rgba(139,106,62,0.2);
+        }
+
+        /* ── Nav ── */
+        .tff-header {
+            background: rgba(250, 247, 242, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(139,106,62,0.15);
+        }
+        .tff-header.on-photo {
+            background: rgba(15,10,5,0.6);
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+
+        /* ── Blog cards ── */
+        .tff-blog-card {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            transition: background 0.3s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+        .tff-blog-card:hover {
+            background: rgba(255,255,255,0.12);
+            transform: translateY(-3px);
+        }
+
+        /* ── Divider ── */
+        .tff-divider {
+            width: 48px;
+            height: 1px;
+            background: #c4942a;
+            margin: 16px auto;
+        }
+
+        /* ── Noise overlay ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.25;
+        }
+
+        /* ── Reveal animation ── */
+        .tff-reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .tff-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════
+         HEADER
+    ═══════════════════════════════════ -->
+    <header id="tff-header" class="tff-header on-photo fixed top-0 left-0 right-0 z-50 px-6 lg:px-10 py-4 flex justify-between items-center">
+        <!-- Back to NOCTA -->
+        <a href="../index.html"
+           class="font-display text-[13px] tracking-[3px] uppercase text-white/70 hover:text-white transition-colors duration-200 flex items-center gap-2">
+            ← NOCTA
+        </a>
+
+        <!-- Brand -->
+        <a href="#top"
+           class="font-serif text-[15px] tracking-[3px] text-white/90 hover:text-white transition-colors duration-200">
+            THE FIRST FLOWER
+        </a>
+
+        <!-- Nav -->
+        <nav class="hidden md:flex items-center gap-6">
+            <a href="#profile"  class="font-jp text-[11px] tracking-[2px] text-white/60 hover:text-white/90 transition-colors duration-200">PROFILE</a>
+            <a href="#quotes"   class="font-jp text-[11px] tracking-[2px] text-white/60 hover:text-white/90 transition-colors duration-200">WORDS</a>
+            <a href="#blog"     class="font-jp text-[11px] tracking-[2px] text-white/60 hover:text-white/90 transition-colors duration-200">BLOG</a>
+        </nav>
+    </header>
+
+    <!-- ═══════════════════════════════════
+         HERO
+    ═══════════════════════════════════ -->
+    <section id="top" class="photo-section hero-bg min-h-screen flex items-center justify-center text-center">
+        <div class="photo-overlay" style="background: rgba(10,5,20,0.48);"></div>
+        <div class="photo-content px-6">
+            <p class="font-serif italic text-white/50 text-[13px] tracking-[4px] mb-6 tff-reveal">— what is a good life —</p>
+            <h1 class="font-serif text-white leading-none mb-4 tff-reveal" style="font-size: clamp(48px, 9vw, 110px); letter-spacing: 0.04em;">
+                The First Flower
+            </h1>
+            <div class="tff-divider tff-reveal"></div>
+            <p class="font-jpserif text-white/75 text-[18px] tracking-[6px] mt-4 tff-reveal">〜 いい人生とは 〜</p>
+            <p class="font-jp text-white/40 text-[12px] tracking-[2px] mt-10 tff-reveal">scroll ↓</p>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         PROFILE
+    ═══════════════════════════════════ -->
+    <section id="profile" class="photo-section profile-bg py-24 px-6">
+        <div class="max-w-5xl mx-auto">
+
+            <!-- Title -->
+            <div class="text-center mb-16 tff-reveal">
+                <p class="font-serif italic text-tff-sub text-[13px] tracking-[4px] mb-3">Кто это?</p>
+                <h2 class="font-serif text-tff-dark text-[42px] lg:text-[56px] leading-none tracking-wide">Profile</h2>
+                <div class="tff-divider" style="background: #8b6a3e;"></div>
+            </div>
+
+            <!-- Two column layout -->
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+
+                <!-- Left: Photos -->
+                <div class="space-y-4 tff-reveal">
+                    <!-- 写真1: img/profile-photo1.jpg を追加してください -->
+                    <div class="profile-photo-placeholder rounded-lg aspect-video flex items-center justify-center">
+                        <p class="font-jp text-tff-sub text-[12px] tracking-widest">photo 01</p>
+                    </div>
+                    <!-- 写真2: img/profile-photo2.jpg を追加してください -->
+                    <div class="profile-photo-placeholder rounded-lg aspect-video flex items-center justify-center">
+                        <p class="font-jp text-tff-sub text-[12px] tracking-widest">photo 02</p>
+                    </div>
+                </div>
+
+                <!-- Right: Bio -->
+                <div class="tff-reveal">
+                    <!-- Bio section -->
+                    <div class="mb-10">
+                        <p class="font-serif italic text-tff-accent text-[12px] tracking-[4px] mb-3 uppercase">Creator</p>
+                        <p class="font-jp text-tff-text text-[15px] leading-[2.2] mb-4">
+                            東京生まれ東京育ち。関西弁に憧れて関西へ行き自分を捨てられるようになりました。また、最近まで秋田に赴任していました。食べ物の美味しさと人のやさしさに感動し、いつかは田舎に住むのを夢みています。子供ができたことで、よりいっそう仕事以外の人生に興味を持ち、今を生きようと思いました。どうぞよろしくお願いいたします。
+                        </p>
+                    </div>
+
+                    <!-- Hobbies section -->
+                    <div>
+                        <p class="font-serif italic text-tff-accent text-[12px] tracking-[4px] mb-3 uppercase">Hobby</p>
+                        <p class="font-jp text-tff-sub text-[13px] tracking-[2px] mb-4">
+                            読書 &nbsp;|&nbsp; アニメ &nbsp;|&nbsp; 漫画 &nbsp;|&nbsp; 旅行 &nbsp;|&nbsp; 夏フェス
+                        </p>
+                        <p class="font-jp text-tff-text text-[14px] leading-[2.2]">
+                            SFや児童小説、自己啓発の本が好きです。自己啓発の本の中では現在、アドラーとデザイン思考にはまっています。が、興味がころころ変わるので、次に書くときは別のものになっているかも。アニメは深夜アニメを、漫画も何でも読みます。旅行が好きで、気が付くと日本一周していました。海外旅行も年に一度は行っていましたが、子供ができたので、どう海外に行くか考え中です。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         TEXT OVERLAYS — Quote Stream
+    ═══════════════════════════════════ -->
+    <section id="quotes" class="photo-section quotes-bg py-24">
+        <div class="photo-overlay" style="background: rgba(5,15,5,0.55);"></div>
+        <div class="photo-content">
+
+            <!-- Title -->
+            <div class="text-center mb-14 px-6 tff-reveal">
+                <p class="font-serif italic text-white/40 text-[13px] tracking-[4px] mb-3">words that move me</p>
+                <h2 class="font-serif text-white text-[42px] lg:text-[56px] leading-none tracking-wide">Text Overlays</h2>
+                <div class="tff-divider" style="margin: 16px auto;"></div>
+                <p class="font-jp text-white/50 text-[13px]">感動した言葉を、流れるように。</p>
+            </div>
+
+            <!-- Stream row 1: left -->
+            <div class="marquee-inner mb-4">
+                <div class="marquee-track marquee-left" id="stream-row1"></div>
+            </div>
+
+            <!-- Stream row 2: right -->
+            <div class="marquee-inner">
+                <div class="marquee-track marquee-right" id="stream-row2"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         BLOG
+    ═══════════════════════════════════ -->
+    <section id="blog" class="photo-section blog-bg py-24 px-6">
+        <div class="photo-overlay" style="background: rgba(8,15,25,0.55);"></div>
+        <div class="photo-content max-w-5xl mx-auto">
+
+            <!-- Title -->
+            <div class="text-center mb-14 tff-reveal">
+                <p class="font-serif italic text-white/40 text-[13px] tracking-[4px] mb-3">感動を書く</p>
+                <h2 class="font-serif text-white text-[42px] lg:text-[56px] leading-none tracking-wide">Blog</h2>
+                <div class="tff-divider"></div>
+                <p class="font-jp text-white/55 text-[13px] mt-4">脳の整理。出会いとのわくわく。感動し前り越えろ。</p>
+            </div>
+
+            <!-- Blog cards grid -->
+            <div class="grid md:grid-cols-3 gap-6 mb-10" id="tff-blog-grid"></div>
+
+            <!-- More link -->
+            <div class="text-center tff-reveal">
+                <a href="../index.html#blog"
+                   class="inline-block font-jp text-[12px] tracking-[3px] text-white/70 border border-white/30 px-8 py-3 hover:bg-white/10 hover:text-white transition-all duration-300">
+                    他の記事はこちら →
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════ -->
+    <footer class="bg-tff-dark py-16 px-6 text-center">
+        <p class="font-serif italic text-white/30 text-[12px] tracking-[3px] mb-4">— what is a good life —</p>
+        <p class="font-serif text-white/80 text-[22px] tracking-[4px] mb-6">The First Flower</p>
+        <div class="tff-divider" style="background: rgba(196,148,42,0.4);"></div>
+        <a href="../index.html"
+           class="inline-block mt-8 font-display text-[12px] tracking-[4px] text-white/40 hover:text-white/80 transition-colors duration-200 uppercase">
+            ← Back to NOCTA
+        </a>
+        <p class="font-jp text-white/20 text-[11px] mt-8">© The First Flower</p>
+    </footer>
+
+    <!-- ═══════════════════════════════════
+         SCRIPTS
+    ═══════════════════════════════════ -->
+    <script src="tff-quotes.js"></script>
+    <script src="../blog-data.js"></script>
+    <script>
+    (function () {
+
+        /* ── Header: switch style when leaving hero ── */
+        var header = document.getElementById('tff-header');
+        var hero   = document.getElementById('top');
+
+        function updateHeader() {
+            var heroBottom = hero.getBoundingClientRect().bottom;
+            if (heroBottom <= 80) {
+                header.classList.remove('on-photo');
+                header.style.setProperty('--text-color', '#2a2218');
+            } else {
+                header.classList.add('on-photo');
+            }
+        }
+        window.addEventListener('scroll', updateHeader, { passive: true });
+
+        /* ── Reveal on scroll ── */
+        var revealObs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    revealObs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        function initReveal() {
+            document.querySelectorAll('.tff-reveal').forEach(function (el) {
+                revealObs.observe(el);
+            });
+        }
+
+        /* ── Quote stream ── */
+        function buildStream() {
+            if (typeof TFF_QUOTES === 'undefined') return;
+
+            var half  = Math.floor(TFF_QUOTES.length / 2);
+            var row1q = TFF_QUOTES.slice(0, half);
+            var row2q = TFF_QUOTES.slice(half);
+
+            function makeCard(q) {
+                var div = document.createElement('div');
+                div.className = 'quote-card';
+                div.innerHTML =
+                    '<p class="q-text">' + q.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</p>' +
+                    '<p class="q-source">— ' + q.source.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</p>';
+                return div;
+            }
+
+            function fillRow(rowId, qs) {
+                var track = document.getElementById(rowId);
+                if (!track) return;
+                // duplicate for seamless loop
+                [qs, qs].forEach(function (set) {
+                    set.forEach(function (q) {
+                        track.appendChild(makeCard(q));
+                    });
+                });
+            }
+
+            fillRow('stream-row1', row1q);
+            fillRow('stream-row2', row2q);
+        }
+
+        /* ── Blog cards ── */
+        function buildBlog() {
+            var grid = document.getElementById('tff-blog-grid');
+            if (!grid || typeof NOCTA_BLOG === 'undefined') return;
+
+            var posts = NOCTA_BLOG.slice(0, 3);
+            if (posts.length === 0) {
+                grid.innerHTML = '<p class="font-jp text-white/40 col-span-3 text-center">記事がありません。</p>';
+                return;
+            }
+
+            function esc(s) {
+                return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            }
+
+            var catColors = {
+                music: 'bg-[rgba(200,162,255,0.15)] text-[#C8A2FF]',
+                essay: 'bg-[rgba(196,148,42,0.15)] text-[#C4942A]',
+                book:  'bg-[rgba(57,255,106,0.15)]  text-[#39FF6A]'
+            };
+            var catLabels = { music: 'Music', essay: 'Essay', book: 'Book' };
+
+            posts.forEach(function (post, i) {
+                var delay = i > 0 ? ' style="transition-delay:' + (i * 0.1) + 's"' : '';
+                var badgeCol = catColors[post.cat] || catColors.essay;
+                var badgeLbl = catLabels[post.cat]  || 'Essay';
+                var card = document.createElement('div');
+                card.className = 'tff-blog-card p-6 tff-reveal';
+                card.setAttribute('style', i > 0 ? 'transition-delay:' + (i * 0.1) + 's' : '');
+                card.onclick = function () { window.open('../blog/post.html?slug=' + post.slug, '_blank'); };
+                card.innerHTML =
+                    '<div class="flex items-center gap-2 mb-3">' +
+                        '<span class="text-[10px] font-bold px-2 py-1 rounded tracking-wider ' + badgeCol + '">' + badgeLbl + '</span>' +
+                        '<span class="font-jp text-white/35 text-[11px] tracking-wider">' + esc(post.date) + '</span>' +
+                    '</div>' +
+                    '<h3 class="font-jpserif text-white text-[17px] leading-snug mb-3">' + esc(post.title) + '</h3>' +
+                    '<p class="font-jp text-white/50 text-[13px] leading-relaxed line-clamp-3">' + esc(post.excerpt) + '</p>';
+                grid.appendChild(card);
+            });
+        }
+
+        /* ── Init ── */
+        buildStream();
+        buildBlog();
+        initReveal();
+
+    })();
+    </script>
+
+</body>
+</html>
