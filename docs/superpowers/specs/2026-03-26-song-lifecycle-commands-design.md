@@ -177,4 +177,4 @@ SLASH COMMANDS テーブルに以下を追加:
 | `/song-list` | 全曲のフェーズ・ステータスを一覧表示 |
 | `/song-switch [曲名]` | 指定した曲のブランチにコンテキスト切り替え |
 | `/song-finish [曲名]` | 曲の完成処理・アーカイブ・HP反映への導線 |
-| `/hp-add-work [曲名] [YouTubeID]` | works-data.js に新曲追加 + 自動デプロイ |
+| `/hp-add-work [曲名] [YouTubeID]` | works-data.js に新曲追加（確認後push） |
