@@ -1,0 +1,203 @@
+# NOCTA プロジェクト 取扱説明書
+
+最終更新: 2026-03-29
+
+---
+
+## 概要
+
+NOCTAは、CEOとAIエージェントチームで楽曲の企画〜リリースまでを完結させる音楽エンタメプロジェクトです。
+このドキュメントでは「何をどこでどう動かすか」を一冊にまとめています。
+
+---
+
+## 1. ファイル構造と役割
+
+```
+/Users/fghmacbook013/NOCTA/
+├── CLAUDE.md                    ← NOCTAの憲法（全ルール・エージェント定義）
+└── project_NOCTA/               ← gitリポジトリ本体（GitHub: kutakuta1001/NOCTA）
+    ├── context.md               ← 現在の楽曲プロジェクト情報（毎セッション読む）
+    ├── handoff.md               ← 作業引き継ぎメモ（完了時に1〜3行追記）
+    ├── CLAUDE.md                ← プロジェクト用ルールコピー（gitで管理）
+    │
+    ├── drafts/                  ← CEO未承認の全草案
+    │   ├── blog_draft.txt       ← /blog-publish の入力ファイル
+    │   ├── interaction-review-*.md   ← 依頼パターンレビュー結果
+    │   ├── best-practices-report-*.md ← ベストプラクティスレポート（自動生成）
+    │   ├── interaction-review-monthly-*.md ← 月次レポート（自動生成）
+    │   └── [その他草案]
+    │
+    ├── outputs/
+    │   ├── midi/                ← Studio Oneにドロップするファイル
+    │   ├── svp/                 ← SynthVで開くファイル
+    │   ├── prompts/             ← Midjourney/Runway用プロンプト
+    │   └── approved/           ← CEO承認済みのみ（手動移動のみ）
+    │
+    ├── website/                 ← HPのソースコード
+    │   ├── index.html           ← NOCTA HP本体
+    │   ├── blog-data.js         ← ブログ記事データ（/blog-publishで更新）
+    │   ├── works-data.js        ← 楽曲リストデータ（/hp-add-workで更新）
+    │   ├── apps-data.js         ← Appsセクションデータ
+    │   ├── visual-data.js       ← ビジュアルギャラリーデータ
+    │   ├── blog/post.html       ← 記事個別ページテンプレート
+    │   └── the-first-flower/    ← The First Flower サブサイト
+    │
+    ├── docs/
+    │   ├── MANUAL.md            ← このファイル
+    │   ├── HANDOVER.md          ← 引き継ぎ書（現状）
+    │   └── best-practices-registry.md ← 公式ドキュメントレビューキュー（41件）
+    │
+    └── claude-config/
+        ├── settings.json        ← Claude Code設定
+        ├── commands/            ← プロジェクト内スキル（参照用）
+        └── agents/              ← 音楽制作エージェント定義
+```
+
+---
+
+## 2. スキル一覧（スラッシュコマンド）
+
+スキルは `~/.claude/commands/` に保存されています。Claude Codeセッション中に `/コマンド名` で呼び出します。
+
+### 楽曲制作フロー
+
+| コマンド | タイミング | 何をするか |
+|---------|-----------|-----------|
+| `/music-init [曲名]` | 新曲開始時 | context.md / handoff.md / drafts/ を初期化 |
+| `/phase1-trend` | フェーズ1 | trend-analyst が市場トレンドを調査して drafts/trend_report.md を生成 |
+| `/phase1-suno` | フェーズ1 | Suno用プロンプトを差別化案ごとに生成 |
+| `/phase2-music` | フェーズ2-A | music-spec-writer + lyric-poet を並列起動。仕様書と歌詞草稿を同時生成 |
+| `/phase2-svp [A/B/C]` | **ゲート③④後のみ** | CEO承認済み歌詞でSVPファイルを生成（アレンジ確定前は実行不可） |
+| `/phase2-demo` | フェーズ2-D | quality-listener がQ&A形式でデモを評価 |
+| `/phase3-pv` | フェーズ3 | concept-director + visual-prompter がPVコンセプト・プロンプトを生成 |
+| `/phase4-release` | フェーズ4 | SNS/PR/著作権/分析の4エージェントを並列起動 |
+| `/phase5-golive` | リリース当日 | go_live_checklist.md の⚠️がゼロになるまでチェック |
+
+### 楽曲管理
+
+| コマンド | 何をするか |
+|---------|-----------|
+| `/music-status` | context.md + handoff.md + drafts/ + outputs/ の現状を一覧表示 |
+| `/music-reset-context` | コンテキストを最小限に圧縮して再開（長いセッション後に使う） |
+| `/song-list` | `song/*` ブランチ一覧とフェーズ・最終更新を表示 |
+| `/song-switch [曲名]` | 指定曲のブランチにコンテキストを切り替え |
+| `/song-finish [曲名]` | 完成処理・アーカイブ・HP反映への導線 |
+
+### HP管理
+
+| コマンド | 何をするか |
+|---------|-----------|
+| `/blog-publish` | `drafts/blog_draft.txt` をHTMLに整形してblog-data.jsに追加しcommit/push |
+| `/hp-add-work [曲名] [YouTubeID]` | works-data.jsに新曲を追加してcommit/push |
+
+### Claude Code運用
+
+| コマンド | 何をするか |
+|---------|-----------|
+| `/best-practices-review` | 公式ドキュメントレジストリから1件をWebFetchし、レポートをdrafts/に保存してcommit |
+| `/interaction-review` | /insights + git履歴から依頼パターンを分析し、改善提案レポートをdrafts/に保存してcommit |
+| `/insights` | セッションの利用統計を分析（ローカルのみ、リモートでは実行不可） |
+| `/brainstorm` | 各フェーズ開始前のブレインストーミング（必ず作業前に実行） |
+
+---
+
+## 3. 自動エージェント（リモートトリガー）
+
+Anthropicクラウド上で自動実行されるエージェントです。ローカルPCが起動していなくても動作します。
+管理画面: https://claude.ai/code/scheduled
+
+| 名前 | ID | スケジュール | 何をするか |
+|------|----|------------|-----------|
+| NOCTA-best-practices-review-weekly | trig_01CZbMTLSuyKmYkH8MgPfuHz | 毎週月曜 9:00 JST | best-practices-registry.md から pending を1件WebFetchし、レポートをcommit |
+| Monthly Interaction Pattern Review | trig_01BH1fGRnG3AnUmw5eHR8B9Y | 毎月1日 9:00 JST | git履歴から作業パターンを分析し、月次レポートをcommit |
+
+**週次レビューの使い方:**
+- 毎週月曜に `drafts/best-practices-report-YYYY-MM-DD-doc*.md` が自動生成される
+- CEOはレポートを読んで「適用する」「適用しない」を判断する
+- 適用する場合は CLAUDE.md またはスキルファイルを手動で編集する
+- 自動適用はしない（CEOの判断が必要）
+
+**月次レビューの使い方:**
+- 毎月1日に `drafts/interaction-review-monthly-YYYY-MM-DD.md` が自動生成される
+- ローカルで `/interaction-review` を実行すると /insights データ込みのより詳細なレポートが生成される
+
+---
+
+## 4. 承認ゲート
+
+各フェーズの区切りにCEOの判断が必要です。AIが勝手に先に進まないルールです。
+
+| # | 内容 | 次のアクション |
+|---|------|--------------|
+| ① | トレンド分析の方向性確認 | 合意したら `/phase2-music` |
+| ② | 楽曲仕様書確認（Studio Oneで実装できる粒度か） | OKなら歌詞選択へ |
+| ③ | 歌詞A/B/Cから選択 | `/phase2-svp A`（または B/C） |
+| ④ | Studio OneでMIDIを鳴らして方向性確認 | OKなら `/phase2-svp` |
+| ⑤ | SynthVで声の質感・感情を確認 | OKなら `/phase2-demo` |
+| ⑥ | PVコンセプト・絵コンテを確認 | OKなら `/phase4-release` |
+| ⑦ | 映像素材の採用/不採用を決定 | 採用素材を伝える |
+| ⑧ | SNS/プレスリリース全文を確認 | OKなら手動投稿・送付 |
+| ⑨ | go_live_checklist.md の⚠️がゼロ | `/phase5-golive` |
+
+---
+
+## 5. HP管理の手順
+
+### ブログ記事を投稿する
+1. `drafts/blog_draft.txt` に本文を書く（Plain textでOK）
+2. Claude Codeで `/blog-publish` を実行
+3. タイトルとカテゴリ（music / essay / book）を入力
+4. プレビューを確認して「ok」
+5. commit/pushが完了したら Netlify に手動デプロイ
+
+### 楽曲（Works）を追加する
+1. YouTubeにアップロード済みであることを確認
+2. `/hp-add-work [曲名] [YouTubeのID]` を実行
+3. commit/pushが完了したら Netlify に手動デプロイ
+
+### Netlify デプロイ手順
+- https://app.netlify.com を開く
+- NOCTAサイトを選択 → "Trigger deploy" → "Deploy site"
+
+---
+
+## 6. 主要ルール（全エージェント共通）
+
+詳細は CLAUDE.md 参照。重要点のみ抜粋:
+
+- **approved/ には自動書き込みしない** — CEOが明示的に「承認した」と言った場合のみ移動
+- **SNS自動投稿しない** — drafts/sns_calendar.md に保存して「CEO確認待ち」と書く
+- **外部ツール（Suno等）は直接実行しない** — outputs/prompts/ にプロンプト文書を生成
+- **SVPはアレンジ確定後のみ** — CEOが「アレンジOKです」と言うまで /phase2-svp を実行しない
+- **作業前に /brainstorm を実行** — 合意なしにファイル生成を始めない
+- **handoff.md は1〜3行のみ** — 「完了した事実」と「次のアクション」のみ追記
+
+---
+
+## 7. 公式ドキュメントレビューキュー
+
+`docs/best-practices-registry.md` に41件の公式ドキュメントが登録されています。
+
+- 毎週月曜に自動で1件ずつ処理（約41週 = 約10ヶ月で全件完了）
+- 各レポートはCEOが確認して、適用するか判断する
+- 現在のキュー状況: 優先度高10件 → 中20件 → 低8件 → PDF3件
+
+---
+
+## 8. よくある質問
+
+**Q: セッションが切れたあとどこから再開すればいい？**
+→ `/music-status` で現状を確認。または context.md と handoff.md を読む。
+
+**Q: コンテキストが重くなってきた**
+→ `/music-reset-context` を実行。必要最小限の情報に圧縮して再開できる。
+
+**Q: git操作でエラーになる**
+→ 作業ディレクトリが `project_NOCTA/` 内にあるか確認する。`git rev-parse --show-toplevel` で確認できる。
+
+**Q: 自動レポートはどこに保存される？**
+→ `drafts/` 配下に保存される。best-practices-report-*.md と interaction-review-*.md。
+
+**Q: スキルを追加・修正したい**
+→ `~/.claude/commands/` 内の対応する.mdファイルを編集する。プロジェクト内の `claude-config/commands/` は参照用コピー。
