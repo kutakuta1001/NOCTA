@@ -811,79 +811,21 @@
 
 
 <!-- =============================================
-     04.5 VISUAL PORTFOLIO
+     04.6 APPS PORTFOLIO
      ============================================= -->
-<section id="visual" class="py-32 relative z-10 border-b border-white/5">
+<section id="apps" class="py-32 relative z-10 border-b border-white/5">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
 
         <div class="text-center mb-16 reveal">
-            <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">VISUAL</h2>
-            <p class="font-jp text-brand-sub text-[15px] tracking-wider">Art & Photography</p>
-
-            <!-- Filter pills — Works の .filter-pill と分離するため .vfilter-pill を使用 -->
-            <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
-                <button class="vfilter-pill active" data-vfilter="all">All</button>
-                <button class="vfilter-pill" data-vfilter="art">Art</button>
-                <button class="vfilter-pill" data-vfilter="photo">Photo</button>
-            </div>
+            <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">TOOLS</h2>
+            <p class="font-jp text-brand-sub text-[15px] tracking-wider">Web Applications</p>
         </div>
 
-        <!-- Grid — visual-data.js から JS でレンダリング -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid">
-        </div>
-
-        <!-- Zora NFT link -->
-        <div class="mt-14 text-center reveal">
-            <a href="https://zora.co/@kutakuta1001" target="_blank" rel="noopener"
-               class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-heading text-[11px] tracking-[3px] uppercase text-brand-sub hover:text-white">
-                <svg class="w-4 h-4 opacity-60" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7 9l5 6 5-6" fill="none" stroke="#05050F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                View NFT Collection on Zora
-            </a>
+        <!-- Grid — apps-data.js から JS でレンダリング -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="apps-grid">
         </div>
     </div>
 </section>
-
-        <!-- =============================================
-             04.6 APPS PORTFOLIO
-             ============================================= -->
-        <section id="apps" class="py-32 relative z-10 border-b border-white/5">
-            <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
-
-                <div class="text-center mb-16 reveal">
-                    <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">TOOLS</h2>
-                    <p class="font-jp text-brand-sub text-[15px] tracking-wider">Web Applications</p>
-                </div>
-
-                <!-- Grid — apps-data.js から JS でレンダリング -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="apps-grid">
-                </div>
-            </div>
-        </section>
-
-        <!-- =============================================
-             04.7 BLOG
-             ============================================= -->
-        <section id="blog" class="py-32 relative z-10 border-b border-white/5">
-            <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
-
-                <div class="text-center mb-16 reveal">
-                    <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">BLOG</h2>
-                    <p class="font-jp text-brand-sub text-[15px] tracking-wider">Music & Essays</p>
-
-                    <!-- Filter pills — .bfilter-pill は .filter-pill / .vfilter-pill と独立 -->
-                    <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
-                        <button class="bfilter-pill active" data-bfilter="all">All</button>
-                        <button class="bfilter-pill" data-bfilter="music">Music</button>
-                        <button class="bfilter-pill" data-bfilter="essay">Essay</button>
-                        <button class="bfilter-pill" data-bfilter="book">Book</button>
-                    </div>
-                </div>
-
-                <!-- Grid — blog-data.js から JS でレンダリング -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="blog-grid">
-                </div>
-            </div>
-        </section>
 
 
 <!-- =============================================
@@ -984,6 +926,65 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     04.5 VISUAL PORTFOLIO
+     ============================================= -->
+<section id="visual" class="py-16 relative z-10 border-b border-white/5">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="text-center mb-8 reveal">
+            <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">VISUAL</h2>
+            <p class="font-jp text-brand-sub text-[15px] tracking-wider">Art & Photography</p>
+
+            <!-- Filter pills — Works の .filter-pill と分離するため .vfilter-pill を使用 -->
+            <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
+                <button class="vfilter-pill active" data-vfilter="all">All</button>
+                <button class="vfilter-pill" data-vfilter="art">Art</button>
+                <button class="vfilter-pill" data-vfilter="photo">Photo</button>
+            </div>
+        </div>
+
+        <!-- Grid — visual-data.js から JS でレンダリング -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid">
+        </div>
+
+        <!-- Zora NFT link -->
+        <div class="mt-10 text-center reveal">
+            <a href="https://zora.co/@kutakuta1001" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-heading text-[11px] tracking-[3px] uppercase text-brand-sub hover:text-white">
+                <svg class="w-4 h-4 opacity-60" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7 9l5 6 5-6" fill="none" stroke="#05050F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                View NFT Collection on Zora
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- =============================================
+     04.7 BLOG
+     ============================================= -->
+<section id="blog" class="py-16 relative z-10 border-b border-white/5">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="text-center mb-8 reveal">
+            <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">BLOG</h2>
+            <p class="font-jp text-brand-sub text-[15px] tracking-wider">Music & Essays</p>
+
+            <!-- Filter pills — .bfilter-pill は .filter-pill / .vfilter-pill と独立 -->
+            <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
+                <button class="bfilter-pill active" data-bfilter="all">All</button>
+                <button class="bfilter-pill" data-bfilter="music">Music</button>
+                <button class="bfilter-pill" data-bfilter="essay">Essay</button>
+                <button class="bfilter-pill" data-bfilter="book">Book</button>
+            </div>
+        </div>
+
+        <!-- Grid — blog-data.js から JS でレンダリング -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="blog-grid">
         </div>
     </div>
 </section>
