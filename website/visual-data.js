@@ -1,26 +1,30 @@
 /**
  * NOCTA Visual Portfolio Data
  *
- * NOCTA_VISUALS_STANDALONE : 単体作品（楽曲と連動しない作品）
- * NOCTA_VISUALS_LINKED     : 楽曲連動作品（曲のリリースに合わせた作品）
+ * NOCTA_VISUALS_WORKS : 完成品（コンセプト付与・Canva加工済み / Base chain）
+ * NOCTA_VISUALS_ART   : AI生成元画像コレクション（Zora chain）
+ * NOCTA_VISUALS_MUSIC : 楽曲連動ビジュアル
  *
  * imgUrl          : IPFS URL (https://ipfs.io/ipfs/[hash])
  * zoraUrl         : Zora NFT ページ URL（不明な場合は Zora プロフィール）
- * badge           : "Art" | "Processed"
+ * badge           : "Works" | "Art" | "Music"
  * badgeColorClass : Tailwind クラス
  * descJa          : 日本語説明
  *
  * 新しい作品を追加するときは配列の先頭に追加してください。
  */
-const NOCTA_VISUALS_STANDALONE = [
+const NOCTA_VISUALS_WORKS = [
   {
     title: "SILENCE #1",
     imgUrl: "https://ipfs.io/ipfs/bafybeigjekudm2vahgkycl7zh4uyx72qymtpod2l2iny2v74ovroxh67zm",
     zoraUrl: "https://zora.co/collect/base:0xcc3e7dba54406b272bf5dd383cc5d66b00e9f735/1",
-    badge: "Processed",
+    badge: "Works",
     badgeColorClass: "bg-amber-500/20 text-amber-400",
     descJa: "SILENCEを元にCanvaで加工。Warpcastフレームとコピーライン「SILENCE ON THE TIMELINE.」を付与した完成品。"
-  },
+  }
+];
+
+const NOCTA_VISUALS_ART = [
   {
     title: "rainy season #1",
     imgUrl: "https://ipfs.io/ipfs/bafybeiddisy5yutc7j6vhy5e6asblpq5gvfm23ss227xtpqco22pse2hh4",
@@ -127,6 +131,6 @@ const NOCTA_VISUALS_STANDALONE = [
   }
 ];
 
-const NOCTA_VISUALS_LINKED = [
+const NOCTA_VISUALS_MUSIC = [
   // NuWord PV ビジュアルなど — 制作後に追加
 ];

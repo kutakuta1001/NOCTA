@@ -942,27 +942,36 @@
             <p class="font-jp text-brand-sub text-[15px] tracking-wider">Art & NFT Collection</p>
         </div>
 
-        <!-- Standalone セクション -->
+        <!-- Works セクション -->
         <div class="mb-16">
             <div class="flex items-center gap-4 mb-8 reveal">
-                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Standalone</h3>
+                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Works</h3>
                 <div class="flex-1 h-px bg-white/10"></div>
-                <span class="font-heading text-[10px] tracking-[2px] text-white/20">楽曲と連動しない単体作品</span>
+                <span class="font-heading text-[10px] tracking-[2px] text-white/20">Concept &amp; Processed</span>
             </div>
-            <!-- Grid — visual-data.js の NOCTA_VISUALS_STANDALONE から JS でレンダリング -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid-standalone">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid-works">
             </div>
         </div>
 
-        <!-- Song-linked セクション -->
+        <!-- Art セクション -->
+        <div class="mb-16">
+            <div class="flex items-center gap-4 mb-8 reveal">
+                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Art</h3>
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="font-heading text-[10px] tracking-[2px] text-white/20">AI Generated / Source</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid-art">
+            </div>
+        </div>
+
+        <!-- Music セクション -->
         <div class="mb-10">
             <div class="flex items-center gap-4 mb-8 reveal">
-                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Song-linked</h3>
+                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Music</h3>
                 <div class="flex-1 h-px bg-white/10"></div>
-                <span class="font-heading text-[10px] tracking-[2px] text-white/20">楽曲リリースに連動した作品</span>
+                <span class="font-heading text-[10px] tracking-[2px] text-white/20">Song-linked Visual</span>
             </div>
-            <!-- Grid — visual-data.js の NOCTA_VISUALS_LINKED から JS でレンダリング -->
-            <div id="visual-grid-linked">
+            <div id="visual-grid-music">
             </div>
         </div>
 
@@ -1634,21 +1643,27 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         ].join('\n');
     }
 
-    // Standalone グリッド
-    var gridS = document.getElementById('visual-grid-standalone');
-    if (gridS && typeof NOCTA_VISUALS_STANDALONE !== 'undefined' && NOCTA_VISUALS_STANDALONE.length > 0) {
-        gridS.innerHTML = NOCTA_VISUALS_STANDALONE.map(makeCard).join('\n');
+    // Works グリッド
+    var gridW = document.getElementById('visual-grid-works');
+    if (gridW && typeof NOCTA_VISUALS_WORKS !== 'undefined' && NOCTA_VISUALS_WORKS.length > 0) {
+        gridW.innerHTML = NOCTA_VISUALS_WORKS.map(makeCard).join('\n');
     }
 
-    // Song-linked グリッド
-    var gridL = document.getElementById('visual-grid-linked');
-    if (gridL) {
-        if (typeof NOCTA_VISUALS_LINKED !== 'undefined' && NOCTA_VISUALS_LINKED.length > 0) {
-            gridL.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7';
-            gridL.innerHTML = NOCTA_VISUALS_LINKED.map(makeCard).join('\n');
+    // Art グリッド
+    var gridA = document.getElementById('visual-grid-art');
+    if (gridA && typeof NOCTA_VISUALS_ART !== 'undefined' && NOCTA_VISUALS_ART.length > 0) {
+        gridA.innerHTML = NOCTA_VISUALS_ART.map(makeCard).join('\n');
+    }
+
+    // Music グリッド
+    var gridM = document.getElementById('visual-grid-music');
+    if (gridM) {
+        if (typeof NOCTA_VISUALS_MUSIC !== 'undefined' && NOCTA_VISUALS_MUSIC.length > 0) {
+            gridM.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7';
+            gridM.innerHTML = NOCTA_VISUALS_MUSIC.map(makeCard).join('\n');
         } else {
-            gridL.innerHTML =
-                '<div class="col-span-3 py-16 text-center reveal">' +
+            gridM.innerHTML =
+                '<div class="py-16 text-center reveal">' +
                 '  <p class="font-heading text-[11px] tracking-[3px] uppercase text-white/20">Coming Soon</p>' +
                 '  <p class="font-jp text-[13px] text-white/15 mt-2">楽曲リリース後に追加されます</p>' +
                 '</div>';
