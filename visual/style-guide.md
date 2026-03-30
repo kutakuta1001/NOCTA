@@ -1,5 +1,5 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30（既存11作品の分析を反映）
+最終更新: 2026-03-30（既存12作品の分析を反映）
 
 ---
 
@@ -28,6 +28,7 @@
 | enjoy | ブラッドオレンジ×ネイビー×クリーム | ルーズペインタリー（表現主義的） | 自信・余裕・タイポグラフィ入り |
 | natural / artificial | ウォームゴールド×紅葉レッド | セミリアル油彩（アニメ顔比率） | 自然と人工の融合・花葉が体に溶ける |
 | rainy season #1 | スペクトルバイオレット×アビスティール | クリーンアニメ | 梅雨・紫陽花・透明傘・振り向き笑み |
+| SILENCE | ピュアホワイト×コールドペールブルー | クリーンアニメ（極限ミニマル） | 冬・雪・沈黙・顔が環境に溶けて消える |
 
 ---
 
@@ -40,7 +41,7 @@
 | 色彩 | **強い支配色1〜2色**＋対比アクセント | 色の主張がない・くすんだ全体 |
 | カラフルさ | 絵画的・意図的・制御された色 | 無秩序・ランダム・ポップ |
 | 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる・窓からの強烈な逆光・**透明/半透明オブジェクト越しの拡散光** | ネオン・人工照明・フラッシュ |
-| 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿・**振り向き3/4**） | 男性中心・群像劇のみ |
+| 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿・振り向き3/4・**顔が環境に溶けて見えない**） | 男性中心・群像劇のみ |
 | 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック・**自信/余裕のある笑み** | 単純な笑顔・元気・陽気（中身のない明るさ） |
 | 背景 | ファンタジー/自然/シンプルなフラット背景/**色彩が支配する室内（アトリエ・窓越しに季節が見える空間）** | 現代リアル都市・色彩的に平凡な室内インテリア |
 | テーマ | 魔法・自然・概念/哲学的・感情の可視化 | 日常・スポーツ・テクノロジー機器 |
@@ -58,6 +59,7 @@
 ### ベース（背景）
 - 深夜系: `#05050F` Deep Void → `#1A0A3A` Midnight Indigo
 - 昼間系: ターコイズ単色 / ウォームイエロー単色 / スカイブルー単色 / ウォームピーチ（シンプルに）
+- 冬・静寂系: ピュアホワイト `#F5F5F5` → コールドペールブルー `#C8D8E8`（ほぼモノクロ）
 
 ### アクセント6色（1作品2色まで）
 | 名前 | カラー | 用途 |
@@ -135,6 +137,14 @@ wisteria tunnel, ancient forest, moonlit clearing,
 bioluminescent plants, soft dappled light, flower petals falling,
 rainy season, hydrangea flowers, transparent umbrella, rain particles,
 teal glowing forest, violet and blue wet atmosphere
+```
+
+**冬・静寂系（SILENCEスタイル）**
+```
+girl sitting alone in snow, face hidden by snow-laden branches,
+voluminous white dress blending into white snow, dark iron gate and bench,
+near-monochrome palette, cold pale blue light, profound silence,
+figure merging into snowy environment, small green accent through snow
 ```
 
 **ファンタジー・魔法系（Witch Girlシリーズ向き）**
