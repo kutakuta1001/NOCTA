@@ -1,5 +1,5 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30（既存8作品の分析を反映）
+最終更新: 2026-03-30（既存9作品の分析を反映）
 
 ---
 
@@ -25,6 +25,7 @@
 | Time leap to GW | スカイブルー×マルチカラー | クリーンアニメ+コンセプチュアル | 時間の跳躍・時計と色彩が舞う昼空 |
 | await in anticipation | ウォームピーチ×ティール | ルーズペインタリー（フラット寄り） | アトリエ・夢想・創造への期待 |
 | Just an ordinary day in the life | ブラッドオレンジ×ディープブラウン | クリーンアニメ | 窓辺・秋の逆光・静かな午後 |
+| enjoy | ブラッドオレンジ×ネイビー×クリーム | ルーズペインタリー（表現主義的） | 自信・余裕・タイポグラフィ入り |
 
 ---
 
@@ -38,7 +39,7 @@
 | カラフルさ | 絵画的・意図的・制御された色 | 無秩序・ランダム・ポップ |
 | 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる・**窓からの強烈な逆光（シルエット効果）** | ネオン・人工照明・フラッシュ |
 | 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿） | 男性中心・群像劇のみ |
-| 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック | 単純な笑顔・元気・陽気 |
+| 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック・**自信/余裕のある笑み** | 単純な笑顔・元気・陽気（中身のない明るさ） |
 | 背景 | ファンタジー/自然/シンプルなフラット背景/**色彩が支配する室内（アトリエ・窓越しに季節が見える空間）** | 現代リアル都市・色彩的に平凡な室内インテリア |
 | テーマ | 魔法・自然・概念/哲学的・感情の可視化 | 日常・スポーツ・テクノロジー機器 |
 
@@ -94,6 +95,7 @@
 ### Loose Painterly（ルーズペインタリー）
 見えるブラシストローク・ラフな背景・エネルギー感
 → 動きのある場面・祭り・風景向き
+→ 極端な表現主義バリアント: クリーム白地 + 爆発的な抽象ブラシストローク（タイポグラフィ要素も可）
 
 ### Conceptual（コンセプチュアル）
 シンプルな背景＋概念の視覚化（髪が情報になる等）
@@ -130,6 +132,13 @@ bioluminescent plants, soft dappled light, flower petals falling
 ```
 witch girl, pointed hat, gothic architecture, jack-o-lantern glow,
 moonlit night sky, deep purple atmosphere, festive magic
+```
+
+**タイポグラフィ×エクスプレッシブ系（enjoyスタイル）**
+```
+expressive brushstroke background, cream white canvas, abstract orange and navy strokes,
+girl with confident smile looking at viewer, bold typography as art element,
+loose painterly expressionism, energetic gestural marks, teal accent splashes
 ```
 
 **窓辺・日常の詩系（Just an ordinary dayスタイル）**
