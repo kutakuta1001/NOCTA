@@ -1602,7 +1602,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 (function () {
     var section = document.getElementById('visual');
     if (!section) return;
-    if (typeof NOCTA_VISUALS_STANDALONE === 'undefined' && typeof NOCTA_VISUALS_LINKED === 'undefined') return;
+    if (typeof NOCTA_VISUALS_WORKS === 'undefined' && typeof NOCTA_VISUALS_ART === 'undefined' && typeof NOCTA_VISUALS_MUSIC === 'undefined') return;
 
     function makeCard(v, i) {
         var col    = i % 3;
