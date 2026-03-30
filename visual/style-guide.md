@@ -1,5 +1,5 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30（既存9作品の分析を反映）
+最終更新: 2026-03-30（既存10作品の分析を反映）
 
 ---
 
@@ -26,6 +26,7 @@
 | await in anticipation | ウォームピーチ×ティール | ルーズペインタリー（フラット寄り） | アトリエ・夢想・創造への期待 |
 | Just an ordinary day in the life | ブラッドオレンジ×ディープブラウン | クリーンアニメ | 窓辺・秋の逆光・静かな午後 |
 | enjoy | ブラッドオレンジ×ネイビー×クリーム | ルーズペインタリー（表現主義的） | 自信・余裕・タイポグラフィ入り |
+| natural / artificial | ウォームゴールド×紅葉レッド | セミリアル油彩（アニメ顔比率） | 自然と人工の融合・花葉が体に溶ける |
 
 ---
 
@@ -33,7 +34,7 @@
 
 | 要素 | YES | NO |
 |------|-----|----|
-| スタイル | アニメイラスト（クリーン〜ルーズペインタリー） | リアル写真・西洋油絵・3DCG |
+| スタイル | アニメイラスト（クリーン〜ルーズペインタリー）・**アニメ顔比率を保ったセミリアル油彩** | リアル写真・アニメ影響のない純粋写実油絵・3DCG |
 | 明暗 | **幅がある**（深夜〜明るい昼まで可）| 単調・平坦な明るさ |
 | 色彩 | **強い支配色1〜2色**＋対比アクセント | 色の主張がない・くすんだ全体 |
 | カラフルさ | 絵画的・意図的・制御された色 | 無秩序・ランダム・ポップ |
@@ -101,6 +102,11 @@
 シンプルな背景＋概念の視覚化（髪が情報になる等）
 → テーマ性の強い単体作品向き
 
+### Semi-realistic Oil（セミリアル油彩）
+アニメ顔比率を保ちながら古典絵画の質感・厚塗り・リッチなテクスチャ
+自然物（花・葉・植物）とキャラが融合する表現に最適
+→ 二項対立テーマ（natural/artificial、生/死 等）向き
+
 ---
 
 ## Midjourney 共通パラメータ（修正版）
@@ -117,7 +123,7 @@
 anime illustration, detailed anime art, female protagonist,
 [キャラクター描写], [シーン・背景], [支配色 + 対比色],
 [光の種類], artistic color palette, painterly quality,
-[スタイルバリエーション: clean anime / loose painterly / conceptual]
+[スタイルバリエーション: clean anime / loose painterly / conceptual / semi-realistic oil]
 ```
 
 ### シーン別キーワード
@@ -132,6 +138,14 @@ bioluminescent plants, soft dappled light, flower petals falling
 ```
 witch girl, pointed hat, gothic architecture, jack-o-lantern glow,
 moonlit night sky, deep purple atmosphere, festive magic
+```
+
+**セミリアル油彩・自然融合系（natural / artificialスタイル）**
+```
+semi-realistic oil painting, anime face proportions, rich painterly texture,
+autumn leaves and flowers woven into hair and body, nature merging with figure,
+warm golden amber background, white shawl, melancholic gaze,
+classical portrait composition, natural / artificial duality
 ```
 
 **タイポグラフィ×エクスプレッシブ系（enjoyスタイル）**
