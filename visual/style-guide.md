@@ -1,5 +1,5 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30（既存12作品の分析を反映）
+最終更新: 2026-03-30（既存13作品の分析を反映）
 
 ---
 
@@ -29,6 +29,7 @@
 | natural / artificial | ウォームゴールド×紅葉レッド | セミリアル油彩（アニメ顔比率） | 自然と人工の融合・花葉が体に溶ける |
 | rainy season #1 | スペクトルバイオレット×アビスティール | クリーンアニメ | 梅雨・紫陽花・透明傘・振り向き笑み |
 | SILENCE | ピュアホワイト×コールドペールブルー | クリーンアニメ（極限ミニマル） | 冬・雪・沈黙・顔が環境に溶けて消える |
+| Jewel Sky#2 | アビスティール×ホワイト×ルナゴールド | クリーンアニメ（ジュエル輝度） | 宝石空・片腕掲げ・スパークル全面 |
 
 ---
 
@@ -41,7 +42,7 @@
 | 色彩 | **強い支配色1〜2色**＋対比アクセント | 色の主張がない・くすんだ全体 |
 | カラフルさ | 絵画的・意図的・制御された色 | 無秩序・ランダム・ポップ |
 | 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる・窓からの強烈な逆光・**透明/半透明オブジェクト越しの拡散光** | ネオン・人工照明・フラッシュ |
-| 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿・振り向き3/4・**顔が環境に溶けて見えない**） | 男性中心・群像劇のみ |
+| 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿・振り向き3/4・顔が環境に溶けて見えない・**片腕を掲げるダイナミックポーズ**） | 男性中心・群像劇のみ |
 | 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック・**自信/余裕のある笑み** | 単純な笑顔・元気・陽気（中身のない明るさ） |
 | 背景 | ファンタジー/自然/シンプルなフラット背景/**色彩が支配する室内（アトリエ・窓越しに季節が見える空間）** | 現代リアル都市・色彩的に平凡な室内インテリア |
 | テーマ | 魔法・自然・概念/哲学的・感情の可視化 | 日常・スポーツ・テクノロジー機器 |
@@ -139,6 +140,14 @@ rainy season, hydrangea flowers, transparent umbrella, rain particles,
 teal glowing forest, violet and blue wet atmosphere
 ```
 
+**ジュエル・ファンタジー系（Jewel Skyスタイル）**
+```
+jewel-toned fantasy, giant teal gem sphere background, sparkling light particles everywhere,
+girl with curly white silver hair, one arm reaching upward, gold jewelry and chain details,
+white flowing dress with aqua accents, sparkle reflections on skin,
+luminous radiant quality, feather and wave-like white elements
+```
+
 **冬・静寂系（SILENCEスタイル）**
 ```
 girl sitting alone in snow, face hidden by snow-laden branches,
@@ -231,7 +240,9 @@ eyes closed in wonder, drowning in golden light
 ## シリーズ管理
 
 新しいシリーズを作るときは `visual/standalone/[シリーズ名]/concept.md` に記録する。
-タイトルに `#1` `#2` のナンバリングを入れると作品のシリーズ感が出る（rainy season #1 の実績あり）。
+タイトルのナンバリング形式は2種類の実績あり:
+- `タイトル #N`（スペースあり）: rainy season #1
+- `タイトル#N`（スペースなし）: Jewel Sky#2
 
 ```markdown
 # [シリーズ名]
