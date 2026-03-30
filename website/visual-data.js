@@ -95,7 +95,7 @@ const NOCTA_VISUALS_STANDALONE = [
   },
   {
     title: "Art and information flood",
-    imgUrl: "https://ipfs.io/ipfs/bafybeigs6ncj5xq6bcfat3fljardm3uozejudlacv7zarz6vovllxt5aeaa",
+    imgUrl: "https://ipfs.io/ipfs/bafybeigs6ncj5xq6bcfat3fljardm3uozejudlacv7zarz6vovllxt5aea",
     zoraUrl: "https://zora.co/@kutakuta1001",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
