@@ -1,5 +1,5 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30（既存7作品の分析を反映）
+最終更新: 2026-03-30（既存8作品の分析を反映）
 
 ---
 
@@ -24,6 +24,7 @@
 | Art and information flood | ウォームイエロー×ティール×オレンジ | コンセプチュアル | 情報の洪水・美しいカオス |
 | Time leap to GW | スカイブルー×マルチカラー | クリーンアニメ+コンセプチュアル | 時間の跳躍・時計と色彩が舞う昼空 |
 | await in anticipation | ウォームピーチ×ティール | ルーズペインタリー（フラット寄り） | アトリエ・夢想・創造への期待 |
+| Just an ordinary day in the life | ブラッドオレンジ×ディープブラウン | クリーンアニメ | 窓辺・秋の逆光・静かな午後 |
 
 ---
 
@@ -35,10 +36,10 @@
 | 明暗 | **幅がある**（深夜〜明るい昼まで可）| 単調・平坦な明るさ |
 | 色彩 | **強い支配色1〜2色**＋対比アクセント | 色の主張がない・くすんだ全体 |
 | カラフルさ | 絵画的・意図的・制御された色 | 無秩序・ランダム・ポップ |
-| 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる | ネオン・人工照明・フラッシュ |
+| 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる・**窓からの強烈な逆光（シルエット効果）** | ネオン・人工照明・フラッシュ |
 | 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿） | 男性中心・群像劇のみ |
 | 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック | 単純な笑顔・元気・陽気 |
-| 背景 | ファンタジー/自然/シンプルなフラット背景/**創造的アトリエ（アート・本・植物に囲まれた室内）** | 現代リアル都市・生活感のある室内インテリア |
+| 背景 | ファンタジー/自然/シンプルなフラット背景/**色彩が支配する室内（アトリエ・窓越しに季節が見える空間）** | 現代リアル都市・色彩的に平凡な室内インテリア |
 | テーマ | 魔法・自然・概念/哲学的・感情の可視化 | 日常・スポーツ・テクノロジー機器 |
 
 ---
@@ -129,6 +130,14 @@ bioluminescent plants, soft dappled light, flower petals falling
 ```
 witch girl, pointed hat, gothic architecture, jack-o-lantern glow,
 moonlit night sky, deep purple atmosphere, festive magic
+```
+
+**窓辺・日常の詩系（Just an ordinary dayスタイル）**
+```
+girl sitting by window lost in thought, blazing autumn light through glass,
+intense warm backlight creating silhouette, mug on table, quiet afternoon,
+fiery orange-red foliage outside, ordinary objects made extraordinary by light,
+contemplative profile, window seat, seasonal color flooding interior
 ```
 
 **アトリエ・夢想系（await in anticipationスタイル）**
