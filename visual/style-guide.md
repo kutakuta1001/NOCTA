@@ -1,5 +1,5 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30（既存10作品の分析を反映）
+最終更新: 2026-03-30（既存11作品の分析を反映）
 
 ---
 
@@ -27,6 +27,7 @@
 | Just an ordinary day in the life | ブラッドオレンジ×ディープブラウン | クリーンアニメ | 窓辺・秋の逆光・静かな午後 |
 | enjoy | ブラッドオレンジ×ネイビー×クリーム | ルーズペインタリー（表現主義的） | 自信・余裕・タイポグラフィ入り |
 | natural / artificial | ウォームゴールド×紅葉レッド | セミリアル油彩（アニメ顔比率） | 自然と人工の融合・花葉が体に溶ける |
+| rainy season #1 | スペクトルバイオレット×アビスティール | クリーンアニメ | 梅雨・紫陽花・透明傘・振り向き笑み |
 
 ---
 
@@ -38,8 +39,8 @@
 | 明暗 | **幅がある**（深夜〜明るい昼まで可）| 単調・平坦な明るさ |
 | 色彩 | **強い支配色1〜2色**＋対比アクセント | 色の主張がない・くすんだ全体 |
 | カラフルさ | 絵画的・意図的・制御された色 | 無秩序・ランダム・ポップ |
-| 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる・**窓からの強烈な逆光（シルエット効果）** | ネオン・人工照明・フラッシュ |
-| 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿） | 男性中心・群像劇のみ |
+| 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる・窓からの強烈な逆光・**透明/半透明オブジェクト越しの拡散光** | ネオン・人工照明・フラッシュ |
+| 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿・**振り向き3/4**） | 男性中心・群像劇のみ |
 | 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック・**自信/余裕のある笑み** | 単純な笑顔・元気・陽気（中身のない明るさ） |
 | 背景 | ファンタジー/自然/シンプルなフラット背景/**色彩が支配する室内（アトリエ・窓越しに季節が見える空間）** | 現代リアル都市・色彩的に平凡な室内インテリア |
 | テーマ | 魔法・自然・概念/哲学的・感情の可視化 | 日常・スポーツ・テクノロジー機器 |
@@ -131,7 +132,9 @@ anime illustration, detailed anime art, female protagonist,
 **自然・季節系**
 ```
 wisteria tunnel, ancient forest, moonlit clearing,
-bioluminescent plants, soft dappled light, flower petals falling
+bioluminescent plants, soft dappled light, flower petals falling,
+rainy season, hydrangea flowers, transparent umbrella, rain particles,
+teal glowing forest, violet and blue wet atmosphere
 ```
 
 **ファンタジー・魔法系（Witch Girlシリーズ向き）**
@@ -217,7 +220,8 @@ eyes closed in wonder, drowning in golden light
 
 ## シリーズ管理
 
-新しいシリーズを作るときは `visual/standalone/[シリーズ名]/concept.md` に記録する:
+新しいシリーズを作るときは `visual/standalone/[シリーズ名]/concept.md` に記録する。
+タイトルに `#1` `#2` のナンバリングを入れると作品のシリーズ感が出る（rainy season #1 の実績あり）。
 
 ```markdown
 # [シリーズ名]
