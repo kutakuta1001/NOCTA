@@ -21,7 +21,7 @@
 | カラフルさ | 絵画的・意図的・制御された色 | 陽気・にぎやか・カジュアル |
 | 光 | 月光・生物発光・炎・霧の中の光・オーラ | ネオン・人工照明・フラッシュ |
 | 質感 | 油絵・水彩にじみ・霧・煙・水面反射 | リアル写真・CGすぎる質感 |
-| 人物 | 女性（主役またはモチーフ）・表情は静か | 笑顔・元気・集団 |
+| 人物 | 女性・女の子（主役またはモチーフ）・表情は静か | 笑顔・元気・集団 |
 | 空気感 | 夢・静寂・神秘・孤高 | 賑やか・躍動・スポーティ |
 
 ---
@@ -50,7 +50,7 @@
 
 ## 人物描写ガイドライン
 
-- **主役は女性**（単独・後ろ姿・横顔・シルエットも可）
+- **主役は女性または女の子**（単独・後ろ姿・横顔・シルエットも可）
 - 表情は静か。笑っていなくてよい。むしろ無表情・憂い・内省
 - 衣装: 現代的すぎず、時代不明な服装が望ましい（ドレープ・フード・長いスカート等）
 - 人物と背景の境界を曖昧にする（霧・光・煙で溶け込ませる）
@@ -70,7 +70,7 @@
 ### 必ず入れるキーワード群（ベース）
 ```
 dark atmospheric, cinematic lighting, oil painting texture,
-mysterious, dreamlike, solitary female figure,
+mysterious, dreamlike, solitary female or young girl figure,
 jewel-toned color palette, painterly, fine art quality,
 deep shadows, ethereal glow
 ```
