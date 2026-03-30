@@ -1,5 +1,5 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30（既存13作品の分析を反映）
+最終更新: 2026-03-30（既存14作品の分析を反映）
 
 ---
 
@@ -30,6 +30,7 @@
 | rainy season #1 | スペクトルバイオレット×アビスティール | クリーンアニメ | 梅雨・紫陽花・透明傘・振り向き笑み |
 | SILENCE | ピュアホワイト×コールドペールブルー | クリーンアニメ（極限ミニマル） | 冬・雪・沈黙・顔が環境に溶けて消える |
 | Jewel Sky#2 | アビスティール×ホワイト×ルナゴールド | クリーンアニメ（ジュエル輝度） | 宝石空・片腕掲げ・スパークル全面 |
+| pop girl #8 | ビビッドオレンジ×白地×カラースプラッター | アーバンポップ（PixAI生成） | ストリートウェア・猫同伴・白地抽象背景 |
 
 ---
 
@@ -45,7 +46,7 @@
 | 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿・振り向き3/4・顔が環境に溶けて見えない・**片腕を掲げるダイナミックポーズ**） | 男性中心・群像劇のみ |
 | 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック・**自信/余裕のある笑み** | 単純な笑顔・元気・陽気（中身のない明るさ） |
 | 背景 | ファンタジー/自然/シンプルなフラット背景/**色彩が支配する室内（アトリエ・窓越しに季節が見える空間）** | 現代リアル都市・色彩的に平凡な室内インテリア |
-| テーマ | 魔法・自然・概念/哲学的・感情の可視化 | 日常・スポーツ・テクノロジー機器 |
+| テーマ | 魔法・自然・概念/哲学的・感情の可視化・**日常のポップアート化（高度に様式化された日常）** | 無感動な日常描写・スポーツ・テクノロジー機器 |
 
 ---
 
@@ -113,6 +114,11 @@
 
 ---
 
+## 生成ツールについて
+
+コレクションの実績: **Midjourney**（主力）/ **PixAI**（pop girl シリーズで使用）
+スタイルガイドのパラメータはMidjourney向けだが、PixAI等でも同様のキーワードが有効。
+
 ## Midjourney 共通パラメータ（修正版）
 
 ```
@@ -138,6 +144,15 @@ wisteria tunnel, ancient forest, moonlit clearing,
 bioluminescent plants, soft dappled light, flower petals falling,
 rainy season, hydrangea flowers, transparent umbrella, rain particles,
 teal glowing forest, violet and blue wet atmosphere
+```
+
+**アーバンポップ系（pop girlスタイル）**
+```
+girl in oversized orange hoodie with cat ears, profile view looking away,
+urban streetwear aesthetic, cat companion beside her, red earphone cables,
+pure white background with explosive color splatter marks,
+vivid orange dominant, geometric paint fragments in red blue teal,
+pop art sensibility, highly stylized daily life
 ```
 
 **ジュエル・ファンタジー系（Jewel Skyスタイル）**
