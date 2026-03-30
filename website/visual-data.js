@@ -1,22 +1,132 @@
 /**
  * NOCTA Visual Portfolio Data
  *
- * 画像を追加するときは、この配列の先頭に新しいオブジェクトを追加してください。
+ * NOCTA_VISUALS_STANDALONE : 単体作品（楽曲と連動しない作品）
+ * NOCTA_VISUALS_LINKED     : 楽曲連動作品（曲のリリースに合わせた作品）
  *
- * cloudinaryUrl : Cloudinary のフル解像度 URL
- * thumbUrl      : サムネ用 URL（cloudinaryUrl の /upload/ 直後に w_600/ を挿入）
- *                 例: .../upload/v123/img.jpg → .../upload/w_600/v123/img.jpg
- * cat           : "art" | "photo"
+ * imgUrl          : IPFS URL (https://ipfs.io/ipfs/[hash])
+ * zoraUrl         : Zora NFT ページ URL（不明な場合は Zora プロフィール）
+ * badge           : "Art" | "Processed"
+ * badgeColorClass : Tailwind クラス
+ * descJa          : 日本語説明
+ *
+ * 新しい作品を追加するときは配列の先頭に追加してください。
  */
-const NOCTA_VISUALS = [
+const NOCTA_VISUALS_STANDALONE = [
   {
-    title: "Sample Art",
-    cat: "art",
-    cloudinaryUrl: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-    thumbUrl: "https://res.cloudinary.com/demo/image/upload/w_600/sample.jpg",
+    title: "SILENCE #1",
+    imgUrl: "https://ipfs.io/ipfs/bafybeigjekudm2vahgkycl7zh4uyx72qymtpod2l2iny2v74ovroxh67zm",
+    zoraUrl: "https://zora.co/collect/base:0xcc3e7dba54406b272bf5dd383cc5d66b00e9f735/1",
+    badge: "Processed",
+    badgeColorClass: "bg-amber-500/20 text-amber-400",
+    descJa: "SILENCEを元にCanvaで加工。Warpcastフレームとコピーライン「SILENCE ON THE TIMELINE.」を付与した完成品。"
+  },
+  {
+    title: "rainy season #1",
+    imgUrl: "https://ipfs.io/ipfs/bafybeiddisy5yutc7j6vhy5e6asblpq5gvfm23ss227xtpqco22pse2hh4",
+    zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/23",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "サンプル。Cloudinary の URL に差し替えてください。",
-    descEn: "Sample. Replace with your Cloudinary URL."
+    descJa: "梅雨。スペクトルバイオレット×アビスティール。透明傘を持って振り返る少女。"
+  },
+  {
+    title: "pop girl #8",
+    imgUrl: "https://ipfs.io/ipfs/bafybeiclqzh2tn23pww7c2iteu6mwkrr6cd4gfpg35ids3gbk7f4blu2qu",
+    zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/3",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "アーバンポップ。ビビッドオレンジ×カラースプラッター。ストリートウェア×猫。PixAI生成。"
+  },
+  {
+    title: "SILENCE",
+    imgUrl: "https://ipfs.io/ipfs/bafybeifzffxpusfpoqdloixvrbx46qlczmys4snxejynq5t3j6wzuhg4am",
+    zoraUrl: "https://zora.co/collect/zora:0x2cf12ca8cb593870b8e6d9807201b13c0932cbc7/2",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "極限のミニマル。冬の雪景色に溶け込む少女。ほぼモノクロのコールドパレット。"
+  },
+  {
+    title: "Jewel Sky#2",
+    imgUrl: "https://ipfs.io/ipfs/bafybeie4wjqjdgsne7tqkb5fw2ycrgfc2j5cfe7ebz3bs5c3ywe4dof4wm",
+    zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/7",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "宝石空。アビスティール×ルナゴールド。片腕を掲げる少女とスパークル全面。"
+  },
+  {
+    title: "Just an ordinary day in the life",
+    imgUrl: "https://ipfs.io/ipfs/bafybeifck5l5enwu3wr2vbrjuu5wktnepkct4argoedmii6exu2enl2y2y",
+    zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/16",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "窓辺の秋。ブラッドオレンジの逆光の中でたたずむ少女。日常の詩的な瞬間。"
+  },
+  {
+    title: "await in anticipation",
+    imgUrl: "https://ipfs.io/ipfs/bafybeig76tuwjmsrldj75yrzwfst26kdsibl4hruduqcgg2335vhhd34wi",
+    zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/14",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "アトリエの夢想。ウォームピーチ×ティール。絵に囲まれた空間で期待を抱く少女。"
+  },
+  {
+    title: "natural / artificial",
+    imgUrl: "https://ipfs.io/ipfs/bafybeieglvkoteecug6fovx5qrqkmglkxow6tthnuuxpivptm32f7edoyq",
+    zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/12",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "セミリアル油彩。秋の花葉が体に溶け込む。自然と人工の境界を問う。"
+  },
+  {
+    title: "enjoy",
+    imgUrl: "https://ipfs.io/ipfs/bafybeidj3t7525dixj5w5ppijxm6hk3ifbwxv457edg4ukhpct5zvspvpy",
+    zoraUrl: "https://zora.co/collect/base:0xa407f675ab46c5c949e866d8f52331f54596f3c3/2",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "タイポグラフィ×エクスプレッシブ。ブラッドオレンジ×ネイビー。自信溢れる少女と抽象的な筆跡。"
+  },
+  {
+    title: "Time leap to GW",
+    imgUrl: "https://ipfs.io/ipfs/bafybeicbli4q7nzb7z2tz3v4v2yoppp7nardyk3oub6j53aausammpvnmi",
+    zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/10",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "時間の跳躍。スカイブルーに時計と紙片が舞う。コンセプチュアルな昼空。"
+  },
+  {
+    title: "Art and information flood",
+    imgUrl: "https://ipfs.io/ipfs/bafybeigs6ncj5xq6bcfat3fljardm3uozejudlacv7zarz6vovllxt5aeaa",
+    zoraUrl: "https://zora.co/@kutakuta1001",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "情報の洪水。ウォームイエロー×ティール×オレンジ。美しいカオスとして視覚化された情報過多。"
+  },
+  {
+    title: "wisteria flowers",
+    imgUrl: "https://ipfs.io/ipfs/bafybeibvqlfmnq2wfxmv54lpw6e4hjhhk7hta5qon7okvpmx7gvmaq6qe4",
+    zoraUrl: "https://zora.co/@kutakuta1001",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "春・静謐。バイオレット×白。藤の花の下に立つ少女。クリーンアニメの精細な描写。"
+  },
+  {
+    title: "Witch girl Sunny afternoon",
+    imgUrl: "https://ipfs.io/ipfs/bafybeiealixrjpsumq2vgerdfd7iz2atyvaynxxgj24oqjeozulmvrcv3a",
+    zoraUrl: "https://zora.co/@kutakuta1001",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "昼の魔法都市。ターコイズ×カラフル。祭りの賑わいの中を歩く魔女少女。"
+  },
+  {
+    title: "Witch girl Midnight Carnival",
+    imgUrl: "https://ipfs.io/ipfs/bafybeihfxbmlqorwsagemxy23roabfiwqcjioq7tslgqh33smavhhqekx4",
+    zoraUrl: "https://zora.co/@kutakuta1001",
+    badge: "Art",
+    badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
+    descJa: "深夜のカーニバル。深紫×オレンジ。ジャック・オー・ランタンが灯るゴシックな祝祭の夜。"
   }
+];
+
+const NOCTA_VISUALS_LINKED = [
+  // NuWord PV ビジュアルなど — 制作後に追加
 ];

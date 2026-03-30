@@ -937,20 +937,33 @@
 <section id="visual" class="py-16 relative z-10 border-b border-white/5">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
 
-        <div class="text-center mb-8 reveal">
+        <div class="text-center mb-12 reveal">
             <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">VISUAL</h2>
-            <p class="font-jp text-brand-sub text-[15px] tracking-wider">Art & Photography</p>
+            <p class="font-jp text-brand-sub text-[15px] tracking-wider">Art & NFT Collection</p>
+        </div>
 
-            <!-- Filter pills — Works の .filter-pill と分離するため .vfilter-pill を使用 -->
-            <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
-                <button class="vfilter-pill active" data-vfilter="all">All</button>
-                <button class="vfilter-pill" data-vfilter="art">Art</button>
-                <button class="vfilter-pill" data-vfilter="photo">Photo</button>
+        <!-- Standalone セクション -->
+        <div class="mb-16">
+            <div class="flex items-center gap-4 mb-8 reveal">
+                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Standalone</h3>
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="font-heading text-[10px] tracking-[2px] text-white/20">楽曲と連動しない単体作品</span>
+            </div>
+            <!-- Grid — visual-data.js の NOCTA_VISUALS_STANDALONE から JS でレンダリング -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid-standalone">
             </div>
         </div>
 
-        <!-- Grid — visual-data.js から JS でレンダリング -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid">
+        <!-- Song-linked セクション -->
+        <div class="mb-10">
+            <div class="flex items-center gap-4 mb-8 reveal">
+                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Song-linked</h3>
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="font-heading text-[10px] tracking-[2px] text-white/20">楽曲リリースに連動した作品</span>
+            </div>
+            <!-- Grid — visual-data.js の NOCTA_VISUALS_LINKED から JS でレンダリング -->
+            <div id="visual-grid-linked">
+            </div>
         </div>
 
         <!-- Zora NFT link -->
@@ -1579,21 +1592,22 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 /* ---- Visual: データ配列からカードをレンダリング ---- */
 (function () {
     var section = document.getElementById('visual');
-    var grid = document.getElementById('visual-grid');
-    if (!grid || typeof NOCTA_VISUALS === 'undefined') return;
+    if (!section) return;
+    if (typeof NOCTA_VISUALS_STANDALONE === 'undefined' && typeof NOCTA_VISUALS_LINKED === 'undefined') return;
 
-    // 空配列時はセクションごと非表示
-    if (NOCTA_VISUALS.length === 0) {
-        if (section) section.style.display = 'none';
-        return;
-    }
-
-    grid.innerHTML = NOCTA_VISUALS.map(function (v, i) {
+    function makeCard(v, i) {
         var col    = i % 3;
         var delay  = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
         var dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
+        var imgUrl = v.imgUrl || '';
+        var zoraLink = v.zoraUrl
+            ? '<a href="' + v.zoraUrl + '" target="_blank" rel="noopener"' +
+              '   onclick="event.stopPropagation()"' +
+              '   class="inline-flex items-center gap-1 mt-3 text-[11px] font-heading tracking-wider text-brand-sub hover:text-white transition-colors">' +
+              'View on Zora ↗</a>'
+            : '';
         var onclick = ' onclick="openVisual(' +
-            '\'' + v.cloudinaryUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+            '\'' + imgUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
             '\'' + v.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
             '\'' + v.badge + '\',' +
             '\'' + v.badgeColorClass + '\',' +
@@ -1601,58 +1615,53 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             ')"';
 
         return [
-            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"',
-            '     data-vcat="' + v.cat + '"' + dstyle + onclick + '>',
-            '  <div class="relative aspect-video overflow-hidden">',
-            '    <img src="' + v.thumbUrl + '" alt="' + v.title.replace(/"/g, '&quot;') + '"',
+            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"' + dstyle + onclick + '>',
+            '  <div class="relative aspect-[3/4] overflow-hidden">',
+            '    <img src="' + imgUrl + '" alt="' + v.title.replace(/"/g, '&quot;') + '"',
+            '         loading="lazy"',
             '         class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">',
             '    <div class="thumb-overlay"></div>',
             '  </div>',
-            '  <div class="p-6">',
+            '  <div class="p-5">',
             '    <div class="flex justify-between items-start mb-2">',
-            '      <h3 class="font-heading font-bold text-[17px] text-white">' + v.title + '</h3>',
-            '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + v.badgeColorClass + ' tracking-wider">' + v.badge + '</span>',
+            '      <h3 class="font-heading font-bold text-[15px] text-white leading-tight">' + v.title + '</h3>',
+            '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded shrink-0 ml-2 ' + v.badgeColorClass + ' tracking-wider">' + v.badge + '</span>',
             '    </div>',
-            '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">' + v.descJa + '</p>',
+            '    <p class="font-jp text-[12px] text-brand-sub leading-relaxed">' + v.descJa + '</p>',
+            '    ' + zoraLink,
             '  </div>',
             '</div>'
         ].join('\n');
-    }).join('\n');
+    }
+
+    // Standalone グリッド
+    var gridS = document.getElementById('visual-grid-standalone');
+    if (gridS && typeof NOCTA_VISUALS_STANDALONE !== 'undefined' && NOCTA_VISUALS_STANDALONE.length > 0) {
+        gridS.innerHTML = NOCTA_VISUALS_STANDALONE.map(makeCard).join('\n');
+    }
+
+    // Song-linked グリッド
+    var gridL = document.getElementById('visual-grid-linked');
+    if (gridL) {
+        if (typeof NOCTA_VISUALS_LINKED !== 'undefined' && NOCTA_VISUALS_LINKED.length > 0) {
+            gridL.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7';
+            gridL.innerHTML = NOCTA_VISUALS_LINKED.map(makeCard).join('\n');
+        } else {
+            gridL.innerHTML =
+                '<div class="col-span-3 py-16 text-center reveal">' +
+                '  <p class="font-heading text-[11px] tracking-[3px] uppercase text-white/20">Coming Soon</p>' +
+                '  <p class="font-jp text-[13px] text-white/15 mt-2">楽曲リリース後に追加されます</p>' +
+                '</div>';
+        }
+    }
 
     // Scroll Reveal を適用
     var obs2 = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
             if (e.isIntersecting) { e.target.classList.add('active'); obs2.unobserve(e.target); }
         });
-    }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
-    grid.querySelectorAll('.reveal').forEach(function (el) { obs2.observe(el); });
-
-    // Visual フィルター
-    var vpills = document.querySelectorAll('.vfilter-pill');
-    var vcards = grid.querySelectorAll('[data-vcat]');
-    vpills.forEach(function (pill) {
-        pill.addEventListener('click', function () {
-            vpills.forEach(function (p) { p.classList.remove('active'); });
-            this.classList.add('active');
-            var f = this.getAttribute('data-vfilter');
-            vcards.forEach(function (card) {
-                var show = f === 'all' || card.getAttribute('data-vcat') === f;
-                if (show) {
-                    card.style.display = '';
-                    requestAnimationFrame(function () {
-                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                        card.style.opacity = '1';
-                        card.style.transform = '';
-                    });
-                } else {
-                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(12px)';
-                    setTimeout(function () { card.style.display = 'none'; }, 320);
-                }
-            });
-        });
-    });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    section.querySelectorAll('.reveal').forEach(function (el) { obs2.observe(el); });
 })();
 
 /* ---- Apps: データ配列からカードをレンダリング ---- */
