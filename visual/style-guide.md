@@ -1,5 +1,5 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30（既存6作品の分析を反映）
+最終更新: 2026-03-30（既存7作品の分析を反映）
 
 ---
 
@@ -23,6 +23,7 @@
 | wisteria flowers | バイオレット×白 | クリーンアニメ | 春・静謐・藤の下 |
 | Art and information flood | ウォームイエロー×ティール×オレンジ | コンセプチュアル | 情報の洪水・美しいカオス |
 | Time leap to GW | スカイブルー×マルチカラー | クリーンアニメ+コンセプチュアル | 時間の跳躍・時計と色彩が舞う昼空 |
+| await in anticipation | ウォームピーチ×ティール | ルーズペインタリー（フラット寄り） | アトリエ・夢想・創造への期待 |
 
 ---
 
@@ -37,7 +38,7 @@
 | 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる | ネオン・人工照明・フラッシュ |
 | 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿） | 男性中心・群像劇のみ |
 | 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック | 単純な笑顔・元気・陽気 |
-| 背景 | ファンタジー/自然/シンプルなフラット背景 | 現代リアル都市・室内インテリア |
+| 背景 | ファンタジー/自然/シンプルなフラット背景/**創造的アトリエ（アート・本・植物に囲まれた室内）** | 現代リアル都市・生活感のある室内インテリア |
 | テーマ | 魔法・自然・概念/哲学的・感情の可視化 | 日常・スポーツ・テクノロジー機器 |
 
 ---
@@ -52,7 +53,7 @@
 
 ### ベース（背景）
 - 深夜系: `#05050F` Deep Void → `#1A0A3A` Midnight Indigo
-- 昼間系: ターコイズ単色 / ウォームイエロー単色 / スカイブルー単色（シンプルに）
+- 昼間系: ターコイズ単色 / ウォームイエロー単色 / スカイブルー単色 / ウォームピーチ（シンプルに）
 
 ### アクセント6色（1作品2色まで）
 | 名前 | カラー | 用途 |
@@ -128,6 +129,13 @@ bioluminescent plants, soft dappled light, flower petals falling
 ```
 witch girl, pointed hat, gothic architecture, jack-o-lantern glow,
 moonlit night sky, deep purple atmosphere, festive magic
+```
+
+**アトリエ・夢想系（await in anticipationスタイル）**
+```
+girl sitting at a desk daydreaming, walls covered with artworks and illustrations,
+artist atelier, warm peach light, plants and paintings surrounding her,
+loose flat illustration style, cozy creative space, anticipatory mood
 ```
 
 **コンセプチュアル系**
