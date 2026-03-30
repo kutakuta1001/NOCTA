@@ -1,14 +1,28 @@
 # NOCTA Visual Style Guide
-最終更新: 2026-03-30
+最終更新: 2026-03-30（既存6作品の分析を反映）
 
 ---
 
 ## コアアイデンティティ
 
-**一言で表すなら**: 「暗闇の中に存在する、芸術的な色彩と女性」
+**一言で表すなら**: 「女の子/女性と、芸術的な色彩の爆発」
 
-夢の中のような不確かさと静けさ。陽気ではなく、美術的。
-深い闇を背景に、宝石・光・夢幻的な色彩が女性とともに存在する世界。
+暗闇から明るい昼まで幅がある。陽気ではなく、美術的。
+強い支配色と対比色によるコントラストが全作品に共通する核。
+光・色・女性キャラクターが常に中心にある。
+
+---
+
+## 参照作品（Zoraコレクションより）
+
+| タイトル | 支配色 | スタイル | 空気感 |
+|---------|--------|---------|--------|
+| free | ウォームゴールド | クリーンアニメ | 光の中の静かな少女 |
+| Witch girl Midnight Carnival | 深紫×オレンジ | クリーンアニメ | ハロウィン夜・ゴシック祝祭 |
+| Witch girl Sunny afternoon | ターコイズ×カラフル | ルーズペインタリー | 昼の魔法都市・祭り |
+| wisteria flowers | バイオレット×白 | クリーンアニメ | 春・静謐・藤の下 |
+| Art and information flood | ウォームイエロー×ティール×オレンジ | コンセプチュアル | 情報の洪水・美しいカオス |
+| Time leap to GW | スカイブルー×マルチカラー | クリーンアニメ+コンセプチュアル | 時間の跳躍・時計と色彩が舞う昼空 |
 
 ---
 
@@ -16,83 +30,119 @@
 
 | 要素 | YES | NO |
 |------|-----|----|
-| 明暗 | ダーク・深夜・深淵 | 昼・明るいナチュラル光 |
-| 色彩 | 宝石色（深紫・翡翠・サファイア・琥珀・緋）| ポップ・パステル・蛍光 |
-| カラフルさ | 絵画的・意図的・制御された色 | 陽気・にぎやか・カジュアル |
-| 光 | 月光・生物発光・炎・霧の中の光・オーラ | ネオン・人工照明・フラッシュ |
-| 質感 | 油絵・水彩にじみ・霧・煙・水面反射 | リアル写真・CGすぎる質感 |
-| 人物 | 女性・女の子（主役またはモチーフ）・表情は静か | 笑顔・元気・集団 |
-| 空気感 | 夢・静寂・神秘・孤高 | 賑やか・躍動・スポーティ |
+| スタイル | アニメイラスト（クリーン〜ルーズペインタリー） | リアル写真・西洋油絵・3DCG |
+| 明暗 | **幅がある**（深夜〜明るい昼まで可）| 単調・平坦な明るさ |
+| 色彩 | **強い支配色1〜2色**＋対比アクセント | 色の主張がない・くすんだ全体 |
+| カラフルさ | 絵画的・意図的・制御された色 | 無秩序・ランダム・ポップ |
+| 光 | 月光・ボケ・木漏れ日・グロー・色彩そのものが光になる | ネオン・人工照明・フラッシュ |
+| 人物 | **女性・女の子が必ず主役**（正面・横顔・上向き・後ろ姿） | 男性中心・群像劇のみ |
+| 表情 | 静か・憂い・畏敬・感情的・穏やか・ドラマティック | 単純な笑顔・元気・陽気 |
+| 背景 | ファンタジー/自然/シンプルなフラット背景 | 現代リアル都市・室内インテリア |
+| テーマ | 魔法・自然・概念/哲学的・感情の可視化 | 日常・スポーツ・テクノロジー機器 |
 
 ---
 
-## カラーパレット
+## カラーパレット（実作品から抽出）
 
-### プライマリ（常に使う）
-- **Deep Void**: `#05050F` — 最も暗い背景
-- **Midnight Indigo**: `#1A0A3A` — 深紫の闇
-- **Ghost White**: `#E8E8F0` — 人物の肌・淡い光
+### 頻出カラー（使用頻度順）
+- **Warm Amber / Gold**: 作品の光源・背景・ボケに最も多く登場
+- **Deep Violet / Purple**: 夜空・藤・アクセントに頻出
+- **Teal / Turquoise**: 対比色として強力（ティールとオレンジは相補）
+- **White**: 人物の衣服・光の中心点のみ
 
-### アクセント（作品に1〜2色を選んで使う）
-- **Spectral Violet**: `#9B4DCA` — 霊的な紫
-- **Absinthe**: `#2ECC71` — 毒のある緑
-- **Blood Amber**: `#C8640A` — 深い琥珀
-- **Abyss Teal**: `#0D7377` — 深海の青緑
-- **Crimson Smoke**: `#8B1A1A` — 煙の中の深紅
-- **Lunar Gold**: `#C9A84C` — 月光の金
+### ベース（背景）
+- 深夜系: `#05050F` Deep Void → `#1A0A3A` Midnight Indigo
+- 昼間系: ターコイズ単色 / ウォームイエロー単色 / スカイブルー単色（シンプルに）
 
-### 使用ルール
-- 背景は必ずDeep Void〜Midnight Indigoの範囲
-- アクセントは1作品につき原則2色まで
-- 白・明るいグレーは「人物の肌・光の中心点」のみに限定
-
----
-
-## 人物描写ガイドライン
-
-- **主役は女性または女の子**（単独・後ろ姿・横顔・シルエットも可）
-- 表情は静か。笑っていなくてよい。むしろ無表情・憂い・内省
-- 衣装: 現代的すぎず、時代不明な服装が望ましい（ドレープ・フード・長いスカート等）
-- 人物と背景の境界を曖昧にする（霧・光・煙で溶け込ませる）
-- 目を強調する表現は有効（光が宿る・異色・閉じている）
+### アクセント6色（1作品2色まで）
+| 名前 | カラー | 用途 |
+|------|--------|------|
+| Spectral Violet | `#9B4DCA` | 夜空・藤・神秘 |
+| Absinthe | `#2ECC71` | 森・自然・毒のある緑 |
+| Blood Amber | `#C8640A` | ランタン・夕焼け・炎 |
+| Abyss Teal | `#0D7377` | 深海・対比・情報 |
+| Crimson Smoke | `#8B1A1A` | 煙・深紅 |
+| Lunar Gold | `#C9A84C` | 月光・ボケ・金 |
 
 ---
 
-## Midjourney 共通パラメータ
+## キャラクタータイプ
+
+### TYPE A: 魔女少女（Witch Girlシリーズ）
+- 黒髪・長髪・ウィッチハット
+- より動的・ドラマティック・カラフル
+- ファンタジー都市・祭り・イベントに映える
+
+### TYPE B: 繊細な少女
+- さまざまな髪色（紫/青グラデーション等・シルバー/白も可）
+- より静か・内省的・自然/概念的な背景
+- 光や色彩と融合する描写に向く
+- 「上を見上げる」構図（時計・花びら・情報片が降り注ぐシーンに特に合う）
+
+**新キャラは自由に作ってよい。ただし必ず女性/女の子。**
+
+---
+
+## スタイルバリエーション
+
+### Clean Anime（クリーンアニメ）
+精細な線・鮮明な色・滑らかな塗り
+→ ポートレート・自然・季節もの向き
+
+### Loose Painterly（ルーズペインタリー）
+見えるブラシストローク・ラフな背景・エネルギー感
+→ 動きのある場面・祭り・風景向き
+
+### Conceptual（コンセプチュアル）
+シンプルな背景＋概念の視覚化（髪が情報になる等）
+→ テーマ性の強い単体作品向き
+
+---
+
+## Midjourney 共通パラメータ（修正版）
 
 ```
 --style raw
---stylize 750
---ar 1:1  （または 9:16 for SNS縦型、16:9 for 横型）
---no smile, happy, bright, cheerful, neon, cyberpunk
+--stylize 700
+--ar 1:1  （または 9:16 for SNS縦型、2:3 for ポートレート）
+--no realistic photo, 3d render, western oil painting, old man, boy, group photo
 ```
 
 ### 必ず入れるキーワード群（ベース）
 ```
-dark atmospheric, cinematic lighting, oil painting texture,
-mysterious, dreamlike, solitary female or young girl figure,
-jewel-toned color palette, painterly, fine art quality,
-deep shadows, ethereal glow
+anime illustration, detailed anime art, female protagonist,
+[キャラクター描写], [シーン・背景], [支配色 + 対比色],
+[光の種類], artistic color palette, painterly quality,
+[スタイルバリエーション: clean anime / loose painterly / conceptual]
 ```
 
-### シーン別追加キーワード
+### シーン別キーワード
 
-**森・自然系**（NuWordとの連動に使いやすい）
+**自然・季節系**
 ```
-ancient forest, bioluminescent plants, moonlit clearing,
-mist between trees, otherworldly nature
-```
-
-**宇宙・抽象系**（単体作品・ブランドビジュアル向け）
-```
-cosmic void, nebula colors bleeding, star dissolution,
-figure merging with universe
+wisteria tunnel, ancient forest, moonlit clearing,
+bioluminescent plants, soft dappled light, flower petals falling
 ```
 
-**水・鏡系**（夢幻・反射表現向け）
+**ファンタジー・魔法系（Witch Girlシリーズ向き）**
 ```
-mirror-like water surface, reflection distortion,
-submerged dreamscape, liquid light
+witch girl, pointed hat, gothic architecture, jack-o-lantern glow,
+moonlit night sky, deep purple atmosphere, festive magic
+```
+
+**コンセプチュアル系**
+```
+figure looking upward, abstract elements emerging from hair,
+color explosion, information overload visualized,
+flat warm background, swirling dynamic colors,
+clocks floating in sky, colorful geometric paper fragments raining down,
+time visualized as objects, bright blue sky background
+```
+
+**光・ボケ系（freeスタイル）**
+```
+warm golden bokeh, particle light, girl surrounded by glowing light,
+eyes closed in wonder, drowning in golden light
 ```
 
 ---
@@ -100,25 +150,40 @@ submerged dreamscape, liquid light
 ## Kling 共通パラメータ（映像版）
 
 ### 動きの方向性
-- **緩慢・夢幻的**（速い動きは原則禁止）
-- 推奨: `slow camera drift`, `subtle particle movement`, `gentle hair motion`
-- 禁止: `fast cut`, `energetic movement`, `zoom in fast`
+- 緩慢・夢幻的を基本とする
+- コンセプチュアル系は「色彩の波が広がる・流れる」動きが合う
+- 推奨: `slow camera drift`, `color flowing like liquid`, `gentle particle movement`
+- 禁止: `fast cut`, `energetic jump`, `zoom in fast`
 
 ### カメラワーク
 - `slow dolly forward` — 吸い込まれるような前進
 - `orbital rotation` — 被写体を中心にゆっくり回転
-- `subtle handheld` — 生きているような微細な揺れ
+- `static camera with subject movement` — 固定カメラで色彩/要素が動く
+
+---
+
+## /visual-prompt での質問精度向上のための参照情報
+
+新しい単体作品を作るとき、以下を参考に質問・提案する:
+
+1. **キャラタイプ**: TYPE A（魔女・ダイナミック）か TYPE B（繊細・静か）か新キャラか
+2. **スタイル**: Clean Anime / Loose Painterly / Conceptual のどれか
+3. **支配色**: Warm Amber / Violet / Teal / その他 （対比色も選ぶ）
+4. **背景**: ファンタジー場面 / 自然 / シンプルフラット
+5. **光**: ボケ光 / グロー / 木漏れ日 / 色彩そのものが光
+6. **テーマ/概念**: 伝えたいこと（感情・哲学・季節・物語の一場面）
 
 ---
 
 ## シリーズ管理
 
-新しいシリーズを作るときは `visual/standalone/[シリーズ名]/concept.md` に以下を記録する:
+新しいシリーズを作るときは `visual/standalone/[シリーズ名]/concept.md` に記録する:
 
 ```markdown
 # [シリーズ名]
 開始日:
-テーマ:
+キャラタイプ: TYPE A / TYPE B / 新キャラ
+スタイル: Clean Anime / Loose Painterly / Conceptual
 使用アクセントカラー:
 共通キーワード:
 参照作品:
@@ -127,14 +192,15 @@ submerged dreamscape, liquid light
 
 ---
 
-## 参照アーティスト・作品（インスピレーション）
+## 参照アーティスト・作品
 - Yoshitaka Amano（天野喜孝）— 線と色の溶け合い
 - Zdzisław Beksiński — 暗闇と美の共存
 - 映画「パーフェクトブルー」「時をかける少女」— 日本的な夢幻感
 - Gustav Klimt — 装飾的な色と人物の融合
+- **既存Zoraコレクション5作品**（本ガイドの根拠）
 
 ---
 
 ## 更新ルール
-- 新しい作品を作ったら、使ったパラメータで効果が高かったものをこのガイドに追記する
+- 新しい作品を作ったら、効果が高かったパラメータをこのガイドに追記する
 - `/visual-style-update` スキルで更新する（作成予定）
