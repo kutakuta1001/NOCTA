@@ -12,7 +12,7 @@
 
 | # | ドキュメント | URL | status | reviewed | findings |
 |---|---|---|---|---|---|
-| 1 | Best Practices | https://code.claude.com/docs/en/best-practices.md | pending | - | - |
+| 1 | Best Practices | https://code.claude.com/docs/en/best-practices.md | done | 2026-04-05 | CLAUDE.md肥大化・/compact改善・/btw未使用 |
 | 2 | Memory & CLAUDE.md | https://code.claude.com/docs/en/memory.md | pending | - | - |
 | 3 | Hooks Guide | https://code.claude.com/docs/en/hooks-guide.md | pending | - | - |
 | 4 | Hooks Reference | https://code.claude.com/docs/en/hooks.md | pending | - | - |
