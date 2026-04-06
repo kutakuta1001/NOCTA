@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/session-start.sh",
+            "statusMessage": "プロジェクト情報を自動読み込み中..."
+          }
+        ]
+      }
+    ]
+  },
+  "disabledMcpjsonServers": ["voicevox"]
+}

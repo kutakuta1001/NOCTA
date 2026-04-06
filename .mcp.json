@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "voicevox": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["mcp-simple-voicevox"],
+      "env": {
+        "VOICEVOX_URL": "http://localhost:50021"
+      }
+    }
+  }
+}
