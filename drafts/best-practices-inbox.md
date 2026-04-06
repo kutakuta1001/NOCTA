@@ -39,3 +39,9 @@
 - https://developers.openai.com/blog/designing-delightful-frontends-with-gpt-5-4 （2026-04-06）
 - https://dev.classmethod.jp/articles/kiro-cli-nyuumon/ （2026-04-06）
 - https://qiita.com/nogataka/items/c2e73515e65533986421 （2026-04-06）
+- https://blog.lai.so/agent-teams/ （2026-04-06）
+- https://note.com/masa_wunder/n/n984af0385d7e （2026-04-06）
+- https://x.com/kawai_design/status/2018951551646318782 （2026-04-06）
+- https://blog.comfy.org/p/ace-step-15-is-now-available-in-comfyui （2026-04-06）
+- https://note.com/small_biz_lab/n/n01fcddd73b20 （2026-04-06）
+- https://note.com/timakin/n/n5579d01bb3bb （2026-04-06）
