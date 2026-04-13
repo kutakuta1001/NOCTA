@@ -25,18 +25,25 @@
 ---
 
 ## 未処理
-
+- https://x.com/i/status/2038286026284667239 | 
+- https://x.com/i/status/2039840802504077655 | 
+- https://x.com/i/status/2041489622061273471 | 
+- https://x.com/i/status/2042601431409267004 | 
+- https://x.com/i/status/2042237392510484504 | 
+- https://x.com/i/status/2041593803522634178 | 
+- https://x.com/i/status/2042555449116102988 | 
+- https://x.com/i/status/2042758779301957823 | 
+- https://x.com/i/status/2042241063612502162 | 
 ## 処理済み
 
-- https://qiita.com/nogataka/items/c2e73515e65533986421 （2026-04-06）
-- https://blog.lai.so/agent-teams/ （2026-04-06）
-- https://note.com/masa_wunder/n/n984af0385d7e （2026-04-06）
-- https://x.com/kawai_design/status/2018951551646318782 （2026-04-06）
-- https://blog.comfy.org/p/ace-step-15-is-now-available-in-comfyui （2026-04-06）
-- https://note.com/small_biz_lab/n/n01fcddd73b20 （2026-04-06）
-- https://note.com/timakin/n/n5579d01bb3bb （2026-04-06）
-- https://x.com/HayattiQ/status/2021057206939156505 （2026-04-07）
-- https://x.com/Hoshino_AISales/status/2033425547989258354 （2026-04-07）
-- https://x.com/ai_jitan/status/2033383556085588289 （2026-04-07）
+- [docs.anthropic.com] モデル一覧 — Opus 4.6 価格 $5/$25/MTok（旧比1/3） （2026-04-13）
+- [docs.anthropic.com] モデル一覧 — 1M トークン コンテキスト（ベータ）対応 （2026-04-13）
+- [docs.anthropic.com] モデル一覧 — Opus 4.6 最大出力 128K （2026-04-13）
+- [docs.anthropic.com] CHANGELOG v2.1.101 — permissions.deny バグ修正 （2026-04-13）
+- [docs.anthropic.com] CHANGELOG v2.1.97 — CJK 入力後 / @メンション使用可 （2026-04-13）
+- [docs.anthropic.com] CHANGELOG v2.1.97 — /agents タブ追加 （2026-04-13）
+- [docs.anthropic.com] CHANGELOG v2.1.94 — デフォルト effort: high に変更 （2026-04-13）
+- [docs.anthropic.com] Claude Code 概要 — /schedule クラウドタスク （2026-04-13）
+- [docs.anthropic.com] Claude Code 概要 — Homebrew 2 cask（自動更新なし） （2026-04-13）
 - https://zenn.dev/lv/articles/b772312d6abf35 （2026-04-07）
 - https://x.com/MakeAI_CEO/status/2041363825631658448 （2026-04-07）
