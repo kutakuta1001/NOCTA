@@ -25,17 +25,17 @@
 ---
 
 ## 未処理
-- https://x.com/i/status/2038286026284667239 | 
-- https://x.com/i/status/2039840802504077655 | 
-- https://x.com/i/status/2041489622061273471 | 
-- https://x.com/i/status/2042601431409267004 | 
-- https://x.com/i/status/2042237392510484504 | 
-- https://x.com/i/status/2041593803522634178 | 
-- https://x.com/i/status/2042555449116102988 | 
-- https://x.com/i/status/2042758779301957823 | 
-- https://x.com/i/status/2042241063612502162 | 
+
 ## 処理済み
 
+- https://x.com/i/status/2038286026284667239 （2026-04-16）
+- https://x.com/i/status/2039840802504077655 （2026-04-16）
+- https://x.com/i/status/2041489622061273471 （2026-04-16）
+- https://x.com/i/status/2042601431409267004 （2026-04-16）
+- https://x.com/i/status/2042237392510484504 （2026-04-16）
+- https://x.com/i/status/2042555449116102988 （2026-04-16）
+- https://x.com/i/status/2042758779301957823 （2026-04-16）
+- https://x.com/i/status/2042241063612502162 （2026-04-16）
 - [docs.anthropic.com] モデル一覧 — Opus 4.6 価格 $5/$25/MTok（旧比1/3） （2026-04-13）
 - [docs.anthropic.com] モデル一覧 — 1M トークン コンテキスト（ベータ）対応 （2026-04-13）
 - [docs.anthropic.com] モデル一覧 — Opus 4.6 最大出力 128K （2026-04-13）
