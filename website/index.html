@@ -1324,6 +1324,8 @@
                         class="absolute -top-9 right-0 font-heading text-[11px] tracking-[2px] uppercase text-brand-sub hover:text-white transition-colors duration-200">
                     ESC / CLOSE ✕
                 </button>
+                <img id="app-modal-img" src="" alt=""
+                     class="w-full aspect-video rounded-2xl object-cover" style="display:none">
                 <div id="app-modal-thumb" class="thumb-1 w-full aspect-video rounded-2xl flex items-center justify-center">
                     <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
                         <circle cx="24" cy="24" r="22" stroke="rgba(200,162,255,0.35)" stroke-width="1"/>
@@ -1699,13 +1701,15 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             var col    = i % 3;
             var delay  = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
             var dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
+            var imgArg = a.imgUrl ? '\'' + a.imgUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' : '\'\'';
             var onclick = ' onclick="openApp(' +
                 '\'' + a.url.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
                 '\'' + a.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
                 '\'' + a.thumbClass + '\',' +
                 '\'' + a.badge + '\',' +
                 '\'' + a.badgeColorClass + '\',' +
-                '\'' + a.descJa.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' +
+                '\'' + a.descJa.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+                imgArg +
                 ')"';
 
             return [
@@ -1718,6 +1722,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                 '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(200,162,255,0.55)"/>',
                 '      </svg>',
                 '    </div>',
+                a.imgUrl ? '    <img src="' + a.imgUrl + '" alt="' + a.title.replace(/"/g, '&quot;') + '" loading="lazy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.style.display=\'none\'">' : '',
                 '    <div class="thumb-overlay"></div>',
                 '  </div>',
                 '  <div class="p-6">',
@@ -1849,10 +1854,19 @@ function closeVisual() {
 }
 
 /* ---- App Modal ---- */
-    function openApp(url, title, thumbClass, badge, badgeClass, desc) {
+    function openApp(url, title, thumbClass, badge, badgeClass, desc, imgUrl) {
         var modal = document.getElementById('app-modal');
         var thumb = document.getElementById('app-modal-thumb');
-        thumb.className = thumbClass + ' w-full aspect-video rounded-2xl flex items-center justify-center';
+        var modalImg = document.getElementById('app-modal-img');
+        if (imgUrl && modalImg) {
+            modalImg.src = imgUrl;
+            modalImg.style.display = 'block';
+            thumb.style.display = 'none';
+        } else {
+            if (modalImg) modalImg.style.display = 'none';
+            thumb.style.display = '';
+            thumb.className = thumbClass + ' w-full aspect-video rounded-2xl flex items-center justify-center';
+        }
         document.getElementById('app-modal-title').textContent = title;
         var badgeEl = document.getElementById('app-modal-badge');
         badgeEl.textContent = badge;
@@ -1866,6 +1880,8 @@ function closeVisual() {
     function closeApp() {
         var modal = document.getElementById('app-modal');
         if (!modal) return;
+        var modalImg = document.getElementById('app-modal-img');
+        if (modalImg) { modalImg.src = ''; modalImg.style.display = 'none'; }
         modal.classList.add('hidden');
         document.body.style.overflow = '';
     }
