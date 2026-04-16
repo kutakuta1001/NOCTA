@@ -14,33 +14,33 @@
  */
 const NOCTA_APPS = [
   {
-    title: "Thought Network",
+    title: "NuWord Seed",
     cat: "app",
-    url: "https://example.com/thought-network",
+    url: "https://nuword-nu.vercel.app/seed",
     thumbClass: "thumb-3",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "過去のメモを起点に、自分の思考をネットワーク状に可視化・記録できるウェブアプリ。",
-    descEn: "A web app to visualize and record your thoughts as a network, starting from past notes."
+    descJa: "思考の種を蒔く、カード型メモアプリ。アイデアをカードに書き、リンクでつなぎ、育てる。",
+    descEn: "A card-based note app to plant and grow ideas. Write, link, and cultivate your thoughts."
   },
   {
-    title: "Book Highlights",
+    title: "NuWord Verse",
     cat: "app",
-    url: "https://example.com/book-highlights",
+    url: "https://nuword-nu.vercel.app/verse",
     thumbClass: "thumb-2",
     badge: "App",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "読書中に出会った印象的な文章をストックし、ランダムに表示するウェブアプリ。",
-    descEn: "A web app to store and randomly display memorable passages encountered while reading."
+    descJa: "詩節のように言葉を手もとに置く。読書中に出会った印象的な一文をストックするウェブアプリ。",
+    descEn: "Keep words close, like verses. A web app to collect and revisit memorable lines from your reading."
   },
   {
-    title: "Self Reflection",
+    title: "NuWord inner canvas",
     cat: "app",
-    url: "https://example.com/self-reflection",
+    url: "https://nner-canvas.vercel.app",
     thumbClass: "thumb-1",
     badge: "App",
     badgeColorClass: "bg-brand-primary/20 text-brand-primary",
-    descJa: "日々の内省を記録し、自己理解を深めるためのウェブアプリ。",
-    descEn: "A web app for recording daily reflections and deepening self-understanding."
+    descJa: "書いた言葉が鏡になり、自分の姿を映す。AIと対話しながら内省を深めるキャンバス。",
+    descEn: "Words become a mirror. An AI-assisted canvas for deep self-reflection and inner dialogue."
   }
 ];
