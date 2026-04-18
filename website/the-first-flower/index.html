@@ -248,22 +248,22 @@
            DYNAMIC EFFECTS
         ═══════════════════════════════════ */
 
-        /* Hero: particle canvas */
-        #tff-hero-canvas {
+        /* Profile: particle canvas */
+        #tff-profile-canvas {
             position: absolute; inset: 0;
             width: 100%; height: 100%;
-            pointer-events: none; z-index: 1;
+            pointer-events: none; z-index: 2;
         }
 
-        /* Hero: shimmer title */
+        /* Profile: shimmer heading (on light bg — darker palette) */
         @keyframes tffShimmer {
             0%   { background-position: -200% center; }
             100% { background-position:  200% center; }
         }
-        .tff-shimmer-text {
+        .tff-shimmer-profile {
             background: linear-gradient(90deg,
-                #fff 0%, #EEA4C0 18%, #FDD9D9 32%,
-                #A6DDD6 50%, #B8E3B7 65%, #fff 78%, #EEA4C0 100%);
+                #705E92 0%, #B168A8 20%, #EEA4C0 35%,
+                #A6DDD6 50%, #B8E3B7 65%, #B168A8 80%, #705E92 100%);
             background-size: 300% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -271,19 +271,19 @@
             animation: tffShimmer 10s linear infinite;
         }
 
-        /* Hero: floating symbols */
+        /* Profile: floating symbols (adapted for light bg) */
         @keyframes tffSym {
-            0%,100% { transform: translateY(0) rotate(0deg);         opacity: 0.5; }
-            50%      { transform: translateY(-16px) rotate(20deg);    opacity: 0.85; }
+            0%,100% { transform: translateY(0) rotate(0deg);         opacity: 0.38; }
+            50%      { transform: translateY(-16px) rotate(20deg);    opacity: 0.70; }
         }
         @keyframes tffSym2 {
-            0%,100% { transform: translateY(0) rotate(0deg) scale(1);      opacity: 0.35; }
-            50%      { transform: translateY(-22px) rotate(-15deg) scale(1.2); opacity: 0.70; }
+            0%,100% { transform: translateY(0) rotate(0deg) scale(1);      opacity: 0.25; }
+            50%      { transform: translateY(-22px) rotate(-15deg) scale(1.2); opacity: 0.58; }
         }
         @keyframes tffSym3 {
-            0%,100% { transform: translateY(0) rotate(0deg);        opacity: 0.40; }
-            40%      { transform: translateY(-10px) rotate(10deg);   opacity: 0.75; }
-            80%      { transform: translateY(-5px) rotate(-5deg);    opacity: 0.55; }
+            0%,100% { transform: translateY(0) rotate(0deg);        opacity: 0.30; }
+            40%      { transform: translateY(-10px) rotate(10deg);   opacity: 0.62; }
+            80%      { transform: translateY(-5px) rotate(-5deg);    opacity: 0.42; }
         }
         .tff-sym-1 { animation: tffSym   5s  ease-in-out infinite; }
         .tff-sym-2 { animation: tffSym2  7s  ease-in-out infinite; animation-delay: 1.5s; }
@@ -326,25 +326,40 @@
         .tff-tw-5 { animation: tffTwinkle  4.5s ease-in-out infinite; animation-delay: 0.5s; }
         .tff-tw-6 { animation: tffTwinkle2 6s   ease-in-out infinite; animation-delay: 3s;   }
 
-        /* Blog: drifting petals */
-        @keyframes tffPetal {
-            0%   { transform: translateY(60px) rotate(0deg)   translateX(0);    opacity: 0; }
-            10%  { opacity: 0.55; }
-            90%  { opacity: 0.25; }
-            100% { transform: translateY(-50px) rotate(180deg) translateX(18px); opacity: 0; }
+        /* Hero: falling sakura petals */
+        @keyframes sakura-a {
+            0%   { transform: translateY(-20px) translateX(0) rotate(0deg);       opacity: 0; }
+            8%   { opacity: 0.72; }
+            90%  { opacity: 0.30; }
+            100% { transform: translateY(110vh) translateX(42px) rotate(540deg);  opacity: 0; }
         }
-        @keyframes tffPetal2 {
-            0%   { transform: translateY(80px) rotate(45deg)  translateX(0);     opacity: 0; }
-            15%  { opacity: 0.45; }
-            85%  { opacity: 0.20; }
-            100% { transform: translateY(-30px) rotate(-120deg) translateX(-14px); opacity: 0; }
+        @keyframes sakura-b {
+            0%   { transform: translateY(-20px) translateX(0) rotate(20deg);      opacity: 0; }
+            10%  { opacity: 0.62; }
+            88%  { opacity: 0.22; }
+            100% { transform: translateY(110vh) translateX(-36px) rotate(-500deg); opacity: 0; }
         }
-        .tff-pt-1 { animation: tffPetal  8s  ease-in-out infinite; }
-        .tff-pt-2 { animation: tffPetal2 10s ease-in-out infinite; animation-delay: 1.5s; }
-        .tff-pt-3 { animation: tffPetal  12s ease-in-out infinite; animation-delay: 3s;   }
-        .tff-pt-4 { animation: tffPetal2 9s  ease-in-out infinite; animation-delay: 5s;   }
-        .tff-pt-5 { animation: tffPetal  11s ease-in-out infinite; animation-delay: 7s;   }
-        .tff-pt-6 { animation: tffPetal2 13s ease-in-out infinite; animation-delay: 2.5s; }
+        @keyframes sakura-c {
+            0%   { transform: translateY(-20px) translateX(0) rotate(-10deg);     opacity: 0; }
+            6%   { opacity: 0.68; }
+            92%  { opacity: 0.18; }
+            100% { transform: translateY(110vh) translateX(22px) rotate(480deg);  opacity: 0; }
+        }
+        .tff-sk-sm { position: absolute; top: 0; line-height: 1; font-size: 10px; pointer-events: none; }
+        .tff-sk-md { position: absolute; top: 0; line-height: 1; font-size: 17px; pointer-events: none; }
+        .tff-sk-lg { position: absolute; top: 0; line-height: 1; font-size: 25px; pointer-events: none; }
+
+        /* Blog: ripple rings */
+        @keyframes tffRipple {
+            0%   { transform: scale(0.08); opacity: 0; }
+            18%  { opacity: 0.48; }
+            100% { transform: scale(1);    opacity: 0; }
+        }
+        .tff-ripple {
+            position: absolute; border-radius: 50%;
+            border: 1.5px solid; pointer-events: none;
+            animation: tffRipple ease-out infinite;
+        }
     </style>
 </head>
 <body>
@@ -376,22 +391,34 @@
          HERO
     ═══════════════════════════════════ -->
     <section id="top" class="photo-section hero-bg min-h-screen flex items-center justify-center text-center">
-        <canvas id="tff-hero-canvas"></canvas>
         <div class="photo-overlay" style="background: rgba(61,46,82,0.45);"></div>
-        <!-- Floating symbols -->
-        <div class="absolute inset-0 pointer-events-none z-[2] overflow-hidden">
-            <span class="tff-sym-1 absolute" style="top:18%;left:7%;font-size:15px;color:rgba(238,164,192,0.65);">✿</span>
-            <span class="tff-sym-2 absolute" style="top:28%;right:9%;font-size:11px;color:rgba(166,221,214,0.70);">✦</span>
-            <span class="tff-sym-3 absolute" style="top:62%;left:13%;font-size:10px;color:rgba(253,217,217,0.60);">❀</span>
-            <span class="tff-sym-4 absolute" style="top:22%;right:22%;font-size:12px;color:rgba(177,104,168,0.55);">✧</span>
-            <span class="tff-sym-5 absolute" style="bottom:28%;right:6%;font-size:16px;color:rgba(238,164,192,0.50);">✿</span>
-            <span class="tff-sym-1 absolute" style="bottom:32%;left:5%;font-size:9px;color:rgba(166,221,214,0.55);">✦</span>
-            <span class="tff-sym-3 absolute" style="top:45%;left:2%;font-size:13px;color:rgba(253,217,217,0.45);">✧</span>
-            <span class="tff-sym-2 absolute" style="top:12%;left:48%;font-size:8px;color:rgba(184,227,183,0.55);">❀</span>
+        <!-- Falling sakura petals -->
+        <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
+            <!-- small -->
+            <span class="tff-sk-sm absolute" style="left:4%;animation:sakura-a 12s ease-in-out -2s infinite;color:rgba(238,164,192,0.75);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:14%;animation:sakura-b 9s ease-in-out -5s infinite;color:rgba(253,217,217,0.65);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:28%;animation:sakura-c 14s ease-in-out -8s infinite;color:rgba(238,164,192,0.60);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:52%;animation:sakura-a 11s ease-in-out -1s infinite;color:rgba(253,217,217,0.70);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:67%;animation:sakura-b 13s ease-in-out -6s infinite;color:rgba(238,164,192,0.55);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:80%;animation:sakura-c 10s ease-in-out -3s infinite;color:rgba(253,217,217,0.60);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:92%;animation:sakura-a 15s ease-in-out -9s infinite;color:rgba(238,164,192,0.50);">✿</span>
+            <!-- medium -->
+            <span class="tff-sk-md absolute" style="left:8%;animation:sakura-b 16s ease-in-out -4s infinite;color:rgba(238,164,192,0.55);">✿</span>
+            <span class="tff-sk-md absolute" style="left:22%;animation:sakura-c 11s ease-in-out -7s infinite;color:rgba(253,217,217,0.50);">❀</span>
+            <span class="tff-sk-md absolute" style="left:38%;animation:sakura-a 13s ease-in-out -11s infinite;color:rgba(238,164,192,0.60);">✿</span>
+            <span class="tff-sk-md absolute" style="left:58%;animation:sakura-b 9s ease-in-out -2s infinite;color:rgba(253,217,217,0.45);">❀</span>
+            <span class="tff-sk-md absolute" style="left:74%;animation:sakura-c 14s ease-in-out -5s infinite;color:rgba(238,164,192,0.50);">✿</span>
+            <span class="tff-sk-md absolute" style="left:88%;animation:sakura-a 12s ease-in-out -8s infinite;color:rgba(253,217,217,0.55);">❀</span>
+            <span class="tff-sk-md absolute" style="left:46%;animation:sakura-c 10s ease-in-out -10s infinite;color:rgba(238,164,192,0.45);">✿</span>
+            <!-- large -->
+            <span class="tff-sk-lg absolute" style="left:18%;animation:sakura-a 15s ease-in-out -3s infinite;color:rgba(238,164,192,0.40);">✿</span>
+            <span class="tff-sk-lg absolute" style="left:44%;animation:sakura-b 12s ease-in-out -6s infinite;color:rgba(253,217,217,0.38);">❀</span>
+            <span class="tff-sk-lg absolute" style="left:72%;animation:sakura-c 16s ease-in-out -1s infinite;color:rgba(238,164,192,0.35);">✿</span>
+            <span class="tff-sk-lg absolute" style="left:95%;animation:sakura-a 11s ease-in-out -9s infinite;color:rgba(253,217,217,0.42);">❀</span>
         </div>
         <div class="photo-content px-6">
             <p class="font-serif italic text-white/50 text-[13px] tracking-[4px] mb-6 tff-reveal">— what is a good life —</p>
-            <h1 class="font-serif tff-shimmer-text leading-none mb-4 tff-reveal" style="font-size: clamp(48px, 9vw, 110px); letter-spacing: 0.04em;">
+            <h1 class="font-serif text-white leading-none mb-4 tff-reveal" style="font-size: clamp(48px, 9vw, 110px); letter-spacing: 0.04em;">
                 The First Flower
             </h1>
             <div class="tff-divider tff-reveal"></div>
@@ -404,6 +431,19 @@
          PROFILE
     ═══════════════════════════════════ -->
     <section id="profile" class="photo-section profile-bg py-24 px-6 overflow-hidden">
+        <!-- Particle canvas (moved from hero) -->
+        <canvas id="tff-profile-canvas"></canvas>
+        <!-- Floating symbols (moved from hero, softer for light bg) -->
+        <div class="absolute inset-0 pointer-events-none z-[3] overflow-hidden">
+            <span class="tff-sym-1 absolute" style="top:12%;left:5%;font-size:14px;color:rgba(177,104,168,0.45);">✿</span>
+            <span class="tff-sym-2 absolute" style="top:22%;right:7%;font-size:10px;color:rgba(166,221,214,0.50);">✦</span>
+            <span class="tff-sym-3 absolute" style="top:58%;left:10%;font-size:9px;color:rgba(238,164,192,0.42);">❀</span>
+            <span class="tff-sym-4 absolute" style="top:18%;right:18%;font-size:11px;color:rgba(177,104,168,0.38);">✧</span>
+            <span class="tff-sym-5 absolute" style="bottom:22%;right:5%;font-size:15px;color:rgba(238,164,192,0.35);">✿</span>
+            <span class="tff-sym-1 absolute" style="bottom:28%;left:4%;font-size:8px;color:rgba(166,221,214,0.40);">✦</span>
+            <span class="tff-sym-3 absolute" style="top:42%;left:2%;font-size:12px;color:rgba(184,227,183,0.38);">✧</span>
+            <span class="tff-sym-2 absolute" style="top:8%;left:45%;font-size:7px;color:rgba(177,104,168,0.42);">❀</span>
+        </div>
         <!-- Glow orbs -->
         <div class="absolute inset-0 pointer-events-none z-0">
             <div class="tff-orb tff-orb-1" style="width:520px;height:520px;top:-160px;left:-140px;background:radial-gradient(circle,rgba(238,164,192,0.25),transparent 70%);"></div>
@@ -415,7 +455,7 @@
             <!-- Title -->
             <div class="text-center mb-16 tff-reveal">
                 <p class="font-serif italic text-tff-sub text-[13px] tracking-[4px] mb-3">Кто это?</p>
-                <h2 class="font-serif text-tff-dark text-[42px] lg:text-[56px] leading-none tracking-wide">Profile</h2>
+                <h2 class="font-serif tff-shimmer-profile text-[42px] lg:text-[56px] leading-none tracking-wide">Profile</h2>
                 <div class="tff-divider" style="background: #B168A8;"></div>
             </div>
 
@@ -505,14 +545,16 @@
     ═══════════════════════════════════ -->
     <section id="blog" class="photo-section blog-bg py-24 px-6">
         <div class="photo-overlay" style="background: rgba(61,46,82,0.35);"></div>
-        <!-- Drifting petals -->
+        <!-- Ripple rings -->
         <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
-            <span class="tff-pt-1 absolute" style="top:20%;left:6%;font-size:13px;color:rgba(238,164,192,0.60);">✿</span>
-            <span class="tff-pt-2 absolute" style="top:48%;right:8%;font-size:10px;color:rgba(166,221,214,0.55);">❀</span>
-            <span class="tff-pt-3 absolute" style="top:68%;left:22%;font-size:12px;color:rgba(253,217,217,0.50);">✿</span>
-            <span class="tff-pt-4 absolute" style="top:32%;left:57%;font-size:9px;color:rgba(177,104,168,0.55);">✦</span>
-            <span class="tff-pt-5 absolute" style="bottom:22%;right:14%;font-size:14px;color:rgba(238,164,192,0.45);">❀</span>
-            <span class="tff-pt-6 absolute" style="top:15%;right:32%;font-size:11px;color:rgba(184,227,183,0.55);">✿</span>
+            <div class="tff-ripple" style="width:110px;height:110px;top:15%;left:5%;border-color:rgba(238,164,192,0.45);animation-duration:5s;animation-delay:0s;"></div>
+            <div class="tff-ripple" style="width:180px;height:180px;top:55%;left:18%;border-color:rgba(166,221,214,0.38);animation-duration:7s;animation-delay:1.5s;"></div>
+            <div class="tff-ripple" style="width:90px;height:90px;top:28%;left:40%;border-color:rgba(253,217,217,0.50);animation-duration:4.5s;animation-delay:3s;"></div>
+            <div class="tff-ripple" style="width:140px;height:140px;top:12%;right:8%;border-color:rgba(177,104,168,0.40);animation-duration:6s;animation-delay:0.8s;"></div>
+            <div class="tff-ripple" style="width:200px;height:200px;bottom:10%;right:12%;border-color:rgba(255,255,255,0.22);animation-duration:8s;animation-delay:2s;"></div>
+            <div class="tff-ripple" style="width:80px;height:80px;top:68%;right:32%;border-color:rgba(238,164,192,0.42);animation-duration:5.5s;animation-delay:4s;"></div>
+            <div class="tff-ripple" style="width:160px;height:160px;top:40%;right:5%;border-color:rgba(166,221,214,0.32);animation-duration:7.5s;animation-delay:1s;"></div>
+            <div class="tff-ripple" style="width:120px;height:120px;bottom:25%;left:48%;border-color:rgba(177,104,168,0.35);animation-duration:6.5s;animation-delay:3.5s;"></div>
         </div>
         <div class="photo-content max-w-5xl mx-auto">
 
@@ -762,9 +804,9 @@
     </script>
 
     <script>
-    /* ---- Hero Particle Canvas ---- */
+    /* ---- Profile Particle Canvas ---- */
     (function () {
-        var canvas = document.getElementById('tff-hero-canvas');
+        var canvas = document.getElementById('tff-profile-canvas');
         if (!canvas) return;
         var ctx = canvas.getContext('2d');
         var W, H, particles = [];
