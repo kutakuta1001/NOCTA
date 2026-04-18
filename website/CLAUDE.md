@@ -108,6 +108,8 @@ const NOCTA_APPS = [ ... ];
 
 ## デザインシステム
 
+詳細仕様: `@website/DESIGN.md`（カラートークン・タイポグラフィ・ビジュアルアセット生成ガイドを含む）
+
 - CSSフレームワーク: Tailwind CSS（CDN）
 - フォント: `font-display`（見出し）/ `font-heading`（小見出し）/ `font-jp`（日本語本文）
 - ブランドカラー: `text-brand-secondary`（グリーン系アクセント）
