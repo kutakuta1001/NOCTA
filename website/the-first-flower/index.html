@@ -326,24 +326,30 @@
         .tff-tw-5 { animation: tffTwinkle  4.5s ease-in-out infinite; animation-delay: 0.5s; }
         .tff-tw-6 { animation: tffTwinkle2 6s   ease-in-out infinite; animation-delay: 3s;   }
 
-        /* Hero: falling sakura petals */
+        /* Hero: falling sakura petals (slow, multi-stage sway) */
         @keyframes sakura-a {
-            0%   { transform: translateY(-20px) translateX(0) rotate(0deg);       opacity: 0; }
-            8%   { opacity: 0.72; }
-            90%  { opacity: 0.30; }
-            100% { transform: translateY(110vh) translateX(42px) rotate(540deg);  opacity: 0; }
+            0%   { transform: translateY(-20px) translateX(0)    rotate(0deg);   opacity: 0; }
+            6%   { opacity: 0.72; }
+            25%  { transform: translateY(25vh)  translateX(32px) rotate(70deg);  }
+            50%  { transform: translateY(52vh)  translateX(-18px) rotate(170deg); }
+            75%  { transform: translateY(78vh)  translateX(28px) rotate(290deg); opacity: 0.32; }
+            100% { transform: translateY(112vh) translateX(-10px) rotate(400deg); opacity: 0; }
         }
         @keyframes sakura-b {
-            0%   { transform: translateY(-20px) translateX(0) rotate(20deg);      opacity: 0; }
-            10%  { opacity: 0.62; }
-            88%  { opacity: 0.22; }
-            100% { transform: translateY(110vh) translateX(-36px) rotate(-500deg); opacity: 0; }
+            0%   { transform: translateY(-20px) translateX(0)    rotate(15deg);  opacity: 0; }
+            8%   { opacity: 0.65; }
+            30%  { transform: translateY(28vh)  translateX(-28px) rotate(80deg); }
+            55%  { transform: translateY(56vh)  translateX(22px) rotate(185deg); }
+            78%  { transform: translateY(82vh)  translateX(-30px) rotate(300deg); opacity: 0.25; }
+            100% { transform: translateY(112vh) translateX(12px) rotate(420deg); opacity: 0; }
         }
         @keyframes sakura-c {
-            0%   { transform: translateY(-20px) translateX(0) rotate(-10deg);     opacity: 0; }
-            6%   { opacity: 0.68; }
-            92%  { opacity: 0.18; }
-            100% { transform: translateY(110vh) translateX(22px) rotate(480deg);  opacity: 0; }
+            0%   { transform: translateY(-20px) translateX(0)    rotate(-8deg);  opacity: 0; }
+            7%   { opacity: 0.68; }
+            20%  { transform: translateY(20vh)  translateX(20px) rotate(55deg);  }
+            45%  { transform: translateY(46vh)  translateX(-24px) rotate(160deg); }
+            70%  { transform: translateY(72vh)  translateX(18px) rotate(270deg); opacity: 0.28; }
+            100% { transform: translateY(112vh) translateX(-8px) rotate(380deg); opacity: 0; }
         }
         .tff-sk-sm { position: absolute; top: 0; line-height: 1; font-size: 10px; pointer-events: none; }
         .tff-sk-md { position: absolute; top: 0; line-height: 1; font-size: 17px; pointer-events: none; }
@@ -352,12 +358,13 @@
         /* Blog: ripple rings */
         @keyframes tffRipple {
             0%   { transform: scale(0.08); opacity: 0; }
-            18%  { opacity: 0.48; }
+            15%  { opacity: 0.75; }
+            60%  { opacity: 0.40; }
             100% { transform: scale(1);    opacity: 0; }
         }
         .tff-ripple {
             position: absolute; border-radius: 50%;
-            border: 1.5px solid; pointer-events: none;
+            border: 2px solid; pointer-events: none;
             animation: tffRipple ease-out infinite;
         }
     </style>
@@ -392,29 +399,29 @@
     ═══════════════════════════════════ -->
     <section id="top" class="photo-section hero-bg min-h-screen flex items-center justify-center text-center">
         <div class="photo-overlay" style="background: rgba(61,46,82,0.45);"></div>
-        <!-- Falling sakura petals -->
+        <!-- Falling sakura petals (slow sway) -->
         <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
             <!-- small -->
-            <span class="tff-sk-sm absolute" style="left:4%;animation:sakura-a 12s ease-in-out -2s infinite;color:rgba(238,164,192,0.75);">✿</span>
-            <span class="tff-sk-sm absolute" style="left:14%;animation:sakura-b 9s ease-in-out -5s infinite;color:rgba(253,217,217,0.65);">❀</span>
-            <span class="tff-sk-sm absolute" style="left:28%;animation:sakura-c 14s ease-in-out -8s infinite;color:rgba(238,164,192,0.60);">✿</span>
-            <span class="tff-sk-sm absolute" style="left:52%;animation:sakura-a 11s ease-in-out -1s infinite;color:rgba(253,217,217,0.70);">❀</span>
-            <span class="tff-sk-sm absolute" style="left:67%;animation:sakura-b 13s ease-in-out -6s infinite;color:rgba(238,164,192,0.55);">✿</span>
-            <span class="tff-sk-sm absolute" style="left:80%;animation:sakura-c 10s ease-in-out -3s infinite;color:rgba(253,217,217,0.60);">❀</span>
-            <span class="tff-sk-sm absolute" style="left:92%;animation:sakura-a 15s ease-in-out -9s infinite;color:rgba(238,164,192,0.50);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:4%;animation:sakura-a 22s ease-in-out -4s infinite;color:rgba(238,164,192,0.75);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:14%;animation:sakura-b 18s ease-in-out -10s infinite;color:rgba(253,217,217,0.65);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:28%;animation:sakura-c 26s ease-in-out -14s infinite;color:rgba(238,164,192,0.60);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:52%;animation:sakura-a 20s ease-in-out -2s infinite;color:rgba(253,217,217,0.70);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:67%;animation:sakura-b 24s ease-in-out -8s infinite;color:rgba(238,164,192,0.55);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:80%;animation:sakura-c 19s ease-in-out -6s infinite;color:rgba(253,217,217,0.60);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:92%;animation:sakura-a 28s ease-in-out -17s infinite;color:rgba(238,164,192,0.50);">✿</span>
             <!-- medium -->
-            <span class="tff-sk-md absolute" style="left:8%;animation:sakura-b 16s ease-in-out -4s infinite;color:rgba(238,164,192,0.55);">✿</span>
-            <span class="tff-sk-md absolute" style="left:22%;animation:sakura-c 11s ease-in-out -7s infinite;color:rgba(253,217,217,0.50);">❀</span>
-            <span class="tff-sk-md absolute" style="left:38%;animation:sakura-a 13s ease-in-out -11s infinite;color:rgba(238,164,192,0.60);">✿</span>
-            <span class="tff-sk-md absolute" style="left:58%;animation:sakura-b 9s ease-in-out -2s infinite;color:rgba(253,217,217,0.45);">❀</span>
-            <span class="tff-sk-md absolute" style="left:74%;animation:sakura-c 14s ease-in-out -5s infinite;color:rgba(238,164,192,0.50);">✿</span>
-            <span class="tff-sk-md absolute" style="left:88%;animation:sakura-a 12s ease-in-out -8s infinite;color:rgba(253,217,217,0.55);">❀</span>
-            <span class="tff-sk-md absolute" style="left:46%;animation:sakura-c 10s ease-in-out -10s infinite;color:rgba(238,164,192,0.45);">✿</span>
+            <span class="tff-sk-md absolute" style="left:8%;animation:sakura-b 25s ease-in-out -7s infinite;color:rgba(238,164,192,0.55);">✿</span>
+            <span class="tff-sk-md absolute" style="left:22%;animation:sakura-c 21s ease-in-out -13s infinite;color:rgba(253,217,217,0.50);">❀</span>
+            <span class="tff-sk-md absolute" style="left:38%;animation:sakura-a 23s ease-in-out -19s infinite;color:rgba(238,164,192,0.60);">✿</span>
+            <span class="tff-sk-md absolute" style="left:58%;animation:sakura-b 18s ease-in-out -3s infinite;color:rgba(253,217,217,0.45);">❀</span>
+            <span class="tff-sk-md absolute" style="left:74%;animation:sakura-c 27s ease-in-out -9s infinite;color:rgba(238,164,192,0.50);">✿</span>
+            <span class="tff-sk-md absolute" style="left:88%;animation:sakura-a 20s ease-in-out -15s infinite;color:rgba(253,217,217,0.55);">❀</span>
+            <span class="tff-sk-md absolute" style="left:46%;animation:sakura-c 22s ease-in-out -11s infinite;color:rgba(238,164,192,0.45);">✿</span>
             <!-- large -->
-            <span class="tff-sk-lg absolute" style="left:18%;animation:sakura-a 15s ease-in-out -3s infinite;color:rgba(238,164,192,0.40);">✿</span>
-            <span class="tff-sk-lg absolute" style="left:44%;animation:sakura-b 12s ease-in-out -6s infinite;color:rgba(253,217,217,0.38);">❀</span>
-            <span class="tff-sk-lg absolute" style="left:72%;animation:sakura-c 16s ease-in-out -1s infinite;color:rgba(238,164,192,0.35);">✿</span>
-            <span class="tff-sk-lg absolute" style="left:95%;animation:sakura-a 11s ease-in-out -9s infinite;color:rgba(253,217,217,0.42);">❀</span>
+            <span class="tff-sk-lg absolute" style="left:18%;animation:sakura-a 28s ease-in-out -5s infinite;color:rgba(238,164,192,0.40);">✿</span>
+            <span class="tff-sk-lg absolute" style="left:44%;animation:sakura-b 24s ease-in-out -12s infinite;color:rgba(253,217,217,0.38);">❀</span>
+            <span class="tff-sk-lg absolute" style="left:72%;animation:sakura-c 26s ease-in-out -2s infinite;color:rgba(238,164,192,0.35);">✿</span>
+            <span class="tff-sk-lg absolute" style="left:95%;animation:sakura-a 21s ease-in-out -18s infinite;color:rgba(253,217,217,0.42);">❀</span>
         </div>
         <div class="photo-content px-6">
             <p class="font-serif italic text-white/50 text-[13px] tracking-[4px] mb-6 tff-reveal">— what is a good life —</p>
@@ -455,7 +462,7 @@
             <!-- Title -->
             <div class="text-center mb-16 tff-reveal">
                 <p class="font-serif italic text-tff-sub text-[13px] tracking-[4px] mb-3">Кто это?</p>
-                <h2 class="font-serif tff-shimmer-profile text-[42px] lg:text-[56px] leading-none tracking-wide">Profile</h2>
+                <h2 class="font-serif text-tff-dark text-[42px] lg:text-[56px] leading-none tracking-wide">Profile</h2>
                 <div class="tff-divider" style="background: #B168A8;"></div>
             </div>
 
@@ -547,14 +554,14 @@
         <div class="photo-overlay" style="background: rgba(61,46,82,0.35);"></div>
         <!-- Ripple rings -->
         <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
-            <div class="tff-ripple" style="width:110px;height:110px;top:15%;left:5%;border-color:rgba(238,164,192,0.45);animation-duration:5s;animation-delay:0s;"></div>
-            <div class="tff-ripple" style="width:180px;height:180px;top:55%;left:18%;border-color:rgba(166,221,214,0.38);animation-duration:7s;animation-delay:1.5s;"></div>
-            <div class="tff-ripple" style="width:90px;height:90px;top:28%;left:40%;border-color:rgba(253,217,217,0.50);animation-duration:4.5s;animation-delay:3s;"></div>
-            <div class="tff-ripple" style="width:140px;height:140px;top:12%;right:8%;border-color:rgba(177,104,168,0.40);animation-duration:6s;animation-delay:0.8s;"></div>
-            <div class="tff-ripple" style="width:200px;height:200px;bottom:10%;right:12%;border-color:rgba(255,255,255,0.22);animation-duration:8s;animation-delay:2s;"></div>
-            <div class="tff-ripple" style="width:80px;height:80px;top:68%;right:32%;border-color:rgba(238,164,192,0.42);animation-duration:5.5s;animation-delay:4s;"></div>
-            <div class="tff-ripple" style="width:160px;height:160px;top:40%;right:5%;border-color:rgba(166,221,214,0.32);animation-duration:7.5s;animation-delay:1s;"></div>
-            <div class="tff-ripple" style="width:120px;height:120px;bottom:25%;left:48%;border-color:rgba(177,104,168,0.35);animation-duration:6.5s;animation-delay:3.5s;"></div>
+            <div class="tff-ripple" style="width:110px;height:110px;top:15%;left:5%;border-color:rgba(238,164,192,0.80);animation-duration:5s;animation-delay:0s;"></div>
+            <div class="tff-ripple" style="width:180px;height:180px;top:55%;left:18%;border-color:rgba(166,221,214,0.72);animation-duration:7s;animation-delay:1.5s;"></div>
+            <div class="tff-ripple" style="width:90px;height:90px;top:28%;left:40%;border-color:rgba(253,217,217,0.85);animation-duration:4.5s;animation-delay:3s;"></div>
+            <div class="tff-ripple" style="width:140px;height:140px;top:12%;right:8%;border-color:rgba(177,104,168,0.75);animation-duration:6s;animation-delay:0.8s;"></div>
+            <div class="tff-ripple" style="width:200px;height:200px;bottom:10%;right:12%;border-color:rgba(255,255,255,0.55);animation-duration:8s;animation-delay:2s;"></div>
+            <div class="tff-ripple" style="width:80px;height:80px;top:68%;right:32%;border-color:rgba(238,164,192,0.78);animation-duration:5.5s;animation-delay:4s;"></div>
+            <div class="tff-ripple" style="width:160px;height:160px;top:40%;right:5%;border-color:rgba(166,221,214,0.68);animation-duration:7.5s;animation-delay:1s;"></div>
+            <div class="tff-ripple" style="width:120px;height:120px;bottom:25%;left:48%;border-color:rgba(177,104,168,0.70);animation-duration:6.5s;animation-delay:3.5s;"></div>
         </div>
         <div class="photo-content max-w-5xl mx-auto">
 
