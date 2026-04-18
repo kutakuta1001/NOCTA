@@ -83,10 +83,13 @@
         .profile-bg {
             background: linear-gradient(135deg,
                 #FDD9D9 0%,
-                #FCFBF5 35%,
-                #A6DDD6 70%,
+                #FCFBF5 25%,
+                #EEA4C0 50%,
+                #A6DDD6 75%,
                 #B8E3B7 100%
             );
+            background-size: 300% 300%;
+            animation: tffProfileMesh 20s ease infinite;
         }
 
         /* ── Quotes Stream ── */
@@ -109,6 +112,30 @@
                 #5E4E82 70%,
                 #3D2E52 100%
             );
+        }
+        /* Aurora: rose帯 */
+        .blog-bg::before {
+            content: "";
+            position: absolute; inset: 0;
+            background: radial-gradient(
+                ellipse 80% 45% at 20% 60%,
+                rgba(238,164,192,0.22) 0%,
+                transparent 70%
+            );
+            animation: tffAuroraA 14s ease-in-out infinite alternate;
+            pointer-events: none; z-index: 0;
+        }
+        /* Aurora: teal帯 */
+        .blog-bg::after {
+            content: "";
+            position: absolute; inset: 0;
+            background: radial-gradient(
+                ellipse 65% 40% at 78% 35%,
+                rgba(166,221,214,0.18) 0%,
+                transparent 70%
+            );
+            animation: tffAuroraB 18s ease-in-out infinite alternate;
+            pointer-events: none; z-index: 0;
         }
 
         /* ── Infinite scroll marquee ── */
@@ -355,6 +382,28 @@
         .tff-sk-md { position: absolute; top: 0; line-height: 1; font-size: 17px; pointer-events: none; }
         .tff-sk-lg { position: absolute; top: 0; line-height: 1; font-size: 25px; pointer-events: none; }
 
+        /* Profile: gradient mesh shift */
+        @keyframes tffProfileMesh {
+            0%   { background-position: 0%   50%; }
+            25%  { background-position: 50%  0%;  }
+            50%  { background-position: 100% 50%; }
+            75%  { background-position: 50%  100%; }
+            100% { background-position: 0%   50%; }
+        }
+
+        /* Blog: aurora drift */
+        @keyframes tffAuroraA {
+            0%   { transform: translate(-10%, -5%)  scale(1);    opacity: 0.7; }
+            33%  { transform: translate(5%,   10%)  scale(1.1);  opacity: 1;   }
+            66%  { transform: translate(15%,  -8%)  scale(0.95); opacity: 0.8; }
+            100% { transform: translate(-5%,  15%)  scale(1.05); opacity: 0.9; }
+        }
+        @keyframes tffAuroraB {
+            0%   { transform: translate(8%,   5%)   scale(1.05); opacity: 0.6; }
+            50%  { transform: translate(-12%, -8%)  scale(0.9);  opacity: 1;   }
+            100% { transform: translate(5%,   12%)  scale(1.1);  opacity: 0.7; }
+        }
+
         /* Blog: ripple rings */
         @keyframes tffRipple {
             0%   { transform: scale(0.08); opacity: 0; }
@@ -552,17 +601,6 @@
     ═══════════════════════════════════ -->
     <section id="blog" class="photo-section blog-bg py-24 px-6">
         <div class="photo-overlay" style="background: rgba(61,46,82,0.35);"></div>
-        <!-- Ripple rings -->
-        <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
-            <div class="tff-ripple" style="width:110px;height:110px;top:15%;left:5%;border-color:rgba(238,164,192,0.80);animation-duration:5s;animation-delay:0s;"></div>
-            <div class="tff-ripple" style="width:180px;height:180px;top:55%;left:18%;border-color:rgba(166,221,214,0.72);animation-duration:7s;animation-delay:1.5s;"></div>
-            <div class="tff-ripple" style="width:90px;height:90px;top:28%;left:40%;border-color:rgba(253,217,217,0.85);animation-duration:4.5s;animation-delay:3s;"></div>
-            <div class="tff-ripple" style="width:140px;height:140px;top:12%;right:8%;border-color:rgba(177,104,168,0.75);animation-duration:6s;animation-delay:0.8s;"></div>
-            <div class="tff-ripple" style="width:200px;height:200px;bottom:10%;right:12%;border-color:rgba(255,255,255,0.55);animation-duration:8s;animation-delay:2s;"></div>
-            <div class="tff-ripple" style="width:80px;height:80px;top:68%;right:32%;border-color:rgba(238,164,192,0.78);animation-duration:5.5s;animation-delay:4s;"></div>
-            <div class="tff-ripple" style="width:160px;height:160px;top:40%;right:5%;border-color:rgba(166,221,214,0.68);animation-duration:7.5s;animation-delay:1s;"></div>
-            <div class="tff-ripple" style="width:120px;height:120px;bottom:25%;left:48%;border-color:rgba(177,104,168,0.70);animation-duration:6.5s;animation-delay:3.5s;"></div>
-        </div>
         <div class="photo-content max-w-5xl mx-auto">
 
             <!-- Title -->
