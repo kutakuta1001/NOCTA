@@ -101,6 +101,30 @@ Space Grotesk は `section-tag`・`filter-pill` の小さなUIラベルに使う
 .section-tag::before { content: ''; width: 24px; height: 1px; background: #C4942A; }
 ```
 
+### セクション見出しパターンの使い分け（必須ルール）
+
+NOCTA HP には意図的に2パターンの見出しが使われている。混在させてよいが、セクション性格に合わせること。
+
+| パターン | 見た目 | 使うセクション | 理由 |
+|----------|--------|--------------|------|
+| **A: Bebas Neue 全大文字** | `WORKS` `VISUAL` `BLOG` | ポートフォリオ・コレクション系 | 作品を「見せる」場。インパクト優先 |
+| **B: section-tag + font-jp 日本語見出し** | `— About` + 「創造と革新が…」 | About / Services / Contact | 言葉で「伝える」場。読ませる文章優先 |
+
+```html
+<!-- パターン A -->
+<h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px]">WORKS</h2>
+
+<!-- パターン B -->
+<p class="section-tag">Services</p>
+<h2 class="font-jp text-[clamp(34px,5vw,56px)] font-bold text-white">
+    音楽を生み出し、<span class="text-gradient">世界に届ける</span>
+</h2>
+```
+
+新しいセクションを追加する場合: コンテンツ主体（作品・ギャラリー）→ パターン A / 説明・CTA → パターン B。
+
+---
+
 ### やってはいけないこと
 
 - serif フォントは使わない（Times / Georgia 等）

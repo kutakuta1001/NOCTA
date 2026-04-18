@@ -189,24 +189,7 @@
             background: rgba(200,162,255,0.12);
             color: #C8A2FF;
         }
-        .bfilter-pill {
-            padding: 0.35rem 1.1rem;
-            border-radius: 9999px;
-            font-family: 'Syne', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: #8A8A9E;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            background: transparent;
-            border: none;
-        }
-        .bfilter-pill:hover, .bfilter-pill.active {
-            background: rgba(200,162,255,0.12);
-            color: #C8A2FF;
-        }
+        /* .vfilter-pill は .vfilter-pill に統合済み */
 
         /* Work card hover */
         .work-card { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease; }
@@ -365,7 +348,7 @@
         /* ===== VOCALOID / SUBCULTURE ADDITIONS ===== */
 
         /* Cute badge pill */
-        .cute-badge {
+        .brand-badge {
             display: inline-flex; align-items: center;
             padding: 5px 14px; border-radius: 9999px;
             font-family: 'Space Grotesk', sans-serif;
@@ -376,11 +359,10 @@
             background: rgba(255,255,255,0.03);
             transition: all 0.3s ease;
         }
-        .cute-badge:hover { transform: translateY(-2px); filter: brightness(1.2); }
+        .brand-badge:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
         /* Vgreen glow */
         .vgreen-glow { box-shadow: 0 0 40px rgba(57,255,106,0.35); }
-        .sakura-glow { box-shadow: 0 0 40px rgba(57,255,106,0.35); }
 
         /* Floating star decoration */
         @keyframes starFloat {
@@ -397,7 +379,7 @@
 
         /* Neon green text */
         .text-vgreen { color: #39FF6A; }
-        .text-sakura { color: #39FF6A; }
+        /* .text-sakura 削除済み → .text-vgreen を使用 */
 
         /* Vocaloid highlight bar */
         .vocaloid-bar {
@@ -605,10 +587,10 @@
                 AIと人間の感性が融合する、新しい音楽の形
             </p>
             <div style="display:flex;justify-content:center;gap:8px;margin-bottom:32px;flex-wrap:wrap;">
-                <span class="cute-badge" style="border-color:rgba(57,255,106,0.4);color:#39FF6A;">✦ VOCALOID</span>
-                <span class="cute-badge" style="border-color:rgba(200,162,255,0.4);color:#C8A2FF;">✦ AI Singer</span>
-                <span class="cute-badge" style="border-color:rgba(57,255,106,0.35);color:#39FF6A;">✦ Original Music</span>
-                <span class="cute-badge" style="border-color:rgba(196,148,42,0.4);color:#C4942A;">✦ PV Production</span>
+                <span class="brand-badge" style="border-color:rgba(57,255,106,0.4);color:#39FF6A;">✦ VOCALOID</span>
+                <span class="brand-badge" style="border-color:rgba(200,162,255,0.4);color:#C8A2FF;">✦ AI Singer</span>
+                <span class="brand-badge" style="border-color:rgba(57,255,106,0.35);color:#39FF6A;">✦ Original Music</span>
+                <span class="brand-badge" style="border-color:rgba(196,148,42,0.4);color:#C4942A;">✦ PV Production</span>
             </div>
 
             <div class="flex flex-col sm:flex-row justify-center gap-5">
@@ -645,11 +627,11 @@
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div class="reveal">
-                <div class="stat-num">0</div>
+                <div class="stat-num">—</div>
                 <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">公開楽曲数</div>
             </div>
             <div class="reveal reveal-delay-1">
-                <div class="stat-num">0</div>
+                <div class="stat-num">—</div>
                 <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">公開PV本数</div>
             </div>
             <div class="reveal reveal-delay-2">
@@ -812,7 +794,7 @@
 
 
 <!-- =============================================
-     04.6 APPS PORTFOLIO
+     04. APPS / TOOLS
      ============================================= -->
 <section id="apps" class="py-32 relative z-10 border-b border-white/5">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
@@ -834,7 +816,7 @@
 
 
 <!-- =============================================
-     04. SERVICES
+     05. SERVICES
      ============================================= -->
 <section id="services" class="py-32 relative z-10">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
@@ -937,9 +919,9 @@
 
 
 <!-- =============================================
-     04.5 VISUAL PORTFOLIO
+     06. VISUAL PORTFOLIO
      ============================================= -->
-<section id="visual" class="py-16 relative z-10 border-b border-white/5">
+<section id="visual" class="py-32 relative z-10 border-b border-white/5">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
 
         <div class="text-center mb-12 reveal">
@@ -992,21 +974,21 @@
 </section>
 
 <!-- =============================================
-     04.7 BLOG
+     07. BLOG
      ============================================= -->
-<section id="blog" class="py-16 relative z-10 border-b border-white/5">
+<section id="blog" class="py-32 relative z-10 border-b border-white/5">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
 
         <div class="text-center mb-8 reveal">
             <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">BLOG</h2>
             <p class="font-jp text-brand-sub text-[15px] tracking-wider">Music & Essays</p>
 
-            <!-- Filter pills — .bfilter-pill は .filter-pill / .vfilter-pill と独立 -->
+            <!-- Filter pills — .vfilter-pill は .filter-pill / .vfilter-pill と独立 -->
             <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
-                <button class="bfilter-pill active" data-bfilter="all">All</button>
-                <button class="bfilter-pill" data-bfilter="music">Music</button>
-                <button class="bfilter-pill" data-bfilter="essay">Essay</button>
-                <button class="bfilter-pill" data-bfilter="book">Book</button>
+                <button class="vfilter-pill active" data-bfilter="all">All</button>
+                <button class="vfilter-pill" data-bfilter="music">Music</button>
+                <button class="vfilter-pill" data-bfilter="essay">Essay</button>
+                <button class="vfilter-pill" data-bfilter="book">Book</button>
             </div>
         </div>
 
@@ -1018,7 +1000,7 @@
 
 
 <!-- =============================================
-     05. NEWS
+     08. NEWS
      ============================================= -->
 <section id="news" class="py-32 relative z-10 bg-black/30 border-y border-white/5">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
@@ -1096,7 +1078,7 @@
 
 
 <!-- =============================================
-     06. CONTACT
+     09. CONTACT
      ============================================= -->
 <section id="contact" class="py-32 relative z-10 overflow-hidden">
 
@@ -1154,7 +1136,7 @@
                     method="POST"
                     data-netlify="true"
                     data-netlify-honeypot="bot-field"
-                    action="/success"
+                    action="./success.html"
                 >
                     <!-- Netlify hidden fields -->
                     <input type="hidden" name="form-name" value="contact"/>
@@ -1804,8 +1786,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
         grid.querySelectorAll('.reveal').forEach(function (el) { blogObserver.observe(el); });
 
-        // Blog フィルター（.bfilter-pill[data-bfilter] と カード[data-bcat] を照合）
-        var bpills = document.querySelectorAll('.bfilter-pill');
+        // Blog フィルター（.vfilter-pill[data-bfilter] と カード[data-bcat] を照合）
+        var bpills = document.querySelectorAll('.vfilter-pill');
         var bcards = grid.querySelectorAll('[data-bcat]');
         bpills.forEach(function (pill) {
             pill.addEventListener('click', function () {
