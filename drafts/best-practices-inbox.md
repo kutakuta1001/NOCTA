@@ -26,13 +26,12 @@
 
 ## 未処理
 
-- [platform.claude.com/docs] [モデル一覧] — Claude Sonnet 4・Opus 4（-20250514版）が 2026-06-15 廃止予定
-- [code.claude.com/docs] [概要] — Agent SDK 一般公開: Claude Code ツールを活用したカスタムエージェントを独自のオーケストレーション・権限で構築可能
-- [code.claude.com/docs] [概要] — GitHub Code Review 機能: 全 PR でクラウドベース自動コードレビューが可能
-- [github.com/anthropics] [CHANGELOG v2.1.111] — Opus 4.7 向け新努力レベル xhigh を追加（/effort コマンドで選択可能）
-
 ## 処理済み
 
+- [platform.claude.com/docs] [モデル一覧] — Claude Sonnet 4・Opus 4（-20250514版）が 2026-06-15 廃止予定 （2026-04-18）
+- [code.claude.com/docs] [概要] — Agent SDK 一般公開: Claude Code ツールを活用したカスタムエージェントを独自のオーケストレーション・権限で構築可能 （2026-04-18）
+- [code.claude.com/docs] [概要] — GitHub Code Review 機能: 全 PR でクラウドベース自動コードレビューが可能 （2026-04-18）
+- [github.com/anthropics] [CHANGELOG v2.1.111] — Opus 4.7 向け新努力レベル xhigh を追加（/effort コマンドで選択可能） （2026-04-18）
 - [github.com/anthropics] [CHANGELOG v2.1.113] — /ultrareview コマンド追加: クラウド上でマルチエージェントによる包括的コードレビューを実行 （2026-04-18）
 - [github.com/anthropics] [CHANGELOG v2.1.113] — /less-permission-prompts スキル追加: 読み取り専用 Bash/MCP ツールを自動スキャンし権限許可リストを提案 （2026-04-18）
 - [github.com/anthropics] [CHANGELOG v2.1.113] — Bash deny ルール強化: env/sudo/watch などの exec ラッパー経由コマンドもブロック可能に （2026-04-18）
