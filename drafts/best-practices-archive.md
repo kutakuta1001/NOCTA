@@ -38,3 +38,16 @@
 - https://x.com/i/status/2042241063612502162 （2026-04-16）
 - [docs.anthropic.com] モデル一覧 — Opus 4.6 価格 $5/$25/MTok（旧比1/3） （2026-04-13）
 - [docs.anthropic.com] モデル一覧 — 1M トークン コンテキスト（ベータ）対応 （2026-04-13）
+
+## 2026-04-18 アーカイブ分（第2回）
+
+- [platform.claude.com/docs] [モデル一覧] — Claude Sonnet 4・Opus 4（-20250514版）が 2026-06-15 廃止予定 （2026-04-18）
+- [code.claude.com/docs] [概要] — Agent SDK 一般公開: Claude Code ツールを活用したカスタムエージェントを独自のオーケストレーション・権限で構築可能 （2026-04-18）
+- [code.claude.com/docs] [概要] — GitHub Code Review 機能: 全 PR でクラウドベース自動コードレビューが可能 （2026-04-18）
+- [github.com/anthropics] [CHANGELOG v2.1.111] — Opus 4.7 向け新努力レベル xhigh を追加（/effort コマンドで選択可能） （2026-04-18）
+- [github.com/anthropics] [CHANGELOG v2.1.113] — /ultrareview コマンド追加: クラウド上でマルチエージェントによる包括的コードレビューを実行 （2026-04-18）
+- [github.com/anthropics] [CHANGELOG v2.1.113] — /less-permission-prompts スキル追加: 読み取り専用 Bash/MCP ツールを自動スキャンし権限許可リストを提案 （2026-04-18）
+- [github.com/anthropics] [CHANGELOG v2.1.113] — Bash deny ルール強化: env/sudo/watch などの exec ラッパー経由コマンドもブロック可能に （2026-04-18）
+- [platform.claude.com/docs] [モデル一覧] — claude-opus-4-7 価格確定: $5/$25/MTok（Opus 4.6 と同価格）。コンテキスト 1M tokens・最大出力 128k・知識カットオフ 2026年1月 （2026-04-18）
+- [platform.claude.com/docs] [モデル一覧] — Claude Haiku 3（claude-3-haiku-20240307）が 2026-04-19 廃止予定（3日後） （2026-04-18）
+- [docs.anthropic.com] モデル一覧 — Opus 4.6 最大出力 128K （2026-04-13）
