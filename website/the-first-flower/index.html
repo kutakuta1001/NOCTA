@@ -16,13 +16,16 @@
                 extend: {
                     colors: {
                         tff: {
-                            bg:      '#faf7f2',
-                            dark:    '#1a1410',
-                            text:    '#2a2218',
-                            sub:     '#7a6a58',
-                            accent:  '#8b6a3e',
-                            gold:    '#c4942a',
-                            warm:    '#e8d5b8',
+                            base:    '#FCFBF5',
+                            dark:    '#705E92',
+                            deep:    '#3D2E52',
+                            text:    '#3D2E52',
+                            sub:     '#9A86B0',
+                            accent:  '#B168A8',
+                            rose:    '#EEA4C0',
+                            pink:    '#FDD9D9',
+                            mint:    '#B8E3B7',
+                            teal:    '#A6DDD6',
                         }
                     },
                     fontFamily: {
@@ -40,8 +43,8 @@
         * { box-sizing: border-box; }
 
         body {
-            background: #faf7f2;
-            color: #2a2218;
+            background: #FCFBF5;
+            color: #3D2E52;
             overflow-x: hidden;
         }
 
@@ -55,7 +58,6 @@
         .photo-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(15, 10, 5, 0.52);
         }
         .photo-content {
             position: relative;
@@ -66,11 +68,11 @@
         /* 写真を追加するときは background-image: url('img/hero.jpg'); に変更してください */
         .hero-bg {
             background: linear-gradient(160deg,
-                #0d0820 0%,
-                #2a0f45 25%,
-                #5a2a00 60%,
-                #8b5a10 80%,
-                #c4942a 100%
+                #3D2E52 0%,
+                #705E92 30%,
+                #B168A8 65%,
+                #EEA4C0 85%,
+                #FDD9D9 100%
             );
             background-size: cover;
             background-position: center;
@@ -80,10 +82,10 @@
         /* 写真を追加するときは background-image: url('img/profile-bg.jpg'); に変更してください */
         .profile-bg {
             background: linear-gradient(135deg,
-                #f0e8f5 0%,
-                #f8e4d8 30%,
-                #e8d8f0 60%,
-                #f5ead5 100%
+                #FDD9D9 0%,
+                #FCFBF5 35%,
+                #A6DDD6 70%,
+                #B8E3B7 100%
             );
         }
 
@@ -91,10 +93,10 @@
         /* 写真を追加するときは background-image: url('img/quotes-bg.jpg'); に変更してください */
         .quotes-bg {
             background: linear-gradient(160deg,
-                #0a1a08 0%,
-                #152a12 40%,
-                #0a1518 80%,
-                #050f0a 100%
+                #3D2E52 0%,
+                #4E3D72 40%,
+                #705E92 80%,
+                #3D2E52 100%
             );
         }
 
@@ -102,10 +104,10 @@
         /* 写真を追加するときは background-image: url('img/blog-bg.jpg'); に変更してください */
         .blog-bg {
             background: linear-gradient(160deg,
-                #0d1a28 0%,
-                #1a2d42 40%,
-                #243850 70%,
-                #1a2a38 100%
+                #3D2E52 0%,
+                #4A3870 40%,
+                #5E4E82 70%,
+                #3D2E52 100%
             );
         }
 
@@ -138,8 +140,8 @@
             width: 380px;
             padding: 24px 32px;
             margin-right: 16px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(238, 164, 192, 0.08);
+            border: 1px solid rgba(238, 164, 192, 0.2);
             border-radius: 4px;
             backdrop-filter: blur(4px);
         }
@@ -154,27 +156,53 @@
         .quote-card .q-source {
             font-family: 'Cormorant Garamond', serif;
             font-size: 0.8rem;
-            color: rgba(196,148,42,0.9);
+            color: rgba(238,164,192,0.9);
             letter-spacing: 0.06em;
         }
 
         /* ── Profile photo placeholders ── */
         .profile-photo-placeholder {
-            background: linear-gradient(135deg, #c8a2ff22, #c4942a22);
-            border: 1px solid rgba(139,106,62,0.2);
+            background: linear-gradient(135deg, rgba(238,164,192,0.15), rgba(166,221,214,0.15));
+            border: 1px solid rgba(177,104,168,0.2);
         }
 
         /* ── Nav ── */
         .tff-header {
-            background: rgba(250, 247, 242, 0.88);
+            background: rgba(252, 251, 245, 0.90);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(139,106,62,0.15);
+            border-bottom: 1px solid rgba(177,104,168,0.15);
+            transition: background 0.3s ease, border-color 0.3s ease;
         }
         .tff-header.on-photo {
-            background: rgba(15,10,5,0.6);
-            border-bottom-color: rgba(255,255,255,0.1);
+            background: rgba(61, 46, 82, 0.72);
+            border-bottom-color: rgba(238, 164, 192, 0.12);
         }
+
+        /* Nav link color switching */
+        .tff-nav-link {
+            color: rgba(61, 46, 82, 0.55);
+            transition: color 0.2s;
+        }
+        .tff-nav-link:hover { color: #3D2E52; }
+        .tff-header.on-photo .tff-nav-link { color: rgba(255,255,255,0.60); }
+        .tff-header.on-photo .tff-nav-link:hover { color: rgba(255,255,255,0.92); }
+
+        .tff-back-link {
+            color: rgba(61, 46, 82, 0.55);
+            transition: color 0.2s;
+        }
+        .tff-back-link:hover { color: #3D2E52; }
+        .tff-header.on-photo .tff-back-link { color: rgba(255,255,255,0.70); }
+        .tff-header.on-photo .tff-back-link:hover { color: rgba(255,255,255,0.95); }
+
+        .tff-brand-link {
+            color: rgba(61, 46, 82, 0.80);
+            transition: color 0.2s;
+        }
+        .tff-brand-link:hover { color: #3D2E52; }
+        .tff-header.on-photo .tff-brand-link { color: rgba(255,255,255,0.90); }
+        .tff-header.on-photo .tff-brand-link:hover { color: #fff; }
 
         /* ── Blog cards ── */
         .tff-blog-card {
@@ -193,7 +221,7 @@
         .tff-divider {
             width: 48px;
             height: 1px;
-            background: #c4942a;
+            background: #EEA4C0;
             margin: 16px auto;
         }
 
@@ -225,21 +253,20 @@
     <header id="tff-header" class="tff-header on-photo fixed top-0 left-0 right-0 z-50 px-6 lg:px-10 py-4 flex justify-between items-center">
         <!-- Back to NOCTA -->
         <a href="../index.html"
-           class="font-display text-[13px] tracking-[3px] uppercase text-white/70 hover:text-white transition-colors duration-200 flex items-center gap-2">
+           class="tff-back-link font-display text-[13px] tracking-[3px] uppercase flex items-center gap-2">
             ← NOCTA
         </a>
 
         <!-- Brand -->
-        <a href="#top"
-           class="font-serif text-[15px] tracking-[3px] text-white/90 hover:text-white transition-colors duration-200">
+        <a href="#top" class="tff-brand-link font-serif text-[15px] tracking-[3px]">
             THE FIRST FLOWER
         </a>
 
         <!-- Nav -->
         <nav class="hidden md:flex items-center gap-6">
-            <a href="#profile"  class="font-jp text-[11px] tracking-[2px] text-white/60 hover:text-white/90 transition-colors duration-200">PROFILE</a>
-            <a href="#quotes"   class="font-jp text-[11px] tracking-[2px] text-white/60 hover:text-white/90 transition-colors duration-200">WORDS</a>
-            <a href="#blog"     class="font-jp text-[11px] tracking-[2px] text-white/60 hover:text-white/90 transition-colors duration-200">BLOG</a>
+            <a href="#profile" class="tff-nav-link font-jp text-[11px] tracking-[2px]">PROFILE</a>
+            <a href="#quotes"  class="tff-nav-link font-jp text-[11px] tracking-[2px]">WORDS</a>
+            <a href="#blog"    class="tff-nav-link font-jp text-[11px] tracking-[2px]">BLOG</a>
         </nav>
     </header>
 
@@ -247,7 +274,7 @@
          HERO
     ═══════════════════════════════════ -->
     <section id="top" class="photo-section hero-bg min-h-screen flex items-center justify-center text-center">
-        <div class="photo-overlay" style="background: rgba(10,5,20,0.48);"></div>
+        <div class="photo-overlay" style="background: rgba(61,46,82,0.45);"></div>
         <div class="photo-content px-6">
             <p class="font-serif italic text-white/50 text-[13px] tracking-[4px] mb-6 tff-reveal">— what is a good life —</p>
             <h1 class="font-serif text-white leading-none mb-4 tff-reveal" style="font-size: clamp(48px, 9vw, 110px); letter-spacing: 0.04em;">
@@ -269,7 +296,7 @@
             <div class="text-center mb-16 tff-reveal">
                 <p class="font-serif italic text-tff-sub text-[13px] tracking-[4px] mb-3">Кто это?</p>
                 <h2 class="font-serif text-tff-dark text-[42px] lg:text-[56px] leading-none tracking-wide">Profile</h2>
-                <div class="tff-divider" style="background: #8b6a3e;"></div>
+                <div class="tff-divider" style="background: #B168A8;"></div>
             </div>
 
             <!-- Two column layout -->
@@ -277,12 +304,12 @@
 
                 <!-- Left: Photos -->
                 <div class="space-y-4 tff-reveal">
-                    <!-- 写真1: img/profile-photo1.jpg を追加してください -->
-                    <div class="profile-photo-placeholder rounded-lg aspect-video flex items-center justify-center">
+                    <!-- 写真1: img/profile-photo1.jpg を追加し tff-profile-data.js の photos[0].src を設定してください -->
+                    <div id="tff-photo-1" class="profile-photo-placeholder rounded-lg aspect-video flex items-center justify-center">
                         <p class="font-jp text-tff-sub text-[12px] tracking-widest">photo 01</p>
                     </div>
-                    <!-- 写真2: img/profile-photo2.jpg を追加してください -->
-                    <div class="profile-photo-placeholder rounded-lg aspect-video flex items-center justify-center">
+                    <!-- 写真2: img/profile-photo2.jpg を追加し tff-profile-data.js の photos[1].src を設定してください -->
+                    <div id="tff-photo-2" class="profile-photo-placeholder rounded-lg aspect-video flex items-center justify-center">
                         <p class="font-jp text-tff-sub text-[12px] tracking-widest">photo 02</p>
                     </div>
                 </div>
@@ -292,7 +319,7 @@
                     <!-- Bio section -->
                     <div class="mb-10">
                         <p class="font-serif italic text-tff-accent text-[12px] tracking-[4px] mb-3 uppercase">Creator</p>
-                        <p class="font-jp text-tff-text text-[15px] leading-[2.2] mb-4">
+                        <p id="tff-bio" class="font-jp text-tff-text text-[15px] leading-[2.2] mb-4">
                             東京生まれ東京育ち。関西弁に憧れて関西へ行き自分を捨てられるようになりました。また、最近まで秋田に赴任していました。食べ物の美味しさと人のやさしさに感動し、いつかは田舎に住むのを夢みています。子供ができたことで、よりいっそう仕事以外の人生に興味を持ち、今を生きようと思いました。どうぞよろしくお願いいたします。
                         </p>
                     </div>
@@ -300,10 +327,10 @@
                     <!-- Hobbies section -->
                     <div>
                         <p class="font-serif italic text-tff-accent text-[12px] tracking-[4px] mb-3 uppercase">Hobby</p>
-                        <p class="font-jp text-tff-sub text-[13px] tracking-[2px] mb-4">
+                        <p id="tff-hobbies-line" class="font-jp text-tff-sub text-[13px] tracking-[2px] mb-4">
                             読書 &nbsp;|&nbsp; アニメ &nbsp;|&nbsp; 漫画 &nbsp;|&nbsp; 旅行 &nbsp;|&nbsp; 夏フェス
                         </p>
-                        <p class="font-jp text-tff-text text-[14px] leading-[2.2]">
+                        <p id="tff-hobby-detail" class="font-jp text-tff-text text-[14px] leading-[2.2]">
                             SFや児童小説、自己啓発の本が好きです。自己啓発の本の中では現在、アドラーとデザイン思考にはまっています。が、興味がころころ変わるので、次に書くときは別のものになっているかも。アニメは深夜アニメを、漫画も何でも読みます。旅行が好きで、気が付くと日本一周していました。海外旅行も年に一度は行っていましたが、子供ができたので、どう海外に行くか考え中です。
                         </p>
                     </div>
@@ -316,7 +343,7 @@
          TEXT OVERLAYS — Quote Stream
     ═══════════════════════════════════ -->
     <section id="quotes" class="photo-section quotes-bg py-24">
-        <div class="photo-overlay" style="background: rgba(5,15,5,0.55);"></div>
+        <div class="photo-overlay" style="background: rgba(61,46,82,0.35);"></div>
         <div class="photo-content">
 
             <!-- Title -->
@@ -344,7 +371,7 @@
          BLOG
     ═══════════════════════════════════ -->
     <section id="blog" class="photo-section blog-bg py-24 px-6">
-        <div class="photo-overlay" style="background: rgba(8,15,25,0.55);"></div>
+        <div class="photo-overlay" style="background: rgba(61,46,82,0.35);"></div>
         <div class="photo-content max-w-5xl mx-auto">
 
             <!-- Title -->
@@ -352,7 +379,7 @@
                 <p class="font-serif italic text-white/40 text-[13px] tracking-[4px] mb-3">感動を書く</p>
                 <h2 class="font-serif text-white text-[42px] lg:text-[56px] leading-none tracking-wide">Blog</h2>
                 <div class="tff-divider"></div>
-                <p class="font-jp text-white/55 text-[13px] mt-4">脳の整理。出会いとのわくわく。感動し前り越えろ。</p>
+                <p class="font-jp text-white/55 text-[13px] mt-4">脳の整理。出会いとのわくわく。感動し乗り越えろ。</p>
             </div>
 
             <!-- Blog cards grid -->
@@ -371,42 +398,65 @@
                 <div class="max-w-lg mx-auto">
                     <p class="font-serif italic text-white/30 text-[11px] tracking-[4px] text-center mb-5">archives</p>
                     <div class="flex flex-col gap-4">
+
                         <!-- Ameblo -->
                         <a href="https://ameblo.jp/kutakuta-1001/" target="_blank" rel="noopener"
                            class="flex items-center gap-5 bg-white/5 border border-white/10 rounded-lg px-7 py-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
-                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[rgba(255,182,120,0.15)] border border-[rgba(255,182,120,0.3)] flex items-center justify-center">
-                                <span class="text-[20px]">✏️</span>
+                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[rgba(238,164,192,0.12)] border border-[rgba(238,164,192,0.3)] flex items-center justify-center text-[#EEA4C0]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                                </svg>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="font-serif text-white/85 text-[16px] tracking-wide group-hover:text-white transition-colors duration-200">Ameblo — クトーエタのブログ</p>
                                 <p class="font-jp text-white/40 text-[12px] mt-1">過去のブログアーカイブ</p>
                             </div>
-                            <span class="text-white/30 group-hover:text-white/70 transition-colors duration-200 text-[18px]">→</span>
+                            <span class="text-white/30 group-hover:text-[#EEA4C0] transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+                                </svg>
+                            </span>
                         </a>
+
                         <!-- Booklog -->
                         <a href="https://booklog.jp/users/nrc56424" target="_blank" rel="noopener"
                            class="flex items-center gap-5 bg-white/5 border border-white/10 rounded-lg px-7 py-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
-                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[rgba(196,148,42,0.15)] border border-[#c4942a]/30 flex items-center justify-center">
-                                <span class="text-[20px]">📚</span>
+                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[rgba(166,221,214,0.12)] border border-[rgba(166,221,214,0.3)] flex items-center justify-center text-[#A6DDD6]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                                </svg>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="font-serif text-white/85 text-[16px] tracking-wide group-hover:text-white transition-colors duration-200">ブクログ — クトーエタの本棚</p>
                                 <p class="font-jp text-white/40 text-[12px] mt-1">277冊 &nbsp;·&nbsp; 149レビュー</p>
                             </div>
-                            <span class="text-white/30 group-hover:text-white/70 transition-colors duration-200 text-[18px]">→</span>
+                            <span class="text-white/30 group-hover:text-[#A6DDD6] transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+                                </svg>
+                            </span>
                         </a>
+
                         <!-- Flickr -->
                         <a href="https://www.flickr.com/photos/kutakuta1001/with/25142094796" target="_blank" rel="noopener"
                            class="flex items-center gap-5 bg-white/5 border border-white/10 rounded-lg px-7 py-5 hover:bg-white/10 hover:border-white/20 transition-all duration-300 group">
-                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[rgba(57,200,255,0.12)] border border-[rgba(57,200,255,0.25)] flex items-center justify-center">
-                                <span class="text-[20px]">📷</span>
+                            <div class="flex-shrink-0 w-12 h-12 rounded-full bg-[rgba(184,227,183,0.12)] border border-[rgba(184,227,183,0.3)] flex items-center justify-center text-[#B8E3B7]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"/>
+                                </svg>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <p class="font-serif text-white/85 text-[16px] tracking-wide group-hover:text-white transition-colors duration-200">Flickr — kuto eta</p>
                                 <p class="font-jp text-white/40 text-[12px] mt-1">66枚のフォトアーカイブ</p>
                             </div>
-                            <span class="text-white/30 group-hover:text-white/70 transition-colors duration-200 text-[18px]">→</span>
+                            <span class="text-white/30 group-hover:text-[#B8E3B7] transition-colors duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"/>
+                                </svg>
+                            </span>
                         </a>
+
                     </div>
                 </div>
             </div>
@@ -420,7 +470,7 @@
     <footer class="bg-tff-dark py-16 px-6 text-center">
         <p class="font-serif italic text-white/30 text-[12px] tracking-[3px] mb-4">— what is a good life —</p>
         <p class="font-serif text-white/80 text-[22px] tracking-[4px] mb-6">The First Flower</p>
-        <div class="tff-divider" style="background: rgba(196,148,42,0.4);"></div>
+        <div class="tff-divider" style="opacity: 0.5;"></div>
         <a href="../index.html"
            class="inline-block mt-8 font-display text-[12px] tracking-[4px] text-white/40 hover:text-white/80 transition-colors duration-200 uppercase">
             ← Back to NOCTA
@@ -431,6 +481,7 @@
     <!-- ═══════════════════════════════════
          SCRIPTS
     ═══════════════════════════════════ -->
+    <script src="tff-profile-data.js"></script>
     <script src="tff-quotes.js"></script>
     <script src="../blog-data.js"></script>
     <script>
@@ -444,7 +495,6 @@
             var heroBottom = hero.getBoundingClientRect().bottom;
             if (heroBottom <= 80) {
                 header.classList.remove('on-photo');
-                header.style.setProperty('--text-color', '#2a2218');
             } else {
                 header.classList.add('on-photo');
             }
@@ -487,11 +537,8 @@
             function fillRow(rowId, qs) {
                 var track = document.getElementById(rowId);
                 if (!track) return;
-                // duplicate for seamless loop
                 [qs, qs].forEach(function (set) {
-                    set.forEach(function (q) {
-                        track.appendChild(makeCard(q));
-                    });
+                    set.forEach(function (q) { track.appendChild(makeCard(q)); });
                 });
             }
 
@@ -515,14 +562,13 @@
             }
 
             var catColors = {
-                music: 'bg-[rgba(200,162,255,0.15)] text-[#C8A2FF]',
-                essay: 'bg-[rgba(196,148,42,0.15)] text-[#C4942A]',
-                book:  'bg-[rgba(57,255,106,0.15)]  text-[#39FF6A]'
+                music: 'bg-[rgba(177,104,168,0.15)] text-[#B168A8]',
+                essay: 'bg-[rgba(238,164,192,0.15)] text-[#EEA4C0]',
+                book:  'bg-[rgba(166,221,214,0.15)] text-[#A6DDD6]'
             };
             var catLabels = { music: 'Music', essay: 'Essay', book: 'Book' };
 
             posts.forEach(function (post, i) {
-                var delay = i > 0 ? ' style="transition-delay:' + (i * 0.1) + 's"' : '';
                 var badgeCol = catColors[post.cat] || catColors.essay;
                 var badgeLbl = catLabels[post.cat]  || 'Essay';
                 var card = document.createElement('div');
@@ -540,7 +586,32 @@
             });
         }
 
+        /* ── Profile rendering from tff-profile-data.js ── */
+        function renderProfile() {
+            if (typeof TFF_PROFILE === 'undefined') return;
+
+            var bio = document.getElementById('tff-bio');
+            if (bio && TFF_PROFILE.bio) bio.textContent = TFF_PROFILE.bio;
+
+            var hobbiesLine = document.getElementById('tff-hobbies-line');
+            if (hobbiesLine && TFF_PROFILE.hobbiesList) {
+                hobbiesLine.innerHTML = TFF_PROFILE.hobbiesList.join(' &nbsp;|&nbsp; ');
+            }
+
+            var hobbyDetail = document.getElementById('tff-hobby-detail');
+            if (hobbyDetail && TFF_PROFILE.hobbyDetail) hobbyDetail.textContent = TFF_PROFILE.hobbyDetail;
+
+            if (TFF_PROFILE.photos) {
+                TFF_PROFILE.photos.forEach(function (photo, i) {
+                    var container = document.getElementById('tff-photo-' + (i + 1));
+                    if (!container || !photo.src) return;
+                    container.innerHTML = '<img src="' + photo.src + '" alt="' + photo.alt + '" class="w-full h-full object-cover rounded-lg">';
+                });
+            }
+        }
+
         /* ── Init ── */
+        renderProfile();
         buildStream();
         buildBlog();
         initReveal();
