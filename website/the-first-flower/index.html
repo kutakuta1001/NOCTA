@@ -243,6 +243,108 @@
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* ═══════════════════════════════════
+           DYNAMIC EFFECTS
+        ═══════════════════════════════════ */
+
+        /* Hero: particle canvas */
+        #tff-hero-canvas {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
+        }
+
+        /* Hero: shimmer title */
+        @keyframes tffShimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position:  200% center; }
+        }
+        .tff-shimmer-text {
+            background: linear-gradient(90deg,
+                #fff 0%, #EEA4C0 18%, #FDD9D9 32%,
+                #A6DDD6 50%, #B8E3B7 65%, #fff 78%, #EEA4C0 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: tffShimmer 10s linear infinite;
+        }
+
+        /* Hero: floating symbols */
+        @keyframes tffSym {
+            0%,100% { transform: translateY(0) rotate(0deg);         opacity: 0.5; }
+            50%      { transform: translateY(-16px) rotate(20deg);    opacity: 0.85; }
+        }
+        @keyframes tffSym2 {
+            0%,100% { transform: translateY(0) rotate(0deg) scale(1);      opacity: 0.35; }
+            50%      { transform: translateY(-22px) rotate(-15deg) scale(1.2); opacity: 0.70; }
+        }
+        @keyframes tffSym3 {
+            0%,100% { transform: translateY(0) rotate(0deg);        opacity: 0.40; }
+            40%      { transform: translateY(-10px) rotate(10deg);   opacity: 0.75; }
+            80%      { transform: translateY(-5px) rotate(-5deg);    opacity: 0.55; }
+        }
+        .tff-sym-1 { animation: tffSym   5s  ease-in-out infinite; }
+        .tff-sym-2 { animation: tffSym2  7s  ease-in-out infinite; animation-delay: 1.5s; }
+        .tff-sym-3 { animation: tffSym   6s  ease-in-out infinite; animation-delay: 3s;   }
+        .tff-sym-4 { animation: tffSym2  8s  ease-in-out infinite; animation-delay: 0.8s; }
+        .tff-sym-5 { animation: tffSym3  5.5s ease-in-out infinite; animation-delay: 2.2s; }
+
+        /* Profile: glow orbs */
+        @keyframes tffOrb {
+            0%,100% { transform: translate(0,0) scale(1);         opacity: 0.22; }
+            33%      { transform: translate(28px,-20px) scale(1.08); opacity: 0.32; }
+            66%      { transform: translate(-16px,14px) scale(0.94); opacity: 0.18; }
+        }
+        @keyframes tffOrb2 {
+            0%,100% { transform: translate(0,0) scale(1);           opacity: 0.18; }
+            40%      { transform: translate(-22px,-28px) scale(1.1);  opacity: 0.28; }
+            70%      { transform: translate(20px,10px) scale(0.92);   opacity: 0.14; }
+        }
+        .tff-orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(70px); pointer-events: none;
+        }
+        .tff-orb-1 { animation: tffOrb  9s  ease-in-out infinite; }
+        .tff-orb-2 { animation: tffOrb2 11s ease-in-out infinite; animation-delay: 2s;   }
+        .tff-orb-3 { animation: tffOrb  13s ease-in-out infinite; animation-delay: 4.5s; }
+
+        /* Quotes: twinkling stars */
+        @keyframes tffTwinkle {
+            0%,100% { opacity: 0.12; transform: scale(0.8); }
+            50%      { opacity: 0.72; transform: scale(1.15); }
+        }
+        @keyframes tffTwinkle2 {
+            0%,100% { opacity: 0.08; transform: scale(1) rotate(0deg); }
+            50%      { opacity: 0.62; transform: scale(1.2) rotate(45deg); }
+        }
+        .tff-tw-1 { animation: tffTwinkle  3s   ease-in-out infinite; }
+        .tff-tw-2 { animation: tffTwinkle2 4s   ease-in-out infinite; animation-delay: 0.8s; }
+        .tff-tw-3 { animation: tffTwinkle  5s   ease-in-out infinite; animation-delay: 1.5s; }
+        .tff-tw-4 { animation: tffTwinkle2 3.5s ease-in-out infinite; animation-delay: 2.2s; }
+        .tff-tw-5 { animation: tffTwinkle  4.5s ease-in-out infinite; animation-delay: 0.5s; }
+        .tff-tw-6 { animation: tffTwinkle2 6s   ease-in-out infinite; animation-delay: 3s;   }
+
+        /* Blog: drifting petals */
+        @keyframes tffPetal {
+            0%   { transform: translateY(60px) rotate(0deg)   translateX(0);    opacity: 0; }
+            10%  { opacity: 0.55; }
+            90%  { opacity: 0.25; }
+            100% { transform: translateY(-50px) rotate(180deg) translateX(18px); opacity: 0; }
+        }
+        @keyframes tffPetal2 {
+            0%   { transform: translateY(80px) rotate(45deg)  translateX(0);     opacity: 0; }
+            15%  { opacity: 0.45; }
+            85%  { opacity: 0.20; }
+            100% { transform: translateY(-30px) rotate(-120deg) translateX(-14px); opacity: 0; }
+        }
+        .tff-pt-1 { animation: tffPetal  8s  ease-in-out infinite; }
+        .tff-pt-2 { animation: tffPetal2 10s ease-in-out infinite; animation-delay: 1.5s; }
+        .tff-pt-3 { animation: tffPetal  12s ease-in-out infinite; animation-delay: 3s;   }
+        .tff-pt-4 { animation: tffPetal2 9s  ease-in-out infinite; animation-delay: 5s;   }
+        .tff-pt-5 { animation: tffPetal  11s ease-in-out infinite; animation-delay: 7s;   }
+        .tff-pt-6 { animation: tffPetal2 13s ease-in-out infinite; animation-delay: 2.5s; }
     </style>
 </head>
 <body>
@@ -274,10 +376,22 @@
          HERO
     ═══════════════════════════════════ -->
     <section id="top" class="photo-section hero-bg min-h-screen flex items-center justify-center text-center">
+        <canvas id="tff-hero-canvas"></canvas>
         <div class="photo-overlay" style="background: rgba(61,46,82,0.45);"></div>
+        <!-- Floating symbols -->
+        <div class="absolute inset-0 pointer-events-none z-[2] overflow-hidden">
+            <span class="tff-sym-1 absolute" style="top:18%;left:7%;font-size:15px;color:rgba(238,164,192,0.65);">✿</span>
+            <span class="tff-sym-2 absolute" style="top:28%;right:9%;font-size:11px;color:rgba(166,221,214,0.70);">✦</span>
+            <span class="tff-sym-3 absolute" style="top:62%;left:13%;font-size:10px;color:rgba(253,217,217,0.60);">❀</span>
+            <span class="tff-sym-4 absolute" style="top:22%;right:22%;font-size:12px;color:rgba(177,104,168,0.55);">✧</span>
+            <span class="tff-sym-5 absolute" style="bottom:28%;right:6%;font-size:16px;color:rgba(238,164,192,0.50);">✿</span>
+            <span class="tff-sym-1 absolute" style="bottom:32%;left:5%;font-size:9px;color:rgba(166,221,214,0.55);">✦</span>
+            <span class="tff-sym-3 absolute" style="top:45%;left:2%;font-size:13px;color:rgba(253,217,217,0.45);">✧</span>
+            <span class="tff-sym-2 absolute" style="top:12%;left:48%;font-size:8px;color:rgba(184,227,183,0.55);">❀</span>
+        </div>
         <div class="photo-content px-6">
             <p class="font-serif italic text-white/50 text-[13px] tracking-[4px] mb-6 tff-reveal">— what is a good life —</p>
-            <h1 class="font-serif text-white leading-none mb-4 tff-reveal" style="font-size: clamp(48px, 9vw, 110px); letter-spacing: 0.04em;">
+            <h1 class="font-serif tff-shimmer-text leading-none mb-4 tff-reveal" style="font-size: clamp(48px, 9vw, 110px); letter-spacing: 0.04em;">
                 The First Flower
             </h1>
             <div class="tff-divider tff-reveal"></div>
@@ -289,8 +403,14 @@
     <!-- ═══════════════════════════════════
          PROFILE
     ═══════════════════════════════════ -->
-    <section id="profile" class="photo-section profile-bg py-24 px-6">
-        <div class="max-w-5xl mx-auto">
+    <section id="profile" class="photo-section profile-bg py-24 px-6 overflow-hidden">
+        <!-- Glow orbs -->
+        <div class="absolute inset-0 pointer-events-none z-0">
+            <div class="tff-orb tff-orb-1" style="width:520px;height:520px;top:-160px;left:-140px;background:radial-gradient(circle,rgba(238,164,192,0.25),transparent 70%);"></div>
+            <div class="tff-orb tff-orb-2" style="width:420px;height:420px;top:40%;right:-120px;background:radial-gradient(circle,rgba(166,221,214,0.22),transparent 70%);"></div>
+            <div class="tff-orb tff-orb-3" style="width:360px;height:360px;bottom:-90px;left:35%;background:radial-gradient(circle,rgba(184,227,183,0.20),transparent 70%);"></div>
+        </div>
+        <div class="max-w-5xl mx-auto relative z-10">
 
             <!-- Title -->
             <div class="text-center mb-16 tff-reveal">
@@ -344,6 +464,19 @@
     ═══════════════════════════════════ -->
     <section id="quotes" class="photo-section quotes-bg py-24">
         <div class="photo-overlay" style="background: rgba(61,46,82,0.35);"></div>
+        <!-- Twinkling stars -->
+        <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
+            <span class="tff-tw-1 absolute" style="top:12%;left:8%;font-size:11px;color:rgba(238,164,192,0.75);">✦</span>
+            <span class="tff-tw-2 absolute" style="top:25%;right:12%;font-size:9px;color:rgba(255,255,255,0.55);">✧</span>
+            <span class="tff-tw-3 absolute" style="top:58%;left:5%;font-size:13px;color:rgba(177,104,168,0.65);">★</span>
+            <span class="tff-tw-4 absolute" style="top:72%;right:8%;font-size:10px;color:rgba(238,164,192,0.60);">✦</span>
+            <span class="tff-tw-5 absolute" style="top:38%;right:20%;font-size:8px;color:rgba(255,255,255,0.50);">✧</span>
+            <span class="tff-tw-6 absolute" style="bottom:18%;left:15%;font-size:12px;color:rgba(166,221,214,0.55);">✦</span>
+            <span class="tff-tw-1 absolute" style="top:18%;left:42%;font-size:9px;color:rgba(238,164,192,0.45);">★</span>
+            <span class="tff-tw-3 absolute" style="bottom:32%;right:25%;font-size:10px;color:rgba(253,217,217,0.55);">✦</span>
+            <span class="tff-tw-2 absolute" style="top:82%;left:52%;font-size:8px;color:rgba(255,255,255,0.38);">✧</span>
+            <span class="tff-tw-4 absolute" style="top:45%;left:28%;font-size:11px;color:rgba(177,104,168,0.50);">✦</span>
+        </div>
         <div class="photo-content">
 
             <!-- Title -->
@@ -372,6 +505,15 @@
     ═══════════════════════════════════ -->
     <section id="blog" class="photo-section blog-bg py-24 px-6">
         <div class="photo-overlay" style="background: rgba(61,46,82,0.35);"></div>
+        <!-- Drifting petals -->
+        <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
+            <span class="tff-pt-1 absolute" style="top:20%;left:6%;font-size:13px;color:rgba(238,164,192,0.60);">✿</span>
+            <span class="tff-pt-2 absolute" style="top:48%;right:8%;font-size:10px;color:rgba(166,221,214,0.55);">❀</span>
+            <span class="tff-pt-3 absolute" style="top:68%;left:22%;font-size:12px;color:rgba(253,217,217,0.50);">✿</span>
+            <span class="tff-pt-4 absolute" style="top:32%;left:57%;font-size:9px;color:rgba(177,104,168,0.55);">✦</span>
+            <span class="tff-pt-5 absolute" style="bottom:22%;right:14%;font-size:14px;color:rgba(238,164,192,0.45);">❀</span>
+            <span class="tff-pt-6 absolute" style="top:15%;right:32%;font-size:11px;color:rgba(184,227,183,0.55);">✿</span>
+        </div>
         <div class="photo-content max-w-5xl mx-auto">
 
             <!-- Title -->
@@ -616,6 +758,70 @@
         buildBlog();
         initReveal();
 
+    })();
+    </script>
+
+    <script>
+    /* ---- Hero Particle Canvas ---- */
+    (function () {
+        var canvas = document.getElementById('tff-hero-canvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var W, H, particles = [];
+        var COLS = [
+            'rgba(238,164,192,',  // rose
+            'rgba(253,217,217,',  // pink
+            'rgba(166,221,214,',  // teal
+            'rgba(184,227,183,',  // mint
+            'rgba(177,104,168,',  // purple
+            'rgba(255,255,255,'   // white
+        ];
+
+        function resize() {
+            W = canvas.width  = canvas.offsetWidth;
+            H = canvas.height = canvas.offsetHeight;
+        }
+
+        function Particle() {
+            this.reset = function () {
+                this.x       = Math.random() * W;
+                this.y       = H + 10;
+                this.vx      = (Math.random() - 0.5) * 0.35;
+                this.vy      = -(Math.random() * 0.45 + 0.18);
+                this.r       = Math.random() * 2.4 + 0.7;
+                this.col     = COLS[Math.floor(Math.random() * COLS.length)];
+                this.a       = Math.random() * 0.45 + 0.15;
+                this.life    = 0;
+                this.maxLife = Math.random() * 220 + 160;
+            };
+            this.reset();
+            this.y = Math.random() * H; // distribute at start
+
+            this.update = function () {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life++;
+                if (this.y < -10 || this.life > this.maxLife) this.reset();
+            };
+            this.draw = function () {
+                var fade = Math.min(this.life / 40, 1) * Math.min((this.maxLife - this.life) / 40, 1);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.fillStyle = this.col + (this.a * fade) + ')';
+                ctx.fill();
+            };
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, W, H);
+            particles.forEach(function (p) { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        resize();
+        for (var i = 0; i < 70; i++) particles.push(new Particle());
+        animate();
+        window.addEventListener('resize', resize);
     })();
     </script>
 
