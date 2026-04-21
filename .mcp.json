@@ -1,12 +1,16 @@
-{
-  "mcpServers": {
-    "voicevox": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": ["mcp-simple-voicevox"],
-      "env": {
-        "VOICEVOX_URL": "http://localhost:50021"
+{                                                                                                                                                                                                                                                                            
+    "mcpServers": {                                                                                                                                                                                                                                                            
+      "voicevox": {                                                                                                                                                                                                                                                            
+        "type": "stdio",                                                                                                                                                                                                                                                       
+        "command": "uvx",
+        "args": ["mcp-simple-voicevox"],                                                                                                                                                                                                                                       
+        "env": {                                                                                                                                                                                                                                                               
+          "VOICEVOX_URL": "http://localhost:50021"
+        }                                                                                                                                                                                                                                                                      
+      },                                                    
+      "xmcp": {
+        "type": "http",
+        "url": "http://127.0.0.1:8000/mcp"                                                                                                                                                                                                                                     
       }
-    }
+    }                                                                                                                                                                                                                                                                          
   }
-}
