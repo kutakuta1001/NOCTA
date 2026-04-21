@@ -3,3 +3,4 @@
 2026-04-16: HP TOOLSセクション追加（Seed/Verse/inner canvas・スクリーンショット3枚処理）、ベストプラクティスレビュー8件、DESIGN.md新設、CLAUDE.md強化（セッション運用・vidIQ MCP・/simplify・Denyリスト）、article-notes LLM Wiki導入、NuWord DESIGN.md引き継ぎ書作成。次: SynthV承認ゲート⑤・vidIQ MCP試用・NuWordのDESIGN.md作成。
 2026-04-18: TFFエフェクト刷新（Hero:桜ペタル・Profile:グラデーションメッシュ・Blog:オーロラ）完了・ブラウザ確認済み。PV制作パイプライン設計完了: pv_edit.py（FFmpeg5バグ修正済み）・/pv-create スキル作成。
 2026-04-19: NOCTA Visual 01 PV制作中。絵コンテ承認済み（3シーン25秒・3:4縦）。Runwayプロンプトv2作成済み（outputs/prompts/pv-video-prompts.md）。Scene01生成OK・Scene02プロンプト修正済み（5s→10s）。Runway Gen4無料枠はクオリティ不足→Kling 3.0 Proに切替予定。次: kling.kuaishou.comでScene01〜03生成→outputs/pv/clips/に配置→/pv-create edit実行。
+2026-04-21: エージェント最小権限（YAMLフロントマター）全12エージェントに適用完了。デザインパイプライン再設計（Opus 4.7批評反映）: /lp-create スキル新設・DESIGN.mdセクション12〜14追加（感情-ビジュアル変換テーブル/レイアウトパターン/継承度ガイド）・MANUAL.md新設。次: NuWorld承認ゲート⑤（SynthV確認）・/lp-create 実運用テスト。
