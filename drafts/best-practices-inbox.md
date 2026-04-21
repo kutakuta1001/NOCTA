@@ -30,6 +30,7 @@
 
 ## 処理済み
 
+- https://zenn.dev/tmasuyama1114/articles/everything-claude-code-concepts （2026-04-21）
 - [docs.anthropic.com] モデル一覧 — ⚠️ claude-3-haiku-20240307 が2026-04-19（本日）廃止。R-09ではHaiku 4.5指定済みだが移行確認推奨 （2026-04-21）
 - [docs.anthropic.com] モデル一覧 — claude-sonnet-4-20250514 / claude-opus-4-20250514 が2026-06-15廃止予定 → Sonnet 4.6 / Opus 4.7に移行要 （2026-04-21）
 - [docs.anthropic.com] モデル一覧 — Opus 4.7の最大出力が128k tokens（Sonnet 4.6は64k）。長文SVP生成・仕様書タスクで有利 （2026-04-21）
