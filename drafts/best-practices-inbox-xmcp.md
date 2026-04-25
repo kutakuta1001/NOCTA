@@ -7,8 +7,6 @@
 
 ## 未処理
 
-- https://x.com/ClaudeCode_love/status/2046531725157957964 | 【保存推奨】Claude Codeで意外と知られていないけど本当に差がつくTips10選 ①/clearで不要な文脈を切る ②/compactで長い会話を要約させる ③CLAUDE.mdに開発ルールを固定する ④手順書はSkillsに逃がして再現性を ⑤調査系はSubagentに分業する ⑥Hooksでformat自動化…
-- https://x.com/MindTheGapMTG/status/2047008822057701713 | We run 12 Claude Code agents in production daily. The lock-in isn't the model. It's your orchestration layer - CLAUDE.md files, hooks, subagent configs. Build that right and swapping models is an afternoon. The real lock-in is your IDE's workflow assumptions.
 - https://x.com/IAmAaronWill/status/2046978768825143655 | → Install Claude Code → Create a /strategy folder → Build your folder structure → Write CLAUDE.md with your offer, ICP & voice → Create a commands folder → Build your first slash command → Add a copywriter subagent → Connect Gmail, Notion and Drive…
 - https://x.com/Dhanush_Nehru/status/2045511473620009233 | Claude's Model Context Protocol (MCP) is taking over but finding the right servers for your workflow is impossible. I just open-sourced the definitive directory for all things MCP. Inside: The best community-built tools for connecting Claude & Cursor to your local DBs, Slack…
 - https://x.com/FelpsCrypto/status/2047124610760503366 | Se eu tivesse que aprender Claude Code em 7 dias, eu não assistiria um único tutorial. Eu estudaria estes repositórios do GitHub. 1. Awesome Claude Code: O índice mestre de tudo sobre Claude Code. Agentes, comandos, hooks, arquivos CLAUDE.md e fluxos completos.
@@ -23,6 +21,8 @@
 
 ## 処理済み
 
+- https://x.com/ClaudeCode_love/status/2046531725157957964 （2026-04-25）
+- https://x.com/MindTheGapMTG/status/2047008822057701713 （2026-04-25）
 - https://x.com/kimmonismus/status/2044114106064515381 （2026-04-21）
 - https://x.com/victormustar/status/2044336082011963872 （2026-04-21）
 - https://x.com/RoundtableSpace/status/2044041733659381771 （2026-04-21）
@@ -32,13 +32,3 @@
 - https://x.com/grok/status/2045289998593806813 （2026-04-21）
 - https://x.com/pankajkumar_dev/status/2044281458999865495 （2026-04-21）
 - https://x.com/nozmen/status/2045254526559740210 （2026-04-18）
-- https://x.com/benscharfstein/status/2045250252412956939 （2026-04-18）
-- https://x.com/msjiaozhu/status/2041698840236245396 （2026-04-13）
-- https://x.com/lucianlamp/status/2042495111578460422 （2026-04-13）
-- https://x.com/socialwithaayan/status/2042993563555037688 （2026-04-13）
-- https://x.com/sukh_saroy/status/2043199144429531433 （2026-04-13）
-- https://x.com/techwith_ram/status/2042094378592923907 （2026-04-13）
-- https://x.com/SuguruKun_ai/status/2043558219055071485 （2026-04-13）
-- https://x.com/tsumotokai/status/2043339982317011455 （2026-04-13）
-- https://x.com/aisearchio/status/2042446695678750882 （2026-04-13）
-- https://x.com/StepFun_ai/status/2041918654439141652 （2026-04-13）

@@ -39,6 +39,19 @@
 - [docs.anthropic.com] モデル一覧 — Opus 4.6 価格 $5/$25/MTok（旧比1/3） （2026-04-13）
 - [docs.anthropic.com] モデル一覧 — 1M トークン コンテキスト（ベータ）対応 （2026-04-13）
 
+## 2026-04-25 アーカイブ分（第2回）
+
+- https://zenn.dev/tmasuyama1114/articles/everything-claude-code-concepts （2026-04-21）
+- [docs.anthropic.com] モデル一覧 — claude-3-haiku-20240307 が2026-04-19廃止 （2026-04-21）
+- [docs.anthropic.com] モデル一覧 — claude-sonnet-4/opus-4-20250514 が2026-06-15廃止予定 （2026-04-21）
+- [docs.anthropic.com] モデル一覧 — Opus 4.7の最大出力が128k tokens （2026-04-21）
+- [docs.anthropic.com] Claude Code 概要 — Agent SDK リリース （2026-04-21）
+- [docs.anthropic.com] Claude Code 概要 — Channels機能（Telegram/Discord/webhook） （2026-04-21）
+- [docs.anthropic.com] CHANGELOG v2.1.116 — MCPスタートアップ高速化 （2026-04-21）
+- [docs.anthropic.com] CHANGELOG v2.1.113 — hooksのfile_pathが絶対パス形式に変更 （2026-04-21）
+- [docs.anthropic.com] CHANGELOG v2.1.110 — Hooksに`if`フィールド追加 （2026-04-21）
+- https://x.com/i/status/2043463258762629222 （2026-04-18）
+
 ## 2026-04-25 アーカイブ分
 
 - https://qiita.com/masa_ClaudeCodeLab/items/8c22966fbd3c125c53dc （2026-04-18）
