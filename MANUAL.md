@@ -1,7 +1,71 @@
-# NOCTA スキル取扱説明書
+# NOCTA スキル取扱説明書 — デザイン・ビジュアル編
 
-NOCTAで使える主要スキルの操作手順まとめ。
-詳細なルールは `CLAUDE.md`、デザイン仕様は `website/DESIGN.md` を参照。
+NOCTAのデザイン・ビジュアル制作スキルの操作手順まとめ。
+楽曲制作スキルは `docs/MANUAL.md` §2を参照。詳細ルールは `CLAUDE.md`、デザイン仕様は `website/DESIGN.md`。
+
+## デザインスキルの全体フロー
+
+```
+/visual-prompt [作品名]
+  → ChatGPT Plus で GPT Image 2 手動生成（G1〜G3から選ぶ）
+    → IPFS に登録（Zora 等）
+      → /visual-add [作品名]   ← HP の Visual セクションに掲載
+
+/lp-create [対象名]
+  → design-brief 生成 → Claude Design 注入 → HTML 実装 → website/[slug]/
+
+/pv-create story → /pv-create prompt → /pv-create edit
+  → 絵コンテ → Runway/Kling プロンプト → FFmpeg 結合 → outputs/pv/
+
+/design-status          ← いつでも現状確認
+```
+
+---
+
+## /design-status
+
+デザイン・ビジュアル制作の進捗を一覧表示する。
+
+**いつ使うか**
+- Visual作品が何件あるか確認したいとき
+- LP制作・PV制作がどこまで進んでいるか確認したいとき
+- 「次に何をするか」を整理したいとき
+
+**使い方**
+```
+/design-status
+```
+
+**表示内容**
+- Visual作品数（Works / Art / Music 別・最新作品タイトル）
+- 進行中LP（`drafts/design-brief-*.md` の有無とフェーズ）
+- 公開済みLP（`website/` 内のサブディレクトリ）
+- PV進捗（pv_concept.md / pv_storyboard.md / outputs/pv/ の有無）
+- 次のアクション提案
+
+---
+
+## /visual-add [作品名]
+
+IPFS登録済みの画像を `website/visual-data.js` に追加し、HPのVisualセクションに掲載する。
+
+**いつ使うか**
+- GPT Image 2やその他ツールで生成した画像をIPFSに登録済みで、HPに載せたいとき
+- `/visual-prompt` で生成した画像を採用したとき（フローの後半ステップ）
+
+**使い方**
+```
+/visual-add                  ← タイトルをその場で聞かれる
+/visual-add "rainy season #2"
+```
+
+**CEOが用意するもの**
+| 項目 | 内容 |
+|---|---|
+| IPFSハッシュ | `bafybei` で始まる59文字のCIDv1（60文字以上はエラー） |
+| Zora URL | NFTページURL（不明な場合は空Enterでスキップ可） |
+| カテゴリ | W（Works）/ A（Art）/ M（Music）から選択 |
+| 日本語説明文 | 1〜2文 |
 
 ---
 
@@ -90,16 +154,28 @@ Phase 4: 確認・git push
 
 ## /visual-prompt [作品名]
 
-Midjourney / Kling向けビジュアルプロンプト生成。楽曲ジャケット・SNSバナー・アート作品に使う。
+GPT Image 2 / Kling向けビジュアルプロンプト生成。楽曲ジャケット・SNSバナー・アート作品・NFT用画像に使う。
 LPや画面レイアウトには使わない（→ `/lp-create` を使う）。
+
+**生成されるもの:**
+- GPT Image 2プロンプト G1〜G3（標準構図・象徴的・構図変化の3案）
+- Klingプロンプト K1〜K2（カメラムーブ・被写体ムーブの2案）
+- SNS / Warpcastコピーライン 3案（音楽用語×SNS用語の二重の意味）
+
+**ChatGPT Plusでの手動生成手順:**
+1. ChatGPT Plus を開いて GPT Image 2 を選択
+2. Thinking Mode をONにする
+3. G1〜G3から選んだプロンプトを貼り付けて生成
+4. 採用した画像のIPFSハッシュを `visual/[作品名]/prompts.md` の生成結果メモに記録
+5. → `/visual-add` でHPに追加
 
 ---
 
-## /lp-create と /visual-prompt の使い分け
+## スキル使い分け早見表
 
 | 作りたいもの | 使うスキル |
 |---|---|
 | 楽曲LP・説明LPのページ | `/lp-create` |
-| 楽曲ジャケット・SNSバナー | `/visual-prompt` |
+| 楽曲ジャケット・SNSバナー・NFTアート | `/visual-prompt` → `/visual-add` |
 | PV動画のキービジュアル | `/pv-create story` → `/visual-prompt` |
-| Visualセクション用アート | `/visual-prompt` → `/visual-add` |
+| 現状確認 | `/design-status` |

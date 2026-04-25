@@ -29,6 +29,47 @@
 
 ---
 
+## デザイン・ビジュアル制作の現状
+
+### Visual作品（website/visual-data.js）
+
+| カテゴリ | 件数 | 最新作品 |
+|---------|------|---------|
+| Works（完成品・Canva加工済み・Base chain） | 1件 | SILENCE #1 |
+| Art（AI生成元画像・Zora chain） | 13件 | rainy season #1 |
+| Music（楽曲連動ビジュアル） | 0件 | 未追加 |
+
+追加手順: `/visual-prompt [作品名]` → ChatGPT PlusでGPT Image 2手動生成 → IPFS登録 → `/visual-add`
+
+### ランディングページ（website/）
+
+| ページ | 状態 |
+|--------|------|
+| the-first-flower/ | 公開済み |
+| NuWord LP | 未制作（`/lp-create NuWord` で開始可能） |
+
+### PV進捗（NuWord）
+
+| 成果物 | 状態 |
+|--------|------|
+| pv_concept.md | 未作成 |
+| pv_storyboard.md | あり（drafts/） |
+| outputs/pv/ | 未作成 |
+
+→ NuWord SynthV確認（ゲート⑤）通過後に `/pv-create story NuWord` で再開
+
+### デザイン関連スキル早見表
+
+| コマンド | 何をするか |
+|---------|-----------|
+| `/design-status` | Visual作品数・LP・PV進捗を一覧確認 |
+| `/visual-prompt [作品名]` | GPT Image 2 / Klingプロンプト生成（G1〜G3・K1〜K2） |
+| `/visual-add [作品名]` | IPFS登録済み画像をvisual-data.jsに追加 |
+| `/lp-create [対象名]` | 楽曲・プロダクト専用ランディングページを構築 |
+| `/pv-create [フェーズ]` | PV制作（絵コンテ / プロンプト / FFmpeg編集） |
+
+---
+
 ## インフラ・設定の現状
 
 ### リモートトリガー（自動エージェント）
