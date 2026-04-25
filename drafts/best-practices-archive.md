@@ -39,6 +39,19 @@
 - [docs.anthropic.com] モデル一覧 — Opus 4.6 価格 $5/$25/MTok（旧比1/3） （2026-04-13）
 - [docs.anthropic.com] モデル一覧 — 1M トークン コンテキスト（ベータ）対応 （2026-04-13）
 
+## 2026-04-25 アーカイブ分
+
+- https://qiita.com/masa_ClaudeCodeLab/items/8c22966fbd3c125c53dc （2026-04-18）
+- https://x.com/i/status/2044707793337528701 （2026-04-18）
+- [docs.anthropic.com] CHANGELOG v2.1.101 — permissions.deny バグ修正 （2026-04-13）
+- [docs.anthropic.com] CHANGELOG v2.1.97 — CJK 入力後 / @メンション使用可 （2026-04-13）
+- [docs.anthropic.com] CHANGELOG v2.1.97 — /agents タブ追加 （2026-04-13）
+- [docs.anthropic.com] CHANGELOG v2.1.94 — デフォルト effort: high に変更 （2026-04-13）
+- [docs.anthropic.com] Claude Code 概要 — /schedule クラウドタスク （2026-04-13）
+- [docs.anthropic.com] Claude Code 概要 — Homebrew 2 cask（自動更新なし） （2026-04-13）
+- https://zenn.dev/lv/articles/b772312d6abf35 （2026-04-07）
+- https://x.com/MakeAI_CEO/status/2041363825631658448 （2026-04-07）
+
 ## 2026-04-18 アーカイブ分（第2回）
 
 - [platform.claude.com/docs] [モデル一覧] — Claude Sonnet 4・Opus 4（-20250514版）が 2026-06-15 廃止予定 （2026-04-18）
