@@ -1,6 +1,8 @@
 .DS_Store
 sample/
 *.mp4
+outputs/audio/**/*.mp3
+outputs/audio/**/*.wav
 
 # 機密ファイル（APIキー・証明書・環境変数）
 .env
