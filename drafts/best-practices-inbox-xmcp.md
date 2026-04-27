@@ -9,6 +9,9 @@
 
 ## 処理済み
 
+- https://x.com/DataChaz/status/2046351105274392670 （2026-04-27）
+- https://x.com/Joestar_sann/status/2048322964048019490 （2026-04-27）
+- https://x.com/Amu_Lab__/status/2048371519114379279 （2026-04-27）
 - https://x.com/sho_ai_real/status/2045831363518169241 （2026-04-26）
 - https://x.com/XVisualneuFX/status/2046981194668298353 （2026-04-26）
 - https://x.com/IAmAaronWill/status/2046978768825143655 （2026-04-25）

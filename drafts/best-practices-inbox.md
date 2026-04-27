@@ -28,6 +28,10 @@
 
 ## 処理済み
 
+- [docs.anthropic.com] リリースノート v2.1.118 — hooks type:mcp_tool （2026-04-27）
+- [docs.anthropic.com] Claude Code overview — クラウドスケジュール済みタスク （2026-04-27）
+- [docs.anthropic.com] リリースノート v2.1.119 — prUrlTemplate （2026-04-27）
+
 - https://qiita.com/retore/items/3688cf515c14f7471ed4 （2026-04-26）
 - https://zenn.dev/acntechjp/articles/3f361da473eac8 （2026-04-26）
 - https://x.com/i/status/2046930094695043199 （2026-04-26）
