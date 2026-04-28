@@ -77,3 +77,13 @@
 - [platform.claude.com/docs] [モデル一覧] — claude-opus-4-7 価格確定: $5/$25/MTok（Opus 4.6 と同価格）。コンテキスト 1M tokens・最大出力 128k・知識カットオフ 2026年1月 （2026-04-18）
 - [platform.claude.com/docs] [モデル一覧] — Claude Haiku 3（claude-3-haiku-20240307）が 2026-04-19 廃止予定（3日後） （2026-04-18）
 - [docs.anthropic.com] モデル一覧 — Opus 4.6 最大出力 128K （2026-04-13）
+- [docs.anthropic.com] リリースノート v2.1.118 — hooks type:mcp_tool （2026-04-27）
+- [docs.anthropic.com] Claude Code overview — クラウドスケジュール済みタスク （2026-04-27）
+- [docs.anthropic.com] リリースノート v2.1.119 — prUrlTemplate （2026-04-27）
+- https://qiita.com/retore/items/3688cf515c14f7471ed4 （2026-04-26）
+- https://zenn.dev/acntechjp/articles/3f361da473eac8 （2026-04-26）
+- https://x.com/i/status/2046930094695043199 （2026-04-26）
+- https://x.com/i/status/2047272345455518009 （2026-04-26）
+- https://github.com/ComposioHQ/awesome-codex-skills （2026-04-26）
+- https://qiita.com/ot12/items/06420caf41a34a910c53 （2026-04-26）
+- https://x.com/i/status/2047837100389876200 （2026-04-26）

@@ -28,16 +28,15 @@
 
 ## 処理済み
 
-- [docs.anthropic.com] リリースノート v2.1.118 — hooks type:mcp_tool （2026-04-27）
-- [docs.anthropic.com] Claude Code overview — クラウドスケジュール済みタスク （2026-04-27）
-- [docs.anthropic.com] リリースノート v2.1.119 — prUrlTemplate （2026-04-27）
-
-- https://qiita.com/retore/items/3688cf515c14f7471ed4 （2026-04-26）
-- https://zenn.dev/acntechjp/articles/3f361da473eac8 （2026-04-26）
-- https://x.com/i/status/2046930094695043199 （2026-04-26）
-- https://x.com/i/status/2047272345455518009 （2026-04-26）
-- https://github.com/ComposioHQ/awesome-codex-skills （2026-04-26）
-- https://qiita.com/ot12/items/06420caf41a34a910c53 （2026-04-26）
-- https://x.com/i/status/2047837100389876200 （2026-04-26）
 - https://x.com/i/status/2047628297086144940 （2026-04-26）
 - https://x.com/i/status/2044704524125057504 （2026-04-26）
+- https://x.com/i/status/2048712868032643402 （2026-04-28）
+- https://x.com/i/status/2048729561089888571 （2026-04-28）
+- https://qiita.com/Akira-Isegawa/items/00f23d206c504db2ac3b （2026-04-28）
+- https://x.com/i/status/2048976187926720967 （2026-04-28）
+- https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices （2026-04-28）
+- [docs.anthropic.com] リリースノート v2.1.117 — スキルfrontmatterに context:fork / agent フィールド追加（エージェントスキル設計に活用可）（2026-04-28）
+- [docs.anthropic.com] リリースノート v2.1.116 — /skills メニューで t キーによるトークン数ソート（スキルファイルのサイズ管理効率化）（2026-04-28）
+- [docs.anthropic.com] モデル一覧 — Sonnet 4 / Opus 4 は 2026-06-15 廃止予定（NOCTAは使用中でないが念のため確認推奨）（2026-04-28）
+- [docs.anthropic.com] Claude Code overview — Channels機能: Telegram/Discord/webhookからセッションにイベントプッシュ可能（2026-04-28）
+- [docs.anthropic.com] Claude Code overview — Agent SDKでオーケストレーション・ツール・権限をフルコントロールしたカスタムエージェント構築可能（2026-04-28）

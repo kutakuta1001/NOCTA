@@ -9,6 +9,9 @@
 
 ## 処理済み
 
+- https://x.com/CodeByPoonam/status/2048366357482520935 （2026-04-28）
+- https://x.com/0xravv/status/2048639799146488317 （2026-04-28）
+- https://x.com/CuriousRefuge/status/2048850086625743220 （2026-04-28）
 - https://x.com/DataChaz/status/2046351105274392670 （2026-04-27）
 - https://x.com/Joestar_sann/status/2048322964048019490 （2026-04-27）
 - https://x.com/Amu_Lab__/status/2048371519114379279 （2026-04-27）
