@@ -58,9 +58,10 @@
       padding-top: 13vh;
       opacity: 1;
       transition: opacity 0.75s ease;
-      pointer-events: auto;
+      pointer-events: none; /* children override individually */
     }
-    #intro.hidden { opacity:0; pointer-events:none; }
+    #intro.hidden { opacity:0; }
+    .dur-row { pointer-events: auto; }
 
     #intro .title { font-size: clamp(2.4rem, 9vw, 3.8rem); }
     #intro .tagline {
@@ -574,7 +575,8 @@ document.getElementById('again-btn').addEventListener('click', restartSession);
 
 function tryTap(x, y) {
   if (mode !== 'idle') return;
-  if (Math.hypot(x - dotX, y - dotY) < 38) startSession();
+  const hit = ('ontouchstart' in window) ? 44 : 56; // wider on desktop
+  if (Math.hypot(x - dotX, y - dotY) < hit) startSession();
 }
 canvas.addEventListener('click',      e => tryTap(e.clientX, e.clientY));
 canvas.addEventListener('touchstart', e => {
