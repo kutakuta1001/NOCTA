@@ -156,7 +156,9 @@ const TIME_MSGS = [
   { atMs: 120000, text: '目を閉じてください', fadeMs: 30000 },  // 2 minutes
 ];
 
-const FOLLOW    = 0.055;   // spring: blob follows finger
+// Liquid spring — velocity + damping (ぬるっと追従)
+const BLOB_K    = 0.010;   // spring stiffness  (低い = 遅い)
+const BLOB_DAMP = 0.82;    // damping           (低い = ゆっくり減衰・ぬるっと感)
 const SHRINK_MS = 3200;    // visual blob shrink speed after release
 
 // Session end timers
@@ -186,6 +188,7 @@ let bx = 0, by = 0;
 let lastTx = 0, lastTy = 0;   // for movement detection
 
 let blobScale      = 0;
+let bvx = 0, bvy = 0;   // blob center velocity (for liquid spring)
 let shownMsgs      = new Set();
 let shownTimeMsgs  = new Set();
 let sessionStart   = null;
@@ -479,7 +482,8 @@ function startSession(clientX, clientY) {
   isHolding      = true;
 
   tx=clientX; ty=clientY; bx=tx; by=ty;
-  lastTx=tx;  lastTy=ty;
+  bvx=0; bvy=0;   // reset velocity at touch start
+  lastTx=tx; lastTy=ty;
 
   colorizeParticles();
   clearEndTimers();
@@ -529,11 +533,16 @@ function frame(ts) {
     if (isHolding) {
       blobScale=Math.min(blobScale+dt/totalMs,1);
       if (blobScale>=1){finishSession();return;}
-      bx+=(tx-bx)*FOLLOW; by+=(ty-by)*FOLLOW;
+      // Liquid spring: velocity accumulates toward finger, then damps
+      bvx=(bvx+(tx-bx)*BLOB_K)*BLOB_DAMP;
+      bvy=(bvy+(ty-by)*BLOB_K)*BLOB_DAMP;
     } else {
       // Visual shrink only (actual end is driven by releaseTimer)
       blobScale=Math.max(blobScale-dt/SHRINK_MS,0);
+      // Inertia: blob drifts and decelerates after release
+      bvx*=BLOB_DAMP; bvy*=BLOB_DAMP;
     }
+    bx+=bvx; by+=bvy;
     sessionElapsed=Date.now()-sessionStart;
     document.getElementById('bar-time').textContent=fmt(sessionElapsed);
     checkMessages(blobScale, sessionElapsed);
@@ -601,6 +610,7 @@ canvas.addEventListener('pointerdown',e=>{
     activePtrId=e.pointerId;
     isHolding=true;
     tx=e.clientX; ty=e.clientY;
+    bvx=0; bvy=0;
     lastTx=tx; lastTy=ty;
     clearTimeout(releaseTimer); releaseTimer=null;
     startStillTimers();
