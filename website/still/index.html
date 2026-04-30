@@ -101,6 +101,55 @@
       cursor:pointer; pointer-events:auto; transition:all 0.25s;
     }
     .again-btn:hover { background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.85); }
+
+    #gate {
+      position:fixed; inset:0; z-index:20;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background:#09090f;
+      transition:opacity 0.6s ease;
+    }
+    #gate.hidden { opacity:0; pointer-events:none; }
+    #gate .title { font-size:clamp(2.4rem,9vw,3.8rem); }
+    #gate .tagline {
+      font-size:clamp(0.62rem,2.6vw,0.78rem); margin-top:0.45rem;
+      color:rgba(255,255,255,0.38);
+    }
+    #gate-msg {
+      font-size:clamp(0.75rem,3.2vw,0.9rem); margin-top:2.4rem;
+      transition:color 0.3s;
+    }
+    #gate-input {
+      margin-top:1.1rem;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:99px; padding:0.52rem 1.4rem;
+      color:rgba(255,255,255,0.85);
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      letter-spacing:0.12em; font-size:0.82rem;
+      text-align:center; outline:none;
+      width:min(72vw,280px); transition:border-color 0.22s;
+    }
+    #gate-input:focus { border-color:rgba(255,255,255,0.42); }
+    #gate-input::placeholder { color:rgba(255,255,255,0.22); letter-spacing:0.08em; }
+    #gate-btn {
+      margin-top:1rem;
+      font-family:'Josefin Sans',sans-serif; font-weight:100;
+      font-size:0.76rem; letter-spacing:0.28em; text-indent:0.28em;
+      color:rgba(255,255,255,0.48);
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:99px; padding:0.44rem 1.6rem;
+      cursor:pointer; transition:all 0.25s;
+    }
+    #gate-btn:hover { background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.85); }
+    #gate-buy {
+      margin-top:3rem;
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      font-size:0.68rem; letter-spacing:0.18em;
+      color:rgba(255,255,255,0.28); text-decoration:none;
+      transition:color 0.22s;
+    }
+    #gate-buy:hover { color:rgba(255,255,255,0.55); }
   </style>
 </head>
 <body>
@@ -129,6 +178,15 @@
   <div class="f-title title">still</div>
   <div class="f-label elapsed" id="done-time">00:00</div>
   <button class="again-btn" id="again-btn">もう一度</button>
+</div>
+
+<div id="gate">
+  <div class="f-title title">still</div>
+  <div class="f-label tagline">しずかな時間</div>
+  <div class="f-jp" id="gate-msg">ライセンスキーを入力してください</div>
+  <input id="gate-input" type="text" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" autocomplete="off" spellcheck="false">
+  <button id="gate-btn">はじめる</button>
+  <a href="https://gumroad.com" id="gate-buy" target="_blank" rel="noopener">Gumroadで購入 →</a>
 </div>
 
 <script>
@@ -593,6 +651,75 @@ function frame(ts) {
 }
 
 // ══════════════════════════════════════════
+// AUTH GATE
+// ══════════════════════════════════════════
+const AUTH_KEY = 'still-auth';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function loadHashes() {
+  try {
+    const r = await fetch('./licenses.json', {cache:'no-store'});
+    const d = await r.json();
+    return d.hashes || [];
+  } catch { return []; }
+}
+
+async function checkAuth() {
+  const saved = localStorage.getItem(AUTH_KEY);
+  if (!saved) return false;
+  const hashes = await loadHashes();
+  return hashes.includes(saved);
+}
+
+function startApp() {
+  resize();
+  loadAudio();
+  requestAnimationFrame(frame);
+}
+
+async function initGate() {
+  const ok = await checkAuth();
+  if (ok) {
+    document.getElementById('gate').style.display = 'none';
+    startApp();
+    return;
+  }
+}
+
+document.getElementById('gate-btn').addEventListener('click', async () => {
+  const val = document.getElementById('gate-input').value.trim().toUpperCase();
+  if (!val) return;
+  const btn = document.getElementById('gate-btn');
+  btn.textContent = '確認中...'; btn.style.opacity = '0.5';
+  const hash = await sha256(val);
+  const hashes = await loadHashes();
+  if (hashes.includes(hash)) {
+    localStorage.setItem(AUTH_KEY, hash);
+    const gate = document.getElementById('gate');
+    gate.classList.add('hidden');
+    setTimeout(() => { gate.style.display = 'none'; startApp(); }, 600);
+  } else {
+    btn.textContent = 'はじめる'; btn.style.opacity = '1';
+    const msg = document.getElementById('gate-msg');
+    msg.textContent = 'コードが正しくありません';
+    msg.style.color = 'rgba(255,100,100,0.8)';
+    document.getElementById('gate-input').value = '';
+    setTimeout(() => {
+      msg.textContent = 'ライセンスキーを入力してください';
+      msg.style.color = '';
+    }, 2500);
+  }
+});
+
+document.getElementById('gate-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('gate-btn').click();
+});
+
+// ══════════════════════════════════════════
 // EVENTS
 // ══════════════════════════════════════════
 document.querySelectorAll('.dur-btn').forEach(b=>{
@@ -649,16 +776,10 @@ document.getElementById('again-btn').addEventListener('click',restartSession);
 // ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
-resize();
-loadAudio();
-requestAnimationFrame(frame);
-
-// ══════════════════════════════════════════
-// SERVICE WORKER（PWA オフライン対応）
-// ══════════════════════════════════════════
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
+initGate();
 </script>
 </body>
 </html>

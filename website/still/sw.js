@@ -1,7 +1,8 @@
-const CACHE = 'still-v2';
+const CACHE = 'still-v3';
 const ASSETS = [
   './',
   './index.html',
+  './licenses.json',
   './audio/track-a.mp3',
   './audio/track-b.mp3',
   './icons/icon-192.png',
