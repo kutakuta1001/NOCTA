@@ -7,3 +7,4 @@
 2026-04-19: NOCTA Visual 01 PV制作中。絵コンテ承認済み（3シーン25秒・3:4縦）。Runwayプロンプトv2作成済み（outputs/prompts/pv-video-prompts.md）。Scene01生成OK・Scene02プロンプト修正済み（5s→10s）。Runway Gen4無料枠はクオリティ不足→Kling 3.0 Proに切替予定。次: kling.kuaishou.comでScene01〜03生成→outputs/pv/clips/に配置→/pv-create edit実行。
 2026-04-21: エージェント最小権限（YAMLフロントマター）全12エージェントに適用完了。デザインパイプライン再設計（Opus 4.7批評反映）: /lp-create スキル新設・DESIGN.mdセクション12〜14追加（感情-ビジュアル変換テーブル/レイアウトパターン/継承度ガイド）・MANUAL.md新設。次: NuWorld承認ゲート⑤（SynthV確認）・/lp-create 実運用テスト。
 2026-04-30: NuWord Still PWA対応完了（manifest.json + sw.js + アイコン）。Androidインストール: Chrome ⋮メニュー→「アプリをインストール」。sw.jsのCACHEを still-v2 に更新済み。次の still 更新時は必ず still-v3, v4... とインクリメントすること。
+2026-04-30: NuWord Still にGumroadライセンスゲート実装完了。SHA-256認証・localStorage保存・keygen.html（CEO専用ハッシュ生成ツール）同梱。licenses.jsonにハッシュを追加→sw.jsバージョンup→push で新規購入者を追加できる。Gumroad商品作成・ライセンスキー発行設定がまだ未実施。keygen.html: https://kutakuta1001.github.io/NOCTA/still/keygen.html
