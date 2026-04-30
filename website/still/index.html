@@ -9,178 +9,117 @@
   <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300&family=Noto+Sans+JP:wght@200&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
     html, body {
-      width:100%; height:100%;
-      overflow:hidden;
+      width:100%; height:100%; overflow:hidden;
       background:#111;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
       touch-action: none;
     }
+    canvas { position:fixed; inset:0; width:100%; height:100%; cursor:none; }
 
-    canvas { position:fixed; inset:0; width:100%; height:100%; }
-
-    /* ── Layout layers ── */
     .layer {
-      position: fixed; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center;
-      pointer-events: none;
+      position:fixed; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center;
+      pointer-events:none;
     }
 
-    /* ── Typography ── */
     .f-title {
-      font-family: 'Josefin Sans', sans-serif;
-      font-weight: 100;
-      letter-spacing: 0.58em;
-      text-transform: uppercase;
-      text-indent: 0.58em;
-      color: rgba(255,255,255,0.85);
+      font-family:'Josefin Sans',sans-serif; font-weight:100;
+      letter-spacing:0.58em; text-transform:uppercase; text-indent:0.58em;
+      color:rgba(255,255,255,0.85);
     }
     .f-label {
-      font-family: 'Josefin Sans', sans-serif;
-      font-weight: 300;
-      letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.52);
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      letter-spacing:0.22em; color:rgba(255,255,255,0.52);
     }
     .f-jp {
-      font-family: 'Noto Sans JP', sans-serif;
-      font-weight: 200;
-      letter-spacing: 0.13em;
-      color: rgba(255,255,255,0.72);
-      transition: opacity 1.4s ease;
+      font-family:'Noto Sans JP',sans-serif; font-weight:200;
+      letter-spacing:0.13em; color:rgba(255,255,255,0.72);
+      transition:opacity 1.4s ease;
     }
 
     /* ── Intro ── */
     #intro {
-      justify-content: flex-start;
-      padding-top: 13vh;
-      opacity: 1;
-      transition: opacity 0.75s ease;
-      pointer-events: none; /* children override individually */
+      justify-content:flex-start; padding-top:13vh;
+      opacity:1; transition:opacity 0.7s ease;
     }
     #intro.hidden { opacity:0; }
-    .dur-row { pointer-events: auto; }
-
-    #intro .title { font-size: clamp(2.4rem, 9vw, 3.8rem); }
+    #intro .title  { font-size:clamp(2.4rem,9vw,3.8rem); }
     #intro .tagline {
-      font-size: clamp(0.62rem, 2.6vw, 0.78rem);
-      margin-top: 0.45rem;
-      color: rgba(255,255,255,0.38);
+      font-size:clamp(0.62rem,2.6vw,0.78rem); margin-top:0.45rem;
+      color:rgba(255,255,255,0.38);
     }
-
     .dur-row {
-      display: flex; gap: 0.85rem;
-      margin-top: 1.9rem;
-      pointer-events: auto;
+      display:flex; gap:0.85rem; margin-top:1.9rem;
+      pointer-events:auto;
     }
     .dur-btn {
-      font-family: 'Josefin Sans', sans-serif;
-      font-weight: 300;
-      font-size: 0.8rem;
-      letter-spacing: 0.14em;
-      color: rgba(255,255,255,0.52);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 99px;
-      padding: 0.36rem 1.1rem;
-      cursor: pointer;
-      transition: all 0.22s;
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      font-size:0.8rem; letter-spacing:0.14em;
+      color:rgba(255,255,255,0.52);
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:99px; padding:0.36rem 1.1rem;
+      cursor:pointer; transition:all 0.22s;
     }
     .dur-btn.sel, .dur-btn:hover {
-      background: rgba(255,255,255,0.17);
-      color: rgba(255,255,255,0.9);
-      border-color: rgba(255,255,255,0.42);
+      background:rgba(255,255,255,0.17);
+      color:rgba(255,255,255,0.9);
+      border-color:rgba(255,255,255,0.42);
     }
 
-    /* ── Session bar (top) ── */
+    /* ── Session bar ── */
     #bar {
-      justify-content: flex-start;
-      padding-top: 6.5vh;
-      opacity: 0;
-      transition: opacity 0.8s;
+      justify-content:flex-start; padding-top:6.5vh;
+      opacity:0; transition:opacity 0.8s;
     }
     #bar.show { opacity:1; }
-    #bar-label { font-size: clamp(0.65rem, 2.6vw, 0.78rem); }
+    #bar-label { font-size:clamp(0.65rem,2.6vw,0.78rem); }
+    #bar-time  {
+      font-size:clamp(0.62rem,2.4vw,0.74rem);
+      margin-top:0.25rem; color:rgba(255,255,255,0.35);
+    }
 
     /* ── Guide message ── */
-    #guide {
-      justify-content: center;
-      margin-top: -8vh;
-    }
-    #guide-text { font-size: clamp(0.78rem, 3.4vw, 0.98rem); }
+    #guide { justify-content:center; margin-top:-8vh; }
+    #guide-text { font-size:clamp(0.78rem,3.4vw,0.98rem); }
 
-    /* ── Bottom ── */
-    #bottom {
-      justify-content: flex-end;
-      padding-bottom: 7.5vh;
-    }
+    /* ── Play button ── */
+    #bottom { justify-content:flex-end; padding-bottom:7.5vh; }
     #play-btn {
-      width: 52px; height: 52px;
-      opacity: 0.72;
-      cursor: pointer;
-      pointer-events: auto;
-      transition: opacity 0.3s, transform 0.3s;
+      width:52px; height:52px; opacity:0.72;
+      cursor:pointer; pointer-events:auto;
+      transition:opacity 0.3s, transform 0.3s;
     }
-    #play-btn:hover { opacity:1; transform: scale(1.05); }
+    #play-btn:hover  { opacity:1; transform:scale(1.05); }
     #play-btn.hidden { opacity:0; pointer-events:none; }
 
-    #stop-btn {
-      font-family: 'Josefin Sans', sans-serif;
-      font-weight: 100;
-      font-size: 0.72rem;
-      letter-spacing: 0.32em;
-      text-indent: 0.32em;
-      color: rgba(255,255,255,0.35);
-      background: none;
-      border: none;
-      cursor: pointer;
-      pointer-events: auto;
-      opacity: 0;
-      transition: opacity 0.8s;
-    }
-    #stop-btn.show { opacity:1; }
-    #stop-btn:hover { color: rgba(255,255,255,0.6); }
-
     /* ── Done ── */
-    #done-overlay {
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.9s;
-    }
+    #done-overlay { justify-content:center; opacity:0; transition:opacity 0.9s; }
     #done-overlay.show { opacity:1; pointer-events:auto; }
-    #done-overlay .title { font-size: clamp(1.8rem, 7vw, 3rem); }
+    #done-overlay .title { font-size:clamp(1.8rem,7vw,3rem); }
     #done-overlay .elapsed {
-      font-size: clamp(0.68rem, 2.8vw, 0.82rem);
-      margin-top: 0.5rem;
-      color: rgba(255,255,255,0.42);
+      font-size:clamp(0.68rem,2.8vw,0.82rem);
+      margin-top:0.5rem; color:rgba(255,255,255,0.42);
     }
     .again-btn {
-      margin-top: 2.4rem;
-      font-family: 'Josefin Sans', sans-serif;
-      font-weight: 100;
-      font-size: 0.76rem;
-      letter-spacing: 0.28em;
-      text-indent: 0.28em;
-      color: rgba(255,255,255,0.48);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.16);
-      border-radius: 99px;
-      padding: 0.44rem 1.6rem;
-      cursor: pointer;
-      transition: all 0.25s;
+      margin-top:2.4rem;
+      font-family:'Josefin Sans',sans-serif; font-weight:100;
+      font-size:0.76rem; letter-spacing:0.28em; text-indent:0.28em;
+      color:rgba(255,255,255,0.48);
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:99px; padding:0.44rem 1.6rem;
+      cursor:pointer; transition:all 0.25s;
     }
-    .again-btn:hover {
-      background: rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.85);
-    }
+    .again-btn:hover { background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.85); }
   </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 
-<!-- Intro -->
 <div class="layer" id="intro">
   <div class="f-title title">still</div>
   <div class="f-label tagline">しずかな時間</div>
@@ -191,27 +130,23 @@
   </div>
 </div>
 
-<!-- Session bar -->
 <div class="layer" id="bar">
   <div class="f-label" id="bar-label">10 分 still</div>
+  <div class="f-label" id="bar-time">00:00</div>
 </div>
 
-<!-- Guide message -->
 <div class="layer" id="guide">
   <div class="f-jp" id="guide-text">ドットに触れてください</div>
 </div>
 
-<!-- Bottom controls -->
 <div class="layer" id="bottom">
   <svg id="play-btn" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
     <circle cx="26" cy="26" r="24" stroke="rgba(255,255,255,0.58)" stroke-width="1" fill="none"/>
     <polygon points="20,16 20,36 39,26" stroke="rgba(255,255,255,0.58)" stroke-width="1"
       stroke-linejoin="round" fill="none"/>
   </svg>
-  <button id="stop-btn">stop</button>
 </div>
 
-<!-- Done overlay -->
 <div class="layer" id="done-overlay">
   <div class="f-title title">still</div>
   <div class="f-label elapsed" id="done-time">00:00</div>
@@ -222,59 +157,59 @@
 // ══════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════
-const TRACKS = [
-  './audio/track-a.mp3',
-  './audio/track-b.mp3'
-];
+const TRACKS = ['./audio/track-a.mp3', './audio/track-b.mp3'];
 
-// [startTop, startBottom] → [endTop, endBottom]
-// warm→cool / cool→warm mix
 const PALETTES = [
-  [['#F5D76E','#E09010'], ['#1968A8','#083560']],  // Yellow → Deep Blue
-  [['#FF8C69','#C03A1A'], ['#2ABFBF','#0A6868']],  // Coral → Teal
-  [['#FFB347','#C06800'], ['#6B5B95','#352860']],  // Amber → Purple
-  [['#94DFC8','#48A888'], ['#E8A0A8','#C06070']],  // Mint → Rose (cool→warm)
-  [['#82BFEB','#3578B0'], ['#F5D06A','#C88800']],  // Sky → Gold (cool→warm)
-  [['#A6E0C8','#4EA890'], ['#EFA0C2','#C05888']],  // Seafoam → Blush (cool→warm)
-  [['#DAA0DC','#9835A8'], ['#4EA878','#1E6040']],  // Plum → Forest
-  [['#F0B8B0','#C06050'], ['#7898C8','#3048A0']],  // Blush → Slate
+  [['#F5D76E','#E09010'], ['#1968A8','#083560']],
+  [['#FF8C69','#C03A1A'], ['#2ABFBF','#0A6868']],
+  [['#FFB347','#C06800'], ['#6B5B95','#352860']],
+  [['#94DFC8','#48A888'], ['#E8A0A8','#C06070']],
+  [['#82BFEB','#3578B0'], ['#F5D06A','#C88800']],
+  [['#A6E0C8','#4EA890'], ['#EFA0C2','#C05888']],
+  [['#DAA0DC','#9835A8'], ['#4EA878','#1E6040']],
+  [['#F0B8B0','#C06050'], ['#7898C8','#3048A0']],
 ];
 
-// [progressThreshold, message]
+// Messages triggered when blobScale first crosses threshold (ascending only)
 const MSGS = [
-  [0.00, ''],
-  [0.05, 'いいペースです'],
-  [0.25, ''],
-  [0.48, '目を閉じてください'],
-  [0.74, ''],
-  [0.91, 'もうすぐです'],
-  [0.99, ''],
+  { at: 0.12, text: 'いいペースです' },
+  { at: 0.45, text: '' },
+  { at: 0.55, text: '目を閉じてください' },
+  { at: 0.85, text: '' },
+  { at: 0.94, text: 'もうすぐです' },
 ];
+
+const SHRINK_MS   = 3200;  // ms to fully shrink after release
+const END_DELAY   = 800;   // ms after blobScale=0 before ending
+const INACTIVITY  = 1200;  // ms after release before shrink begins aggressively
 
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
-let mode = 'idle'; // idle | run | done
-let selMin = 10, totalMs = 600000;
-let t0 = null, elapsed = 0, prog = 0;
-let palette = PALETTES[0];
-let msgIdx = -1;
+let mode       = 'idle';   // idle | run | done
+let selMin     = 10;
+let totalMs    = 600000;
+let isHolding  = false;
+let blobScale  = 0;        // 0–1: current visual blob size
+let shownMsgs  = new Set();
+let sessionStart   = null;
+let sessionElapsed = 0;
+let releaseTime    = 0;    // when user last released
+let endScheduled   = false;
+let palette    = PALETTES[0];
 
 // ══════════════════════════════════════════
 // CANVAS
 // ══════════════════════════════════════════
 const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-let W, H, dpr;
+const ctx    = canvas.getContext('2d');
+let W, H, dpr, lastTs = 0;
 
 function resize() {
   dpr = window.devicePixelRatio || 1;
-  W = window.innerWidth;
-  H = window.innerHeight;
-  canvas.width  = W * dpr;
-  canvas.height = H * dpr;
-  canvas.style.width  = W + 'px';
-  canvas.style.height = H + 'px';
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width  = W * dpr; canvas.height = H * dpr;
+  canvas.style.width  = W + 'px'; canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
   spawnParticles();
 }
@@ -283,21 +218,19 @@ window.addEventListener('resize', resize);
 // ══════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════
-const lerp  = (a, b, t) => a + (b - a) * t;
-const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-const ease  = t => t < .5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2;
-const rand  = (lo, hi) => lo + Math.random() * (hi - lo);
-
-function fmt(ms) {
-  const s = Math.floor(ms / 1000);
+const lerp  = (a,b,t) => a + (b-a)*t;
+const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
+const ease  = t => t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+const rand  = (lo,hi) => lo + Math.random()*(hi-lo);
+const fmt   = ms => {
+  const s = Math.floor(ms/1000);
   return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
-}
-
+};
 function hexRgb(h) {
   return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
 }
-function lerpHex(a, b, t) {
-  const [r1,g1,b1] = hexRgb(a), [r2,g2,b2] = hexRgb(b);
+function lerpHex(a,b,t) {
+  const [r1,g1,b1]=hexRgb(a),[r2,g2,b2]=hexRgb(b);
   return `rgb(${~~lerp(r1,r2,t)},${~~lerp(g1,g2,t)},${~~lerp(b1,b2,t)})`;
 }
 
@@ -308,22 +241,19 @@ function drawBlob(cx, cy, r, t, turb, fill) {
   const N = 64;
   const pts = [];
   for (let i = 0; i < N; i++) {
-    const a = (i / N) * Math.PI * 2;
-    const d = turb * (
-      Math.sin(a*2 + t*.38)  * .18 +
-      Math.sin(a*3 - t*.56)  * .12 +
-      Math.sin(a*5 + t*.81)  * .07 +
-      Math.sin(a*7 - t*.27)  * .04
+    const a = (i/N)*Math.PI*2;
+    const d = turb*(
+      Math.sin(a*2+t*.38)*.18 + Math.sin(a*3-t*.56)*.12 +
+      Math.sin(a*5+t*.81)*.07 + Math.sin(a*7-t*.27)*.04
     );
-    const rr = r * (1 + d);
-    pts.push([cx + Math.cos(a)*rr, cy + Math.sin(a)*rr]);
+    pts.push([cx+Math.cos(a)*r*(1+d), cy+Math.sin(a)*r*(1+d)]);
   }
   ctx.beginPath();
   const s = [(pts[N-1][0]+pts[0][0])*.5, (pts[N-1][1]+pts[0][1])*.5];
-  ctx.moveTo(s[0], s[1]);
-  for (let i = 0; i < N; i++) {
-    const p = pts[i], n = pts[(i+1)%N];
-    ctx.quadraticCurveTo(p[0], p[1], (p[0]+n[0])*.5, (p[1]+n[1])*.5);
+  ctx.moveTo(s[0],s[1]);
+  for (let i=0;i<N;i++) {
+    const p=pts[i], n=pts[(i+1)%N];
+    ctx.quadraticCurveTo(p[0],p[1],(p[0]+n[0])*.5,(p[1]+n[1])*.5);
   }
   ctx.closePath();
   ctx.fillStyle = fill;
@@ -335,254 +265,251 @@ function drawBlob(cx, cy, r, t, turb, fill) {
 // ══════════════════════════════════════════
 let particles = [];
 function spawnParticles() {
-  particles = Array.from({length: 24}, () => ({
-    x: rand(0, W), y: rand(0, H),
-    vx: rand(-.38, .38), vy: rand(-.38, .38),
-    r: rand(2.5, 9.5),
-    phase: rand(0, Math.PI*2),
-    alpha: rand(0.10, 0.26),
-  }));
+  particles = Array.from({length:24}, () => {
+    const x=rand(0,W), y=rand(0,H);
+    return { x, y, ox:x, oy:y,
+      vx:rand(-.3,.3), vy:rand(-.3,.3),
+      r:rand(2.5,9), phase:rand(0,Math.PI*2), alpha:rand(.10,.26) };
+  });
 }
+
 function tickParticles() {
+  const cx=W/2, cy=H*.55;
   particles.forEach(p => {
-    p.x += p.vx; p.y += p.vy; p.phase += .0068;
-    if (p.x < -20) p.x = W+20; if (p.x > W+20) p.x = -20;
-    if (p.y < -20) p.y = H+20; if (p.y > H+20) p.y = -20;
-  });
-}
-
-// ══════════════════════════════════════════
-// MOVING DOT (intro tap target)
-// ══════════════════════════════════════════
-let dotAngle = 0, dotX = 0, dotY = 0;
-function drawTapDot() {
-  dotAngle += .0065;
-  dotX = W*.5 + Math.cos(dotAngle*.85) * W*.14;
-  dotY = H*.60 + Math.sin(dotAngle*1.1) * H*.075;
-  // Halo
-  ctx.beginPath();
-  ctx.arc(dotX, dotY, 14, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(255,255,255,0.10)';
-  ctx.fill();
-  // Dot
-  ctx.beginPath();
-  ctx.arc(dotX, dotY, 8, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(255,255,255,0.80)';
-  ctx.fill();
-}
-
-// ══════════════════════════════════════════
-// WHITE DOT (in-blob focus point)
-// ══════════════════════════════════════════
-let wDotAngle = 0;
-function drawWhiteDot(cx, cy, r) {
-  wDotAngle += .0048;
-  const ox = cx + Math.cos(wDotAngle*.72) * r*.30;
-  const oy = cy + Math.sin(wDotAngle*1.0) * r*.26;
-  ctx.beginPath();
-  ctx.arc(ox, oy, 6, 0, Math.PI*2);
-  ctx.fillStyle = 'rgba(255,255,255,0.82)';
-  ctx.fill();
-}
-
-// ══════════════════════════════════════════
-// RENDER LOOP
-// ══════════════════════════════════════════
-let nowT = 0;
-function frame(ts) {
-  requestAnimationFrame(frame);
-  nowT = ts * .001;
-  ctx.clearRect(0, 0, W, H);
-
-  // Background gradient
-  const te = ease(clamp(prog, 0, 1));
-  const grd = ctx.createLinearGradient(0, 0, 0, H);
-  grd.addColorStop(0, lerpHex(palette[0][0], palette[1][0], te));
-  grd.addColorStop(1, lerpHex(palette[0][1], palette[1][1], te));
-  ctx.fillStyle = grd;
-  ctx.fillRect(0, 0, W, H);
-
-  // Background particles
-  tickParticles();
-  particles.forEach(p => {
-    const a = p.alpha * (.55 + .45 * Math.sin(p.phase));
-    drawBlob(p.x, p.y,
-      p.r * (1 + Math.sin(p.phase) * .22),
-      nowT + p.phase * 2, .42,
-      `rgba(255,255,255,${a.toFixed(2)})`
-    );
-  });
-
-  // ── IDLE ──
-  if (mode === 'idle') {
-    // small center hint blob
-    drawBlob(W*.5, H*.60, Math.min(W,H)*.055, nowT, .50,
-      'rgba(255,255,255,0.09)');
-    drawTapDot();
-  }
-
-  // ── RUNNING / DONE ──
-  if (mode === 'run' || mode === 'done') {
-    // Progress update
-    if (mode === 'run' && t0) {
-      elapsed = Date.now() - t0;
-      prog    = clamp(elapsed / totalMs, 0, 1);
-      checkMessages();
-      if (prog >= 1) finishSession();
+    p.phase += .007;
+    if (isHolding && mode==='run') {
+      // Attract toward blob center
+      const dx=cx-p.x, dy=cy-p.y;
+      p.vx += dx*.0028; p.vy += dy*.0028;
+      const spd = Math.hypot(p.vx,p.vy);
+      if (spd>3) { p.vx=p.vx/spd*3; p.vy=p.vy/spd*3; }
+    } else {
+      // Return home
+      p.vx += (p.ox-p.x)*.0022; p.vy += (p.oy-p.y)*.0022;
+      p.vx *= 0.94; p.vy *= 0.94;
     }
+    p.x += p.vx; p.y += p.vy;
+  });
+}
 
-    const minR =  Math.min(W, H) * .11;
-    const maxR =  Math.min(W, H) * .58;
-    const bR   = lerp(minR, maxR, ease(prog));
-    const turb = lerp(.62, .18, ease(prog));
-    const cy   = H * .55;
+// ══════════════════════════════════════════
+// TAP DOT (intro)
+// ══════════════════════════════════════════
+let dotA=0, dotX=0, dotY=0;
+function drawTapDot(t) {
+  dotA += .0065;
+  dotX = W*.5 + Math.cos(dotA*.85)*W*.14;
+  dotY = H*.60 + Math.sin(dotA*1.1)*H*.075;
+  ctx.beginPath(); ctx.arc(dotX,dotY,14,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.09)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(dotX,dotY,8,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.80)'; ctx.fill();
+}
 
-    // Outer halo
-    drawBlob(W/2, cy, bR * 1.07, nowT, turb * .75,
-      `rgba(255,255,255,${(lerp(.08, .14, ease(prog))).toFixed(2)})`);
-
-    // Main blob — radial gradient fill
-    const ba = lerp(.50, .68, ease(prog));
-    const bg = ctx.createRadialGradient(
-      W/2 - bR*.18, cy - bR*.18, bR*.02,
-      W/2, cy, bR * 1.06
-    );
-    bg.addColorStop(0,   `rgba(255,255,255,${(ba*.88).toFixed(2)})`);
-    bg.addColorStop(.42, `rgba(255,255,255,${(ba*.45).toFixed(2)})`);
-    bg.addColorStop(1,   `rgba(255,255,255,${(ba*.07).toFixed(2)})`);
-    drawBlob(W/2, cy, bR, nowT, turb, bg);
-
-    // Focus dot
-    if (mode === 'run') drawWhiteDot(W/2, cy, bR);
-  }
+// ══════════════════════════════════════════
+// WHITE DOT (inside blob)
+// ══════════════════════════════════════════
+let wDotA=0;
+function drawWhiteDot(cx,cy,r) {
+  wDotA += .005;
+  ctx.beginPath();
+  ctx.arc(cx+Math.cos(wDotA*.72)*r*.30, cy+Math.sin(wDotA)*r*.26, 6, 0, Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.82)'; ctx.fill();
 }
 
 // ══════════════════════════════════════════
 // MESSAGES
 // ══════════════════════════════════════════
 const guideEl = document.getElementById('guide-text');
-function checkMessages() {
-  for (let i = MSGS.length - 1; i >= 0; i--) {
-    if (prog >= MSGS[i][0] && i !== msgIdx) {
-      msgIdx = i;
-      const txt = MSGS[i][1];
-      guideEl.style.opacity = '0';
+function checkMessages(scale) {
+  MSGS.forEach((m,i) => {
+    if (scale >= m.at && !shownMsgs.has(i)) {
+      shownMsgs.add(i);
+      guideEl.style.opacity='0';
       setTimeout(() => {
-        guideEl.textContent = txt;
-        guideEl.style.opacity = txt ? '1' : '0';
+        guideEl.textContent = m.text;
+        guideEl.style.opacity = m.text ? '1' : '0';
       }, 900);
-      break;
     }
-  }
+  });
 }
 
 // ══════════════════════════════════════════
 // AUDIO
 // ══════════════════════════════════════════
-let aud = null;
+let aud=null;
 function loadAudio() {
-  const src = TRACKS[Math.floor(Math.random() * TRACKS.length)];
-  aud = new Audio(src);
-  aud.loop = true;
-  aud.volume = 0;
-  aud.load();
+  aud = new Audio(TRACKS[~~(Math.random()*TRACKS.length)]);
+  aud.loop=true; aud.volume=0; aud.load();
 }
 function fadeIn() {
   if (!aud) return;
-  aud.play().catch(() => {});
-  let v = 0;
-  const id = setInterval(() => {
-    v = Math.min(v + .015, .55);
-    aud.volume = v;
-    if (v >= .55) clearInterval(id);
-  }, 110);
+  aud.play().catch(()=>{});
+  let v=0, id=setInterval(()=>{
+    v=Math.min(v+.015,.55); aud.volume=v;
+    if(v>=.55) clearInterval(id);
+  },110);
 }
 function fadeOut() {
   if (!aud) return;
-  const id = setInterval(() => {
-    aud.volume = Math.max(0, aud.volume - .02);
-    if (aud.volume <= 0) { aud.pause(); clearInterval(id); }
-  }, 100);
+  let id=setInterval(()=>{
+    aud.volume=Math.max(0,aud.volume-.02);
+    if(aud.volume<=0){aud.pause();clearInterval(id);}
+  },100);
 }
 
 // ══════════════════════════════════════════
 // SESSION FLOW
 // ══════════════════════════════════════════
 function startSession() {
-  mode    = 'run';
-  palette = PALETTES[~~(Math.random() * PALETTES.length)];
-  t0      = Date.now();
-  elapsed = 0; prog = 0; msgIdx = -1;
-  dotAngle = 0; wDotAngle = 0;
+  if (mode==='run') return;
+  mode       = 'run';
+  palette    = PALETTES[~~(Math.random()*PALETTES.length)];
+  sessionStart = Date.now();
+  sessionElapsed = 0;
+  blobScale  = 0;
+  shownMsgs  = new Set();
+  endScheduled = false;
+  isHolding  = true;
 
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('play-btn').classList.add('hidden');
-  guideEl.textContent = '';
-  guideEl.style.opacity = '0';
-  document.getElementById('bar-label').textContent = `${selMin} 分 still`;
+  guideEl.textContent=''; guideEl.style.opacity='0';
+  document.getElementById('bar-label').textContent=`${selMin} 分 still`;
 
-  setTimeout(() => {
+  setTimeout(()=>{
     document.getElementById('bar').classList.add('show');
-    document.getElementById('stop-btn').classList.add('show');
     fadeIn();
-  }, 650);
+  }, 500);
 }
 
 function finishSession() {
+  if (mode==='done') return;
   mode = 'done';
+  isHolding = false;
   fadeOut();
   document.getElementById('bar').classList.remove('show');
-  document.getElementById('stop-btn').classList.remove('show');
-  guideEl.style.opacity = '0';
-  document.getElementById('done-time').textContent = fmt(elapsed);
-  setTimeout(() => {
-    document.getElementById('done-overlay').classList.add('show');
-  }, 380);
+  guideEl.style.opacity='0';
+  document.getElementById('done-time').textContent = fmt(sessionElapsed);
+  setTimeout(()=>document.getElementById('done-overlay').classList.add('show'), 400);
 }
 
 function restartSession() {
-  mode = 'idle';
-  prog = 0; elapsed = 0; t0 = null; msgIdx = -1;
-  palette = PALETTES[0];
-
+  mode='idle'; blobScale=0; sessionStart=null; isHolding=false; endScheduled=false;
   document.getElementById('done-overlay').classList.remove('show');
-  guideEl.textContent = 'ドットに触れてください';
-  guideEl.style.opacity = '1';
-
-  setTimeout(() => {
+  guideEl.textContent='ドットに触れてください'; guideEl.style.opacity='1';
+  setTimeout(()=>{
     document.getElementById('intro').classList.remove('hidden');
-    document.getElementById('play-btn').classList.remove('hidden');
-  }, 280);
-
+    const p=document.getElementById('play-btn');
+    p.classList.remove('hidden');
+  },300);
   loadAudio();
+}
+
+// ══════════════════════════════════════════
+// RENDER LOOP
+// ══════════════════════════════════════════
+function frame(ts) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(ts-lastTs, 50); lastTs=ts;
+  const nowT = ts*.001;
+
+  // ── Blob size update ──
+  if (mode==='run') {
+    if (isHolding) {
+      endScheduled = false;
+      blobScale = Math.min(blobScale + dt/totalMs, 1);
+      if (blobScale>=1) { finishSession(); return; }
+    } else {
+      // Only shrink after brief inactivity
+      if (Date.now()-releaseTime > INACTIVITY) {
+        blobScale = Math.max(blobScale - dt/SHRINK_MS, 0);
+      }
+      // Schedule end when fully shrunk
+      if (blobScale<=0 && !endScheduled) {
+        endScheduled = true;
+        setTimeout(finishSession, END_DELAY);
+      }
+    }
+    // Update elapsed & timer display
+    sessionElapsed = Date.now()-sessionStart;
+    document.getElementById('bar-time').textContent = fmt(sessionElapsed);
+    checkMessages(blobScale);
+  }
+
+  // ── Background ──
+  ctx.clearRect(0,0,W,H);
+  const te = ease(clamp(blobScale,0,1));
+  const g  = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, lerpHex(palette[0][0],palette[1][0],te));
+  g.addColorStop(1, lerpHex(palette[0][1],palette[1][1],te));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  // ── Particles ──
+  tickParticles();
+  particles.forEach(p=>{
+    const a = p.alpha*(.55+.45*Math.sin(p.phase));
+    drawBlob(p.x,p.y, p.r*(1+Math.sin(p.phase)*.22), nowT+p.phase*2, .42,
+      `rgba(255,255,255,${a.toFixed(2)})`);
+  });
+
+  // ── Idle: moving dot ──
+  if (mode==='idle') {
+    drawBlob(W*.5,H*.60, Math.min(W,H)*.055, nowT, .50,'rgba(255,255,255,0.09)');
+    drawTapDot(nowT);
+  }
+
+  // ── Run / done: main blob ──
+  if ((mode==='run'||mode==='done') && blobScale>0.005) {
+    const minR = Math.min(W,H)*.10;
+    const maxR = Math.min(W,H)*.58;
+    const bR   = lerp(minR,maxR,ease(blobScale));
+    const turb = lerp(.65,.18,ease(blobScale));
+    const cy   = H*.55;
+
+    // Halo
+    drawBlob(W/2,cy, bR*1.07, nowT, turb*.75,
+      `rgba(255,255,255,${lerp(.07,.14,ease(blobScale)).toFixed(2)})`);
+
+    // Main blob
+    const ba = lerp(.48,.68,ease(blobScale));
+    const bg = ctx.createRadialGradient(W/2-bR*.18,cy-bR*.18,bR*.02, W/2,cy,bR*1.06);
+    bg.addColorStop(0,   `rgba(255,255,255,${(ba*.88).toFixed(2)})`);
+    bg.addColorStop(.42, `rgba(255,255,255,${(ba*.45).toFixed(2)})`);
+    bg.addColorStop(1,   `rgba(255,255,255,${(ba*.07).toFixed(2)})`);
+    drawBlob(W/2,cy,bR,nowT,turb,bg);
+
+    if (mode==='run') drawWhiteDot(W/2,cy,bR);
+  }
 }
 
 // ══════════════════════════════════════════
 // EVENTS
 // ══════════════════════════════════════════
-document.querySelectorAll('.dur-btn').forEach(b => {
-  b.addEventListener('click', () => {
-    document.querySelectorAll('.dur-btn').forEach(x => x.classList.remove('sel'));
+// Duration buttons
+document.querySelectorAll('.dur-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.dur-btn').forEach(x=>x.classList.remove('sel'));
     b.classList.add('sel');
-    selMin  = +b.dataset.m;
-    totalMs = selMin * 60000;
+    selMin=+b.dataset.m; totalMs=selMin*60000;
   });
 });
 
+// Play button (alternative start)
 document.getElementById('play-btn').addEventListener('click', startSession);
-document.getElementById('stop-btn').addEventListener('click', finishSession);
-document.getElementById('again-btn').addEventListener('click', restartSession);
 
-function tryTap(x, y) {
-  if (mode !== 'idle') return;
-  const hit = ('ontouchstart' in window) ? 44 : 56; // wider on desktop
-  if (Math.hypot(x - dotX, y - dotY) < hit) startSession();
-}
-canvas.addEventListener('click',      e => tryTap(e.clientX, e.clientY));
-canvas.addEventListener('touchstart', e => {
-  const t = e.touches[0];
-  tryTap(t.clientX, t.clientY);
-}, { passive: true });
+// Hold / release on canvas
+canvas.addEventListener('pointerdown', e=>{
+  e.preventDefault();
+  if (mode==='idle') { startSession(); return; }
+  if (mode==='run')  { isHolding=true; }
+}, {passive:false});
+
+window.addEventListener('pointerup',     ()=>{ if(mode==='run'){isHolding=false; releaseTime=Date.now();} });
+window.addEventListener('pointercancel', ()=>{ if(mode==='run'){isHolding=false; releaseTime=Date.now();} });
+
+// Restart
+document.getElementById('again-btn').addEventListener('click', restartSession);
 
 // ══════════════════════════════════════════
 // INIT
