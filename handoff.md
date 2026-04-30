@@ -8,3 +8,4 @@
 2026-04-21: エージェント最小権限（YAMLフロントマター）全12エージェントに適用完了。デザインパイプライン再設計（Opus 4.7批評反映）: /lp-create スキル新設・DESIGN.mdセクション12〜14追加（感情-ビジュアル変換テーブル/レイアウトパターン/継承度ガイド）・MANUAL.md新設。次: NuWorld承認ゲート⑤（SynthV確認）・/lp-create 実運用テスト。
 2026-04-30: NuWord Still PWA対応完了（manifest.json + sw.js + アイコン）。Androidインストール: Chrome ⋮メニュー→「アプリをインストール」。sw.jsのCACHEを still-v2 に更新済み。次の still 更新時は必ず still-v3, v4... とインクリメントすること。
 2026-04-30: NuWord Still にGumroadライセンスゲート実装完了。SHA-256認証・localStorage保存・keygen.html（CEO専用ハッシュ生成ツール）同梱。licenses.jsonにハッシュを追加→sw.jsバージョンup→push で新規購入者を追加できる。Gumroad商品作成・ライセンスキー発行設定がまだ未実施。keygen.html: https://kutakuta1001.github.io/NOCTA/still/keygen.html
+2026-04-30: HP英語対応完了。ヘッダーにJA/ENトグル追加・index.htmlにi18n実装済み。visual-data.js全14エントリにdescEn追加（Works1件+Art13件）→Visualセクション説明文も英語切り替え対応済み。push済み。
