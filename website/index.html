@@ -448,6 +448,27 @@
             border-radius: 12px;
         }
 
+        /* Lang toggle buttons */
+        #lang-btn {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px; font-weight: 600; letter-spacing: 2px;
+            color: rgba(255,255,255,0.45);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 99px; padding: 4px 12px;
+            cursor: pointer; background: transparent;
+            transition: all 0.22s;
+        }
+        #lang-btn:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+        #lang-btn-mobile {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px; font-weight: 600; letter-spacing: 2px;
+            color: rgba(255,255,255,0.45);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 99px; padding: 5px 14px;
+            cursor: pointer; background: transparent;
+            transition: all 0.22s; align-self: flex-start;
+        }
+
     </style>
 </head>
 
@@ -478,6 +499,7 @@
                     ✦ The First Flower
                     <svg class="w-2.5 h-2.5 opacity-60" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 8.5L8.5 1.5M4.5 1.5h4v4"/></svg>
                 </a>
+                <button id="lang-btn" onclick="toggleLang()" aria-label="言語切替">JA</button>
                 <a href="#contact"
                    class="px-6 py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-brand-secondary/60 hover:shadow-glow-gold">
                     Contact
@@ -503,6 +525,7 @@
             <a href="#blog" class="text-brand-sub hover:text-white transition-colors">Blog</a>
             <a href="#services" class="text-brand-sub hover:text-white transition-colors">Services</a>
             <a href="the-first-flower/index.html" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-[#c4942a]/80 hover:text-[#c4942a] transition-colors">✦ The First Flower <svg class="w-2.5 h-2.5 opacity-60" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 8.5L8.5 1.5M4.5 1.5h4v4"/></svg></a>
+            <button id="lang-btn-mobile" onclick="toggleLang()" aria-label="言語切替">JA</button>
             <a href="#contact"  class="text-brand-primary">Contact</a>
         </div>
     </div>
@@ -583,7 +606,7 @@
                 MEETS SOUL
             </h1>
 
-            <p class="font-jp text-base md:text-xl text-brand-sub font-light tracking-[0.3em] mb-8">
+            <p class="font-jp text-base md:text-xl text-brand-sub font-light tracking-[0.3em] mb-8" data-i18n="hero.tagline">
                 AIと人間の感性が融合する、新しい音楽の形
             </p>
             <div style="display:flex;justify-content:center;gap:8px;margin-bottom:32px;flex-wrap:wrap;">
@@ -594,8 +617,8 @@
             </div>
 
             <div class="flex flex-col sm:flex-row justify-center gap-5">
-                <a href="#works"   class="btn-primary-cta">Works を見る</a>
-                <a href="#contact" class="btn-glass-cta">お問い合わせ</a>
+                <a href="#works"   class="btn-primary-cta" data-i18n="hero.cta.works">Works を見る</a>
+                <a href="#contact" class="btn-glass-cta" data-i18n="hero.cta.contact">お問い合わせ</a>
             </div>
         </div>
     </div>
@@ -628,19 +651,19 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div class="reveal">
                 <div class="stat-num">—</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">公開楽曲数</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.songs">公開楽曲数</div>
             </div>
             <div class="reveal reveal-delay-1">
                 <div class="stat-num">—</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">公開PV本数</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.pvs">公開PV本数</div>
             </div>
             <div class="reveal reveal-delay-2">
                 <div class="stat-num">1</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">制作中の楽曲</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.wip">制作中の楽曲</div>
             </div>
             <div class="reveal reveal-delay-3">
                 <div class="font-display text-[clamp(48px,6vw,72px)] leading-none text-vgreen" style="font-family:'Bebas Neue',sans-serif;line-height:1;">∞</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider">可能性</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.potential">可能性</div>
             </div>
         </div>
     </div>
@@ -657,11 +680,11 @@
             <!-- Text -->
             <div class="order-2 lg:order-1">
                 <p class="section-tag reveal">About</p>
-                <h2 class="font-jp text-[clamp(28px,3.8vw,44px)] font-bold text-white leading-tight mb-8 reveal reveal-delay-1">
+                <h2 class="font-jp text-[clamp(28px,3.8vw,44px)] font-bold text-white leading-tight mb-8 reveal reveal-delay-1" data-i18n-html="about.h2">
                     創造と革新が交わる、<br>
                     <span class="text-gradient">新しい音楽の会社</span>
                 </h2>
-                <p class="font-jp text-brand-sub text-[15px] leading-[2.1] mb-10 reveal reveal-delay-2">
+                <p class="font-jp text-brand-sub text-[15px] leading-[2.1] mb-10 reveal reveal-delay-2" data-i18n-html="about.body">
                     私たちは、最新テクノロジーと人間のクリエイティビティを融合させ、
                     オリジナル楽曲の制作からPV映像、デジタルマーケティング、
                     メディアPRまでを一貫して手掛ける音楽エンタメカンパニーです。
@@ -678,29 +701,29 @@
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
                         <div class="w-px h-12 bg-gradient-to-b from-[#C8A2FF] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300">革新（Innovation）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed">テクノロジーの力で、音楽業界の常識を更新し続ける。</div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v1.title">革新（Innovation）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v1.desc">テクノロジーの力で、音楽業界の常識を更新し続ける。</div>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
                         <div class="w-px h-12 bg-gradient-to-b from-[#C4942A] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300">創造（Creation）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed">人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。</div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v2.title">創造（Creation）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v2.desc">人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。</div>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group" style="border-color:rgba(57,255,106,0.15);">
                         <div class="w-px h-12 bg-gradient-to-b from-[#39FF6A] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-[#39FF6A] transition-colors duration-300">歌声合成（Synthesis）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed">ボーカロイドをはじめとするAI歌声技術で、唯一無二の音楽表現を実現。</div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-[#39FF6A] transition-colors duration-300" data-i18n="about.v3.title">歌声合成（Synthesis）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v3.desc">ボーカロイドをはじめとするAI歌声技術で、唯一無二の音楽表現を実現。</div>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
                         <div class="w-px h-12 bg-gradient-to-b from-[#C8A2FF] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300">解放（Freedom）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed">規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。</div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v4.title">解放（Freedom）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v4.desc">規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。</div>
                         </div>
                     </div>
                 </div>
@@ -774,7 +797,7 @@
 
         <div class="text-center mb-16 reveal">
             <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">PORTFOLIO</h2>
-            <p class="font-jp text-brand-sub text-[15px] tracking-wider">AIと感性が生んだ、作品たち</p>
+            <p class="font-jp text-brand-sub text-[15px] tracking-wider" data-i18n="works.subtitle">AIと感性が生んだ、作品たち</p>
 
             <!-- Filter pills -->
             <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
@@ -804,7 +827,7 @@
             <p class="font-jp text-brand-sub text-[15px] tracking-wider mb-5">Web Applications</p>
             <a href="https://nuword-nu.vercel.app" target="_blank" rel="noopener noreferrer"
                class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-heading text-[11px] tracking-[3px] uppercase text-brand-sub hover:text-white">
-                NuWord コンセプトページ →
+                <span data-i18n="tools.nuword">NuWord コンセプトページ →</span>
             </a>
         </div>
 
@@ -823,10 +846,10 @@
 
         <div class="mb-16 reveal">
             <p class="section-tag">Services</p>
-            <h2 class="font-jp text-[clamp(34px,5vw,56px)] font-bold text-white leading-tight mb-4">
+            <h2 class="font-jp text-[clamp(34px,5vw,56px)] font-bold text-white leading-tight mb-4" data-i18n-html="services.h2">
                 音楽を生み出し、<br><span class="text-gradient">世界に届ける</span>
             </h2>
-            <p class="font-jp text-brand-sub text-[15px] leading-loose max-w-xl">
+            <p class="font-jp text-brand-sub text-[15px] leading-loose max-w-xl" data-i18n="services.subtitle">
                 楽曲制作からメディア展開まで、すべてを一気通貫でご提供します。
             </p>
         </div>
@@ -838,18 +861,18 @@
                 <div class="card-top-bar bar-purple"></div>
                 <div class="mb-6">
                     <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C8A2FF">01</div>
-                    <h3 class="font-heading font-bold text-[22px] text-white mb-3">楽曲制作</h3>
-                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5">
+                    <h3 class="font-heading font-bold text-[22px] text-white mb-3" data-i18n="services.s1.title">楽曲制作</h3>
+                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5" data-i18n-html="services.s1.desc">
                         トレンド分析から作曲・編曲・歌詞制作まで。
                         ジャンル・ムード・ターゲット層に最適化された
                         楽曲を高速かつ高品質に制作します。
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">作曲・編曲</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">歌詞制作</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">ボーカル演出</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">サウンドデザイン</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s1.t1">作曲・編曲</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s1.t2">歌詞制作</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s1.t3">ボーカル演出</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s1.t4">サウンドデザイン</span>
                 </div>
             </div>
 
@@ -858,18 +881,18 @@
                 <div class="card-top-bar bar-cyan"></div>
                 <div class="mb-6">
                     <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C4942A">02</div>
-                    <h3 class="font-heading font-bold text-[22px] text-white mb-3">PV・映像制作</h3>
-                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5">
+                    <h3 class="font-heading font-bold text-[22px] text-white mb-3" data-i18n="services.s2.title">PV・映像制作</h3>
+                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5" data-i18n-html="services.s2.desc">
                         世界観コンセプトの設計から絵コンテ、
                         最先端の映像生成技術を駆使したビジュアル制作まで。
                         シネマティックな映像表現をスピーディに実現します。
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">コンセプト設計</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">絵コンテ</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">映像制作</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">カラーグレーディング</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s2.t1">コンセプト設計</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s2.t2">絵コンテ</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s2.t3">映像制作</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s2.t4">カラーグレーディング</span>
                 </div>
             </div>
 
@@ -878,18 +901,18 @@
                 <div class="card-top-bar bar-pink"></div>
                 <div class="mb-6">
                     <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#39FF6A">03</div>
-                    <h3 class="font-heading font-bold text-[22px] text-white mb-3">デジタルマーケティング</h3>
-                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5">
+                    <h3 class="font-heading font-bold text-[22px] text-white mb-3" data-i18n="services.s3.title">デジタルマーケティング</h3>
+                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5" data-i18n-html="services.s3.desc">
                         X・Instagram・TikTok・YouTubeの各プラットフォームに
                         最適化されたコンテンツ戦略と制作・運用を
                         リリーススケジュールと連動して展開します。
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">SNS戦略</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">広告クリエイティブ</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">コンテンツ制作</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">SEO対応</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s3.t1">SNS戦略</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s3.t2">広告クリエイティブ</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s3.t3">コンテンツ制作</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s3.t4">SEO対応</span>
                 </div>
             </div>
 
@@ -898,18 +921,18 @@
                 <div class="card-top-bar bar-gold"></div>
                 <div class="mb-6">
                     <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C4942A">04</div>
-                    <h3 class="font-heading font-bold text-[22px] text-white mb-3">PR・メディア展開</h3>
-                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5">
+                    <h3 class="font-heading font-bold text-[22px] text-white mb-3" data-i18n="services.s4.title">PR・メディア展開</h3>
+                    <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5" data-i18n-html="services.s4.desc">
                         プレスリリース作成からメディアリスト構築、
                         取材対応の準備まで。リリースのインパクトを
                         最大化するPR戦略を一貫してサポートします。
                     </p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">プレスリリース</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">メディア対応</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">インフルエンサー連携</span>
-                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub">危機管理</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s4.t1">プレスリリース</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s4.t2">メディア対応</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s4.t3">インフルエンサー連携</span>
+                    <span class="text-[10px] font-heading font-semibold tracking-wide px-3 py-1.5 rounded-full border border-white/10 text-brand-sub" data-i18n="services.s4.t4">危機管理</span>
                 </div>
             </div>
 
@@ -1032,11 +1055,11 @@
                 </div>
                 <div class="p-8">
                     <div class="font-heading text-[11px] font-semibold tracking-[2px] mb-3" style="color:#C4942A">2026.03.21</div>
-                    <h3 class="font-heading font-bold text-[20px] text-white leading-snug mb-3">
+                    <h3 class="font-heading font-bold text-[20px] text-white leading-snug mb-3" data-i18n-html="news.featured.title">
                         音楽エンタメカンパニー、正式始動。<br>
                         楽曲制作からPR展開まで一気通貫サービスを開始。
                     </h3>
-                    <p class="font-jp text-brand-sub text-[13px] leading-relaxed">
+                    <p class="font-jp text-brand-sub text-[13px] leading-relaxed" data-i18n="news.featured.desc">
                         最新テクノロジーと人間のクリエイティビティを融合した新しいプロダクション体制を構築。
                         今後のプロジェクト受付を正式に開始します。
                     </p>
@@ -1048,27 +1071,27 @@
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
                     <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.03.15</div>
-                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">第1弾楽曲「Neon Cascade」のPV映像が完成</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n1">第1弾楽曲「Neon Cascade」のPV映像が完成</div>
                 </div>
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
                     <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.02.28</div>
-                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">タイアップ・コラボ依頼の受付を開始しました</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n2">タイアップ・コラボ依頼の受付を開始しました</div>
                 </div>
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
                     <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.02.10</div>
-                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">創業期の制作プロセスについて、ブログを公開</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n3">創業期の制作プロセスについて、ブログを公開</div>
                 </div>
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
                     <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.01.20</div>
-                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">メディア各社向けのプレス資料を公開</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n4">メディア各社向けのプレス資料を公開</div>
                 </div>
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
                     <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.01.05</div>
-                    <div class="font-heading font-semibold text-[14px] text-white leading-snug">ブランドビジュアルアイデンティティを策定・公開</div>
+                    <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n5">ブランドビジュアルアイデンティティを策定・公開</div>
                 </div>
             </div>
 
@@ -1092,10 +1115,10 @@
             <!-- Info -->
             <div>
                 <p class="section-tag reveal">Contact</p>
-                <h2 class="font-jp text-[clamp(30px,4.5vw,48px)] font-bold text-white leading-tight mb-5 reveal reveal-delay-1">
+                <h2 class="font-jp text-[clamp(30px,4.5vw,48px)] font-bold text-white leading-tight mb-5 reveal reveal-delay-1" data-i18n-html="contact.h2">
                     一緒に、<span class="text-gradient">未来の音楽</span>を<br>作りませんか
                 </h2>
-                <p class="font-jp text-brand-sub text-[14px] leading-[2.2] mb-10 reveal reveal-delay-2">
+                <p class="font-jp text-brand-sub text-[14px] leading-[2.2] mb-10 reveal reveal-delay-2" data-i18n-html="contact.subtitle">
                     楽曲制作・PV制作・マーケティング・PRなど、<br>
                     アイデア段階でもお気軽にご相談ください。
                 </p>
@@ -1110,7 +1133,7 @@
                         </div>
                         <div>
                             <div class="social-platform">X (Twitter)</div>
-                            <div class="social-desc">最新情報をいち早く</div>
+                            <div class="social-desc" data-i18n="contact.social.x">最新情報をいち早く</div>
                         </div>
                     </a>
                     <!-- TODO: href に note アカウント URL を設定 例: https://note.com/nocta_music -->
@@ -1122,7 +1145,7 @@
                         </div>
                         <div>
                             <div class="social-platform">note</div>
-                            <div class="social-desc">制作ブログ・ライナーノーツ</div>
+                            <div class="social-desc" data-i18n="contact.social.note">制作ブログ・ライナーノーツ</div>
                         </div>
                     </a>
                 </div>
@@ -1146,39 +1169,40 @@
 
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">お名前 *</label>
-                            <input class="form-field" type="text" name="name" placeholder="山田 太郎" required/>
+                            <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.name">お名前 *</label>
+                            <input class="form-field" type="text" name="name" placeholder="山田 太郎" required data-i18n-ph="contact.ph.name"/>
                         </div>
                         <div>
-                            <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">会社名</label>
-                            <input class="form-field" type="text" name="company" placeholder="株式会社〇〇"/>
+                            <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.company">会社名</label>
+                            <input class="form-field" type="text" name="company" placeholder="株式会社〇〇" data-i18n-ph="contact.ph.company"/>
                         </div>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">メールアドレス *</label>
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.email">メールアドレス *</label>
                         <input class="form-field" type="email" name="email" placeholder="hello@example.com" required/>
                     </div>
                     <div class="mb-4">
-                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">ご依頼の種別</label>
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.service">ご依頼の種別</label>
                         <select class="form-field" name="service">
-                            <option value="">選択してください</option>
-                            <option value="music">楽曲制作</option>
-                            <option value="pv">PV・映像制作</option>
-                            <option value="marketing">マーケティング支援</option>
-                            <option value="pr">PR・メディア展開</option>
-                            <option value="collab">タイアップ・コラボ</option>
-                            <option value="media">取材・メディア掲載</option>
-                            <option value="other">その他</option>
+                            <option value="" data-i18n="contact.opt.default">選択してください</option>
+                            <option value="music" data-i18n="contact.opt.music">楽曲制作</option>
+                            <option value="pv" data-i18n="contact.opt.pv">PV・映像制作</option>
+                            <option value="marketing" data-i18n="contact.opt.marketing">マーケティング支援</option>
+                            <option value="pr" data-i18n="contact.opt.pr">PR・メディア展開</option>
+                            <option value="collab" data-i18n="contact.opt.collab">タイアップ・コラボ</option>
+                            <option value="media" data-i18n="contact.opt.media">取材・メディア掲載</option>
+                            <option value="other" data-i18n="contact.opt.other">その他</option>
                         </select>
                     </div>
                     <div class="mb-6">
-                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2">メッセージ *</label>
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.message">メッセージ *</label>
                         <textarea class="form-field min-h-[120px] resize-y"
                                   name="message"
                                   placeholder="プロジェクトの内容・ご要望をお気軽にご記入ください"
+                                  data-i18n-ph="contact.ph.message"
                                   required></textarea>
                     </div>
-                    <button class="btn-submit" type="submit" id="submitBtn">送信する</button>
+                    <button class="btn-submit" type="submit" id="submitBtn" data-i18n="contact.submit">送信する</button>
                 </form>
             </div>
 
@@ -1196,7 +1220,7 @@
         <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-14">
             <div>
                 <div class="font-brand text-2xl tracking-[6px] text-white font-extrabold mb-4">NOCTA</div>
-                <p class="font-jp text-brand-sub text-[13px] leading-relaxed max-w-xs">
+                <p class="font-jp text-brand-sub text-[13px] leading-relaxed max-w-xs" data-i18n-html="footer.tagline">
                     AIと人間の感性が融合する、<br>
                     新しい音楽エンタメカンパニー。<br>
                     あなたのビジョンを現実にします。
@@ -1205,10 +1229,10 @@
             <div>
                 <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Services</div>
                 <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
-                    <a href="#services" class="hover:text-white transition-colors duration-200">楽曲制作</a>
-                    <a href="#services" class="hover:text-white transition-colors duration-200">PV・映像制作</a>
-                    <a href="#services" class="hover:text-white transition-colors duration-200">デジタルMKT</a>
-                    <a href="#services" class="hover:text-white transition-colors duration-200">PR支援</a>
+                    <a href="#services" class="hover:text-white transition-colors duration-200" data-i18n="footer.s1">楽曲制作</a>
+                    <a href="#services" class="hover:text-white transition-colors duration-200" data-i18n="footer.s2">PV・映像制作</a>
+                    <a href="#services" class="hover:text-white transition-colors duration-200" data-i18n="footer.s3">デジタルMKT</a>
+                    <a href="#services" class="hover:text-white transition-colors duration-200" data-i18n="footer.s4">PR支援</a>
                 </div>
             </div>
             <div>
@@ -1226,8 +1250,8 @@
             <div>
                 <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">The First Flower</div>
                 <div class="flex flex-col gap-3 font-jp text-[13px]">
-                    <a href="the-first-flower/index.html" class="text-[#c4942a]/70 hover:text-[#c4942a] transition-colors duration-200">✦ いい人生とは</a>
-                    <p class="text-brand-sub/50 text-[11px] leading-relaxed">人生観・詩・思い・感動を<br>つづるパーソナルサイト</p>
+                    <a href="the-first-flower/index.html" class="text-[#c4942a]/70 hover:text-[#c4942a] transition-colors duration-200" data-i18n="footer.tff.link">✦ いい人生とは</a>
+                    <p class="text-brand-sub/50 text-[11px] leading-relaxed" data-i18n-html="footer.tff.desc">人生観・詩・思い・感動を<br>つづるパーソナルサイト</p>
                 </div>
             </div>
             <div>
@@ -1956,6 +1980,167 @@ if (noctaForm) {
         });
     });
 }
+</script>
+
+<!-- i18n -->
+<script>
+const I18N = {
+  ja: {
+    'hero.tagline': 'AIと人間の感性が融合する、新しい音楽の形',
+    'hero.cta.works': 'Works を見る',
+    'hero.cta.contact': 'お問い合わせ',
+    'stats.songs': '公開楽曲数',
+    'stats.pvs': '公開PV本数',
+    'stats.wip': '制作中の楽曲',
+    'stats.potential': '可能性',
+    'about.h2': '創造と革新が交わる、<br><span class="text-gradient">新しい音楽の会社</span>',
+    'about.body': '私たちは、最新テクノロジーと人間のクリエイティビティを融合させ、オリジナル楽曲の制作からPV映像、デジタルマーケティング、メディアPRまでを一貫して手掛ける音楽エンタメカンパニーです。<br><br><span style="color:#39FF6A;font-weight:700;">ボーカロイド・AI歌声合成</span>を積極的に活用し、人間とバーチャルシンガーが共存するサブカルチャー文化から、メインストリームへ新しい波を生み出します。<br><br>スピード・品質・一貫性——この3つを同時に実現することで、アーティストやブランドの可能性を最大限に引き出します。',
+    'about.v1.title': '革新（Innovation）',
+    'about.v1.desc': 'テクノロジーの力で、音楽業界の常識を更新し続ける。',
+    'about.v2.title': '創造（Creation）',
+    'about.v2.desc': '人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。',
+    'about.v3.title': '歌声合成（Synthesis）',
+    'about.v3.desc': 'ボーカロイドをはじめとするAI歌声技術で、唯一無二の音楽表現を実現。',
+    'about.v4.title': '解放（Freedom）',
+    'about.v4.desc': '規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。',
+    'works.subtitle': 'AIと感性が生んだ、作品たち',
+    'tools.nuword': 'NuWord コンセプトページ →',
+    'services.h2': '音楽を生み出し、<br><span class="text-gradient">世界に届ける</span>',
+    'services.subtitle': '楽曲制作からメディア展開まで、すべてを一気通貫でご提供します。',
+    'services.s1.title': '楽曲制作',
+    'services.s1.desc': 'トレンド分析から作曲・編曲・歌詞制作まで。ジャンル・ムード・ターゲット層に最適化された楽曲を高速かつ高品質に制作します。',
+    'services.s1.t1': '作曲・編曲', 'services.s1.t2': '歌詞制作', 'services.s1.t3': 'ボーカル演出', 'services.s1.t4': 'サウンドデザイン',
+    'services.s2.title': 'PV・映像制作',
+    'services.s2.desc': '世界観コンセプトの設計から絵コンテ、最先端の映像生成技術を駆使したビジュアル制作まで。シネマティックな映像表現をスピーディに実現します。',
+    'services.s2.t1': 'コンセプト設計', 'services.s2.t2': '絵コンテ', 'services.s2.t3': '映像制作', 'services.s2.t4': 'カラーグレーディング',
+    'services.s3.title': 'デジタルマーケティング',
+    'services.s3.desc': 'X・Instagram・TikTok・YouTubeの各プラットフォームに最適化されたコンテンツ戦略と制作・運用をリリーススケジュールと連動して展開します。',
+    'services.s3.t1': 'SNS戦略', 'services.s3.t2': '広告クリエイティブ', 'services.s3.t3': 'コンテンツ制作', 'services.s3.t4': 'SEO対応',
+    'services.s4.title': 'PR・メディア展開',
+    'services.s4.desc': 'プレスリリース作成からメディアリスト構築、取材対応の準備まで。リリースのインパクトを最大化するPR戦略を一貫してサポートします。',
+    'services.s4.t1': 'プレスリリース', 'services.s4.t2': 'メディア対応', 'services.s4.t3': 'インフルエンサー連携', 'services.s4.t4': '危機管理',
+    'news.featured.title': '音楽エンタメカンパニー、正式始動。<br>楽曲制作からPR展開まで一気通貫サービスを開始。',
+    'news.featured.desc': '最新テクノロジーと人間のクリエイティビティを融合した新しいプロダクション体制を構築。今後のプロジェクト受付を正式に開始します。',
+    'news.n1': '第1弾楽曲「Neon Cascade」のPV映像が完成',
+    'news.n2': 'タイアップ・コラボ依頼の受付を開始しました',
+    'news.n3': '創業期の制作プロセスについて、ブログを公開',
+    'news.n4': 'メディア各社向けのプレス資料を公開',
+    'news.n5': 'ブランドビジュアルアイデンティティを策定・公開',
+    'contact.h2': '一緒に、<span class="text-gradient">未来の音楽</span>を<br>作りませんか',
+    'contact.subtitle': '楽曲制作・PV制作・マーケティング・PRなど、<br>アイデア段階でもお気軽にご相談ください。',
+    'contact.social.x': '最新情報をいち早く',
+    'contact.social.note': '制作ブログ・ライナーノーツ',
+    'contact.lbl.name': 'お名前 *', 'contact.ph.name': '山田 太郎',
+    'contact.lbl.company': '会社名', 'contact.ph.company': '株式会社〇〇',
+    'contact.lbl.email': 'メールアドレス *',
+    'contact.lbl.service': 'ご依頼の種別',
+    'contact.opt.default': '選択してください',
+    'contact.opt.music': '楽曲制作', 'contact.opt.pv': 'PV・映像制作',
+    'contact.opt.marketing': 'マーケティング支援', 'contact.opt.pr': 'PR・メディア展開',
+    'contact.opt.collab': 'タイアップ・コラボ', 'contact.opt.media': '取材・メディア掲載',
+    'contact.opt.other': 'その他',
+    'contact.lbl.message': 'メッセージ *',
+    'contact.ph.message': 'プロジェクトの内容・ご要望をお気軽にご記入ください',
+    'contact.submit': '送信する',
+    'footer.tagline': 'AIと人間の感性が融合する、<br>新しい音楽エンタメカンパニー。<br>あなたのビジョンを現実にします。',
+    'footer.s1': '楽曲制作', 'footer.s2': 'PV・映像制作', 'footer.s3': 'デジタルMKT', 'footer.s4': 'PR支援',
+    'footer.tff.link': '✦ いい人生とは',
+    'footer.tff.desc': '人生観・詩・思い・感動を<br>つづるパーソナルサイト',
+  },
+  en: {
+    'hero.tagline': 'Where AI and human creativity shape a new form of music.',
+    'hero.cta.works': 'View Works',
+    'hero.cta.contact': 'Contact Us',
+    'stats.songs': 'Tracks',
+    'stats.pvs': 'Music Videos',
+    'stats.wip': 'In Production',
+    'stats.potential': 'Possibilities',
+    'about.h2': 'Where Creation &amp; Innovation<br><span class="text-gradient">Come Together</span>',
+    'about.body': 'We are a music entertainment company that merges cutting-edge technology with human creativity — delivering original music production, PV visuals, digital marketing, and media PR as a seamless end-to-end service.<br><br><span style="color:#39FF6A;font-weight:700;">VOCALOID &amp; AI vocal synthesis</span> are at the core of our work, bridging subculture and mainstream through the unique fusion of human and virtual singers.<br><br>Speed. Quality. Consistency. By achieving all three simultaneously, we unlock the full potential of artists and brands.',
+    'about.v1.title': 'Innovation',
+    'about.v1.desc': 'Continuously redefining industry norms through the power of technology.',
+    'about.v2.title': 'Creation',
+    'about.v2.desc': 'Pursuing one-of-a-kind expression born from the fusion of human sensibility and technology.',
+    'about.v3.title': 'Synthesis',
+    'about.v3.desc': 'Realizing unique musical expression through VOCALOID and AI vocal synthesis technology.',
+    'about.v4.title': 'Freedom',
+    'about.v4.desc': 'Breaking free from scale constraints to create space for pure expression and vision.',
+    'works.subtitle': 'Works born from AI and human creativity.',
+    'tools.nuword': 'NuWord Concept Page →',
+    'services.h2': 'Create Music,<br><span class="text-gradient">Reach the World</span>',
+    'services.subtitle': 'End-to-end services from music production to media outreach.',
+    'services.s1.title': 'Music Production',
+    'services.s1.desc': 'From trend analysis to composition, arrangement, and lyrics. We produce high-quality music optimized for your genre, mood, and target audience — fast.',
+    'services.s1.t1': 'Composition', 'services.s1.t2': 'Lyrics', 'services.s1.t3': 'Vocal Direction', 'services.s1.t4': 'Sound Design',
+    'services.s2.title': 'PV / Video Production',
+    'services.s2.desc': 'From world concept design and storyboards to cinematic visuals using cutting-edge generative video technology.',
+    'services.s2.t1': 'Concept Design', 'services.s2.t2': 'Storyboard', 'services.s2.t3': 'Video Production', 'services.s2.t4': 'Color Grading',
+    'services.s3.title': 'Digital Marketing',
+    'services.s3.desc': 'Platform-native content strategy across X, Instagram, TikTok, and YouTube — integrated with your release schedule.',
+    'services.s3.t1': 'Social Strategy', 'services.s3.t2': 'Ad Creative', 'services.s3.t3': 'Content Production', 'services.s3.t4': 'SEO',
+    'services.s4.title': 'PR & Media',
+    'services.s4.desc': 'Press release writing, media list building, and interview prep — full-stack PR to maximize your release impact.',
+    'services.s4.t1': 'Press Release', 'services.s4.t2': 'Media Relations', 'services.s4.t3': 'Influencer Outreach', 'services.s4.t4': 'Crisis Management',
+    'news.featured.title': 'Music Entertainment Company officially launched.<br>End-to-end services from production to PR now open.',
+    'news.featured.desc': 'Building a new production framework that fuses cutting-edge technology with human creativity. Now officially accepting project inquiries.',
+    'news.n1': 'PV for debut track "Neon Cascade" is complete',
+    'news.n2': 'Now accepting tie-up and collaboration requests',
+    'news.n3': 'A blog post on our early production process is live',
+    'news.n4': 'Press materials for media companies are now available',
+    'news.n5': 'Brand visual identity established and published',
+    'contact.h2': "Let's Build<br><span class=\"text-gradient\">the Future of Music</span><br>Together",
+    'contact.subtitle': 'Music production, PV, marketing, PR —<br>feel free to reach out even with rough ideas.',
+    'contact.social.x': 'Latest news, first.',
+    'contact.social.note': 'Production blog & liner notes',
+    'contact.lbl.name': 'Name *', 'contact.ph.name': 'John Doe',
+    'contact.lbl.company': 'Company', 'contact.ph.company': 'Company Inc.',
+    'contact.lbl.email': 'Email *',
+    'contact.lbl.service': 'Service Type',
+    'contact.opt.default': 'Please select',
+    'contact.opt.music': 'Music Production', 'contact.opt.pv': 'PV / Video Production',
+    'contact.opt.marketing': 'Marketing Support', 'contact.opt.pr': 'PR & Media',
+    'contact.opt.collab': 'Tie-up / Collaboration', 'contact.opt.media': 'Press / Media Coverage',
+    'contact.opt.other': 'Other',
+    'contact.lbl.message': 'Message *',
+    'contact.ph.message': "Tell us about your project and what you're looking for.",
+    'contact.submit': 'Send',
+    'footer.tagline': 'Where AI and human sensibility meet —<br>a new music entertainment company.<br>We bring your vision to life.',
+    'footer.s1': 'Music Production', 'footer.s2': 'PV / Video', 'footer.s3': 'Digital MKT', 'footer.s4': 'PR Support',
+    'footer.tff.link': '✦ What is a good life?',
+    'footer.tff.desc': 'A personal site for life philosophy,<br>poetry, and moments that move us.',
+  }
+};
+
+let currentLang = localStorage.getItem('nocta-lang') || 'ja';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('nocta-lang', lang);
+  document.documentElement.lang = lang;
+  const dict = I18N[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (dict[k] !== undefined) el.textContent = dict[k];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.dataset.i18nHtml;
+    if (dict[k] !== undefined) el.innerHTML = dict[k];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.dataset.i18nPh;
+    if (dict[k] !== undefined) el.placeholder = dict[k];
+  });
+  const btn = document.getElementById('lang-btn');
+  const btnM = document.getElementById('lang-btn-mobile');
+  if (btn) btn.textContent = lang === 'ja' ? 'EN' : 'JA';
+  if (btnM) btnM.textContent = lang === 'ja' ? 'EN' : 'JA';
+}
+
+function toggleLang() {
+  setLang(currentLang === 'ja' ? 'en' : 'ja');
+}
+
+document.addEventListener('DOMContentLoaded', () => setLang(currentLang));
 </script>
 </body>
 </html>
