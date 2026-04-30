@@ -17,6 +17,7 @@ const NOCTA_APPS = [
     title: "NuWord still",
     cat: "app",
     url: "https://kutakuta1001.github.io/NOCTA/still/",
+    imgUrl: "./images/still.jpg",
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
