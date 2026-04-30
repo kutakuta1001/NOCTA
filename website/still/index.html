@@ -157,9 +157,8 @@ const TIME_MSGS = [
 ];
 
 // Liquid spring — velocity + damping (ぬるっと追従)
-const BLOB_K    = 0.010;   // spring stiffness  (低い = 遅い)
-const BLOB_DAMP = 0.82;    // damping           (低い = ゆっくり減衰・ぬるっと感)
-const SHRINK_MS = 3200;    // visual blob shrink speed after release
+const BLOB_K    = 0.007;   // spring stiffness  (低い = 遅い)
+const BLOB_DAMP = 0.80;    // damping           (低い = ゆっくり減衰・ぬるっと感)
 
 // Session end timers
 const RELEASE_END_MS = 5000;   // 5s after lifting finger → end
@@ -537,10 +536,9 @@ function frame(ts) {
       bvx=(bvx+(tx-bx)*BLOB_K)*BLOB_DAMP;
       bvy=(bvy+(ty-by)*BLOB_K)*BLOB_DAMP;
     } else {
-      // Visual shrink only (actual end is driven by releaseTimer)
-      blobScale=Math.max(blobScale-dt/SHRINK_MS,0);
-      // Inertia: blob drifts and decelerates after release
-      bvx*=BLOB_DAMP; bvy*=BLOB_DAMP;
+      // 指が離れてもblobScaleはそのまま保持
+      // 5秒以内に再タッチすれば大きさを引き継いで継続
+      bvx*=BLOB_DAMP; bvy*=BLOB_DAMP;  // 慣性で流れてから停止
     }
     bx+=bvx; by+=bvy;
     sessionElapsed=Date.now()-sessionStart;
