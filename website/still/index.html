@@ -45,7 +45,7 @@
       justify-content:flex-start; padding-top:13vh;
       opacity:1; transition:opacity 0.7s ease;
     }
-    #intro.hidden { opacity:0; }
+    #intro.hidden { opacity:0; pointer-events:none; }
     #intro .title  { font-size:clamp(2.4rem,9vw,3.8rem); }
     #intro .tagline {
       font-size:clamp(0.62rem,2.6vw,0.78rem); margin-top:0.45rem;
@@ -83,18 +83,8 @@
     }
 
     /* ── Guide message ── */
-    #guide { justify-content:center; margin-top:-8vh; }
+    #guide { justify-content:center; }
     #guide-text { font-size:clamp(0.78rem,3.4vw,0.98rem); }
-
-    /* ── Play button ── */
-    #bottom { justify-content:flex-end; padding-bottom:7.5vh; }
-    #play-btn {
-      width:52px; height:52px; opacity:0.72;
-      cursor:pointer; pointer-events:auto;
-      transition:opacity 0.3s, transform 0.3s;
-    }
-    #play-btn:hover  { opacity:1; transform:scale(1.05); }
-    #play-btn.hidden { opacity:0; pointer-events:none; }
 
     /* ── Done ── */
     #done-overlay { justify-content:center; opacity:0; transition:opacity 0.9s; }
@@ -112,7 +102,8 @@
       background:rgba(255,255,255,0.06);
       border:1px solid rgba(255,255,255,0.16);
       border-radius:99px; padding:0.44rem 1.6rem;
-      cursor:pointer; transition:all 0.25s;
+      cursor:pointer; pointer-events:auto;
+      transition:all 0.25s;
     }
     .again-btn:hover { background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.85); }
   </style>
@@ -139,14 +130,6 @@
   <div class="f-jp" id="guide-text">ドットに触れてください</div>
 </div>
 
-<div class="layer" id="bottom">
-  <svg id="play-btn" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="26" cy="26" r="24" stroke="rgba(255,255,255,0.58)" stroke-width="1" fill="none"/>
-    <polygon points="20,16 20,36 39,26" stroke="rgba(255,255,255,0.58)" stroke-width="1"
-      stroke-linejoin="round" fill="none"/>
-  </svg>
-</div>
-
 <div class="layer" id="done-overlay">
   <div class="f-title title">still</div>
   <div class="f-label elapsed" id="done-time">00:00</div>
@@ -170,33 +153,42 @@ const PALETTES = [
   [['#F0B8B0','#C06050'], ['#7898C8','#3048A0']],
 ];
 
-// Messages triggered when blobScale first crosses threshold (ascending only)
+// Messages at blobScale thresholds (ascending, shown once)
 const MSGS = [
-  { at: 0.12, text: 'いいペースです' },
-  { at: 0.45, text: '' },
-  { at: 0.55, text: '目を閉じてください' },
-  { at: 0.85, text: '' },
-  { at: 0.94, text: 'もうすぐです' },
+  { at: 0.08, text: 'ゆっくりつづけてください' },
+  { at: 0.40, text: '' },
+  { at: 0.50, text: 'そのまま続けてください'  },
+  { at: 0.78, text: '' },
+  { at: 0.85, text: '目を閉じてください'      },
+  { at: 0.95, text: 'もうすぐです'            },
 ];
 
-const SHRINK_MS   = 3200;  // ms to fully shrink after release
-const END_DELAY   = 800;   // ms after blobScale=0 before ending
-const INACTIVITY  = 1200;  // ms after release before shrink begins aggressively
+// Spring: how quickly blob center follows finger
+const FOLLOW   = 0.055;
+// Shrink/end timing after release
+const SHRINK_MS  = 3200;
+const END_DELAY  = 800;
+const INACTIVITY = 1200;
 
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
-let mode       = 'idle';   // idle | run | done
-let selMin     = 10;
-let totalMs    = 600000;
-let isHolding  = false;
-let blobScale  = 0;        // 0–1: current visual blob size
-let shownMsgs  = new Set();
+let mode           = 'idle'; // idle | run | done
+let selMin         = 10;
+let totalMs        = 600000;
+
+let isHolding      = false;
+let activePtrId    = null;   // active pointer ID (multi-touch safety)
+let tx = 0, ty = 0;         // exact touch/cursor position
+let bx = 0, by = 0;         // blob center (spring-lags behind touch)
+
+let blobScale      = 0;      // 0–1
+let shownMsgs      = new Set();
 let sessionStart   = null;
 let sessionElapsed = 0;
-let releaseTime    = 0;    // when user last released
+let releaseTime    = 0;
 let endScheduled   = false;
-let palette    = PALETTES[0];
+let palette        = PALETTES[0];
 
 // ══════════════════════════════════════════
 // CANVAS
@@ -211,6 +203,8 @@ function resize() {
   canvas.width  = W * dpr; canvas.height = H * dpr;
   canvas.style.width  = W + 'px'; canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
+  // Re-center defaults
+  if (mode === 'idle') { tx = W/2; ty = H*0.6; bx = tx; by = ty; }
   spawnParticles();
 }
 window.addEventListener('resize', resize);
@@ -219,8 +213,8 @@ window.addEventListener('resize', resize);
 // UTILS
 // ══════════════════════════════════════════
 const lerp  = (a,b,t) => a + (b-a)*t;
-const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
-const ease  = t => t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+const clamp = (v,lo,hi) => Math.max(lo, Math.min(hi,v));
+const ease  = t => t<.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
 const rand  = (lo,hi) => lo + Math.random()*(hi-lo);
 const fmt   = ms => {
   const s = Math.floor(ms/1000);
@@ -230,7 +224,7 @@ function hexRgb(h) {
   return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
 }
 function lerpHex(a,b,t) {
-  const [r1,g1,b1]=hexRgb(a),[r2,g2,b2]=hexRgb(b);
+  const [r1,g1,b1]=hexRgb(a), [r2,g2,b2]=hexRgb(b);
   return `rgb(${~~lerp(r1,r2,t)},${~~lerp(g1,g2,t)},${~~lerp(b1,b2,t)})`;
 }
 
@@ -274,15 +268,14 @@ function spawnParticles() {
 }
 
 function tickParticles() {
-  const cx=W/2, cy=H*.55;
   particles.forEach(p => {
     p.phase += .007;
     if (isHolding && mode==='run') {
-      // Attract toward blob center
-      const dx=cx-p.x, dy=cy-p.y;
-      p.vx += dx*.0028; p.vy += dy*.0028;
-      const spd = Math.hypot(p.vx,p.vy);
-      if (spd>3) { p.vx=p.vx/spd*3; p.vy=p.vy/spd*3; }
+      // Attract toward blob center (which follows finger)
+      const dx = bx - p.x, dy = by - p.y;
+      p.vx += dx * .0030; p.vy += dy * .0030;
+      const spd = Math.hypot(p.vx, p.vy);
+      if (spd > 3) { p.vx = p.vx/spd*3; p.vy = p.vy/spd*3; }
     } else {
       // Return home
       p.vx += (p.ox-p.x)*.0022; p.vy += (p.oy-p.y)*.0022;
@@ -293,28 +286,32 @@ function tickParticles() {
 }
 
 // ══════════════════════════════════════════
-// TAP DOT (intro)
+// TAP DOT  (idle)
 // ══════════════════════════════════════════
 let dotA=0, dotX=0, dotY=0;
-function drawTapDot(t) {
+function drawTapDot() {
   dotA += .0065;
   dotX = W*.5 + Math.cos(dotA*.85)*W*.14;
   dotY = H*.60 + Math.sin(dotA*1.1)*H*.075;
-  ctx.beginPath(); ctx.arc(dotX,dotY,14,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.09)'; ctx.fill();
+  // Halo
+  ctx.beginPath(); ctx.arc(dotX,dotY,16,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.fill();
+  // Core
   ctx.beginPath(); ctx.arc(dotX,dotY,8,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.80)'; ctx.fill();
+  ctx.fillStyle='rgba(255,255,255,0.82)'; ctx.fill();
 }
 
 // ══════════════════════════════════════════
-// WHITE DOT (inside blob)
+// TOUCH INDICATOR DOT  (run)
+// Drawn at exact finger position inside blob
 // ══════════════════════════════════════════
-let wDotA=0;
-function drawWhiteDot(cx,cy,r) {
-  wDotA += .005;
-  ctx.beginPath();
-  ctx.arc(cx+Math.cos(wDotA*.72)*r*.30, cy+Math.sin(wDotA)*r*.26, 6, 0, Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.82)'; ctx.fill();
+function drawTouchDot() {
+  // Outer glow
+  ctx.beginPath(); ctx.arc(tx,ty,16,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fill();
+  // Core dot
+  ctx.beginPath(); ctx.arc(tx,ty,7,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.88)'; ctx.fill();
 }
 
 // ══════════════════════════════════════════
@@ -325,7 +322,7 @@ function checkMessages(scale) {
   MSGS.forEach((m,i) => {
     if (scale >= m.at && !shownMsgs.has(i)) {
       shownMsgs.add(i);
-      guideEl.style.opacity='0';
+      guideEl.style.opacity = '0';
       setTimeout(() => {
         guideEl.textContent = m.text;
         guideEl.style.opacity = m.text ? '1' : '0';
@@ -337,7 +334,7 @@ function checkMessages(scale) {
 // ══════════════════════════════════════════
 // AUDIO
 // ══════════════════════════════════════════
-let aud=null;
+let aud = null;
 function loadAudio() {
   aud = new Audio(TRACKS[~~(Math.random()*TRACKS.length)]);
   aud.loop=true; aud.volume=0; aud.load();
@@ -361,7 +358,7 @@ function fadeOut() {
 // ══════════════════════════════════════════
 // SESSION FLOW
 // ══════════════════════════════════════════
-function startSession() {
+function startSession(clientX, clientY) {
   if (mode==='run') return;
   mode       = 'run';
   palette    = PALETTES[~~(Math.random()*PALETTES.length)];
@@ -372,8 +369,11 @@ function startSession() {
   endScheduled = false;
   isHolding  = true;
 
+  // Blob starts at touch position
+  tx = clientX; ty = clientY;
+  bx = tx;      by = ty;
+
   document.getElementById('intro').classList.add('hidden');
-  document.getElementById('play-btn').classList.add('hidden');
   guideEl.textContent=''; guideEl.style.opacity='0';
   document.getElementById('bar-label').textContent=`${selMin} 分 still`;
 
@@ -387,6 +387,7 @@ function finishSession() {
   if (mode==='done') return;
   mode = 'done';
   isHolding = false;
+  activePtrId = null;
   fadeOut();
   document.getElementById('bar').classList.remove('show');
   guideEl.style.opacity='0';
@@ -395,14 +396,14 @@ function finishSession() {
 }
 
 function restartSession() {
-  mode='idle'; blobScale=0; sessionStart=null; isHolding=false; endScheduled=false;
+  mode='idle'; blobScale=0; sessionStart=null;
+  isHolding=false; activePtrId=null; endScheduled=false;
   document.getElementById('done-overlay').classList.remove('show');
   guideEl.textContent='ドットに触れてください'; guideEl.style.opacity='1';
   setTimeout(()=>{
     document.getElementById('intro').classList.remove('hidden');
-    const p=document.getElementById('play-btn');
-    p.classList.remove('hidden');
   },300);
+  tx=W/2; ty=H*0.6; bx=tx; by=ty;
   loadAudio();
 }
 
@@ -411,27 +412,29 @@ function restartSession() {
 // ══════════════════════════════════════════
 function frame(ts) {
   requestAnimationFrame(frame);
-  const dt = Math.min(ts-lastTs, 50); lastTs=ts;
+  const dt   = Math.min(ts-lastTs, 50); lastTs=ts;
   const nowT = ts*.001;
 
-  // ── Blob size update ──
+  // ── Blob scale & spring ──
   if (mode==='run') {
     if (isHolding) {
       endScheduled = false;
+      // Grow steadily: reaches 1.0 after totalMs of continuous touch
       blobScale = Math.min(blobScale + dt/totalMs, 1);
-      if (blobScale>=1) { finishSession(); return; }
+      if (blobScale >= 1) { finishSession(); return; }
+      // Spring: blob center follows finger
+      bx += (tx-bx) * FOLLOW;
+      by += (ty-by) * FOLLOW;
     } else {
-      // Only shrink after brief inactivity
+      // Shrink after inactivity
       if (Date.now()-releaseTime > INACTIVITY) {
         blobScale = Math.max(blobScale - dt/SHRINK_MS, 0);
       }
-      // Schedule end when fully shrunk
-      if (blobScale<=0 && !endScheduled) {
+      if (blobScale <= 0 && !endScheduled) {
         endScheduled = true;
         setTimeout(finishSession, END_DELAY);
       }
     }
-    // Update elapsed & timer display
     sessionElapsed = Date.now()-sessionStart;
     document.getElementById('bar-time').textContent = fmt(sessionElapsed);
     checkMessages(blobScale);
@@ -441,72 +444,95 @@ function frame(ts) {
   ctx.clearRect(0,0,W,H);
   const te = ease(clamp(blobScale,0,1));
   const g  = ctx.createLinearGradient(0,0,0,H);
-  g.addColorStop(0, lerpHex(palette[0][0],palette[1][0],te));
-  g.addColorStop(1, lerpHex(palette[0][1],palette[1][1],te));
+  g.addColorStop(0, lerpHex(palette[0][0], palette[1][0], te));
+  g.addColorStop(1, lerpHex(palette[0][1], palette[1][1], te));
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
   // ── Particles ──
   tickParticles();
-  particles.forEach(p=>{
+  particles.forEach(p => {
     const a = p.alpha*(.55+.45*Math.sin(p.phase));
     drawBlob(p.x,p.y, p.r*(1+Math.sin(p.phase)*.22), nowT+p.phase*2, .42,
       `rgba(255,255,255,${a.toFixed(2)})`);
   });
 
-  // ── Idle: moving dot ──
+  // ── Idle: wandering tap dot ──
   if (mode==='idle') {
-    drawBlob(W*.5,H*.60, Math.min(W,H)*.055, nowT, .50,'rgba(255,255,255,0.09)');
-    drawTapDot(nowT);
+    drawBlob(W*.5,H*.60, Math.min(W,H)*.055, nowT,.50,'rgba(255,255,255,0.08)');
+    drawTapDot();
   }
 
-  // ── Run / done: main blob ──
-  if ((mode==='run'||mode==='done') && blobScale>0.005) {
-    const minR = Math.min(W,H)*.10;
-    const maxR = Math.min(W,H)*.58;
-    const bR   = lerp(minR,maxR,ease(blobScale));
-    const turb = lerp(.65,.18,ease(blobScale));
-    const cy   = H*.55;
+  // ── Run / done: main blob (centered on touch) ──
+  if ((mode==='run' || mode==='done') && blobScale > 0.005) {
+    const minR = Math.min(W,H) * .07;
+    const maxR = Math.max(W,H) * .78;  // fills screen at full size
+    const bR   = lerp(minR, maxR, ease(blobScale));
+    const turb = lerp(.65, .16, ease(blobScale));
+    const cx   = (mode==='run') ? bx : W/2;  // done overlay: re-center
+    const cy   = (mode==='run') ? by : H/2;
 
     // Halo
-    drawBlob(W/2,cy, bR*1.07, nowT, turb*.75,
-      `rgba(255,255,255,${lerp(.07,.14,ease(blobScale)).toFixed(2)})`);
+    drawBlob(cx,cy, bR*1.07, nowT, turb*.75,
+      `rgba(255,255,255,${lerp(.06,.13,ease(blobScale)).toFixed(2)})`);
 
-    // Main blob
-    const ba = lerp(.48,.68,ease(blobScale));
-    const bg = ctx.createRadialGradient(W/2-bR*.18,cy-bR*.18,bR*.02, W/2,cy,bR*1.06);
+    // Main blob — radial gradient
+    const ba = lerp(.45,.66,ease(blobScale));
+    const bg = ctx.createRadialGradient(cx-bR*.18,cy-bR*.18,bR*.02, cx,cy,bR*1.06);
     bg.addColorStop(0,   `rgba(255,255,255,${(ba*.88).toFixed(2)})`);
-    bg.addColorStop(.42, `rgba(255,255,255,${(ba*.45).toFixed(2)})`);
-    bg.addColorStop(1,   `rgba(255,255,255,${(ba*.07).toFixed(2)})`);
-    drawBlob(W/2,cy,bR,nowT,turb,bg);
+    bg.addColorStop(.42, `rgba(255,255,255,${(ba*.44).toFixed(2)})`);
+    bg.addColorStop(1,   `rgba(255,255,255,${(ba*.06).toFixed(2)})`);
+    drawBlob(cx,cy, bR, nowT, turb, bg);
 
-    if (mode==='run') drawWhiteDot(W/2,cy,bR);
+    // Touch indicator: white dot at exact finger position
+    if (mode==='run' && isHolding) drawTouchDot();
   }
 }
 
 // ══════════════════════════════════════════
 // EVENTS
 // ══════════════════════════════════════════
+
 // Duration buttons
-document.querySelectorAll('.dur-btn').forEach(b=>{
-  b.addEventListener('click',()=>{
+document.querySelectorAll('.dur-btn').forEach(b => {
+  b.addEventListener('click', () => {
     document.querySelectorAll('.dur-btn').forEach(x=>x.classList.remove('sel'));
     b.classList.add('sel');
-    selMin=+b.dataset.m; totalMs=selMin*60000;
+    selMin = +b.dataset.m; totalMs = selMin * 60000;
   });
 });
 
-// Play button (alternative start)
-document.getElementById('play-btn').addEventListener('click', startSession);
-
-// Hold / release on canvas
-canvas.addEventListener('pointerdown', e=>{
+// ── Pointer: down ──
+canvas.addEventListener('pointerdown', e => {
   e.preventDefault();
-  if (mode==='idle') { startSession(); return; }
-  if (mode==='run')  { isHolding=true; }
-}, {passive:false});
+  if (mode === 'idle') {
+    activePtrId = e.pointerId;
+    startSession(e.clientX, e.clientY);
+    return;
+  }
+  if (mode === 'run' && activePtrId === null) {
+    activePtrId = e.pointerId;
+    isHolding   = true;
+    tx = e.clientX; ty = e.clientY;
+  }
+}, { passive: false });
 
-window.addEventListener('pointerup',     ()=>{ if(mode==='run'){isHolding=false; releaseTime=Date.now();} });
-window.addEventListener('pointercancel', ()=>{ if(mode==='run'){isHolding=false; releaseTime=Date.now();} });
+// ── Pointer: move ──
+window.addEventListener('pointermove', e => {
+  if (mode === 'run' && e.pointerId === activePtrId && isHolding) {
+    tx = e.clientX;
+    ty = e.clientY;
+  }
+});
+
+// ── Pointer: up / cancel ──
+function onRelease(e) {
+  if (e.pointerId === activePtrId) {
+    activePtrId = null;
+    if (mode === 'run') { isHolding = false; releaseTime = Date.now(); }
+  }
+}
+window.addEventListener('pointerup',     onRelease);
+window.addEventListener('pointercancel', onRelease);
 
 // Restart
 document.getElementById('again-btn').addEventListener('click', restartSession);
