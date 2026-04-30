@@ -17,7 +17,6 @@
       touch-action: none;
     }
     canvas { position:fixed; inset:0; width:100%; height:100%; cursor:none; }
-
     .layer {
       position:fixed; inset:0;
       display:flex; flex-direction:column;
@@ -38,8 +37,6 @@
       letter-spacing:0.13em; color:rgba(255,255,255,0.72);
       transition:opacity 1.4s ease;
     }
-
-    /* ── Intro ── */
     #intro {
       justify-content:flex-start; padding-top:13vh;
       opacity:1; transition:opacity 0.7s ease;
@@ -68,8 +65,6 @@
       color:rgba(255,255,255,0.9);
       border-color:rgba(255,255,255,0.42);
     }
-
-    /* ── Session bar ── */
     #bar {
       justify-content:flex-start; padding-top:6.5vh;
       opacity:0; transition:opacity 0.8s;
@@ -80,12 +75,8 @@
       font-size:clamp(0.62rem,2.4vw,0.74rem);
       margin-top:0.25rem; color:rgba(255,255,255,0.35);
     }
-
-    /* ── Guide message ── */
     #guide { justify-content:center; }
     #guide-text { font-size:clamp(0.78rem,3.4vw,0.98rem); }
-
-    /* ── Done ── */
     #done-overlay { justify-content:center; opacity:0; transition:opacity 0.9s; }
     #done-overlay.show { opacity:1; pointer-events:auto; }
     #done-overlay .title { font-size:clamp(1.8rem,7vw,3rem); }
@@ -101,8 +92,7 @@
       background:rgba(255,255,255,0.06);
       border:1px solid rgba(255,255,255,0.16);
       border-radius:99px; padding:0.44rem 1.6rem;
-      cursor:pointer; pointer-events:auto;
-      transition:all 0.25s;
+      cursor:pointer; pointer-events:auto; transition:all 0.25s;
     }
     .again-btn:hover { background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.85); }
   </style>
@@ -141,45 +131,44 @@
 // ══════════════════════════════════════════
 const TRACKS = ['./audio/track-a.mp3', './audio/track-b.mp3'];
 
-// Each palette: [warmSide[light,dark], coolSide[light,dark]]
-// warmSide → blob color + particle color
-// coolSide → background color when blobScale grows
+// palette[0] = warm (blob + particles), palette[1] = cool (background)
 const PALETTES = [
-  [['#F5D76E','#C88010'], ['#1968A8','#052850']],  // gold / deep blue
-  [['#FF9C7A','#C04A20'], ['#2ABFBF','#085858']],  // salmon / teal
-  [['#FFB347','#C06800'], ['#7B6BA5','#302060']],  // amber / purple
-  [['#88DFC4','#38A880'], ['#E898A8','#A04060']],  // mint / rose
-  [['#90CFEF','#3A88C0'], ['#F0C060','#B07800']],  // sky / amber
-  [['#A8E0C0','#48A880'], ['#F0A0C8','#B04878']],  // seafoam / pink
-  [['#D8A0E0','#9030A8'], ['#50B880','#185838']],  // lavender / forest
-  [['#F0B8A8','#C06050'], ['#7898D0','#2848A8']],  // peach / slate
+  [['#F5D76E','#C88010'], ['#1968A8','#052850']],
+  [['#FF9C7A','#C04A20'], ['#2ABFBF','#085858']],
+  [['#FFB347','#C06800'], ['#7B6BA5','#302060']],
+  [['#88DFC4','#38A880'], ['#E898A8','#A04060']],
+  [['#90CFEF','#3A88C0'], ['#F0C060','#B07800']],
+  [['#A8E0C0','#48A880'], ['#F0A0C8','#B04878']],
+  [['#D8A0E0','#9030A8'], ['#50B880','#185838']],
+  [['#F0B8A8','#C06050'], ['#7898D0','#2848A8']],
 ];
-
-// Background near-black base (idle state)
 const BG_DARK = '#09090f';
 
-// Messages at blobScale thresholds (ascending, shown once)
+// Progress-based messages (blobScale threshold)
+// fadeMs: auto-hide after N ms, null = stay until next message
 const MSGS = [
-  { at: 0.08, text: 'ゆっくりつづけてください' },
-  { at: 0.40, text: '' },
-  { at: 0.50, text: 'そのまま続けてください'  },
-  { at: 0.78, text: '' },
-  { at: 0.85, text: '目を閉じてください'      },
-  { at: 0.95, text: 'もうすぐです'            },
+  { at: 0.08, text: 'ゆっくりつづけてください', fadeMs: 30000 },
+  { at: 0.50, text: 'そのまま続けてください',   fadeMs: 30000 },
+  { at: 0.95, text: 'もうすぐです',             fadeMs: null  },
+];
+// Absolute-time messages (ms since session start)
+const TIME_MSGS = [
+  { atMs: 120000, text: '目を閉じてください', fadeMs: 30000 },  // 2 minutes
 ];
 
-// Spring: blob center follows finger
-const FOLLOW     = 0.055;
-// Shrink/end after release
-const SHRINK_MS  = 3200;
-const END_DELAY  = 800;
-const INACTIVITY = 1200;
+const FOLLOW    = 0.055;   // spring: blob follows finger
+const SHRINK_MS = 3200;    // visual blob shrink speed after release
 
-// Particle gathering — 1/4 of previous speed
+// Session end timers
+const RELEASE_END_MS = 5000;   // 5s after lifting finger → end
+const STILL_END_MS   = 10000;  // 10s without finger movement → end
+const MOVE_THRESHOLD = 3;      // px — min displacement to count as movement
+
+// Particle system
 const PARTICLE_COUNT = 44;
-const ATTRACT_K      = 0.00013;  // force = K × distance  (was 0.00052)
-const ATTRACT_MAXSPD = 2.0;      // px/frame cap           (was 7.0)
-const RIM_MIN_R      = 0.36;     // respawn ring min / max(W,H)
+const ATTRACT_K      = 0.00013;  // force = K × distance  (slow drift)
+const ATTRACT_MAXSPD = 2.0;      // px/frame cap
+const RIM_MIN_R      = 0.36;
 const RIM_MAX_R      = 0.66;
 
 // ══════════════════════════════════════════
@@ -191,20 +180,24 @@ let totalMs    = 600000;
 
 let isHolding  = false;
 let activePtrId = null;
-let tx = 0, ty = 0;   // exact touch position
-let bx = 0, by = 0;   // blob center (spring-lags)
+let tx = 0, ty = 0;
+let bx = 0, by = 0;
+let lastTx = 0, lastTy = 0;   // for movement detection
 
 let blobScale      = 0;
 let shownMsgs      = new Set();
+let shownTimeMsgs  = new Set();
 let sessionStart   = null;
 let sessionElapsed = 0;
-let releaseTime    = 0;
-let endScheduled   = false;
-let palette        = PALETTES[0];
 
-// Cached blob RGB channels (set when palette is chosen)
-let blobR = 255, blobG = 255, blobB = 255;  // warm-light color
-let blobDR= 200, blobDG= 160, blobDB= 20;   // warm-dark color
+// End timers
+let releaseTimer = null;
+let stillTimer   = null;
+let msgFadeTimer = null;
+
+// Palette RGB cache
+let blobR=255,blobG=255,blobB=255, blobDR=200,blobDG=160,blobDB=20;
+let palette = PALETTES[0];
 
 // ══════════════════════════════════════════
 // CANVAS
@@ -216,10 +209,10 @@ let W, H, dpr, lastTs = 0;
 function resize() {
   dpr = window.devicePixelRatio || 1;
   W = window.innerWidth; H = window.innerHeight;
-  canvas.width  = W * dpr; canvas.height = H * dpr;
-  canvas.style.width  = W + 'px'; canvas.style.height = H + 'px';
-  ctx.scale(dpr, dpr);
-  if (mode === 'idle') { tx = W/2; ty = H*0.6; bx = tx; by = ty; }
+  canvas.width  = W*dpr; canvas.height = H*dpr;
+  canvas.style.width  = W+'px'; canvas.style.height = H+'px';
+  ctx.scale(dpr,dpr);
+  if (mode==='idle') { tx=W/2; ty=H*0.6; bx=tx; by=ty; }
   spawnParticles();
 }
 window.addEventListener('resize', resize);
@@ -227,219 +220,216 @@ window.addEventListener('resize', resize);
 // ══════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════
-const lerp  = (a,b,t) => a + (b-a)*t;
-const clamp = (v,lo,hi) => Math.max(lo, Math.min(hi,v));
-const ease  = t => t<.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
-const rand  = (lo,hi) => lo + Math.random()*(hi-lo);
+const lerp  = (a,b,t) => a+(b-a)*t;
+const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
+const ease  = t => t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+const rand  = (lo,hi) => lo+Math.random()*(hi-lo);
 const fmt   = ms => {
-  const s = Math.floor(ms/1000);
+  const s=Math.floor(ms/1000);
   return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
 };
 function hexRgb(h) {
-  return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+  return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
 }
 function lerpHex(a,b,t) {
-  const [r1,g1,b1]=hexRgb(a), [r2,g2,b2]=hexRgb(b);
+  const [r1,g1,b1]=hexRgb(a),[r2,g2,b2]=hexRgb(b);
   return `rgb(${~~lerp(r1,r2,t)},${~~lerp(g1,g2,t)},${~~lerp(b1,b2,t)})`;
 }
-
-// Update cached blob RGB when palette changes
 function updateBlobColor() {
-  [blobR,  blobG,  blobB ] = hexRgb(palette[0][0]);  // warm light
-  [blobDR, blobDG, blobDB] = hexRgb(palette[0][1]);  // warm dark
+  [blobR,blobG,blobB]   = hexRgb(palette[0][0]);
+  [blobDR,blobDG,blobDB] = hexRgb(palette[0][1]);
 }
 
 // ══════════════════════════════════════════
 // BLOB SHAPE
 // ══════════════════════════════════════════
-function drawBlob(cx, cy, r, t, turb, fill) {
-  const N = 64;
-  const pts = [];
-  for (let i = 0; i < N; i++) {
-    const a = (i/N)*Math.PI*2;
-    const d = turb*(
-      Math.sin(a*2+t*.38)*.18 + Math.sin(a*3-t*.56)*.12 +
-      Math.sin(a*5+t*.81)*.07 + Math.sin(a*7-t*.27)*.04
-    );
-    pts.push([cx+Math.cos(a)*r*(1+d), cy+Math.sin(a)*r*(1+d)]);
+function drawBlob(cx,cy,r,t,turb,fill) {
+  const N=64, pts=[];
+  for (let i=0;i<N;i++) {
+    const a=(i/N)*Math.PI*2;
+    const d=turb*(Math.sin(a*2+t*.38)*.18+Math.sin(a*3-t*.56)*.12+
+                  Math.sin(a*5+t*.81)*.07+Math.sin(a*7-t*.27)*.04);
+    pts.push([cx+Math.cos(a)*r*(1+d),cy+Math.sin(a)*r*(1+d)]);
   }
   ctx.beginPath();
-  const s = [(pts[N-1][0]+pts[0][0])*.5, (pts[N-1][1]+pts[0][1])*.5];
+  const s=[(pts[N-1][0]+pts[0][0])*.5,(pts[N-1][1]+pts[0][1])*.5];
   ctx.moveTo(s[0],s[1]);
-  for (let i=0;i<N;i++) {
-    const p=pts[i], n=pts[(i+1)%N];
-    ctx.quadraticCurveTo(p[0],p[1],(p[0]+n[0])*.5,(p[1]+n[1])*.5);
-  }
-  ctx.closePath();
-  ctx.fillStyle = fill;
-  ctx.fill();
+  for (let i=0;i<N;i++){const p=pts[i],n=pts[(i+1)%N];ctx.quadraticCurveTo(p[0],p[1],(p[0]+n[0])*.5,(p[1]+n[1])*.5);}
+  ctx.closePath(); ctx.fillStyle=fill; ctx.fill();
 }
 
 // ══════════════════════════════════════════
-// PARTICLES — gathering orbs
+// PARTICLES
 // ══════════════════════════════════════════
-let particles = [];
+let particles=[];
 
 function spawnParticles() {
-  particles = Array.from({length: PARTICLE_COUNT}, () => {
-    const x = rand(0,W), y = rand(0,H);
-    return {
-      x, y, ox:x, oy:y,
-      vx: rand(-.2,.2), vy: rand(-.2,.2),
-      r:        rand(12, 36),
-      phase:    rand(0, Math.PI*2),
-      alpha:    rand(.06, .18),   // subtle in idle
-      speedMul: 1.0,              // overwritten at session start
-      // Color channels (white in idle, palette in run)
-      pr: 255, pg: 255, pb: 255,
-    };
+  particles=Array.from({length:PARTICLE_COUNT},()=>{
+    const x=rand(0,W),y=rand(0,H);
+    return {x,y,ox:x,oy:y,vx:rand(-.2,.2),vy:rand(-.2,.2),
+      r:rand(12,36),phase:rand(0,Math.PI*2),alpha:rand(.06,.18),
+      speedMul:1, pr:255,pg:255,pb:255};
   });
 }
 
-// Called once per session start — assign palette color + random speed to each particle
 function colorizeParticles() {
-  // All particles get the same warm-light color (matching blob)
-  // Slightly lighten toward white for a soft, luminous look
-  const pr = ~~lerp(blobR, 255, 0.18);
-  const pg = ~~lerp(blobG, 255, 0.18);
-  const pb = ~~lerp(blobB, 255, 0.18);
-  particles.forEach(p => {
-    p.pr = pr; p.pg = pg; p.pb = pb;
-    p.alpha    = rand(.16, .38);
-    p.speedMul = rand(0.35, 1.2);   // random per-particle speed (±3x spread)
+  // All particles: same warm-light color as blob (slightly brightened)
+  const pr=~~lerp(blobR,255,.18), pg=~~lerp(blobG,255,.18), pb=~~lerp(blobB,255,.18);
+  particles.forEach(p=>{
+    p.pr=pr; p.pg=pg; p.pb=pb;
+    p.alpha    = rand(.16,.38);
+    p.speedMul = rand(.35,1.2);  // random per-particle speed
   });
 }
 
 function resetParticleToRim(p) {
-  const rim  = Math.max(W,H);
-  const dist = rand(rim*RIM_MIN_R, rim*RIM_MAX_R);
-  const ang  = rand(0, Math.PI*2);
-  p.x  = W/2 + Math.cos(ang)*dist;
-  p.y  = H/2 + Math.sin(ang)*dist;
-  p.vx = rand(-.1,.1); p.vy = rand(-.1,.1);
+  const rim=Math.max(W,H);
+  const d=rand(rim*RIM_MIN_R,rim*RIM_MAX_R), a=rand(0,Math.PI*2);
+  p.x=W/2+Math.cos(a)*d; p.y=H/2+Math.sin(a)*d;
+  p.vx=rand(-.1,.1); p.vy=rand(-.1,.1);
 }
 
 function tickParticles() {
-  particles.forEach(p => {
-    p.phase += .007;
+  // Current blob radius (same formula as render loop)
+  const bR_now = lerp(Math.min(W,H)*.07, Math.max(W,H)*.78,
+                      ease(clamp(blobScale,0,1)));
+  // Particles absorbed at ~90% of blob radius (blob edge, not center)
+  const absorbR = Math.max(20, bR_now * 0.90);
+
+  particles.forEach(p=>{
+    p.phase+=.007;
     if (isHolding && mode==='run') {
-      const dx = bx - p.x, dy = by - p.y;
-      const dist = Math.hypot(dx, dy) || 1;
-      // Gravity-like: F ∝ distance, scaled by per-particle speed multiplier
-      const force = ATTRACT_K * dist * p.speedMul;
-      p.vx += (dx/dist) * force;
-      p.vy += (dy/dist) * force;
-      // Per-particle speed cap
-      const maxSpd = ATTRACT_MAXSPD * p.speedMul;
-      const spd = Math.hypot(p.vx, p.vy);
-      if (spd > maxSpd) { p.vx = p.vx/spd*maxSpd; p.vy = p.vy/spd*maxSpd; }
-      // Absorbed → respawn from rim → continuous stream
-      if (dist < 22) resetParticleToRim(p);
+      const dx=bx-p.x, dy=by-p.y;
+      const dist=Math.hypot(dx,dy)||1;
+      const force=ATTRACT_K*dist*p.speedMul;
+      p.vx+=(dx/dist)*force; p.vy+=(dy/dist)*force;
+      const maxSpd=ATTRACT_MAXSPD*p.speedMul;
+      const spd=Math.hypot(p.vx,p.vy);
+      if (spd>maxSpd){p.vx=p.vx/spd*maxSpd;p.vy=p.vy/spd*maxSpd;}
+      // Absorbed at blob boundary → respawn at rim
+      if (dist<absorbR) resetParticleToRim(p);
     } else {
-      p.vx += (p.ox-p.x)*.0016; p.vy += (p.oy-p.y)*.0016;
-      p.vx *= 0.92; p.vy *= 0.92;
+      p.vx+=(p.ox-p.x)*.0016; p.vy+=(p.oy-p.y)*.0016;
+      p.vx*=0.92; p.vy*=0.92;
     }
-    p.x += p.vx; p.y += p.vy;
+    p.x+=p.vx; p.y+=p.vy;
   });
 }
 
 function drawParticles(nowT) {
-  const attracting = isHolding && mode==='run';
-  particles.forEach(p => {
-    const pulse = 1 + Math.sin(p.phase)*.22;
-    let a = p.alpha * (.55 + .45*Math.sin(p.phase));
-
+  const attracting=isHolding&&mode==='run';
+  particles.forEach(p=>{
+    const pulse=1+Math.sin(p.phase)*.22;
+    let a=p.alpha*(.55+.45*Math.sin(p.phase));
     if (attracting) {
-      // Boost alpha as particle nears blob center
-      const dist    = Math.hypot(bx - p.x, by - p.y);
-      const maxDist = Math.max(W,H) * 0.60;
-      const t       = clamp(1 - dist/maxDist, 0, 1);
-      a = lerp(a, a*3.6, t*t);
-      a = Math.min(a, 0.70);
+      const dist=Math.hypot(bx-p.x,by-p.y);
+      const t=clamp(1-dist/(Math.max(W,H)*.60),0,1);
+      a=Math.min(lerp(a,a*3.6,t*t),.70);
     }
-
-    // idle: white, run/done: palette warm color (all same)
-    const r = (mode==='run'||mode==='done') ? p.pr : 255;
-    const g = (mode==='run'||mode==='done') ? p.pg : 255;
-    const b = (mode==='run'||mode==='done') ? p.pb : 255;
-
-    drawBlob(p.x, p.y, p.r*pulse, nowT+p.phase*2, .42,
-      `rgba(${r},${g},${b},${a.toFixed(3)})`);
+    const r=(mode==='run'||mode==='done')?p.pr:255;
+    const g=(mode==='run'||mode==='done')?p.pg:255;
+    const b=(mode==='run'||mode==='done')?p.pb:255;
+    drawBlob(p.x,p.y,p.r*pulse,nowT+p.phase*2,.42,`rgba(${r},${g},${b},${a.toFixed(3)})`);
   });
 }
 
 // ══════════════════════════════════════════
-// TAP DOT  (idle)
+// TAP DOT (idle)
 // ══════════════════════════════════════════
-let dotA=0, dotX=0, dotY=0;
+let dotA=0;
 function drawTapDot() {
-  dotA += .0065;
-  dotX = W*.5 + Math.cos(dotA*.85)*W*.14;
-  dotY = H*.60 + Math.sin(dotA*1.1)*H*.075;
-  ctx.beginPath(); ctx.arc(dotX,dotY,18,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.fill();
-  ctx.beginPath(); ctx.arc(dotX,dotY,8,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.82)'; ctx.fill();
+  dotA+=.0065;
+  const dx=W*.5+Math.cos(dotA*.85)*W*.14, dy=H*.60+Math.sin(dotA*1.1)*H*.075;
+  ctx.beginPath();ctx.arc(dx,dy,18,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.07)';ctx.fill();
+  ctx.beginPath();ctx.arc(dx,dy,8,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.82)';ctx.fill();
 }
 
 // ══════════════════════════════════════════
-// TOUCH INDICATOR DOT  (run — exact finger pos)
+// TOUCH DOT (run — exact finger position)
 // ══════════════════════════════════════════
 function drawTouchDot() {
-  ctx.beginPath(); ctx.arc(tx,ty,16,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.14)'; ctx.fill();
-  ctx.beginPath(); ctx.arc(tx,ty,7,0,Math.PI*2);
-  ctx.fillStyle='rgba(255,255,255,0.88)'; ctx.fill();
+  ctx.beginPath();ctx.arc(tx,ty,16,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.14)';ctx.fill();
+  ctx.beginPath();ctx.arc(tx,ty,7,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.88)';ctx.fill();
 }
 
 // ══════════════════════════════════════════
 // MESSAGES
 // ══════════════════════════════════════════
-const guideEl = document.getElementById('guide-text');
-function checkMessages(scale) {
-  MSGS.forEach((m,i) => {
-    if (scale >= m.at && !shownMsgs.has(i)) {
+const guideEl=document.getElementById('guide-text');
+
+// Show a message; optionally auto-fade it after fadeMs
+function showMessage(text, fadeMs) {
+  clearTimeout(msgFadeTimer); msgFadeTimer=null;
+  guideEl.style.opacity='0';
+  setTimeout(()=>{
+    guideEl.textContent=text;
+    if (text) {
+      guideEl.style.opacity='1';
+      if (fadeMs) {
+        msgFadeTimer=setTimeout(()=>{ guideEl.style.opacity='0'; }, fadeMs);
+      }
+    }
+  }, 900);
+}
+
+function checkMessages(scale, elapsed) {
+  // Progress-based
+  MSGS.forEach((m,i)=>{
+    if (scale>=m.at && !shownMsgs.has(i)) {
       shownMsgs.add(i);
-      guideEl.style.opacity = '0';
-      setTimeout(() => {
-        guideEl.textContent = m.text;
-        guideEl.style.opacity = m.text ? '1' : '0';
-      }, 900);
+      showMessage(m.text, m.fadeMs);
+    }
+  });
+  // Absolute-time-based
+  TIME_MSGS.forEach((m,i)=>{
+    if (elapsed>=m.atMs && !shownTimeMsgs.has(i)) {
+      shownTimeMsgs.add(i);
+      showMessage(m.text, m.fadeMs);
     }
   });
 }
 
 // ══════════════════════════════════════════
-// AUDIO  (bug fix: capture local reference to prevent cross-session leaks)
+// AUDIO (local capture fix)
 // ══════════════════════════════════════════
-let aud = null;
-
+let aud=null;
 function loadAudio() {
-  // Stop and release any existing audio before creating new one
-  if (aud) { aud.pause(); aud.src = ''; aud = null; }
-  aud = new Audio(TRACKS[~~(Math.random()*TRACKS.length)]);
-  aud.loop = true; aud.volume = 0; aud.load();
+  if (aud){aud.pause();aud.src='';aud=null;}
+  aud=new Audio(TRACKS[~~(Math.random()*TRACKS.length)]);
+  aud.loop=true; aud.volume=0; aud.load();
 }
-
 function fadeIn() {
   if (!aud) return;
-  const target = aud;   // capture: prevents interference if aud is replaced later
+  const target=aud;
   target.play().catch(()=>{});
-  let v = 0;
-  const id = setInterval(() => {
-    v = Math.min(v + .015, .55);
-    target.volume = v;
-    if (v >= .55) clearInterval(id);
-  }, 110);
+  let v=0,id=setInterval(()=>{v=Math.min(v+.015,.55);target.volume=v;if(v>=.55)clearInterval(id);},110);
 }
-
 function fadeOut() {
   if (!aud) return;
-  const target = aud;   // capture: old audio fades out even after aud is replaced
-  const id = setInterval(() => {
-    target.volume = Math.max(0, target.volume - .02);
-    if (target.volume <= 0) { target.pause(); clearInterval(id); }
-  }, 100);
+  const target=aud;
+  const id=setInterval(()=>{target.volume=Math.max(0,target.volume-.02);if(target.volume<=0){target.pause();clearInterval(id);}},100);
+}
+
+// ══════════════════════════════════════════
+// END TIMERS
+// ══════════════════════════════════════════
+function clearEndTimers() {
+  clearTimeout(releaseTimer); releaseTimer=null;
+  clearTimeout(stillTimer);   stillTimer=null;
+}
+
+// Start the stillness timer (resets on each movement)
+function startStillTimer() {
+  clearTimeout(stillTimer);
+  stillTimer=setTimeout(()=>{ if(mode==='run') finishSession(); }, STILL_END_MS);
+}
+
+// Called when movement is detected
+function onMovementDetected(nx, ny) {
+  if (Math.hypot(nx-lastTx, ny-lastTy) >= MOVE_THRESHOLD) {
+    lastTx=nx; lastTy=ny;
+    startStillTimer();  // reset 10s stillness timer
+  }
 }
 
 // ══════════════════════════════════════════
@@ -449,50 +439,51 @@ function startSession(clientX, clientY) {
   if (mode==='run') return;
   mode       = 'run';
   palette    = PALETTES[~~(Math.random()*PALETTES.length)];
-  updateBlobColor();      // cache RGB from new palette
+  updateBlobColor();
   sessionStart   = Date.now();
   sessionElapsed = 0;
   blobScale      = 0;
   shownMsgs      = new Set();
-  endScheduled   = false;
+  shownTimeMsgs  = new Set();
   isHolding      = true;
 
-  tx = clientX; ty = clientY;
-  bx = tx;      by = ty;
+  tx=clientX; ty=clientY; bx=tx; by=ty;
+  lastTx=tx;  lastTy=ty;
 
-  colorizeParticles();   // assign palette color + random speed
+  colorizeParticles();
+  clearEndTimers();
+  startStillTimer();   // 10s still → end
 
   document.getElementById('intro').classList.add('hidden');
   guideEl.textContent=''; guideEl.style.opacity='0';
   document.getElementById('bar-label').textContent=`${selMin} 分 still`;
-
-  setTimeout(()=>{
-    document.getElementById('bar').classList.add('show');
-    fadeIn();
-  }, 500);
+  setTimeout(()=>{ document.getElementById('bar').classList.add('show'); fadeIn(); }, 500);
 }
 
 function finishSession() {
   if (mode==='done') return;
-  mode = 'done';
-  isHolding   = false;
-  activePtrId = null;
+  mode='done';
+  isHolding=false; activePtrId=null;
+  clearEndTimers();
+  clearTimeout(msgFadeTimer); msgFadeTimer=null;
   fadeOut();
   document.getElementById('bar').classList.remove('show');
   guideEl.style.opacity='0';
-  document.getElementById('done-time').textContent = fmt(sessionElapsed);
-  setTimeout(()=>document.getElementById('done-overlay').classList.add('show'), 400);
+  document.getElementById('done-time').textContent=fmt(sessionElapsed);
+  setTimeout(()=>document.getElementById('done-overlay').classList.add('show'),400);
 }
 
 function restartSession() {
+  clearEndTimers();
+  clearTimeout(msgFadeTimer); msgFadeTimer=null;
   mode='idle'; blobScale=0; sessionStart=null;
-  isHolding=false; activePtrId=null; endScheduled=false;
+  isHolding=false; activePtrId=null;
   document.getElementById('done-overlay').classList.remove('show');
   guideEl.textContent='ドットに触れてください'; guideEl.style.opacity='1';
-  setTimeout(()=>document.getElementById('intro').classList.remove('hidden'), 300);
+  setTimeout(()=>document.getElementById('intro').classList.remove('hidden'),300);
   tx=W/2; ty=H*0.6; bx=tx; by=ty;
-  spawnParticles();   // reset particles to white & home
-  loadAudio();        // load new audio (safely stops previous)
+  spawnParticles();
+  loadAudio();
 }
 
 // ══════════════════════════════════════════
@@ -500,117 +491,113 @@ function restartSession() {
 // ══════════════════════════════════════════
 function frame(ts) {
   requestAnimationFrame(frame);
-  const dt   = Math.min(ts-lastTs, 50); lastTs=ts;
-  const nowT = ts*.001;
+  const dt=Math.min(ts-lastTs,50); lastTs=ts;
+  const nowT=ts*.001;
 
-  // ── Blob scale & spring ──
   if (mode==='run') {
     if (isHolding) {
-      endScheduled = false;
-      blobScale = Math.min(blobScale + dt/totalMs, 1);
-      if (blobScale >= 1) { finishSession(); return; }
-      bx += (tx-bx) * FOLLOW;
-      by += (ty-by) * FOLLOW;
+      blobScale=Math.min(blobScale+dt/totalMs,1);
+      if (blobScale>=1){finishSession();return;}
+      bx+=(tx-bx)*FOLLOW; by+=(ty-by)*FOLLOW;
     } else {
-      if (Date.now()-releaseTime > INACTIVITY) {
-        blobScale = Math.max(blobScale - dt/SHRINK_MS, 0);
-      }
-      if (blobScale <= 0 && !endScheduled) {
-        endScheduled = true;
-        setTimeout(finishSession, END_DELAY);
-      }
+      // Visual shrink only (actual end is driven by releaseTimer)
+      blobScale=Math.max(blobScale-dt/SHRINK_MS,0);
     }
-    sessionElapsed = Date.now()-sessionStart;
-    document.getElementById('bar-time').textContent = fmt(sessionElapsed);
-    checkMessages(blobScale);
+    sessionElapsed=Date.now()-sessionStart;
+    document.getElementById('bar-time').textContent=fmt(sessionElapsed);
+    checkMessages(blobScale, sessionElapsed);
   }
 
-  // ── Background ──
+  // Background
   ctx.clearRect(0,0,W,H);
-  const te = ease(clamp(blobScale,0,1));
-  const bg = ctx.createLinearGradient(0,0,0,H);
-  // Idle: near-black. Growing: transitions to cool palette side.
-  bg.addColorStop(0, lerpHex(BG_DARK, palette[1][0], te * 0.88));
-  bg.addColorStop(1, lerpHex(BG_DARK, palette[1][1], te));
+  const te=ease(clamp(blobScale,0,1));
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,lerpHex(BG_DARK,palette[1][0],te*.88));
+  bg.addColorStop(1,lerpHex(BG_DARK,palette[1][1],te));
   ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
 
-  // ── Particles ──
+  // Particles
   tickParticles();
   drawParticles(nowT);
 
-  // ── Idle: wandering tap dot ──
+  // Idle tap dot
   if (mode==='idle') {
-    drawBlob(W*.5,H*.60, Math.min(W,H)*.055, nowT,.50,'rgba(255,255,255,0.07)');
+    drawBlob(W*.5,H*.60,Math.min(W,H)*.055,nowT,.50,'rgba(255,255,255,0.07)');
     drawTapDot();
   }
 
-  // ── Run / done: main blob (warm color, contrasts with cool background) ──
-  if ((mode==='run'||mode==='done') && blobScale > 0.005) {
-    const minR = Math.min(W,H) * .07;
-    const maxR = Math.max(W,H) * .78;
-    const bR   = lerp(minR, maxR, ease(blobScale));
-    const turb = lerp(.65, .16, ease(blobScale));
-    const cx   = (mode==='run') ? bx : W/2;
-    const cy   = (mode==='run') ? by : H/2;
-    const ba   = lerp(.50, .78, ease(blobScale));
+  // Main blob (warm color on cool background)
+  if ((mode==='run'||mode==='done') && blobScale>0.005) {
+    const minR=Math.min(W,H)*.07, maxR=Math.max(W,H)*.78;
+    const bR=lerp(minR,maxR,ease(blobScale));
+    const turb=lerp(.65,.16,ease(blobScale));
+    const cx=(mode==='run')?bx:W/2, cy=(mode==='run')?by:H/2;
+    const ba=lerp(.50,.78,ease(blobScale));
 
-    // Halo: warm color, low alpha
-    drawBlob(cx,cy, bR*1.10, nowT, turb*.8,
+    // Halo
+    drawBlob(cx,cy,bR*1.10,nowT,turb*.8,
       `rgba(${blobR},${blobG},${blobB},${lerp(.04,.11,te).toFixed(3)})`);
+    // Core
+    const g2=ctx.createRadialGradient(cx-bR*.18,cy-bR*.18,bR*.02,cx,cy,bR*1.06);
+    g2.addColorStop(0,  `rgba(${blobR},${blobG},${blobB},${(ba*.90).toFixed(3)})`);
+    g2.addColorStop(.45,`rgba(${blobR},${blobG},${blobB},${(ba*.50).toFixed(3)})`);
+    g2.addColorStop(1,  `rgba(${blobDR},${blobDG},${blobDB},${(ba*.08).toFixed(3)})`);
+    drawBlob(cx,cy,bR,nowT,turb,g2);
 
-    // Main blob: warm-color radial gradient
-    const g2 = ctx.createRadialGradient(cx-bR*.18,cy-bR*.18,bR*.02, cx,cy,bR*1.06);
-    g2.addColorStop(0,   `rgba(${blobR},${blobG},${blobB},${(ba*.90).toFixed(3)})`);
-    g2.addColorStop(.45, `rgba(${blobR},${blobG},${blobB},${(ba*.50).toFixed(3)})`);
-    g2.addColorStop(1,   `rgba(${blobDR},${blobDG},${blobDB},${(ba*.08).toFixed(3)})`);
-    drawBlob(cx,cy, bR, nowT, turb, g2);
-
-    // Touch indicator: white dot at exact finger position
-    if (mode==='run' && isHolding) drawTouchDot();
+    if (mode==='run'&&isHolding) drawTouchDot();
   }
 }
 
 // ══════════════════════════════════════════
 // EVENTS
 // ══════════════════════════════════════════
-document.querySelectorAll('.dur-btn').forEach(b => {
-  b.addEventListener('click', () => {
+document.querySelectorAll('.dur-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
     document.querySelectorAll('.dur-btn').forEach(x=>x.classList.remove('sel'));
     b.classList.add('sel');
-    selMin = +b.dataset.m; totalMs = selMin * 60000;
+    selMin=+b.dataset.m; totalMs=selMin*60000;
   });
 });
 
-canvas.addEventListener('pointerdown', e => {
+canvas.addEventListener('pointerdown',e=>{
   e.preventDefault();
-  if (mode === 'idle') {
-    activePtrId = e.pointerId;
-    startSession(e.clientX, e.clientY);
+  if (mode==='idle'){
+    activePtrId=e.pointerId;
+    startSession(e.clientX,e.clientY);
     return;
   }
-  if (mode === 'run' && activePtrId === null) {
-    activePtrId = e.pointerId;
-    isHolding   = true;
-    tx = e.clientX; ty = e.clientY;
+  if (mode==='run'&&activePtrId===null){
+    activePtrId=e.pointerId;
+    isHolding=true;
+    tx=e.clientX; ty=e.clientY;
+    lastTx=tx; lastTy=ty;
+    clearTimeout(releaseTimer); releaseTimer=null;
+    startStillTimer();
   }
-}, { passive: false });
+},{passive:false});
 
-window.addEventListener('pointermove', e => {
-  if (mode === 'run' && e.pointerId === activePtrId && isHolding) {
-    tx = e.clientX; ty = e.clientY;
+window.addEventListener('pointermove',e=>{
+  if (mode==='run'&&e.pointerId===activePtrId&&isHolding){
+    tx=e.clientX; ty=e.clientY;
+    onMovementDetected(tx,ty);
   }
 });
 
-function onRelease(e) {
-  if (e.pointerId === activePtrId) {
-    activePtrId = null;
-    if (mode === 'run') { isHolding = false; releaseTime = Date.now(); }
+function onRelease(e){
+  if (e.pointerId===activePtrId){
+    activePtrId=null;
+    if (mode==='run'){
+      isHolding=false;
+      clearTimeout(stillTimer); stillTimer=null;
+      // Hard end after 5 seconds of non-touch
+      releaseTimer=setTimeout(()=>{ if(mode==='run') finishSession(); }, RELEASE_END_MS);
+    }
   }
 }
-window.addEventListener('pointerup',     onRelease);
-window.addEventListener('pointercancel', onRelease);
+window.addEventListener('pointerup',    onRelease);
+window.addEventListener('pointercancel',onRelease);
 
-document.getElementById('again-btn').addEventListener('click', restartSession);
+document.getElementById('again-btn').addEventListener('click',restartSession);
 
 // ══════════════════════════════════════════
 // INIT
