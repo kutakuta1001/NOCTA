@@ -1568,7 +1568,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             '      <h3 class="font-heading font-bold text-[17px] text-white">' + w.title + '</h3>',
             '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + w.badgeColorClass + ' tracking-wider">' + w.badge + '</span>',
             '    </div>',
-            '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">' + w.descJa + '</p>',
+            '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed" data-desc-ja="' + w.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (w.descEn||w.descJa).replace(/"/g,'&quot;') + '">' + w.descJa + '</p>',
             '  </div>',
             '</div>'
         ].join('\n');
@@ -1649,7 +1649,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             '      <h3 class="font-heading font-bold text-[15px] text-white leading-tight">' + v.title + '</h3>',
             '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded shrink-0 ml-2 ' + v.badgeColorClass + ' tracking-wider">' + v.badge + '</span>',
             '    </div>',
-            '    <p class="font-jp text-[12px] text-brand-sub leading-relaxed">' + v.descJa + '</p>',
+            '    <p class="font-jp text-[12px] text-brand-sub leading-relaxed" data-desc-ja="' + v.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (v.descEn||v.descJa).replace(/"/g,'&quot;') + '">' + v.descJa + '</p>',
             '    ' + zoraLink,
             '  </div>',
             '</div>'
@@ -1709,6 +1709,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             var delay  = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
             var dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
             var imgArg = a.imgUrl ? '\'' + a.imgUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' : '\'\'';
+            var descEnArg = a.descEn ? '\'' + a.descEn.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' : '\'\'';
             var onclick = ' onclick="openApp(' +
                 '\'' + a.url.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
                 '\'' + a.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
@@ -1716,7 +1717,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                 '\'' + a.badge + '\',' +
                 '\'' + a.badgeColorClass + '\',' +
                 '\'' + a.descJa.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
-                imgArg +
+                imgArg + ',' +
+                descEnArg +
                 ')"';
 
             return [
@@ -1737,7 +1739,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                 '      <h3 class="font-heading font-bold text-[17px] text-white">' + a.title + '</h3>',
                 '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + a.badgeColorClass + ' tracking-wider">' + a.badge + '</span>',
                 '    </div>',
-                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed">' + a.descJa + '</p>',
+                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed" data-desc-ja="' + a.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (a.descEn||a.descJa).replace(/"/g,'&quot;') + '">' + a.descJa + '</p>',
                 '  </div>',
                 '</div>'
             ].join('\n');
@@ -1861,7 +1863,8 @@ function closeVisual() {
 }
 
 /* ---- App Modal ---- */
-    function openApp(url, title, thumbClass, badge, badgeClass, desc, imgUrl) {
+    function openApp(url, title, thumbClass, badge, badgeClass, desc, imgUrl, descEn) {
+        desc = (typeof currentLang !== 'undefined' && currentLang === 'en' && descEn) ? descEn : desc;
         var modal = document.getElementById('app-modal');
         var thumb = document.getElementById('app-modal-thumb');
         var modalImg = document.getElementById('app-modal-img');
@@ -2129,6 +2132,9 @@ function setLang(lang) {
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
     const k = el.dataset.i18nPh;
     if (dict[k] !== undefined) el.placeholder = dict[k];
+  });
+  document.querySelectorAll('[data-desc-ja]').forEach(el => {
+    el.textContent = lang === 'en' && el.dataset.descEn ? el.dataset.descEn : el.dataset.descJa;
   });
   const btn = document.getElementById('lang-btn');
   const btnM = document.getElementById('lang-btn-mobile');
