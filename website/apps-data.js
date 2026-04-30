@@ -14,6 +14,16 @@
  */
 const NOCTA_APPS = [
   {
+    title: "NuWord still",
+    cat: "app",
+    url: "https://kutakuta1001.github.io/NOCTA/still/",
+    thumbClass: "thumb-4",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "ドットに触れ、ただ止まる。5・10・15分の静かな瞑想タイマー。",
+    descEn: "Touch the dot. Simply be still. A quiet meditation timer for 5, 10, or 15 minutes."
+  },
+  {
     title: "NuWord Seed",
     cat: "app",
     url: "https://nuword-nu.vercel.app/seed",
