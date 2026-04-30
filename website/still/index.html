@@ -161,7 +161,8 @@ const SHRINK_MS = 3200;    // visual blob shrink speed after release
 
 // Session end timers
 const RELEASE_END_MS = 5000;   // 5s after lifting finger → end
-const STILL_END_MS   = 10000;  // 10s without finger movement → end
+const STILL_WARN_MS  = 5000;   // 5s without movement → show warning
+const STILL_END_MS   = 10000;  // 10s without movement → end session
 const MOVE_THRESHOLD = 3;      // px — min displacement to count as movement
 
 // Particle system
@@ -191,9 +192,11 @@ let sessionStart   = null;
 let sessionElapsed = 0;
 
 // End timers
-let releaseTimer = null;
-let stillTimer   = null;
-let msgFadeTimer = null;
+let releaseTimer      = null;
+let stillTimer        = null;
+let stillWarnTimer    = null;
+let stillWarningShown = false;  // true while "指が止まっています" is displayed
+let msgFadeTimer      = null;
 
 // Palette RGB cache
 let blobR=255,blobG=255,blobB=255, blobDR=200,blobDG=160,blobDB=20;
@@ -267,7 +270,7 @@ function spawnParticles() {
   particles=Array.from({length:PARTICLE_COUNT},()=>{
     const x=rand(0,W),y=rand(0,H);
     return {x,y,ox:x,oy:y,vx:rand(-.2,.2),vy:rand(-.2,.2),
-      r:rand(12,36),phase:rand(0,Math.PI*2),alpha:rand(.06,.18),
+      r:rand(4,12),phase:rand(0,Math.PI*2),alpha:rand(.06,.18),
       speedMul:1, pr:255,pg:255,pb:255};
   });
 }
@@ -277,8 +280,8 @@ function colorizeParticles() {
   const pr=~~lerp(blobR,255,.18), pg=~~lerp(blobG,255,.18), pb=~~lerp(blobB,255,.18);
   particles.forEach(p=>{
     p.pr=pr; p.pg=pg; p.pb=pb;
-    p.alpha    = rand(.16,.38);
-    p.speedMul = rand(.35,1.2);  // random per-particle speed
+    p.alpha    = rand(.20,.45);   // slightly higher alpha for tiny particles
+    p.speedMul = rand(.35,1.2);
   });
 }
 
@@ -414,21 +417,49 @@ function fadeOut() {
 // END TIMERS
 // ══════════════════════════════════════════
 function clearEndTimers() {
-  clearTimeout(releaseTimer); releaseTimer=null;
-  clearTimeout(stillTimer);   stillTimer=null;
+  clearTimeout(releaseTimer);   releaseTimer=null;
+  clearTimeout(stillTimer);     stillTimer=null;
+  clearTimeout(stillWarnTimer); stillWarnTimer=null;
 }
 
-// Start the stillness timer (resets on each movement)
-function startStillTimer() {
+// Show "指が止まっています" after 5s of stillness
+function showStillWarning() {
+  if (!isHolding || mode!=='run') return;
+  stillWarningShown=true;
+  clearTimeout(msgFadeTimer); msgFadeTimer=null;
+  guideEl.style.opacity='0';
+  setTimeout(()=>{
+    if (stillWarningShown) {
+      guideEl.textContent='指が止まっています';
+      guideEl.style.opacity='1';
+    }
+  }, 600);
+}
+
+// Hide warning when finger moves again
+function hideStillWarning() {
+  if (!stillWarningShown) return;
+  stillWarningShown=false;
+  guideEl.style.opacity='0';
+  setTimeout(()=>{
+    if (!stillWarningShown) guideEl.textContent='';
+  }, 1400);
+}
+
+// Start both warn (5s) and end (10s) stillness timers
+function startStillTimers() {
+  clearTimeout(stillWarnTimer);
   clearTimeout(stillTimer);
-  stillTimer=setTimeout(()=>{ if(mode==='run') finishSession(); }, STILL_END_MS);
+  stillWarnTimer = setTimeout(showStillWarning, STILL_WARN_MS);
+  stillTimer     = setTimeout(()=>{ if(mode==='run') finishSession(); }, STILL_END_MS);
 }
 
 // Called when movement is detected
 function onMovementDetected(nx, ny) {
   if (Math.hypot(nx-lastTx, ny-lastTy) >= MOVE_THRESHOLD) {
     lastTx=nx; lastTy=ny;
-    startStillTimer();  // reset 10s stillness timer
+    hideStillWarning();   // dismiss warning immediately
+    startStillTimers();   // reset both timers
   }
 }
 
@@ -452,7 +483,7 @@ function startSession(clientX, clientY) {
 
   colorizeParticles();
   clearEndTimers();
-  startStillTimer();   // 10s still → end
+  startStillTimers();   // 10s still → end
 
   document.getElementById('intro').classList.add('hidden');
   guideEl.textContent=''; guideEl.style.opacity='0';
@@ -463,7 +494,7 @@ function startSession(clientX, clientY) {
 function finishSession() {
   if (mode==='done') return;
   mode='done';
-  isHolding=false; activePtrId=null;
+  isHolding=false; activePtrId=null; stillWarningShown=false;
   clearEndTimers();
   clearTimeout(msgFadeTimer); msgFadeTimer=null;
   fadeOut();
@@ -477,7 +508,7 @@ function restartSession() {
   clearEndTimers();
   clearTimeout(msgFadeTimer); msgFadeTimer=null;
   mode='idle'; blobScale=0; sessionStart=null;
-  isHolding=false; activePtrId=null;
+  isHolding=false; activePtrId=null; stillWarningShown=false;
   document.getElementById('done-overlay').classList.remove('show');
   guideEl.textContent='ドットに触れてください'; guideEl.style.opacity='1';
   setTimeout(()=>document.getElementById('intro').classList.remove('hidden'),300);
@@ -572,7 +603,7 @@ canvas.addEventListener('pointerdown',e=>{
     tx=e.clientX; ty=e.clientY;
     lastTx=tx; lastTy=ty;
     clearTimeout(releaseTimer); releaseTimer=null;
-    startStillTimer();
+    startStillTimers();
   }
 },{passive:false});
 
@@ -588,7 +619,9 @@ function onRelease(e){
     activePtrId=null;
     if (mode==='run'){
       isHolding=false;
-      clearTimeout(stillTimer); stillTimer=null;
+      hideStillWarning();                          // dismiss if showing
+      clearTimeout(stillWarnTimer); stillWarnTimer=null;
+      clearTimeout(stillTimer);     stillTimer=null;
       // Hard end after 5 seconds of non-touch
       releaseTimer=setTimeout(()=>{ if(mode==='run') finishSession(); }, RELEASE_END_MS);
     }
