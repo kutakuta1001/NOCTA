@@ -25,9 +25,14 @@
 ---
 
 ## 未処理
-
+<!-- WebFetch失敗（2026-04-30 529 Overloaded）。次回再試行 -->
+- https://note.com/betaitohuman/n/nffecc168f4d3
+- https://arxiv.org/abs/2512.13564
+- https://github.com/Shichun-Liu/Agent-Memory-Paper-List
 ## 処理済み
 
+- https://x.com/i/status/2048888680354644460 （2026-04-30）
+- https://x.com/i/status/2049043044130066462 （2026-04-30）
 - https://x.com/i/status/2047628297086144940 （2026-04-26）
 - https://x.com/i/status/2044704524125057504 （2026-04-26）
 - https://x.com/i/status/2048712868032643402 （2026-04-28）
