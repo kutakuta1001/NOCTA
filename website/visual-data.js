@@ -10,6 +10,7 @@
  * badge           : "Works" | "Art" | "Music"
  * badgeColorClass : Tailwind クラス
  * descJa          : 日本語説明
+ * descEn          : 英語説明（言語トグル用）
  *
  * 新しい作品を追加するときは配列の先頭に追加してください。
  */
@@ -20,7 +21,8 @@ const NOCTA_VISUALS_WORKS = [
     zoraUrl: "https://zora.co/collect/base:0xcc3e7dba54406b272bf5dd383cc5d66b00e9f735/1",
     badge: "Works",
     badgeColorClass: "bg-amber-500/20 text-amber-400",
-    descJa: "SILENCEを元にCanvaで加工。Warpcastフレームとコピーライン「SILENCE ON THE TIMELINE.」を付与した完成品。"
+    descJa: "SILENCEを元にCanvaで加工。Warpcastフレームとコピーライン「SILENCE ON THE TIMELINE.」を付与した完成品。",
+    descEn: "Processed from SILENCE in Canva. Final version with Warpcast frame and copy line 'SILENCE ON THE TIMELINE.'"
   }
 ];
 
@@ -31,7 +33,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/23",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "梅雨。スペクトルバイオレット×アビスティール。透明傘を持って振り返る少女。"
+    descJa: "梅雨。スペクトルバイオレット×アビスティール。透明傘を持って振り返る少女。",
+    descEn: "Rainy season. Spectrum violet × abyss teal. A girl looking back, holding a transparent umbrella."
   },
   {
     title: "pop girl #8",
@@ -39,7 +42,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/3",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "アーバンポップ。ビビッドオレンジ×カラースプラッター。ストリートウェア×猫。PixAI生成。"
+    descJa: "アーバンポップ。ビビッドオレンジ×カラースプラッター。ストリートウェア×猫。PixAI生成。",
+    descEn: "Urban pop. Vivid orange × color splatter. Streetwear × cat. Generated with PixAI."
   },
   {
     title: "SILENCE",
@@ -47,7 +51,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/zora:0x2cf12ca8cb593870b8e6d9807201b13c0932cbc7/2",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "極限のミニマル。冬の雪景色に溶け込む少女。ほぼモノクロのコールドパレット。"
+    descJa: "極限のミニマル。冬の雪景色に溶け込む少女。ほぼモノクロのコールドパレット。",
+    descEn: "Ultimate minimalism. A girl dissolving into a winter snowscape. Near-monochrome cold palette."
   },
   {
     title: "Jewel Sky#2",
@@ -55,7 +60,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/7",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "宝石空。アビスティール×ルナゴールド。片腕を掲げる少女とスパークル全面。"
+    descJa: "宝石空。アビスティール×ルナゴールド。片腕を掲げる少女とスパークル全面。",
+    descEn: "Jewel sky. Abyss teal × lunar gold. A girl with one arm raised, surrounded by full-field sparkles."
   },
   {
     title: "Just an ordinary day in the life",
@@ -63,7 +69,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/16",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "窓辺の秋。ブラッドオレンジの逆光の中でたたずむ少女。日常の詩的な瞬間。"
+    descJa: "窓辺の秋。ブラッドオレンジの逆光の中でたたずむ少女。日常の詩的な瞬間。",
+    descEn: "Autumn by the window. A girl standing in blood-orange backlight. A poetic moment of the everyday."
   },
   {
     title: "await in anticipation",
@@ -71,7 +78,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/14",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "アトリエの夢想。ウォームピーチ×ティール。絵に囲まれた空間で期待を抱く少女。"
+    descJa: "アトリエの夢想。ウォームピーチ×ティール。絵に囲まれた空間で期待を抱く少女。",
+    descEn: "Atelier daydream. Warm peach × teal. A girl holding anticipation in a space surrounded by paintings."
   },
   {
     title: "natural / artificial",
@@ -79,7 +87,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/12",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "セミリアル油彩。秋の花葉が体に溶け込む。自然と人工の境界を問う。"
+    descJa: "セミリアル油彩。秋の花葉が体に溶け込む。自然と人工の境界を問う。",
+    descEn: "Semi-real oil painting. Autumn flowers and leaves merging into the body. Questioning the boundary between nature and artifice."
   },
   {
     title: "enjoy",
@@ -87,7 +96,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/base:0xa407f675ab46c5c949e866d8f52331f54596f3c3/2",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "タイポグラフィ×エクスプレッシブ。ブラッドオレンジ×ネイビー。自信溢れる少女と抽象的な筆跡。"
+    descJa: "タイポグラフィ×エクスプレッシブ。ブラッドオレンジ×ネイビー。自信溢れる少女と抽象的な筆跡。",
+    descEn: "Typography × expressive. Blood orange × navy. A confident girl amid abstract brushstrokes."
   },
   {
     title: "Time leap to GW",
@@ -95,7 +105,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/collect/zora:0x70694802b830f1e35c289ed73b407bc631482e53/10",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "時間の跳躍。スカイブルーに時計と紙片が舞う。コンセプチュアルな昼空。"
+    descJa: "時間の跳躍。スカイブルーに時計と紙片が舞う。コンセプチュアルな昼空。",
+    descEn: "A leap through time. Clocks and paper fragments drifting in a sky-blue sky. A conceptual daytime scene."
   },
   {
     title: "Art and information flood",
@@ -103,7 +114,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/@kutakuta1001",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "情報の洪水。ウォームイエロー×ティール×オレンジ。美しいカオスとして視覚化された情報過多。"
+    descJa: "情報の洪水。ウォームイエロー×ティール×オレンジ。美しいカオスとして視覚化された情報過多。",
+    descEn: "Information flood. Warm yellow × teal × orange. Information overload visualized as beautiful chaos."
   },
   {
     title: "wisteria flowers",
@@ -111,7 +123,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/@kutakuta1001",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "春・静謐。バイオレット×白。藤の花の下に立つ少女。クリーンアニメの精細な描写。"
+    descJa: "春・静謐。バイオレット×白。藤の花の下に立つ少女。クリーンアニメの精細な描写。",
+    descEn: "Spring stillness. Violet × white. A girl standing beneath wisteria blossoms. Refined clean-anime detail."
   },
   {
     title: "Witch girl Sunny afternoon",
@@ -119,7 +132,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/@kutakuta1001",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "昼の魔法都市。ターコイズ×カラフル。祭りの賑わいの中を歩く魔女少女。"
+    descJa: "昼の魔法都市。ターコイズ×カラフル。祭りの賑わいの中を歩く魔女少女。",
+    descEn: "A magical city in daylight. Turquoise × colorful. A witch girl walking through a festive crowd."
   },
   {
     title: "Witch girl Midnight Carnival",
@@ -127,7 +141,8 @@ const NOCTA_VISUALS_ART = [
     zoraUrl: "https://zora.co/@kutakuta1001",
     badge: "Art",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "深夜のカーニバル。深紫×オレンジ。ジャック・オー・ランタンが灯るゴシックな祝祭の夜。"
+    descJa: "深夜のカーニバル。深紫×オレンジ。ジャック・オー・ランタンが灯るゴシックな祝祭の夜。",
+    descEn: "Midnight carnival. Deep purple × orange. A gothic festival night lit by jack-o'-lanterns."
   }
 ];
 
