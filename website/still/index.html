@@ -164,11 +164,18 @@ const MSGS = [
 ];
 
 // Spring: how quickly blob center follows finger
-const FOLLOW   = 0.055;
+const FOLLOW     = 0.055;
 // Shrink/end timing after release
 const SHRINK_MS  = 3200;
 const END_DELAY  = 800;
 const INACTIVITY = 1200;
+
+// Particle gathering
+const PARTICLE_COUNT = 44;
+const ATTRACT_K      = 0.00052; // force = K * distance  (gravity-like)
+const ATTRACT_MAXSPD = 7;       // px/frame speed cap when attracted
+const RIM_MIN_RATIO  = 0.36;    // respawn ring: min dist / max(W,H)
+const RIM_MAX_RATIO  = 0.66;    // respawn ring: max dist
 
 // ══════════════════════════════════════════
 // STATE
@@ -178,11 +185,11 @@ let selMin         = 10;
 let totalMs        = 600000;
 
 let isHolding      = false;
-let activePtrId    = null;   // active pointer ID (multi-touch safety)
+let activePtrId    = null;
 let tx = 0, ty = 0;         // exact touch/cursor position
 let bx = 0, by = 0;         // blob center (spring-lags behind touch)
 
-let blobScale      = 0;      // 0–1
+let blobScale      = 0;
 let shownMsgs      = new Set();
 let sessionStart   = null;
 let sessionElapsed = 0;
@@ -203,7 +210,6 @@ function resize() {
   canvas.width  = W * dpr; canvas.height = H * dpr;
   canvas.style.width  = W + 'px'; canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
-  // Re-center defaults
   if (mode === 'idle') { tx = W/2; ty = H*0.6; bx = tx; by = ty; }
   spawnParticles();
 }
@@ -227,9 +233,14 @@ function lerpHex(a,b,t) {
   const [r1,g1,b1]=hexRgb(a), [r2,g2,b2]=hexRgb(b);
   return `rgb(${~~lerp(r1,r2,t)},${~~lerp(g1,g2,t)},${~~lerp(b1,b2,t)})`;
 }
+// Build rgba string from hex + alpha
+function hexAlpha(hex, a) {
+  const [r,g,b] = hexRgb(hex);
+  return `rgba(${r},${g},${b},${a.toFixed(3)})`;
+}
 
 // ══════════════════════════════════════════
-// BLOB
+// BLOB SHAPE
 // ══════════════════════════════════════════
 function drawBlob(cx, cy, r, t, turb, fill) {
   const N = 64;
@@ -255,33 +266,99 @@ function drawBlob(cx, cy, r, t, turb, fill) {
 }
 
 // ══════════════════════════════════════════
-// PARTICLES
+// PARTICLES — gathering orbs
 // ══════════════════════════════════════════
 let particles = [];
+
 function spawnParticles() {
-  particles = Array.from({length:24}, () => {
-    const x=rand(0,W), y=rand(0,H);
-    return { x, y, ox:x, oy:y,
-      vx:rand(-.3,.3), vy:rand(-.3,.3),
-      r:rand(2.5,9), phase:rand(0,Math.PI*2), alpha:rand(.10,.26) };
+  particles = Array.from({length: PARTICLE_COUNT}, () => {
+    const x = rand(0,W), y = rand(0,H);
+    return {
+      x, y, ox:x, oy:y,
+      vx: rand(-.25,.25), vy: rand(-.25,.25),
+      r:     rand(12, 38),      // large visible orbs
+      phase: rand(0, Math.PI*2),
+      alpha: rand(.07, .20),    // subtle in idle
+      // Color assigned per-particle when palette is chosen
+      r0: 255, g0: 255, b0: 255   // default white
+    };
   });
+}
+
+// Called at session start — assign palette-sampled colors to each particle
+function colorizeParticles() {
+  particles.forEach(p => {
+    // Pick randomly from the 4 palette color stops
+    const side  = Math.random() < 0.5 ? 0 : 1;  // warm or cool side
+    const stop  = Math.random() < 0.5 ? 0 : 1;  // light or dark stop
+    const [r,g,b] = hexRgb(palette[side][stop]);
+    // Lighten toward white for a soft look
+    p.r0 = ~~lerp(r, 255, 0.38);
+    p.g0 = ~~lerp(g, 255, 0.38);
+    p.b0 = ~~lerp(b, 255, 0.38);
+    p.alpha = rand(.16, .36);   // brighter when session active
+  });
+}
+
+// Teleport one particle back to the rim (called when it reaches the center)
+function resetParticleToRim(p) {
+  const rimDiag  = Math.max(W,H);
+  const dist     = rand(rimDiag*RIM_MIN_RATIO, rimDiag*RIM_MAX_RATIO);
+  const angle    = rand(0, Math.PI*2);
+  p.x  = W/2 + Math.cos(angle)*dist;
+  p.y  = H/2 + Math.sin(angle)*dist;
+  p.ox = p.x; p.oy = p.y;
+  p.vx = rand(-.15,.15); p.vy = rand(-.15,.15);
 }
 
 function tickParticles() {
   particles.forEach(p => {
     p.phase += .007;
     if (isHolding && mode==='run') {
-      // Attract toward blob center (which follows finger)
+      // Gravity toward blob center: F ∝ distance
       const dx = bx - p.x, dy = by - p.y;
-      p.vx += dx * .0030; p.vy += dy * .0030;
+      const dist = Math.hypot(dx, dy) || 1;
+      const force = ATTRACT_K * dist;
+      p.vx += (dx/dist)*force;
+      p.vy += (dy/dist)*force;
+      // Speed cap
       const spd = Math.hypot(p.vx, p.vy);
-      if (spd > 3) { p.vx = p.vx/spd*3; p.vy = p.vy/spd*3; }
+      if (spd > ATTRACT_MAXSPD) { p.vx = p.vx/spd*ATTRACT_MAXSPD; p.vy = p.vy/spd*ATTRACT_MAXSPD; }
+      // Absorbed → respawn at rim → continuous gathering stream
+      if (dist < 22) resetParticleToRim(p);
     } else {
-      // Return home
-      p.vx += (p.ox-p.x)*.0022; p.vy += (p.oy-p.y)*.0022;
-      p.vx *= 0.94; p.vy *= 0.94;
+      // Float home gently
+      p.vx += (p.ox-p.x)*.0018; p.vy += (p.oy-p.y)*.0018;
+      p.vx *= 0.92; p.vy *= 0.92;
     }
     p.x += p.vx; p.y += p.vy;
+  });
+}
+
+function drawParticles(nowT) {
+  const attracting = isHolding && mode==='run';
+  particles.forEach(p => {
+    const pulse = 1 + Math.sin(p.phase)*.22;
+    let a = p.alpha * (.55 + .45*Math.sin(p.phase));
+
+    if (attracting) {
+      // Alpha boost as particle closes in on blob center
+      const dist    = Math.hypot(bx - p.x, by - p.y);
+      const maxDist = Math.max(W,H) * 0.60;
+      const t       = clamp(1 - dist/maxDist, 0, 1);
+      a = lerp(a, a*3.8, t*t);
+      a = Math.min(a, 0.72);
+    }
+
+    // In idle: white. In run/done: palette color
+    let fill;
+    if (mode==='run' || mode==='done') {
+      fill = `rgba(${p.r0},${p.g0},${p.b0},${a.toFixed(3)})`;
+    } else {
+      fill = `rgba(255,255,255,${a.toFixed(3)})`;
+    }
+
+    drawBlob(p.x, p.y, p.r*pulse, nowT+p.phase*2, .42, fill);
   });
 }
 
@@ -293,23 +370,18 @@ function drawTapDot() {
   dotA += .0065;
   dotX = W*.5 + Math.cos(dotA*.85)*W*.14;
   dotY = H*.60 + Math.sin(dotA*1.1)*H*.075;
-  // Halo
-  ctx.beginPath(); ctx.arc(dotX,dotY,16,0,Math.PI*2);
+  ctx.beginPath(); ctx.arc(dotX,dotY,18,0,Math.PI*2);
   ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.fill();
-  // Core
   ctx.beginPath(); ctx.arc(dotX,dotY,8,0,Math.PI*2);
   ctx.fillStyle='rgba(255,255,255,0.82)'; ctx.fill();
 }
 
 // ══════════════════════════════════════════
-// TOUCH INDICATOR DOT  (run)
-// Drawn at exact finger position inside blob
+// TOUCH INDICATOR DOT  (run — exact finger pos)
 // ══════════════════════════════════════════
 function drawTouchDot() {
-  // Outer glow
   ctx.beginPath(); ctx.arc(tx,ty,16,0,Math.PI*2);
   ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.fill();
-  // Core dot
   ctx.beginPath(); ctx.arc(tx,ty,7,0,Math.PI*2);
   ctx.fillStyle='rgba(255,255,255,0.88)'; ctx.fill();
 }
@@ -373,6 +445,9 @@ function startSession(clientX, clientY) {
   tx = clientX; ty = clientY;
   bx = tx;      by = ty;
 
+  // Assign palette colors to particles
+  colorizeParticles();
+
   document.getElementById('intro').classList.add('hidden');
   guideEl.textContent=''; guideEl.style.opacity='0';
   document.getElementById('bar-label').textContent=`${selMin} 分 still`;
@@ -404,6 +479,7 @@ function restartSession() {
     document.getElementById('intro').classList.remove('hidden');
   },300);
   tx=W/2; ty=H*0.6; bx=tx; by=ty;
+  spawnParticles();   // reset particles to white & home positions
   loadAudio();
 }
 
@@ -419,14 +495,12 @@ function frame(ts) {
   if (mode==='run') {
     if (isHolding) {
       endScheduled = false;
-      // Grow steadily: reaches 1.0 after totalMs of continuous touch
       blobScale = Math.min(blobScale + dt/totalMs, 1);
       if (blobScale >= 1) { finishSession(); return; }
       // Spring: blob center follows finger
       bx += (tx-bx) * FOLLOW;
       by += (ty-by) * FOLLOW;
     } else {
-      // Shrink after inactivity
       if (Date.now()-releaseTime > INACTIVITY) {
         blobScale = Math.max(blobScale - dt/SHRINK_MS, 0);
       }
@@ -448,13 +522,9 @@ function frame(ts) {
   g.addColorStop(1, lerpHex(palette[0][1], palette[1][1], te));
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
-  // ── Particles ──
+  // ── Particles (tick + draw) ──
   tickParticles();
-  particles.forEach(p => {
-    const a = p.alpha*(.55+.45*Math.sin(p.phase));
-    drawBlob(p.x,p.y, p.r*(1+Math.sin(p.phase)*.22), nowT+p.phase*2, .42,
-      `rgba(255,255,255,${a.toFixed(2)})`);
-  });
+  drawParticles(nowT);
 
   // ── Idle: wandering tap dot ──
   if (mode==='idle') {
@@ -465,17 +535,17 @@ function frame(ts) {
   // ── Run / done: main blob (centered on touch) ──
   if ((mode==='run' || mode==='done') && blobScale > 0.005) {
     const minR = Math.min(W,H) * .07;
-    const maxR = Math.max(W,H) * .78;  // fills screen at full size
+    const maxR = Math.max(W,H) * .78;
     const bR   = lerp(minR, maxR, ease(blobScale));
     const turb = lerp(.65, .16, ease(blobScale));
-    const cx   = (mode==='run') ? bx : W/2;  // done overlay: re-center
+    const cx   = (mode==='run') ? bx : W/2;
     const cy   = (mode==='run') ? by : H/2;
 
     // Halo
     drawBlob(cx,cy, bR*1.07, nowT, turb*.75,
       `rgba(255,255,255,${lerp(.06,.13,ease(blobScale)).toFixed(2)})`);
 
-    // Main blob — radial gradient
+    // Main blob
     const ba = lerp(.45,.66,ease(blobScale));
     const bg = ctx.createRadialGradient(cx-bR*.18,cy-bR*.18,bR*.02, cx,cy,bR*1.06);
     bg.addColorStop(0,   `rgba(255,255,255,${(ba*.88).toFixed(2)})`);
@@ -483,7 +553,7 @@ function frame(ts) {
     bg.addColorStop(1,   `rgba(255,255,255,${(ba*.06).toFixed(2)})`);
     drawBlob(cx,cy, bR, nowT, turb, bg);
 
-    // Touch indicator: white dot at exact finger position
+    // Touch indicator dot
     if (mode==='run' && isHolding) drawTouchDot();
   }
 }
