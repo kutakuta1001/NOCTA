@@ -87,3 +87,16 @@
 - https://github.com/ComposioHQ/awesome-codex-skills （2026-04-26）
 - https://qiita.com/ot12/items/06420caf41a34a910c53 （2026-04-26）
 - https://x.com/i/status/2047837100389876200 （2026-04-26）
+
+## 2026-05-04 アーカイブ分
+
+- https://x.com/i/status/2048888680354644460 （2026-04-30）
+- https://x.com/i/status/2049043044130066462 （2026-04-30）
+- https://x.com/i/status/2047628297086144940 （2026-04-26）
+- https://x.com/i/status/2044704524125057504 （2026-04-26）
+- https://x.com/i/status/2048712868032643402 （2026-04-28）
+- https://x.com/i/status/2048729561089888571 （2026-04-28）
+- https://qiita.com/Akira-Isegawa/items/00f23d206c504db2ac3b （2026-04-28）
+- https://x.com/i/status/2048976187926720967 （2026-04-28）
+- https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices （2026-04-28）
+- [docs.anthropic.com] リリースノート v2.1.117 — スキルfrontmatterに context:fork / agent フィールド追加（エージェントスキル設計に活用可）（2026-04-28）
