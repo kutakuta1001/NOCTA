@@ -9,3 +9,6 @@
 2026-04-30: NuWord Still PWA対応完了（manifest.json + sw.js + アイコン）。Androidインストール: Chrome ⋮メニュー→「アプリをインストール」。sw.jsのCACHEを still-v2 に更新済み。次の still 更新時は必ず still-v3, v4... とインクリメントすること。
 2026-04-30: NuWord Still にGumroadライセンスゲート実装完了。SHA-256認証・localStorage保存・keygen.html（CEO専用ハッシュ生成ツール）同梱。licenses.jsonにハッシュを追加→sw.jsバージョンup→push で新規購入者を追加できる。Gumroad商品作成・ライセンスキー発行設定がまだ未実施。keygen.html: https://kutakuta1001.github.io/NOCTA/still/keygen.html
 2026-04-30: HP英語対応完了。ヘッダーにJA/ENトグル追加・index.htmlにi18n実装済み。visual-data.js全14エントリにdescEn追加（Works1件+Art13件）→Visualセクション説明文も英語切り替え対応済み。push済み。
+2026-05-04: ベストプラクティスレビュー完了（14件・push済み）。CLAUDE.md 4箇所更新（R-09 Batch API 300k/R-12 ACE-Step UI fspecii/セッション運用 purge追加/lp-create 2段階フロー）。/research スキル新設（~/research/に任意トピックを格納・NOCTA分離・既存フォルダ選択UI付き）。~/research/codex-app-tips/ が初回サンプルとして作成済み。次: ~/research/ をObsidian Vaultに追加・/research で別トピックを試用。
+2026-05-04: /wrap-up スキル新設（~/.claude/commands/wrap-up.md）。Stop hook を ~/.claude/settings.json に追加（セッション終了時に /wrap-up リマインド通知を表示）。~/research/README.md も作成済み。次: セッション終了時に「作業完了 — /wrap-up で…」通知が出ることを確認。
+2026-05-12: 週次ベストプラクティスルーティン完了（/x-practices-search 6件・/claude-docs-review 5件・/web-practices-review・/best-practices-review 11件）。CLAUDE.md 5箇所更新（R-09: Haiku 4.5拡張思考追記・Opus 4.7≒555k words追記・CLAUDE_EFFORT hook注記追加、セッション運用: /goal・Agent View追加）。次: 承認ゲート⑤（SynthV Studio PROでvocal_draft.svpを開いてRender確認）。
