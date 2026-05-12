@@ -28,6 +28,12 @@
 
 ## 処理済み
 
+- [docs.anthropic.com] CHANGELOG v2.1.133 — hooksにeffort.level（CLAUDE_EFFORT）渡し対応 （2026-05-12）
+- [docs.anthropic.com] CHANGELOG v2.1.139 — /goalコマンド追加（2026-05-12）
+- [docs.anthropic.com] CHANGELOG v2.1.139 — Agent View追加（2026-05-12）
+- [docs.anthropic.com] モデル一覧 — Opus 4.7新トークナイザー≒555k words（2026-05-12）
+- [docs.anthropic.com] モデル一覧 — Haiku 4.5拡張思考対応あり（2026-05-12）
+
 - [docs.anthropic.com] リリースノート v2.1.116 — /skills メニューで t キーによるトークン数ソート（スキルファイルのサイズ管理効率化）（2026-04-28）
 - [docs.anthropic.com] モデル一覧 — Sonnet 4 / Opus 4 は 2026-06-15 廃止予定（NOCTAは使用中でないが念のため確認推奨）（2026-04-28）
 - [docs.anthropic.com] Claude Code overview — Channels機能: Telegram/Discord/webhookからセッションにイベントプッシュ可能（2026-04-28）

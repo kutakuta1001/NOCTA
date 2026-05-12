@@ -9,6 +9,13 @@
 
 ## 処理済み
 
+- https://x.com/Sabrina_Ramonov/status/2051784000830595503 （2026-05-12）
+- https://x.com/SantiTorAI/status/2052754501611016619 （2026-05-12）
+- https://x.com/Oluwaphilemon1/status/2051864490640072965 （2026-05-12）
+- https://x.com/ClaudeCode_love/status/2053958369787187619 （2026-05-12）
+- https://x.com/yuruto23/status/2052258705232830640 （2026-05-12）
+- https://x.com/StarHistoryHQ/status/2051937799138353392 （2026-05-12）
+
 - https://x.com/CodeByPoonam/status/2048366357482520935 （2026-04-28）
 - https://x.com/0xravv/status/2048639799146488317 （2026-04-28）
 - https://x.com/CuriousRefuge/status/2048850086625743220 （2026-04-28）
