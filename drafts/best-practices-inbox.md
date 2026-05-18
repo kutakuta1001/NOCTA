@@ -28,22 +28,18 @@
 
 ## 処理済み
 
+- [docs.anthropic.com] CHANGELOG v2.1.126 — claude project purge [path] コマンド追加（2026-05-04）
+- [docs.anthropic.com] CHANGELOG v2.1.126 — context:forkスキルのdeferred toolsバグ修正（2026-05-04）
+- [docs.anthropic.com] CHANGELOG v2.1.126 — Mac スリープ後のStream idle timeout修正（2026-05-04）
 - [docs.anthropic.com] CHANGELOG v2.1.133 — hooksにeffort.level（CLAUDE_EFFORT）渡し対応 （2026-05-12）
 - [docs.anthropic.com] CHANGELOG v2.1.139 — /goalコマンド追加（2026-05-12）
 - [docs.anthropic.com] CHANGELOG v2.1.139 — Agent View追加（2026-05-12）
 - [docs.anthropic.com] モデル一覧 — Opus 4.7新トークナイザー≒555k words（2026-05-12）
 - [docs.anthropic.com] モデル一覧 — Haiku 4.5拡張思考対応あり（2026-05-12）
-
-- [docs.anthropic.com] リリースノート v2.1.116 — /skills メニューで t キーによるトークン数ソート（スキルファイルのサイズ管理効率化）（2026-04-28）
-- [docs.anthropic.com] モデル一覧 — Sonnet 4 / Opus 4 は 2026-06-15 廃止予定（NOCTAは使用中でないが念のため確認推奨）（2026-04-28）
-- [docs.anthropic.com] Claude Code overview — Channels機能: Telegram/Discord/webhookからセッションにイベントプッシュ可能（2026-04-28）
-- [docs.anthropic.com] Claude Code overview — Agent SDKでオーケストレーション・ツール・権限をフルコントロールしたカスタムエージェント構築可能（2026-04-28）
-- https://note.com/betaitohuman/n/nffecc168f4d3 （2026-05-04）
-- https://arxiv.org/abs/2512.13564 （2026-05-04）
-- https://github.com/Shichun-Liu/Agent-Memory-Paper-List （2026-05-04）
-- https://x.com/i/status/2049871598883115376 （2026-05-04）
-- https://x.com/i/status/2043643311039426670 （2026-05-04）
-- [docs.anthropic.com] CHANGELOG v2.1.126 — Batch APIで最大300kトークン出力可能（output-300k-2026-03-24ベータヘッダー）（2026-05-04）
-- [docs.anthropic.com] CHANGELOG v2.1.126 — claude project purge [path] コマンド追加（2026-05-04）
-- [docs.anthropic.com] CHANGELOG v2.1.126 — context:forkスキルのdeferred toolsバグ修正（2026-05-04）
-- [docs.anthropic.com] CHANGELOG v2.1.126 — Mac スリープ後のStream idle timeout修正（2026-05-04）
+- [docs.anthropic.com] モデル一覧 — Haiku 4.5 価格: 入力 $1/MTok・出力 $5/MTok（CLAUDE.md R-09 未記載）（2026-05-18）
+- [docs.anthropic.com] モデル一覧 — Claude Sonnet 4 / Opus 4 が 2026-06-15 廃止予定（NOCTA 未使用だが記録）（2026-05-18）
+- [changelog v2.1.142] Fast mode のデフォルトモデルが Opus 4.6 → Opus 4.7 に変更（/fast 利用時に挙動変化）（2026-05-18）
+- [changelog v2.1.142] root-level SKILL.md をプロジェクトに置くとプラグインスキルとして自動検出される（2026-05-18）
+- [changelog v2.1.141] Hook 出力に terminalSequence フィールド追加・デスクトップ通知/ウィンドウタイトル生成が可能に（2026-05-18）
+- [changelog v2.1.139] Hook の args フィールドで exec form 実行（シェル経由しないコマンド指定）が可能に（2026-05-18）
+- [changelog v2.1.143] /loop の pending wakeup を Esc/Ctrl+C でキャンセル可能に（2026-05-18）
