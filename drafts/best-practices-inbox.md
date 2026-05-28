@@ -28,6 +28,12 @@
 
 ## 処理済み
 
+- [changelog v2.1.152] スキルの disallowed-tools フロントマターでスキル実行時の特定ツール除外が可能（2026-05-28）
+- [changelog v2.1.149] /usageがスキル・サブエージェント・プラグイン・MCP別のコスト内訳を表示（2026-05-28）
+- [changelog v2.1.153] /modelでモデル選択をデフォルト保存可能（sキーで現セッションのみ切替）（2026-05-28）
+- [docs.anthropic.com] モデル一覧 — Sonnet 4.6 が適応的思考（Adaptive Thinking）に対応（2026-05-28）
+- [docs.anthropic.com] モデル一覧 — Haiku 4.5 の knowledge cutoff は 2025年2月（2026-05-28）
+
 - [docs.anthropic.com] CHANGELOG v2.1.126 — claude project purge [path] コマンド追加（2026-05-04）
 - [docs.anthropic.com] CHANGELOG v2.1.126 — context:forkスキルのdeferred toolsバグ修正（2026-05-04）
 - [docs.anthropic.com] CHANGELOG v2.1.126 — Mac スリープ後のStream idle timeout修正（2026-05-04）
