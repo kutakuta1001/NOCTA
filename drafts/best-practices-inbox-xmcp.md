@@ -9,6 +9,14 @@
 
 ## 処理済み
 
+- https://x.com/dunik_7/status/2060036450217836664 （2026-06-04）
+- https://x.com/bkarishma360/status/2062067876606132654 （2026-06-04）
+- https://x.com/uslab1994/status/2060964508810846542 （2026-06-04）
+- https://x.com/LaboNft/status/2061503301133410701 （2026-06-04）
+- https://x.com/sho_blog11/status/2062004446620783001 （2026-06-04）
+- https://x.com/RimoApp/status/2061630637287800997 （2026-06-04）
+- https://x.com/victormustar/status/2062091472996819298 （2026-06-04）
+- https://x.com/acedatacloud/status/2061127801177047363 （2026-06-04）
 - https://x.com/ClaudeCodeozi/status/2055221909500186678 （2026-05-18）
 - https://x.com/junmingong/status/2055452194632302640 （2026-05-18）
 - https://x.com/AIDailyGems/status/2055173021111914924 （2026-05-18）
