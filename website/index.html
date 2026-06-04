@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -278,38 +278,34 @@
         /* CTA buttons */
         .btn-primary-cta {
             display: inline-flex; align-items: center; justify-content: center;
-            padding: 15px 40px; border-radius: 9999px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 13px; font-weight: 700; letter-spacing: 1px;
+            padding: 12px 28px;
+            font-family: 'Syne', sans-serif;
+            font-size: 10px; font-weight: 700; letter-spacing: 2px;
             text-transform: uppercase;
             background: transparent;
-            color: #fff;
-            border: 2px solid #C4942A;
-            box-shadow: 0 0 30px rgba(196,148,42,0.35);
-            transition: all 0.3s ease;
+            color: #C4942A;
+            border: 1px solid rgba(196,148,42,0.5);
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
         .btn-primary-cta:hover {
             background: #C4942A;
-            box-shadow: 0 0 60px rgba(196,148,42,0.6);
-            color: #05050F;
-            transform: translateY(-2px);
+            color: #0A0906;
+            border-color: #C4942A;
         }
         .btn-glass-cta {
             display: inline-flex; align-items: center; justify-content: center;
-            padding: 15px 40px; border-radius: 9999px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 13px; font-weight: 700; letter-spacing: 1px;
+            padding: 12px 28px;
+            font-family: 'Syne', sans-serif;
+            font-size: 10px; font-weight: 700; letter-spacing: 2px;
             text-transform: uppercase;
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.1);
-            backdrop-filter: blur(12px);
-            transition: all 0.3s ease;
+            background: transparent;
+            color: rgba(240,234,216,0.45);
+            border: 1px solid rgba(240,234,216,0.15);
+            transition: color 0.2s ease, border-color 0.2s ease;
         }
         .btn-glass-cta:hover {
-            background: rgba(255,255,255,0.10);
-            border-color: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
+            border-color: rgba(240,234,216,0.3);
+            color: #F0EAD8;
         }
 
         /* Thumb gradients */
@@ -535,113 +531,48 @@
 <!-- =============================================
      01. HERO
      ============================================= -->
-<section id="hero" class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+<section id="hero" class="relative min-h-screen flex flex-col justify-end pb-24 md:pb-32 overflow-hidden">
 
-    <!-- Particle canvas -->
-    <canvas id="particle-canvas"></canvas>
-
-    <!-- SVG Waveform bg -->
-    <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none z-[1]">
-        <svg class="w-full h-full" viewBox="0 0 1000 500" preserveAspectRatio="none">
-            <defs>
-                <linearGradient id="gw1" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%"   stop-color="#C4942A"/>
-                    <stop offset="35%"  stop-color="#C4942A"/>
-                    <stop offset="70%"  stop-color="#C4942A"/>
-                    <stop offset="100%" stop-color="#C4942A"/>
-                </linearGradient>
-                <linearGradient id="gw2" x1="100%" y1="0%" x2="0%" y2="0%">
-                    <stop offset="0%"   stop-color="#C4942A"/>
-                    <stop offset="100%" stop-color="#C4942A"/>
-                </linearGradient>
-            </defs>
-            <path d="M0,250 C150,100 350,400 500,250 C650,100 850,400 1000,250"
-                  fill="none" stroke="url(#gw1)" stroke-width="2" opacity="0.6">
-                <animate attributeName="d" dur="12s" repeatCount="indefinite"
-                    values="
-                        M0,250 C150,100 350,400 500,250 C650,100 850,400 1000,250;
-                        M0,250 C150,400 350,100 500,250 C650,400 850,100 1000,250;
-                        M0,250 C150,100 350,400 500,250 C650,100 850,400 1000,250"/>
-            </path>
-            <path d="M0,250 C200,170 300,330 500,250 C700,170 800,330 1000,250"
-                  fill="none" stroke="url(#gw2)" stroke-width="1" opacity="0.35">
-                <animate attributeName="d" dur="18s" repeatCount="indefinite"
-                    values="
-                        M0,250 C200,170 300,330 500,250 C700,170 800,330 1000,250;
-                        M0,250 C200,330 300,170 500,250 C700,330 800,170 1000,250;
-                        M0,250 C200,170 300,330 500,250 C700,170 800,330 1000,250"/>
-            </path>
-            <path d="M0,250 C100,200 200,300 500,250 C800,200 900,300 1000,250"
-                  fill="none" stroke="url(#gw1)" stroke-width="0.8" opacity="0.2">
-                <animate attributeName="d" dur="8s" repeatCount="indefinite"
-                    values="
-                        M0,250 C100,200 200,300 500,250 C800,200 900,300 1000,250;
-                        M0,250 C100,300 200,200 500,250 C800,300 900,200 1000,250;
-                        M0,250 C100,200 200,300 500,250 C800,200 900,300 1000,250"/>
-            </path>
-        </svg>
+    <!-- Background year (decorative) -->
+    <div class="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden z-[0]" aria-hidden="true">
+        <span style="font-family:'Bebas Neue',sans-serif; font-size:28vw; line-height:0.82; color:rgba(240,234,216,0.025); display:block; padding-right:2vw;">2026</span>
     </div>
 
-    <!-- Glow blobs -->
-    <div class="absolute -top-1/4 -left-1/4 w-[700px] h-[700px] rounded-full pointer-events-none z-[1]"
-         style="background:radial-gradient(circle, rgba(196,148,42,0.10) 0%, rgba(196,148,42,0.05) 50%, transparent 70%); filter:blur(80px);"></div>
-    <div class="absolute -bottom-1/4 -right-1/4 w-[600px] h-[600px] rounded-full pointer-events-none z-[1]"
-         style="background:radial-gradient(circle, rgba(196,148,42,0.10) 0%, transparent 70%); filter:blur(80px);"></div>
+    <!-- Hero content: left-aligned -->
+    <div class="relative z-10 w-full max-w-[1200px] mx-auto px-6 lg:px-12">
 
-    <!-- Hero content -->
-    <div class="relative z-10 text-center px-6 max-w-[1000px] mx-auto">
-        <div class="reveal active">
-            <!-- Badge -->
-            <div class="inline-flex items-center gap-2 glass rounded-full px-5 py-2 mb-10 font-heading text-[11px] font-semibold tracking-[2px] uppercase" style="color:#C4942A;">
-                <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:#C4942A"></span>
-                Music Entertainment — Est. 2026
-            </div>
+        <!-- Eyebrow -->
+        <div class="flex items-center gap-4 mb-10 reveal active">
+            <div style="width:36px; height:1px; background:#C4942A; flex-shrink:0;"></div>
+            <span style="font-family:'Syne',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#C4942A;">Music Entertainment — Est. 2026</span>
+        </div>
 
-            <!-- Main heading -->
-            <h1 class="font-display text-[14vw] md:text-[10vw] lg:text-[120px] leading-[0.88] tracking-wide text-white mb-3">
-                これからの
-            </h1>
-            <h1 class="font-display text-[14vw] md:text-[10vw] lg:text-[120px] leading-[0.88] tracking-wide text-white mb-3">
-                人間の
-            </h1>
-            <h1 class="font-display text-[14vw] md:text-[10vw] lg:text-[120px] leading-[0.88] tracking-wide mb-10" style="color:#C4942A;">
-                遊び方。
-            </h1>
+        <!-- Heading: 3 lines, staggered reveal -->
+        <h1 class="reveal reveal-delay-1" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:0.92; letter-spacing:-1px; color:#F0EAD8; margin-bottom:6px;">
+            これからの
+        </h1>
+        <h1 class="reveal reveal-delay-2" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:0.92; letter-spacing:-1px; color:#F0EAD8; margin-bottom:6px;">
+            人間の
+        </h1>
+        <h1 class="reveal reveal-delay-3" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; font-style:italic; line-height:0.92; letter-spacing:-1px; color:#C4942A; margin-bottom:36px;">
+            遊び方。
+        </h1>
 
-            <p class="font-jp text-base md:text-xl text-brand-sub font-light tracking-[0.3em] mb-8" data-i18n="hero.tagline">
+        <!-- Horizontal rule -->
+        <div class="reveal reveal-delay-3" style="height:1px; background:#221c10; margin-bottom:24px;"></div>
+
+        <!-- Tagline + CTA -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 reveal reveal-delay-4">
+            <p style="font-family:'Noto Sans JP',sans-serif; font-size:14px; font-weight:300; letter-spacing:0.25em; color:#7a6a50; line-height:1.9;" data-i18n="hero.tagline">
                 消費するだけでも、生産するだけでもなく。
             </p>
-            <div style="display:flex;justify-content:center;gap:8px;margin-bottom:32px;flex-wrap:wrap;">
-                <span class="brand-badge" style="border-color:rgba(196,148,42,0.4);color:#C4942A;">✦ VOCALOID</span>
-                <span class="brand-badge" style="border-color:rgba(196,148,42,0.4);color:#C4942A;">✦ AI Singer</span>
-                <span class="brand-badge" style="border-color:rgba(196,148,42,0.35);color:#C4942A;">✦ Original Music</span>
-                <span class="brand-badge" style="border-color:rgba(196,148,42,0.4);color:#C4942A;">✦ PV Production</span>
-            </div>
-
-            <div class="flex flex-col sm:flex-row justify-center gap-5">
+            <div class="flex gap-4 flex-shrink-0">
                 <a href="#works"   class="btn-primary-cta" data-i18n="hero.cta.works">Works を見る</a>
-                <a href="#contact" class="btn-glass-cta" data-i18n="hero.cta.contact">お問い合わせ</a>
+                <a href="#contact" class="btn-glass-cta"   data-i18n="hero.cta.contact">お問い合わせ</a>
             </div>
         </div>
     </div>
 
-    <!-- Floating stars decoration -->
-    <div class="absolute inset-0 z-[2] pointer-events-none overflow-hidden">
-        <div class="star-float-1 absolute" style="top:20%;left:8%;font-size:14px;color:#C4942A;opacity:0.5;">✦</div>
-        <div class="star-float-2 absolute" style="top:35%;right:10%;font-size:10px;color:#C4942A;opacity:0.6;">★</div>
-        <div class="star-float-3 absolute" style="top:65%;left:15%;font-size:8px;color:#C4942A;opacity:0.5;">✦</div>
-        <div class="star-float-1 absolute" style="top:15%;right:25%;font-size:12px;color:#C4942A;opacity:0.4;">✧</div>
-        <div class="star-float-2 absolute" style="bottom:25%;right:8%;font-size:16px;color:#C4942A;opacity:0.35;">✦</div>
-        <div class="star-float-3 absolute" style="bottom:30%;left:6%;font-size:9px;color:#C4942A;opacity:0.5;">★</div>
-        <div class="star-float-1 absolute" style="top:50%;left:3%;font-size:11px;color:#C4942A;opacity:0.3;">✧</div>
-        <div class="star-float-2 absolute" style="top:10%;left:50%;font-size:7px;color:#C4942A;opacity:0.4;">✦</div>
-    </div>
-
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2">
-        <span class="font-heading text-[9px] tracking-[3px] uppercase text-brand-sub">Scroll</span>
-        <div class="w-px h-14 bg-gradient-to-b from-brand-primary to-transparent scroll-line"></div>
-    </div>
 </section>
 
 
@@ -1358,92 +1289,6 @@
 <script src="apps-data.js"></script>
 <script src="blog-data.js"></script>
 <script>
-/* ---- Particle Canvas ---- */
-(function () {
-    const canvas = document.getElementById('particle-canvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, particles = [];
-    const COLS = ['rgba(196,148,42,', 'rgba(196,148,42,', 'rgba(196,148,42,'];
-
-    function resize() {
-        W = canvas.width  = canvas.offsetWidth;
-        H = canvas.height = canvas.offsetHeight;
-    }
-
-    function Particle() {
-        this.reset();
-    }
-    Particle.prototype.reset = function () {
-        this.x    = Math.random() * W;
-        this.y    = Math.random() * H;
-        this.r    = Math.random() * 1.6 + 0.3;
-        this.vx   = (Math.random() - 0.5) * 0.38;
-        this.vy   = (Math.random() - 0.5) * 0.38;
-        this.col  = COLS[Math.floor(Math.random() * COLS.length)];
-        this.a    = Math.random() * 0.55 + 0.1;
-        this.life = 0;
-        this.max  = Math.random() * 350 + 180;
-    };
-    Particle.prototype.update = function () {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.life++;
-        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H || this.life > this.max) {
-            this.reset();
-        }
-    };
-    Particle.prototype.draw = function () {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = this.col + this.a + ')';
-        ctx.fill();
-    };
-
-    function drawGrid() {
-        ctx.strokeStyle = 'rgba(196,148,42,0.035)';
-        ctx.lineWidth = 0.5;
-        const s = 70;
-        for (let x = 0; x < W; x += s) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-        }
-        for (let y = 0; y < H; y += s) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-        }
-    }
-
-    function drawLinks() {
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const d  = Math.sqrt(dx * dx + dy * dy);
-                if (d < 110) {
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = 'rgba(196,148,42,' + (0.08 * (1 - d / 110)) + ')';
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-                }
-            }
-        }
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, W, H);
-        drawGrid();
-        drawLinks();
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animate);
-    }
-
-    resize();
-    for (let i = 0; i < 110; i++) particles.push(new Particle());
-    animate();
-    window.addEventListener('resize', resize);
-})();
-
-
 /* ---- Navbar scroll ---- */
 (function () {
     const nav = document.getElementById('navbar');
