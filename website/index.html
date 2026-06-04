@@ -785,707 +785,244 @@
 <!-- =============================================
      JAVASCRIPT
      ============================================= -->
-<script src="works-data.js"></script>
-<script src="visual-data.js"></script>
-<script src="apps-data.js"></script>
-<script src="blog-data.js"></script>
+<script src="./works-data.js"></script>
+<script src="./visual-data.js"></script>
+<script src="./apps-data.js"></script>
+<script src="./blog-data.js"></script>
 <script>
+
+/* ---- YouTube Modal ---- */
+function openYouTube(id, title) {
+    var modal = document.getElementById('yt-modal');
+    var iframe = document.getElementById('yt-iframe');
+    if (!modal || !iframe) return;
+    iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+function closeYouTube() {
+    var modal = document.getElementById('yt-modal');
+    var iframe = document.getElementById('yt-iframe');
+    if (modal) modal.classList.add('hidden');
+    if (iframe) iframe.src = '';
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { closeYouTube(); closeVisual(); }
+});
+
+
+/* ---- Visual Modal ---- */
+function openVisual(imgUrl, title, badge, badgeColorClass, desc) {
+    var modal = document.getElementById('visual-modal');
+    if (!modal) return;
+    document.getElementById('visual-modal-img').src   = imgUrl || '';
+    document.getElementById('visual-modal-title').textContent = title || '';
+    document.getElementById('visual-modal-badge').textContent = badge || '';
+    document.getElementById('visual-modal-badge').className   =
+        'text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider ' + (badgeColorClass || '');
+    document.getElementById('visual-modal-desc').textContent  = desc || '';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+function closeVisual() {
+    var modal = document.getElementById('visual-modal');
+    if (modal) modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+
 /* ---- Navbar scroll ---- */
 (function () {
-    const nav = document.getElementById('navbar');
+    var nav = document.getElementById('navbar');
+    if (!nav) return;
     window.addEventListener('scroll', function () {
-        if (window.scrollY > 60) {
-            nav.style.cssText = 'background:rgba(10,10,15,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07);';
-        } else {
-            nav.style.cssText = '';
-        }
+        nav.classList.toggle('scrolled', window.scrollY > 60);
     });
 })();
 
 
 /* ---- Hamburger ---- */
+function closeMobileMenu() {
+    var menu = document.getElementById('mobile-menu');
+    var hb1  = document.getElementById('hb-1');
+    var hb2  = document.getElementById('hb-2');
+    var hb3  = document.getElementById('hb-3');
+    if (menu) menu.classList.add('hidden');
+    if (hb1) hb1.style.transform = '';
+    if (hb2) hb2.style.opacity   = '1';
+    if (hb3) hb3.style.transform = '';
+}
 (function () {
-    const btn  = document.getElementById('hamburger');
-    const menu = document.getElementById('mobile-menu');
-    const hb1  = document.getElementById('hb-1');
-    const hb2  = document.getElementById('hb-2');
-    const hb3  = document.getElementById('hb-3');
-    let open   = false;
+    var btn  = document.getElementById('hamburger');
+    var menu = document.getElementById('mobile-menu');
+    var hb1  = document.getElementById('hb-1');
+    var hb2  = document.getElementById('hb-2');
+    var hb3  = document.getElementById('hb-3');
+    if (!btn) return;
+    var open = false;
     btn.addEventListener('click', function () {
         open = !open;
         menu.classList.toggle('hidden', !open);
-        hb1.style.transform = open ? 'translateY(6.5px) rotate(45deg)'  : '';
+        hb1.style.transform = open ? 'translateY(5px) rotate(45deg)'  : '';
         hb2.style.opacity   = open ? '0' : '1';
-        hb3.style.transform = open ? 'translateY(-6.5px) rotate(-45deg)' : '';
+        hb3.style.transform = open ? 'translateY(-5px) rotate(-45deg)' : '';
     });
-    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-        open = false; menu.classList.add('hidden');
-        hb1.style.transform = ''; hb2.style.opacity = '1'; hb3.style.transform = '';
-    }));
 })();
 
 
 /* ---- Scroll Reveal ---- */
 (function () {
-    const els = document.querySelectorAll('.reveal');
-    const obs = new IntersectionObserver(entries => {
-        entries.forEach(e => {
+    var obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
             if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); }
         });
     }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
-    els.forEach(el => obs.observe(el));
+    document.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
 })();
 
 
-/* ---- Count-up ---- */
-(function () {
-    const nums = document.querySelectorAll('[data-count]');
-    const obs  = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (!e.isIntersecting) return;
-            const target = parseInt(e.target.getAttribute('data-count'));
-            const dur    = 1400;
-            const start  = performance.now();
-            function tick(now) {
-                const p = Math.min((now - start) / dur, 1);
-                const ease = 1 - Math.pow(1 - p, 3);
-                e.target.textContent = Math.round(ease * target);
-                if (p < 1) requestAnimationFrame(tick);
-                else e.target.textContent = target + '+';
-            }
-            requestAnimationFrame(tick);
-            obs.unobserve(e.target);
-        });
-    }, { threshold: 0.5 });
-    nums.forEach(n => obs.observe(n));
-})();
-
-
-/* Works Filter は works-data.js のレンダリング IIFE 内で処理 */
-
-
-/* ---- Smooth scroll ---- */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
+/* ---- Smooth Scroll ---- */
+document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     a.addEventListener('click', function (e) {
-        const el = document.querySelector(this.getAttribute('href'));
+        var el = document.querySelector(this.getAttribute('href'));
         if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
     });
 });
 
 
-/* ---- Works: データ配列からカードをレンダリング ---- */
+/* ---- Featured Track (NOCTA_WORKS[0]) ---- */
 (function () {
-    const grid = document.getElementById('works-grid');
-    if (!grid || typeof NOCTA_WORKS === 'undefined') return;
+    if (typeof NOCTA_WORKS === 'undefined' || !NOCTA_WORKS.length) return;
+    var w = NOCTA_WORKS[0];
 
-    grid.innerHTML = NOCTA_WORKS.map(function (w, i) {
-        const col   = i % 3;
-        const delay = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
-        const dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
-        const hasVideo = !!w.youtubeId;
-        const cursor   = hasVideo ? 'cursor-pointer' : 'cursor-default';
-        const onclick  = hasVideo
-            ? ' onclick="openYouTube(\'' + w.youtubeId + '\',\'' + w.title.replace(/'/g, "\\'") + '\')"'
+    var titleEl = document.getElementById('featured-title');
+    var metaEl  = document.getElementById('featured-meta');
+    var descEl  = document.getElementById('featured-desc');
+    var ctaEl   = document.getElementById('featured-cta');
+    var thumb   = document.getElementById('featured-thumb');
+
+    if (titleEl) titleEl.textContent = w.title || '';
+    if (metaEl) {
+        var parts = [];
+        if (w.cat)  parts.push(w.cat.toUpperCase());
+        if (w.bpm)  parts.push('BPM ' + w.bpm);
+        if (w.key)  parts.push(w.key);
+        if (w.year) parts.push(String(w.year));
+        metaEl.textContent = parts.filter(Boolean).join(' · ');
+    }
+    if (descEl) descEl.textContent = w.descJa || '';
+
+    if (w.youtubeId && thumb) {
+        var img = document.createElement('img');
+        img.src = 'https://img.youtube.com/vi/' + w.youtubeId + '/maxresdefault.jpg';
+        img.alt = w.title || '';
+        img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+        img.onerror = function () { img.remove(); };
+        thumb.insertBefore(img, thumb.firstChild);
+        thumb.addEventListener('click', function () { openYouTube(w.youtubeId, w.title); });
+        if (ctaEl) ctaEl.addEventListener('click', function () { openYouTube(w.youtubeId, w.title); });
+    } else if (ctaEl) {
+        ctaEl.style.display = 'none';
+    }
+})();
+
+
+/* ---- Discography (NOCTA_WORKS 全件) ---- */
+(function () {
+    var list = document.getElementById('discography-list');
+    if (!list || typeof NOCTA_WORKS === 'undefined') return;
+
+    list.innerHTML = NOCTA_WORKS.map(function (w, i) {
+        var num    = String(i + 1).padStart(2, '0');
+        var year   = w.year  ? String(w.year)  : '';
+        var bpmStr = w.bpm   ? 'BPM ' + w.bpm  : '';
+        var catStr = w.cat   ? w.cat.toUpperCase() : '';
+        var meta   = [catStr, bpmStr].filter(Boolean).join(' · ');
+        var hasVid = !!w.youtubeId;
+        var cursor = hasVid ? 'cursor-pointer' : 'cursor-default';
+        var click  = hasVid
+            ? ' onclick="openYouTube(\'' + w.youtubeId + '\',\'' + w.title.replace(/'/g,"\\'") + '\')"'
             : '';
-
         return [
-            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 ' + cursor + ' reveal' + delay + '"',
-            '     data-cat="' + w.cat + '"' + dstyle + onclick + '>',
-            '  <div class="relative aspect-video overflow-hidden">',
-            '    <div class="' + w.thumbClass + ' w-full h-full flex items-center justify-center">',
-            '      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">',
-            '        <circle cx="24" cy="24" r="22" stroke="rgba(200,162,255,0.35)" stroke-width="1"/>',
-            '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(200,162,255,0.55)"/>',
-            '      </svg>',
-            '    </div>',
-            hasVideo
-                ? '    <div class="thumb-overlay"><div class="play-circle"><div class="play-triangle"></div></div></div>'
-                : '',
+            '<div class="disc-row ' + cursor + ' grid items-center border-b border-[#1e1408]"',
+            '     style="grid-template-columns:36px 1fr auto; gap:16px; padding:15px 0;"' + click + '>',
+            '  <div class="font-display text-[18px] text-[#2a2010]">' + num + '</div>',
+            '  <div>',
+            '    <div class="font-body text-[18px] text-brand-text">' + w.title + '</div>',
+            '    <div class="font-heading text-[8px] tracking-[1px] text-[#4a3a28] mt-1">' + meta + '</div>',
             '  </div>',
-            '  <div class="p-6">',
-            '    <div class="flex justify-between items-start mb-2">',
-            '      <h3 class="font-heading font-bold text-[17px] text-white">' + w.title + '</h3>',
-            '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + w.badgeColorClass + ' tracking-wider">' + w.badge + '</span>',
-            '    </div>',
-            '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed" data-desc-ja="' + w.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (w.descEn||w.descJa).replace(/"/g,'&quot;') + '">' + w.descJa + '</p>',
-            '  </div>',
+            '  <div class="font-body text-[13px] italic text-[#3a2a18] hidden sm:block">' + year + '</div>',
             '</div>'
-        ].join('\n');
-    }).join('\n');
+        ].join('');
+    }).join('');
+})();
 
-    // 新しく挿入された要素に Scroll Reveal を適用
-    const obs = new IntersectionObserver(function (entries) {
+
+/* ---- Visual Grid (非対称) ---- */
+(function () {
+    var grid = document.getElementById('visual-grid');
+    if (!grid) return;
+    var WK = typeof NOCTA_VISUALS_WORKS !== 'undefined' ? NOCTA_VISUALS_WORKS : [];
+    var ART = typeof NOCTA_VISUALS_ART   !== 'undefined' ? NOCTA_VISUALS_ART   : [];
+    var MU  = typeof NOCTA_VISUALS_MUSIC !== 'undefined' ? NOCTA_VISUALS_MUSIC : [];
+    var all = WK.concat(ART).concat(MU);
+    if (!all.length) return;
+
+    function esc(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+    function cell(v, spanRow) {
+        var s = '<div class="visual-cell relative overflow-hidden bg-brand-bg2 border border-[#1e1408]"';
+        if (spanRow) s += ' style="grid-row:span 2;"';
+        s += ' onclick="openVisual(\'' + esc(v.imgUrl) + '\',\'' + esc(v.title) + '\',\'' +
+             esc(v.badge) + '\',\'' + esc(v.badgeColorClass) + '\',\'' + esc(v.descJa) + '\')">';
+        if (v.imgUrl) {
+            s += '<img src="' + v.imgUrl + '" alt="' + esc(v.title) + '" class="w-full h-full object-cover">';
+        } else {
+            s += '<div class="flex items-center justify-center h-full font-heading text-[8px] tracking-[2px] text-[#2a2010] uppercase">img</div>';
+        }
+        s += '<div class="absolute bottom-2 left-2 font-heading text-[8px] tracking-[1px] uppercase px-2 py-0.5 border border-[#C4942A33] text-[#C4942A]">' + (v.badge||'') + '</div>';
+        s += '</div>';
+        return s;
+    }
+    function placeholder() {
+        return '<div class="bg-brand-bg2 border border-[#1e1408] flex items-center justify-center">' +
+               '<span class="font-heading text-[7px] tracking-[2px] text-[#2a2010] uppercase">img</span>' +
+               '</div>';
+    }
+
+    var html = cell(all[0], true);
+    for (var i = 1; i < 5; i++) {
+        html += (i < all.length) ? cell(all[i], false) : placeholder();
+    }
+    grid.innerHTML = html;
+
+    var obs = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
             if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); }
         });
     }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
-    grid.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
-
-    // Works Filter を再バインド（新しいカードに対して）
-    const pills = document.querySelectorAll('.filter-pill');
-    const cards = grid.querySelectorAll('[data-cat]');
-    pills.forEach(function (pill) {
-        pill.addEventListener('click', function () {
-            pills.forEach(function (p) { p.classList.remove('active'); });
-            this.classList.add('active');
-            const f = this.getAttribute('data-filter');
-            cards.forEach(function (card) {
-                const show = f === 'all' || card.getAttribute('data-cat') === f;
-                if (show) {
-                    card.style.display = '';
-                    requestAnimationFrame(function () {
-                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                        card.style.opacity = '1';
-                        card.style.transform = '';
-                    });
-                } else {
-                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(12px)';
-                    setTimeout(function () { card.style.display = 'none'; }, 320);
-                }
-            });
-        });
-    });
+    obs.observe(grid);
 })();
 
 
-/* ---- Visual: データ配列からカードをレンダリング ---- */
+/* ---- Tools Grid (NOCTA_APPS) ---- */
 (function () {
-    var section = document.getElementById('visual');
-    if (!section) return;
-    if (typeof NOCTA_VISUALS_WORKS === 'undefined' && typeof NOCTA_VISUALS_ART === 'undefined' && typeof NOCTA_VISUALS_MUSIC === 'undefined') return;
+    var grid = document.getElementById('tools-grid');
+    if (!grid || typeof NOCTA_APPS === 'undefined') return;
 
-    function makeCard(v, i) {
-        var col    = i % 3;
-        var delay  = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
-        var dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
-        var imgUrl = v.imgUrl || '';
-        var zoraLink = v.zoraUrl
-            ? '<a href="' + v.zoraUrl + '" target="_blank" rel="noopener"' +
-              '   onclick="event.stopPropagation()"' +
-              '   class="inline-flex items-center gap-1 mt-3 text-[11px] font-heading tracking-wider text-brand-sub hover:text-white transition-colors">' +
-              'View on Zora ↗</a>'
-            : '';
-        var onclick = ' onclick="openVisual(' +
-            '\'' + imgUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
-            '\'' + v.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
-            '\'' + v.badge + '\',' +
-            '\'' + v.badgeColorClass + '\',' +
-            '\'' + v.descJa.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' +
-            ')"';
-
+    grid.innerHTML = NOCTA_APPS.map(function (a) {
         return [
-            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"' + dstyle + onclick + '>',
-            '  <div class="relative aspect-[3/4] overflow-hidden">',
-            '    <img src="' + imgUrl + '" alt="' + v.title.replace(/"/g, '&quot;') + '"',
-            '         loading="lazy"',
-            '         class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">',
-            '    <div class="thumb-overlay"></div>',
-            '  </div>',
-            '  <div class="p-5">',
-            '    <div class="flex justify-between items-start mb-2">',
-            '      <h3 class="font-heading font-bold text-[15px] text-white leading-tight">' + v.title + '</h3>',
-            '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded shrink-0 ml-2 ' + v.badgeColorClass + ' tracking-wider">' + v.badge + '</span>',
-            '    </div>',
-            '    <p class="font-jp text-[12px] text-brand-sub leading-relaxed" data-desc-ja="' + v.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (v.descEn||v.descJa).replace(/"/g,'&quot;') + '">' + v.descJa + '</p>',
-            '    ' + zoraLink,
-            '  </div>',
-            '</div>'
-        ].join('\n');
-    }
-
-    // Works グリッド
-    var gridW = document.getElementById('visual-grid-works');
-    if (gridW && typeof NOCTA_VISUALS_WORKS !== 'undefined' && NOCTA_VISUALS_WORKS.length > 0) {
-        gridW.innerHTML = NOCTA_VISUALS_WORKS.map(makeCard).join('\n');
-    }
-
-    // Art グリッド
-    var gridA = document.getElementById('visual-grid-art');
-    if (gridA && typeof NOCTA_VISUALS_ART !== 'undefined' && NOCTA_VISUALS_ART.length > 0) {
-        gridA.innerHTML = NOCTA_VISUALS_ART.map(makeCard).join('\n');
-    }
-
-    // Music グリッド
-    var gridM = document.getElementById('visual-grid-music');
-    if (gridM) {
-        if (typeof NOCTA_VISUALS_MUSIC !== 'undefined' && NOCTA_VISUALS_MUSIC.length > 0) {
-            gridM.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7';
-            gridM.innerHTML = NOCTA_VISUALS_MUSIC.map(makeCard).join('\n');
-        } else {
-            gridM.innerHTML =
-                '<div class="py-16 text-center reveal">' +
-                '  <p class="font-heading text-[11px] tracking-[3px] uppercase text-white/20">Coming Soon</p>' +
-                '  <p class="font-jp text-[13px] text-white/15 mt-2">楽曲リリース後に追加されます</p>' +
-                '</div>';
-        }
-    }
-
-    // Scroll Reveal を適用
-    var obs2 = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-            if (e.isIntersecting) { e.target.classList.add('active'); obs2.unobserve(e.target); }
-        });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-    section.querySelectorAll('.reveal').forEach(function (el) { obs2.observe(el); });
+            '<a href="' + (a.url||'#') + '" target="_blank" rel="noopener noreferrer"',
+            '   class="tool-card bg-brand-bg block px-6 py-8">',
+            '  <div class="font-heading text-[8px] tracking-[2px] text-[#3a2a18] uppercase mb-3">' + (a.badge||'App') + '</div>',
+            '  <div class="font-body font-semibold text-[18px] text-brand-text mb-2">' + (a.title||'') + '</div>',
+            '  <p class="font-body text-[13px] italic text-[#5a4a30] leading-relaxed">' + (a.descJa||'') + '</p>',
+            '</a>'
+        ].join('');
+    }).join('');
 })();
 
-/* ---- Apps: データ配列からカードをレンダリング ---- */
-    (function () {
-        var section = document.getElementById('apps');
-        var grid = document.getElementById('apps-grid');
-        if (!grid || typeof NOCTA_APPS === 'undefined') return;
 
-        // 空配列時はセクションごと非表示
-        if (NOCTA_APPS.length === 0) {
-            if (section) section.style.display = 'none';
-            return;
-        }
-
-        grid.innerHTML = NOCTA_APPS.map(function (a, i) {
-            var col    = i % 3;
-            var delay  = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
-            var dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
-            var imgArg = a.imgUrl ? '\'' + a.imgUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' : '\'\'';
-            var descEnArg = a.descEn ? '\'' + a.descEn.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' : '\'\'';
-            var onclick = ' onclick="openApp(' +
-                '\'' + a.url.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
-                '\'' + a.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
-                '\'' + a.thumbClass + '\',' +
-                '\'' + a.badge + '\',' +
-                '\'' + a.badgeColorClass + '\',' +
-                '\'' + a.descJa.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
-                imgArg + ',' +
-                descEnArg +
-                ')"';
-
-            return [
-                '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"',
-                '     data-acat="' + a.cat + '"' + dstyle + onclick + '>',
-                '  <div class="relative aspect-video overflow-hidden">',
-                '    <div class="' + a.thumbClass + ' w-full h-full flex items-center justify-center">',
-                '      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">',
-                '        <circle cx="24" cy="24" r="22" stroke="rgba(200,162,255,0.35)" stroke-width="1"/>',
-                '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(200,162,255,0.55)"/>',
-                '      </svg>',
-                '    </div>',
-                a.imgUrl ? '    <img src="' + a.imgUrl + '" alt="' + a.title.replace(/"/g, '&quot;') + '" loading="lazy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.style.display=\'none\'">' : '',
-                '    <div class="thumb-overlay"></div>',
-                '  </div>',
-                '  <div class="p-6">',
-                '    <div class="flex justify-between items-start mb-2">',
-                '      <h3 class="font-heading font-bold text-[17px] text-white">' + a.title + '</h3>',
-                '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + a.badgeColorClass + ' tracking-wider">' + a.badge + '</span>',
-                '    </div>',
-                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed" data-desc-ja="' + a.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (a.descEn||a.descJa).replace(/"/g,'&quot;') + '">' + a.descJa + '</p>',
-                '  </div>',
-                '</div>'
-            ].join('\n');
-        }).join('\n');
-
-        // Scroll Reveal（obs / obs2 は既存コードで使用済みのため appsObserver を使用）
-        var appsObserver = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-                if (e.isIntersecting) { e.target.classList.add('active'); appsObserver.unobserve(e.target); }
-            });
-        }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
-        grid.querySelectorAll('.reveal').forEach(function (el) { appsObserver.observe(el); });
-    })();
-
-    /* ---- Blog: データ配列からカードをレンダリング ---- */
-    (function () {
-        function esc(s) {
-            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        }
-
-        var section = document.getElementById('blog');
-        var grid = document.getElementById('blog-grid');
-        if (!grid || typeof NOCTA_BLOG === 'undefined') return;
-
-        // 空配列時はセクションごと非表示
-        if (NOCTA_BLOG.length === 0) {
-            if (section) section.style.display = 'none';
-            return;
-        }
-
-        grid.innerHTML = NOCTA_BLOG.map(function (b, i) {
-            var col      = i % 3;
-            var delay    = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
-            var dstyle   = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
-            var thumbNum = (i % 6) + 1;
-            var badgeClass = b.cat === 'music'
-                ? 'bg-brand-primary/20 text-brand-primary'
-                : b.cat === 'book'
-                ? 'bg-brand-vgreen/20 text-brand-vgreen'
-                : 'bg-brand-secondary/20 text-brand-secondary';
-            var badge = b.cat === 'music' ? 'Music' : b.cat === 'book' ? 'Book' : 'Essay';
-            var slug  = b.slug.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-            var onclick = ' onclick="window.open(\'blog/post.html?slug=' + slug + '\', \'_blank\')"';
-
-            return [
-                '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"',
-                '     data-bcat="' + b.cat + '"' + dstyle + onclick + '>',
-                '  <div class="relative aspect-video overflow-hidden">',
-                '    <div class="thumb-' + thumbNum + ' w-full h-full flex items-end p-4">',
-                '      <span class="font-heading text-[11px] tracking-[2px] uppercase text-white/50">' + esc(b.date) + '</span>',
-                '    </div>',
-                '    <div class="thumb-overlay"></div>',
-                '  </div>',
-                '  <div class="p-6">',
-                '    <div class="flex justify-between items-start mb-2">',
-                '      <h3 class="font-heading font-bold text-[17px] text-white">' + esc(b.title) + '</h3>',
-                '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + badgeClass + ' tracking-wider">' + badge + '</span>',
-                '    </div>',
-                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed line-clamp-2">' + esc(b.excerpt) + '</p>',
-                '  </div>',
-                '</div>'
-            ].join('\n');
-        }).join('\n');
-
-        // Scroll Reveal（obs / obs2 / appsObserver は使用済みのため blogObserver を使用）
-        var blogObserver = new IntersectionObserver(function (entries) {
-            entries.forEach(function (e) {
-                if (e.isIntersecting) { e.target.classList.add('active'); blogObserver.unobserve(e.target); }
-            });
-        }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
-        grid.querySelectorAll('.reveal').forEach(function (el) { blogObserver.observe(el); });
-
-        // Blog フィルター（.vfilter-pill[data-bfilter] と カード[data-bcat] を照合）
-        var bpills = document.querySelectorAll('.vfilter-pill');
-        var bcards = grid.querySelectorAll('[data-bcat]');
-        bpills.forEach(function (pill) {
-            pill.addEventListener('click', function () {
-                bpills.forEach(function (p) { p.classList.remove('active'); });
-                this.classList.add('active');
-                var f = this.getAttribute('data-bfilter');
-                bcards.forEach(function (card) {
-                    var show = f === 'all' || card.getAttribute('data-bcat') === f;
-                    if (show) {
-                        card.style.display = '';
-                        requestAnimationFrame(function () {
-                            card.style.transitionDelay = '0s';
-                            card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                            card.style.opacity = '1';
-                            card.style.transform = '';
-                        });
-                    } else {
-                        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                        card.style.opacity = '0';
-                        card.style.transform = 'translateY(12px)';
-                        setTimeout(function () { card.style.display = 'none'; }, 320);
-                    }
-                });
-            });
-        });
-    })();
-
-/* ---- Visual Lightbox ---- */
-function openVisual(imgUrl, title, badge, badgeClass, desc) {
-    var modal = document.getElementById('visual-modal');
-    document.getElementById('visual-modal-img').src = imgUrl;
-    document.getElementById('visual-modal-title').textContent = title;
-    var badgeEl = document.getElementById('visual-modal-badge');
-    badgeEl.textContent = badge;
-    badgeEl.className = 'text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider ' + badgeClass;
-    document.getElementById('visual-modal-desc').textContent = desc;
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeVisual() {
-    var modal = document.getElementById('visual-modal');
-    if (!modal) return;
-    document.getElementById('visual-modal-img').src = '';
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-/* ---- App Modal ---- */
-    function openApp(url, title, thumbClass, badge, badgeClass, desc, imgUrl, descEn) {
-        desc = (typeof currentLang !== 'undefined' && currentLang === 'en' && descEn) ? descEn : desc;
-        var modal = document.getElementById('app-modal');
-        var thumb = document.getElementById('app-modal-thumb');
-        var modalImg = document.getElementById('app-modal-img');
-        if (imgUrl && modalImg) {
-            modalImg.src = imgUrl;
-            modalImg.style.display = 'block';
-            thumb.style.display = 'none';
-        } else {
-            if (modalImg) modalImg.style.display = 'none';
-            thumb.style.display = '';
-            thumb.className = thumbClass + ' w-full aspect-video rounded-2xl flex items-center justify-center';
-        }
-        document.getElementById('app-modal-title').textContent = title;
-        var badgeEl = document.getElementById('app-modal-badge');
-        badgeEl.textContent = badge;
-        badgeEl.className = 'text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider ' + badgeClass;
-        document.getElementById('app-modal-desc').textContent = desc;
-        document.getElementById('app-modal-link').href = url;
-        modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeApp() {
-        var modal = document.getElementById('app-modal');
-        if (!modal) return;
-        var modalImg = document.getElementById('app-modal-img');
-        if (modalImg) { modalImg.src = ''; modalImg.style.display = 'none'; }
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-
-/* ---- YouTube Modal ---- */
-function openYouTube(id, title) {
-    var modal  = document.getElementById('yt-modal');
-    var iframe = document.getElementById('yt-iframe');
-    iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1';
-    modal.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeYouTube() {
-    var modal  = document.getElementById('yt-modal');
-    var iframe = document.getElementById('yt-iframe');
-    iframe.src = '';
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-}
-
-document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') { closeYouTube(); closeVisual(); closeApp(); }
-});
-
-
-/* ---- Netlify Form submit ---- */
-const noctaForm = document.getElementById('nocta-contact-form');
-if (noctaForm) {
-    noctaForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        const btn = document.getElementById('submitBtn');
-        const formData = new FormData(noctaForm);
-
-        // バリデーション
-        const name    = formData.get('name')    || '';
-        const email   = formData.get('email')   || '';
-        const message = formData.get('message') || '';
-        if (!name.trim() || !email.trim() || !message.trim()) {
-            btn.textContent = '必須項目を入力してください';
-            btn.style.background = 'linear-gradient(135deg,#C4942A,#8b6914)';
-            setTimeout(() => {
-                btn.textContent = '送信する';
-                btn.style.background = '';
-            }, 2500);
-            return;
-        }
-
-        // 送信中ステート
-        btn.textContent = '送信中...';
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
-
-        fetch('/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(formData).toString()
-        })
-        .then(response => {
-            if (response.ok) {
-                // 送信成功
-                btn.textContent = '✦ 送信完了しました';
-                btn.style.background = 'linear-gradient(135deg,#39FF6A,#00b894)';
-                btn.style.color = '#05050F';
-                btn.style.boxShadow = '0 0 40px rgba(57,255,106,0.5)';
-                btn.style.opacity = '1';
-                noctaForm.reset();
-                setTimeout(() => {
-                    btn.textContent = '送信する';
-                    btn.style.background = '';
-                    btn.style.color = '';
-                    btn.style.boxShadow = '';
-                    btn.disabled = false;
-                }, 5000);
-            } else {
-                throw new Error('送信失敗');
-            }
-        })
-        .catch(() => {
-            btn.textContent = '送信エラー — 再度お試しください';
-            btn.style.background = 'linear-gradient(135deg,#ff4444,#cc0000)';
-            btn.style.opacity = '1';
-            btn.disabled = false;
-            setTimeout(() => {
-                btn.textContent = '送信する';
-                btn.style.background = '';
-            }, 3500);
-        });
-    });
-}
-</script>
-
-<!-- i18n -->
-<script>
-const I18N = {
-  ja: {
-    'hero.tagline': 'AIと人間の感性が融合する、新しい音楽の形',
-    'hero.cta.works': 'Works を見る',
-    'hero.cta.contact': 'お問い合わせ',
-    'stats.songs': '公開楽曲数',
-    'stats.pvs': '公開PV本数',
-    'stats.wip': '制作中の楽曲',
-    'stats.potential': '可能性',
-    'about.h2': '創造と革新が交わる、<br><span class="text-gradient">新しい音楽の会社</span>',
-    'about.body': '私たちは、最新テクノロジーと人間のクリエイティビティを融合させ、オリジナル楽曲の制作からPV映像、デジタルマーケティング、メディアPRまでを一貫して手掛ける音楽エンタメカンパニーです。<br><br><span style="color:#39FF6A;font-weight:700;">ボーカロイド・AI歌声合成</span>を積極的に活用し、人間とバーチャルシンガーが共存するサブカルチャー文化から、メインストリームへ新しい波を生み出します。<br><br>スピード・品質・一貫性——この3つを同時に実現することで、アーティストやブランドの可能性を最大限に引き出します。',
-    'about.v1.title': '革新（Innovation）',
-    'about.v1.desc': 'テクノロジーの力で、音楽業界の常識を更新し続ける。',
-    'about.v2.title': '創造（Creation）',
-    'about.v2.desc': '人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。',
-    'about.v3.title': '歌声合成（Synthesis）',
-    'about.v3.desc': 'ボーカロイドをはじめとするAI歌声技術で、唯一無二の音楽表現を実現。',
-    'about.v4.title': '解放（Freedom）',
-    'about.v4.desc': '規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。',
-    'works.subtitle': 'AIと感性が生んだ、作品たち',
-    'tools.nuword': 'NuWord コンセプトページ →',
-    'services.h2': '音楽を生み出し、<br><span class="text-gradient">世界に届ける</span>',
-    'services.subtitle': '楽曲制作からメディア展開まで、すべてを一気通貫でご提供します。',
-    'services.s1.title': '楽曲制作',
-    'services.s1.desc': 'トレンド分析から作曲・編曲・歌詞制作まで。ジャンル・ムード・ターゲット層に最適化された楽曲を高速かつ高品質に制作します。',
-    'services.s1.t1': '作曲・編曲', 'services.s1.t2': '歌詞制作', 'services.s1.t3': 'ボーカル演出', 'services.s1.t4': 'サウンドデザイン',
-    'services.s2.title': 'PV・映像制作',
-    'services.s2.desc': '世界観コンセプトの設計から絵コンテ、最先端の映像生成技術を駆使したビジュアル制作まで。シネマティックな映像表現をスピーディに実現します。',
-    'services.s2.t1': 'コンセプト設計', 'services.s2.t2': '絵コンテ', 'services.s2.t3': '映像制作', 'services.s2.t4': 'カラーグレーディング',
-    'services.s3.title': 'デジタルマーケティング',
-    'services.s3.desc': 'X・Instagram・TikTok・YouTubeの各プラットフォームに最適化されたコンテンツ戦略と制作・運用をリリーススケジュールと連動して展開します。',
-    'services.s3.t1': 'SNS戦略', 'services.s3.t2': '広告クリエイティブ', 'services.s3.t3': 'コンテンツ制作', 'services.s3.t4': 'SEO対応',
-    'services.s4.title': 'PR・メディア展開',
-    'services.s4.desc': 'プレスリリース作成からメディアリスト構築、取材対応の準備まで。リリースのインパクトを最大化するPR戦略を一貫してサポートします。',
-    'services.s4.t1': 'プレスリリース', 'services.s4.t2': 'メディア対応', 'services.s4.t3': 'インフルエンサー連携', 'services.s4.t4': '危機管理',
-    'news.featured.title': '音楽エンタメカンパニー、正式始動。<br>楽曲制作からPR展開まで一気通貫サービスを開始。',
-    'news.featured.desc': '最新テクノロジーと人間のクリエイティビティを融合した新しいプロダクション体制を構築。今後のプロジェクト受付を正式に開始します。',
-    'news.n1': '第1弾楽曲「Neon Cascade」のPV映像が完成',
-    'news.n2': 'タイアップ・コラボ依頼の受付を開始しました',
-    'news.n3': '創業期の制作プロセスについて、ブログを公開',
-    'news.n4': 'メディア各社向けのプレス資料を公開',
-    'news.n5': 'ブランドビジュアルアイデンティティを策定・公開',
-    'contact.h2': '一緒に、<span class="text-gradient">未来の音楽</span>を<br>作りませんか',
-    'contact.subtitle': '楽曲制作・PV制作・マーケティング・PRなど、<br>アイデア段階でもお気軽にご相談ください。',
-    'contact.social.x': '最新情報をいち早く',
-    'contact.social.note': '制作ブログ・ライナーノーツ',
-    'contact.lbl.name': 'お名前 *', 'contact.ph.name': '山田 太郎',
-    'contact.lbl.company': '会社名', 'contact.ph.company': '株式会社〇〇',
-    'contact.lbl.email': 'メールアドレス *',
-    'contact.lbl.service': 'ご依頼の種別',
-    'contact.opt.default': '選択してください',
-    'contact.opt.music': '楽曲制作', 'contact.opt.pv': 'PV・映像制作',
-    'contact.opt.marketing': 'マーケティング支援', 'contact.opt.pr': 'PR・メディア展開',
-    'contact.opt.collab': 'タイアップ・コラボ', 'contact.opt.media': '取材・メディア掲載',
-    'contact.opt.other': 'その他',
-    'contact.lbl.message': 'メッセージ *',
-    'contact.ph.message': 'プロジェクトの内容・ご要望をお気軽にご記入ください',
-    'contact.submit': '送信する',
-    'footer.tagline': 'AIと人間の感性が融合する、<br>新しい音楽エンタメカンパニー。<br>あなたのビジョンを現実にします。',
-    'footer.s1': '楽曲制作', 'footer.s2': 'PV・映像制作', 'footer.s3': 'デジタルMKT', 'footer.s4': 'PR支援',
-    'footer.tff.link': '✦ いい人生とは',
-    'footer.tff.desc': '人生観・詩・思い・感動を<br>つづるパーソナルサイト',
-  },
-  en: {
-    'hero.tagline': 'Where AI and human creativity shape a new form of music.',
-    'hero.cta.works': 'View Works',
-    'hero.cta.contact': 'Contact Us',
-    'stats.songs': 'Tracks',
-    'stats.pvs': 'Music Videos',
-    'stats.wip': 'In Production',
-    'stats.potential': 'Possibilities',
-    'about.h2': 'Where Creation &amp; Innovation<br><span class="text-gradient">Come Together</span>',
-    'about.body': 'We are a music entertainment company that merges cutting-edge technology with human creativity — delivering original music production, PV visuals, digital marketing, and media PR as a seamless end-to-end service.<br><br><span style="color:#39FF6A;font-weight:700;">VOCALOID &amp; AI vocal synthesis</span> are at the core of our work, bridging subculture and mainstream through the unique fusion of human and virtual singers.<br><br>Speed. Quality. Consistency. By achieving all three simultaneously, we unlock the full potential of artists and brands.',
-    'about.v1.title': 'Innovation',
-    'about.v1.desc': 'Continuously redefining industry norms through the power of technology.',
-    'about.v2.title': 'Creation',
-    'about.v2.desc': 'Pursuing one-of-a-kind expression born from the fusion of human sensibility and technology.',
-    'about.v3.title': 'Synthesis',
-    'about.v3.desc': 'Realizing unique musical expression through VOCALOID and AI vocal synthesis technology.',
-    'about.v4.title': 'Freedom',
-    'about.v4.desc': 'Breaking free from scale constraints to create space for pure expression and vision.',
-    'works.subtitle': 'Works born from AI and human creativity.',
-    'tools.nuword': 'NuWord Concept Page →',
-    'services.h2': 'Create Music,<br><span class="text-gradient">Reach the World</span>',
-    'services.subtitle': 'End-to-end services from music production to media outreach.',
-    'services.s1.title': 'Music Production',
-    'services.s1.desc': 'From trend analysis to composition, arrangement, and lyrics. We produce high-quality music optimized for your genre, mood, and target audience — fast.',
-    'services.s1.t1': 'Composition', 'services.s1.t2': 'Lyrics', 'services.s1.t3': 'Vocal Direction', 'services.s1.t4': 'Sound Design',
-    'services.s2.title': 'PV / Video Production',
-    'services.s2.desc': 'From world concept design and storyboards to cinematic visuals using cutting-edge generative video technology.',
-    'services.s2.t1': 'Concept Design', 'services.s2.t2': 'Storyboard', 'services.s2.t3': 'Video Production', 'services.s2.t4': 'Color Grading',
-    'services.s3.title': 'Digital Marketing',
-    'services.s3.desc': 'Platform-native content strategy across X, Instagram, TikTok, and YouTube — integrated with your release schedule.',
-    'services.s3.t1': 'Social Strategy', 'services.s3.t2': 'Ad Creative', 'services.s3.t3': 'Content Production', 'services.s3.t4': 'SEO',
-    'services.s4.title': 'PR & Media',
-    'services.s4.desc': 'Press release writing, media list building, and interview prep — full-stack PR to maximize your release impact.',
-    'services.s4.t1': 'Press Release', 'services.s4.t2': 'Media Relations', 'services.s4.t3': 'Influencer Outreach', 'services.s4.t4': 'Crisis Management',
-    'news.featured.title': 'Music Entertainment Company officially launched.<br>End-to-end services from production to PR now open.',
-    'news.featured.desc': 'Building a new production framework that fuses cutting-edge technology with human creativity. Now officially accepting project inquiries.',
-    'news.n1': 'PV for debut track "Neon Cascade" is complete',
-    'news.n2': 'Now accepting tie-up and collaboration requests',
-    'news.n3': 'A blog post on our early production process is live',
-    'news.n4': 'Press materials for media companies are now available',
-    'news.n5': 'Brand visual identity established and published',
-    'contact.h2': "Let's Build<br><span class=\"text-gradient\">the Future of Music</span><br>Together",
-    'contact.subtitle': 'Music production, PV, marketing, PR —<br>feel free to reach out even with rough ideas.',
-    'contact.social.x': 'Latest news, first.',
-    'contact.social.note': 'Production blog & liner notes',
-    'contact.lbl.name': 'Name *', 'contact.ph.name': 'John Doe',
-    'contact.lbl.company': 'Company', 'contact.ph.company': 'Company Inc.',
-    'contact.lbl.email': 'Email *',
-    'contact.lbl.service': 'Service Type',
-    'contact.opt.default': 'Please select',
-    'contact.opt.music': 'Music Production', 'contact.opt.pv': 'PV / Video Production',
-    'contact.opt.marketing': 'Marketing Support', 'contact.opt.pr': 'PR & Media',
-    'contact.opt.collab': 'Tie-up / Collaboration', 'contact.opt.media': 'Press / Media Coverage',
-    'contact.opt.other': 'Other',
-    'contact.lbl.message': 'Message *',
-    'contact.ph.message': "Tell us about your project and what you're looking for.",
-    'contact.submit': 'Send',
-    'footer.tagline': 'Where AI and human sensibility meet —<br>a new music entertainment company.<br>We bring your vision to life.',
-    'footer.s1': 'Music Production', 'footer.s2': 'PV / Video', 'footer.s3': 'Digital MKT', 'footer.s4': 'PR Support',
-    'footer.tff.link': '✦ What is a good life?',
-    'footer.tff.desc': 'A personal site for life philosophy,<br>poetry, and moments that move us.',
-  }
-};
-
-let currentLang = localStorage.getItem('nocta-lang') || 'ja';
-
-function setLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('nocta-lang', lang);
-  document.documentElement.lang = lang;
-  const dict = I18N[lang];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const k = el.dataset.i18n;
-    if (dict[k] !== undefined) el.textContent = dict[k];
-  });
-  document.querySelectorAll('[data-i18n-html]').forEach(el => {
-    const k = el.dataset.i18nHtml;
-    if (dict[k] !== undefined) el.innerHTML = dict[k];
-  });
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-    const k = el.dataset.i18nPh;
-    if (dict[k] !== undefined) el.placeholder = dict[k];
-  });
-  document.querySelectorAll('[data-desc-ja]').forEach(el => {
-    el.textContent = lang === 'en' && el.dataset.descEn ? el.dataset.descEn : el.dataset.descJa;
-  });
-  const btn = document.getElementById('lang-btn');
-  const btnM = document.getElementById('lang-btn-mobile');
-  if (btn) btn.textContent = lang === 'ja' ? 'EN' : 'JA';
-  if (btnM) btnM.textContent = lang === 'ja' ? 'EN' : 'JA';
-}
-
-function toggleLang() {
-  setLang(currentLang === 'ja' ? 'en' : 'ja');
-}
-
-document.addEventListener('DOMContentLoaded', () => setLang(currentLang));
 </script>
 </body>
 </html>
