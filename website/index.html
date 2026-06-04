@@ -425,57 +425,23 @@
 <!-- =============================================
      06. VISUAL PORTFOLIO
      ============================================= -->
-<section id="visual" class="py-32 relative z-10 border-b border-white/5">
-    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
-
-        <div class="text-center mb-12 reveal">
-            <h2 class="font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">VISUAL</h2>
-            <p class="font-jp text-brand-sub text-[15px] tracking-wider">Art & NFT Collection</p>
+<!-- VISUAL -->
+<section id="visual" class="scroll-mt-20">
+    <div class="max-w-[900px] mx-auto px-10 py-12">
+        <div class="flex justify-between items-baseline mb-6">
+            <div class="font-display text-[42px] tracking-[3px] text-brand-text">VISUAL</div>
+            <a href="https://zora.co/@kutakuta1001" target="_blank" rel="noopener"
+               class="font-body text-[14px] italic text-brand-gold hover:opacity-80 transition-opacity">アーカイブ →</a>
         </div>
-
-        <!-- Works セクション -->
-        <div class="mb-16">
-            <div class="flex items-center gap-4 mb-8 reveal">
-                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Works</h3>
-                <div class="flex-1 h-px bg-white/10"></div>
-                <span class="font-heading text-[10px] tracking-[2px] text-white/20">Concept &amp; Processed</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid-works">
-            </div>
-        </div>
-
-        <!-- Art セクション -->
-        <div class="mb-16">
-            <div class="flex items-center gap-4 mb-8 reveal">
-                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Art</h3>
-                <div class="flex-1 h-px bg-white/10"></div>
-                <span class="font-heading text-[10px] tracking-[2px] text-white/20">AI Generated / Source</span>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid-art">
-            </div>
-            <!-- Zora NFT link — Art の直下に配置（Art = Zora 出品作品のため） -->
-            <div class="mt-8 text-center reveal">
-                <a href="https://zora.co/@kutakuta1001" target="_blank" rel="noopener"
-                   class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-heading text-[11px] tracking-[3px] uppercase text-brand-sub hover:text-white">
-                    <svg class="w-4 h-4 opacity-60" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7 9l5 6 5-6" fill="none" stroke="#05050F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    View NFT Collection on Zora
-                    <svg class="w-3 h-3 opacity-50" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10L10 2M5 2h5v5"/></svg>
-                </a>
-            </div>
-        </div>
-
-        <!-- Music セクション -->
-        <div class="mb-10">
-            <div class="flex items-center gap-4 mb-8 reveal">
-                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Music</h3>
-                <div class="flex-1 h-px bg-white/10"></div>
-                <span class="font-heading text-[10px] tracking-[2px] text-white/20">Song-linked Visual</span>
-            </div>
-            <div id="visual-grid-music">
-            </div>
+        <!-- Non-symmetric grid: 2fr 1fr 1fr / 170px 170px — populated by JS -->
+        <div id="visual-grid"
+             class="reveal"
+             style="display:grid; gap:8px; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 170px 170px;">
         </div>
     </div>
 </section>
+
+<div class="max-w-[900px] mx-auto px-10"><hr class="page-rule"></div>
 
 <!-- =============================================
      07. BLOG
