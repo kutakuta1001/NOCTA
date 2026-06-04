@@ -221,10 +221,10 @@
             transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.3s ease, box-shadow 0.4s ease;
         }
         .service-card:hover { transform: translateY(-6px); }
-        .service-card.c-purple:hover { border-color: rgba(200,162,255,0.5); box-shadow: 0 0 60px rgba(200,162,255,0.18); }
-        .service-card.c-cyan:hover   { border-color: rgba(196,148,42,0.5);  box-shadow: 0 0 60px rgba(196,148,42,0.18); }
-        .service-card.c-pink:hover   { border-color: rgba(57,255,106,0.5);  box-shadow: 0 0 60px rgba(57,255,106,0.18); }
-        .service-card.c-gold:hover   { border-color: rgba(196,148,42,0.6);  box-shadow: 0 0 60px rgba(196,148,42,0.20); }
+        .service-card.c-purple:hover,
+        .service-card.c-cyan:hover,
+        .service-card.c-pink:hover,
+        .service-card.c-gold:hover { border-color: rgba(196,148,42,0.5); box-shadow: 0 0 60px rgba(196,148,42,0.18); }
 
         /* Top accent bar on card hover */
         .card-top-bar {
@@ -232,10 +232,10 @@
             opacity: 0; transition: opacity 0.3s ease;
         }
         .service-card:hover .card-top-bar { opacity: 1; }
-        .bar-purple { background: linear-gradient(90deg, transparent, #C8A2FF, transparent); }
-        .bar-cyan   { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
-        .bar-pink   { background: linear-gradient(90deg, transparent, #39FF6A, transparent); }
-        .bar-gold   { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
+        .bar-purple,
+        .bar-cyan,
+        .bar-pink,
+        .bar-gold { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
 
         /* Contact form */
         .form-field {
@@ -262,35 +262,35 @@
         /* Submit button */
         .btn-submit {
             width: 100%; padding: 16px;
-            background: linear-gradient(135deg, #C4942A, #C8A2FF, #39FF6A);
-            color: #fff; border: none; border-radius: 12px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
+            background: #C4942A;
+            color: #0A0906; border: none; border-radius: 6px;
+            font-family: 'Syne', sans-serif;
+            font-size: 13px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase;
             cursor: pointer; transition: all 0.3s ease;
-            box-shadow: 0 0 32px rgba(196,148,42,0.35), 0 0 20px rgba(200,162,255,0.2);
+            box-shadow: 0 0 32px rgba(196,148,42,0.35);
         }
         .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 60px rgba(196,148,42,0.5), 0 0 30px rgba(200,162,255,0.35);
+            transform: translateY(-1px);
+            box-shadow: 0 0 60px rgba(196,148,42,0.5);
         }
 
         /* CTA buttons */
         .btn-primary-cta {
             display: inline-flex; align-items: center; justify-content: center;
             padding: 15px 40px; border-radius: 9999px;
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Syne', sans-serif;
             font-size: 13px; font-weight: 700; letter-spacing: 1px;
             text-transform: uppercase;
             background: transparent;
-            color: #fff;
-            border: 2px solid #C8A2FF;
-            box-shadow: 0 0 30px rgba(200,162,255,0.35);
+            color: #F0EAD8;
+            border: 1px solid rgba(196,148,42,0.33);
             transition: all 0.3s ease;
         }
         .btn-primary-cta:hover {
-            background: #C8A2FF;
-            box-shadow: 0 0 60px rgba(200,162,255,0.6);
-            color: #05050F;
+            background: rgba(196,148,42,0.1);
+            border-color: #C4942A;
+            color: #C4942A;
             transform: translateY(-2px);
         }
         .btn-glass-cta {
@@ -361,7 +361,7 @@
         .brand-badge:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
         /* Vgreen glow */
-        .vgreen-glow { box-shadow: 0 0 40px rgba(57,255,106,0.35); }
+        .vgreen-glow { box-shadow: 0 0 40px rgba(196,148,42,0.35); }
 
         /* Floating star decoration */
         @keyframes starFloat {
@@ -377,50 +377,41 @@
         .star-float-3 { animation: starFloat  5s ease-in-out infinite; animation-delay: 3s; }
 
         /* Neon green text */
-        .text-vgreen { color: #39FF6A; }
+        .text-vgreen { color: #C4942A; }
         /* .text-sakura 削除済み → .text-vgreen を使用 */
 
         /* Vocaloid highlight bar */
         .vocaloid-bar {
             display: inline-block;
             padding: 2px 10px;
-            background: rgba(57,255,106,0.1);
-            border-left: 2px solid #39FF6A;
+            background: rgba(196,148,42,0.08);
+            border-left: 2px solid #C4942A;
             border-radius: 0 4px 4px 0;
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Syne', sans-serif;
             font-size: 11px; font-weight: 700;
             letter-spacing: 1px;
-            color: #39FF6A;
+            color: #C4942A;
         }
 
         /* Cute underline wave */
         .cute-underline {
             text-decoration: underline;
-            text-decoration-color: #39FF6A;
+            text-decoration-color: #C4942A;
             text-underline-offset: 4px;
             text-decoration-thickness: 2px;
         }
 
         /* Holographic shimmer on hero heading */
-        @keyframes shimmer {
-            0%   { background-position: -200% center; }
-            100% { background-position:  200% center; }
-        }
-        .shimmer-text {
-            background: linear-gradient(90deg, #C8A2FF, #39FF6A, #C4942A, #C8A2FF, #39FF6A);
-            background-size: 200% auto;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            animation: shimmer 6s linear infinite;
-        }
+        .shimmer-text { color: #F0EAD8; }
 
         /* Vocaloid card accent */
         .vocaloid-card-tag {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 9px; font-weight: 700;
             letter-spacing: 2px; text-transform: uppercase;
-            color: #39FF6A;
-            background: rgba(57,255,106,0.1);
-            border: 1px solid rgba(57,255,106,0.25);
+            color: #C4942A;
+            background: rgba(196,148,42,0.08);
+            border: 1px solid rgba(196,148,42,0.25);
             padding: 3px 10px; border-radius: 4px;
         }
 
