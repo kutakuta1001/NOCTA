@@ -43,28 +43,31 @@
         :root {
             --blur-glass:   blur(20px);
             --border-glass: 1px solid rgba(255,255,255,0.08);
-            --color-gold: #C4942A;
-            --color-lavender: #C8A2FF;
-            --color-vgreen: #39FF6A;
+            --color-gold:       #C4942A;
+            --color-cream:      #F0EAD8;
+            --color-warm-gray:  #7a6a50;
+            --color-warm-black: #0A0906;
+            --color-lavender:   #C4942A;
+            --color-vgreen:     #C4942A;
         }
 
-        * { scrollbar-width: thin; scrollbar-color: #39FF6A transparent; }
+        * { scrollbar-width: thin; scrollbar-color: #C4942A transparent; }
         *::-webkit-scrollbar { width: 4px; }
-        *::-webkit-scrollbar-thumb { background: #39FF6A; border-radius: 9999px; }
+        *::-webkit-scrollbar-thumb { background: #C4942A; border-radius: 9999px; }
         *::-webkit-scrollbar-track { background: transparent; }
 
-        body { background-color: #05050F; color: #F0F0F8; overflow-x: hidden; }
+        body { background-color: #0A0906; color: #F0EAD8; overflow-x: hidden; }
 
         /* Glass */
         .glass {
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: var(--blur-glass);
-            -webkit-backdrop-filter: var(--blur-glass);
-            border: var(--border-glass);
+            background: #0F0D0A;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border: 1px solid #221c10;
         }
         .glass-hover:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: rgba(255,255,255,0.14);
+            background: #141008;
+            border-color: rgba(196,148,42,0.2);
         }
 
         /* Gradient text */
@@ -246,9 +249,9 @@
             -webkit-appearance: none;
         }
         .form-field:focus {
-            border-color: #C8A2FF;
-            box-shadow: 0 0 0 3px rgba(200,162,255,0.14);
-            background: rgba(200,162,255,0.06);
+            border-color: #C4942A;
+            box-shadow: 0 0 0 3px rgba(196,148,42,0.14);
+            background: rgba(196,148,42,0.04);
         }
         .form-field::placeholder { color: rgba(255,255,255,0.18); }
         .form-field option { background: #1a1a2e; }
