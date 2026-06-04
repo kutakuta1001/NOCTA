@@ -57,7 +57,7 @@ const NOCTA_VISUALS_MUSIC = [ ... ];  // 楽曲連動ビジュアル
   zoraUrl: "https://zora.co/collect/[chain]:[contract]/[tokenId]",
   badge: "Works" | "Art" | "Music",
   badgeColorClass: "bg-amber-500/20 text-amber-400"       // Works
-               //  "bg-brand-secondary/20 text-brand-secondary"  // Art/Music
+               //  "bg-brand-gold/20 text-brand-gold"  // Art/Music
   descJa: "日本語説明文",
 }
 ```
