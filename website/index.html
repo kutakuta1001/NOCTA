@@ -72,16 +72,18 @@
 
         /* Gradient text */
         .text-gradient {
-            background: linear-gradient(135deg, #C8A2FF 0%, #39FF6A 45%, #C4942A 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: #F0EAD8;
+            background-clip: unset;
+            color: #F0EAD8;
         }
         .text-gradient-alt {
-            background: linear-gradient(90deg, #C4942A, #C8A2FF, #39FF6A);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: #C4942A;
+            background-clip: unset;
+            color: #C4942A;
         }
 
         /* Reveal */
@@ -133,10 +135,11 @@
             font-family: 'Bebas Neue', sans-serif;
             font-size: clamp(48px, 6vw, 72px);
             line-height: 1;
-            background: linear-gradient(135deg, #C4942A, #C8A2FF, #39FF6A);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            background: none;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: #C4942A;
+            background-clip: unset;
+            color: #C4942A;
         }
 
         /* Tag label */
@@ -155,16 +158,16 @@
         /* Filter pill */
         .filter-pill {
             padding: 9px 22px; border-radius: 9999px;
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Syne', sans-serif;
             font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
             cursor: pointer; transition: all 0.3s ease;
             border: 1px solid rgba(255,255,255,0.1);
-            color: #8A8A9E; background: transparent;
+            color: #7a6a50; background: transparent;
         }
         .filter-pill:hover, .filter-pill.active {
-            background: #39FF6A; color: #05050F;
-            border-color: #39FF6A;
-            box-shadow: 0 0 28px rgba(57,255,106,0.55);
+            background: #C4942A; color: #0A0906;
+            border-color: #C4942A;
+            box-shadow: 0 0 20px rgba(196,148,42,0.4);
         }
         /* Visual フィルターピル（Works の .filter-pill と独立） */
         .vfilter-pill {
@@ -182,8 +185,8 @@
             border: none;
         }
         .vfilter-pill:hover, .vfilter-pill.active {
-            background: rgba(200,162,255,0.12);
-            color: #C8A2FF;
+            background: rgba(196,148,42,0.12);
+            color: #C4942A;
         }
         /* .vfilter-pill は .vfilter-pill に統合済み */
 
