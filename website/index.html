@@ -99,13 +99,6 @@
         .reveal-delay-3 { transition-delay: 0.36s; }
         .reveal-delay-4 { transition-delay: 0.48s; }
 
-        /* Particle canvas */
-        #particle-canvas {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-        }
-
         /* Noise overlay */
         body::before {
             content: '';
@@ -122,13 +115,6 @@
             100% { transform: scaleY(0); transform-origin: bottom; }
         }
         .scroll-line { animation: scrollLine 2.2s ease-in-out infinite; }
-
-        /* Orbit rings */
-        @keyframes spinSlow  { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
-        @keyframes spinSlowR { from { transform: rotate(0deg); }   to { transform: rotate(-360deg); } }
-        .orbit-1 { animation: spinSlow  80s linear infinite; }
-        .orbit-2 { animation: spinSlowR 50s linear infinite; }
-        .orbit-3 { animation: spinSlow  30s linear infinite; }
 
         /* Count-up numbers */
         .stat-num {
@@ -531,9 +517,6 @@
      ============================================= -->
 <section id="hero" class="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
 
-    <!-- Particle canvas -->
-    <canvas id="particle-canvas"></canvas>
-
     <!-- SVG Waveform bg -->
     <div class="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none z-[1]">
         <svg class="w-full h-full" viewBox="0 0 1000 500" preserveAspectRatio="none">
@@ -731,11 +714,6 @@
                         <div class="w-32 h-32 rounded-full"
                              style="background: radial-gradient(circle, rgba(196,148,42,0.22), rgba(200,162,255,0.10) 50%, transparent 70%); filter: blur(30px);"></div>
                     </div>
-
-                    <!-- Orbit rings -->
-                    <div class="absolute inset-0 rounded-full border border-white/5 orbit-1"></div>
-                    <div class="absolute inset-6 rounded-full border border-brand-primary/15 orbit-2"></div>
-                    <div class="absolute inset-14 rounded-full border border-brand-secondary/15 orbit-3"></div>
 
                     <!-- SVG connecting lines & nodes -->
                     <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
@@ -1359,92 +1337,6 @@
 <script src="apps-data.js"></script>
 <script src="blog-data.js"></script>
 <script>
-/* ---- Particle Canvas ---- */
-(function () {
-    const canvas = document.getElementById('particle-canvas');
-    const ctx = canvas.getContext('2d');
-    let W, H, particles = [];
-    const COLS = ['rgba(57,255,106,', 'rgba(200,162,255,', 'rgba(196,148,42,'];
-
-    function resize() {
-        W = canvas.width  = canvas.offsetWidth;
-        H = canvas.height = canvas.offsetHeight;
-    }
-
-    function Particle() {
-        this.reset();
-    }
-    Particle.prototype.reset = function () {
-        this.x    = Math.random() * W;
-        this.y    = Math.random() * H;
-        this.r    = Math.random() * 1.6 + 0.3;
-        this.vx   = (Math.random() - 0.5) * 0.38;
-        this.vy   = (Math.random() - 0.5) * 0.38;
-        this.col  = COLS[Math.floor(Math.random() * COLS.length)];
-        this.a    = Math.random() * 0.55 + 0.1;
-        this.life = 0;
-        this.max  = Math.random() * 350 + 180;
-    };
-    Particle.prototype.update = function () {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.life++;
-        if (this.x < 0 || this.x > W || this.y < 0 || this.y > H || this.life > this.max) {
-            this.reset();
-        }
-    };
-    Particle.prototype.draw = function () {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-        ctx.fillStyle = this.col + this.a + ')';
-        ctx.fill();
-    };
-
-    function drawGrid() {
-        ctx.strokeStyle = 'rgba(196,148,42,0.035)';
-        ctx.lineWidth = 0.5;
-        const s = 70;
-        for (let x = 0; x < W; x += s) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-        }
-        for (let y = 0; y < H; y += s) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-        }
-    }
-
-    function drawLinks() {
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const d  = Math.sqrt(dx * dx + dy * dy);
-                if (d < 110) {
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = 'rgba(196,148,42,' + (0.08 * (1 - d / 110)) + ')';
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-                }
-            }
-        }
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, W, H);
-        drawGrid();
-        drawLinks();
-        particles.forEach(p => { p.update(); p.draw(); });
-        requestAnimationFrame(animate);
-    }
-
-    resize();
-    for (let i = 0; i < 110; i++) particles.push(new Particle());
-    animate();
-    window.addEventListener('resize', resize);
-})();
-
-
 /* ---- Navbar scroll ---- */
 (function () {
     const nav = document.getElementById('navbar');
