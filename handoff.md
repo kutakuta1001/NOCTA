@@ -16,3 +16,4 @@
 2026-06-04: frontend-designプラグインインストール完了。/lp-create Phase 3とwebsite/CLAUDE.mdに統合済み（LP新規作成・HP大幅改修時に自動発動）。次: 承認ゲート⑤（vocal_draft.svp確認）変わらず。
 2026-06-04: HP Phase B完了（CSS差し替え・EB Garamond・パーティクル削除）。ブラウンスカラーパレット #C4942A全適用・stats-bar/services非表示・古色（#39FF6A/#C8A2FF）CSS内削除完了。ブラウザ確認待ち → CEO承認後にPhase A（HTML簡略化）開始。
 2026-06-04: Phase A完了（HTML全面刷新・EB Garamond・パーティクル削除・Servicesセクション削除）。DESIGN.md・CLAUDE.md更新済み。次: ブラウザ確認 → git push でGitHub Pagesデプロイ。
+2026-06-04: HP追加改修完了。①旧レイアウト復元（WHERE AI MEETS SOUL構造を維持）②ヒーロー左揃えエディトリアルに刷新（EB Garamond・パーティクル/星/グロー全削除・背景「2026」装飾）③カラーパレット: ゴールド→バーミリオン→シルバー(#B8B4AE)×オフホワイト(#E8E0D0)に決定④ServicesセクションとLatest Newsセクション削除⑤Contact文言をAI時代の創造的プロジェクト向け日本語に更新。次: 引き続きデザイン微調整 or 承認ゲート⑤（vocal_draft.svp確認）。
