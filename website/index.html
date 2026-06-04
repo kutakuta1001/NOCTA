@@ -16,15 +16,15 @@
                 extend: {
                     colors: {
                         brand: {
-                            bg:        '#05050F',
-                            bg2:       '#0A0A16',
-                            primary:   '#C4942A',
-                            secondary: '#C4942A',
-                            highlight: '#E8D0FF',
-                            text:      '#E8E8F4',
-                            sub:       '#8A8A9E',
-                            gold:      '#C4942A',
-                            vgreen:    '#C4942A',
+                            bg:        '#0A0906',
+                            bg2:       '#0F0D0A',
+                            primary:   '#C43B1A',
+                            secondary: '#C43B1A',
+                            highlight: '#E8E0D0',
+                            text:      '#E8E0D0',
+                            sub:       '#9A8A7A',
+                            gold:      '#C43B1A',
+                            vgreen:    '#C43B1A',
                         }
                     },
                     fontFamily: {
@@ -35,11 +35,11 @@
                         display: ['Bebas Neue', 'sans-serif'],
                     },
                     boxShadow: {
-                        'glow-purple': '0 0 50px rgba(196,148,42,0.35)',
-                        'glow-cyan':   '0 0 50px rgba(196,148,42,0.30)',
+                        'glow-purple': '0 0 50px rgba(196,59,26,0.35)',
+                        'glow-cyan':   '0 0 50px rgba(196,59,26,0.30)',
                         'glow-pink':   '0 0 50px rgba(232,208,255,0.30)',
-                        'glow-gold':   '0 0 50px rgba(196,148,42,0.40)',
-                        'glow-vgreen': '0 0 50px rgba(196,148,42,0.45)',
+                        'glow-gold':   '0 0 50px rgba(196,59,26,0.40)',
+                        'glow-vgreen': '0 0 50px rgba(196,59,26,0.45)',
                     }
                 }
             }
@@ -50,14 +50,14 @@
         :root {
             --blur-glass:   blur(20px);
             --border-glass: 1px solid rgba(255,255,255,0.08);
-            --color-gold: #C4942A;
-            --color-lavender: #C4942A;
-            --color-vgreen: #C4942A;
+            --color-gold: #C43B1A;
+            --color-lavender: #C43B1A;
+            --color-vgreen: #C43B1A;
         }
 
-        * { scrollbar-width: thin; scrollbar-color: #C4942A transparent; }
+        * { scrollbar-width: thin; scrollbar-color: #C43B1A transparent; }
         *::-webkit-scrollbar { width: 4px; }
-        *::-webkit-scrollbar-thumb { background: #C4942A; border-radius: 9999px; }
+        *::-webkit-scrollbar-thumb { background: #C43B1A; border-radius: 9999px; }
         *::-webkit-scrollbar-track { background: transparent; }
 
         body { background-color: #05050F; color: #F0F0F8; overflow-x: hidden; }
@@ -76,13 +76,13 @@
 
         /* Gradient text */
         .text-gradient {
-            background: linear-gradient(135deg, #C4942A 0%, #C4942A 45%, #C4942A 100%);
+            background: linear-gradient(135deg, #C43B1A 0%, #C43B1A 45%, #C43B1A 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .text-gradient-alt {
-            background: linear-gradient(90deg, #C4942A, #C4942A, #C4942A);
+            background: linear-gradient(90deg, #C43B1A, #C43B1A, #C43B1A);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -137,7 +137,7 @@
             font-family: 'Bebas Neue', sans-serif;
             font-size: clamp(48px, 6vw, 72px);
             line-height: 1;
-            background: linear-gradient(135deg, #C4942A, #C4942A, #C4942A);
+            background: linear-gradient(135deg, #C43B1A, #C43B1A, #C43B1A);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -149,11 +149,11 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 11px; font-weight: 600;
             letter-spacing: 3px; text-transform: uppercase;
-            color: #C4942A; margin-bottom: 20px;
+            color: #C43B1A; margin-bottom: 20px;
         }
         .section-tag::before {
             content: ''; width: 24px; height: 1px;
-            background: #C4942A; flex-shrink: 0;
+            background: #C43B1A; flex-shrink: 0;
         }
 
         /* Filter pill */
@@ -166,9 +166,9 @@
             color: #8A8A9E; background: transparent;
         }
         .filter-pill:hover, .filter-pill.active {
-            background: #C4942A; color: #05050F;
-            border-color: #C4942A;
-            box-shadow: 0 0 28px rgba(196,148,42,0.55);
+            background: #C43B1A; color: #05050F;
+            border-color: #C43B1A;
+            box-shadow: 0 0 28px rgba(196,59,26,0.55);
         }
         /* Visual フィルターピル（Works の .filter-pill と独立） */
         .vfilter-pill {
@@ -186,14 +186,14 @@
             border: none;
         }
         .vfilter-pill:hover, .vfilter-pill.active {
-            background: rgba(196,148,42,0.12);
-            color: #C4942A;
+            background: rgba(196,59,26,0.12);
+            color: #C43B1A;
         }
         /* .vfilter-pill は .vfilter-pill に統合済み */
 
         /* Work card hover */
         .work-card { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease; }
-        .work-card:hover { transform: translateY(-8px); box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 40px rgba(196,148,42,0.16); }
+        .work-card:hover { transform: translateY(-8px); box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 40px rgba(196,59,26,0.16); }
         .work-card .thumb-overlay {
             opacity: 0; transition: opacity 0.3s ease;
             position: absolute; inset: 0;
@@ -222,10 +222,10 @@
             transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.3s ease, box-shadow 0.4s ease;
         }
         .service-card:hover { transform: translateY(-6px); }
-        .service-card.c-purple:hover { border-color: rgba(196,148,42,0.5); box-shadow: 0 0 60px rgba(196,148,42,0.18); }
-        .service-card.c-cyan:hover   { border-color: rgba(196,148,42,0.5);  box-shadow: 0 0 60px rgba(196,148,42,0.18); }
-        .service-card.c-pink:hover   { border-color: rgba(196,148,42,0.5);  box-shadow: 0 0 60px rgba(196,148,42,0.18); }
-        .service-card.c-gold:hover   { border-color: rgba(196,148,42,0.6);  box-shadow: 0 0 60px rgba(196,148,42,0.20); }
+        .service-card.c-purple:hover { border-color: rgba(196,59,26,0.5); box-shadow: 0 0 60px rgba(196,59,26,0.18); }
+        .service-card.c-cyan:hover   { border-color: rgba(196,59,26,0.5);  box-shadow: 0 0 60px rgba(196,59,26,0.18); }
+        .service-card.c-pink:hover   { border-color: rgba(196,59,26,0.5);  box-shadow: 0 0 60px rgba(196,59,26,0.18); }
+        .service-card.c-gold:hover   { border-color: rgba(196,59,26,0.6);  box-shadow: 0 0 60px rgba(196,59,26,0.20); }
 
         /* Top accent bar on card hover */
         .card-top-bar {
@@ -233,10 +233,10 @@
             opacity: 0; transition: opacity 0.3s ease;
         }
         .service-card:hover .card-top-bar { opacity: 1; }
-        .bar-purple { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
-        .bar-cyan   { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
-        .bar-pink   { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
-        .bar-gold   { background: linear-gradient(90deg, transparent, #C4942A, transparent); }
+        .bar-purple { background: linear-gradient(90deg, transparent, #C43B1A, transparent); }
+        .bar-cyan   { background: linear-gradient(90deg, transparent, #C43B1A, transparent); }
+        .bar-pink   { background: linear-gradient(90deg, transparent, #C43B1A, transparent); }
+        .bar-gold   { background: linear-gradient(90deg, transparent, #C43B1A, transparent); }
 
         /* Contact form */
         .form-field {
@@ -253,9 +253,9 @@
             -webkit-appearance: none;
         }
         .form-field:focus {
-            border-color: #C4942A;
-            box-shadow: 0 0 0 3px rgba(196,148,42,0.14);
-            background: rgba(196,148,42,0.06);
+            border-color: #C43B1A;
+            box-shadow: 0 0 0 3px rgba(196,59,26,0.14);
+            background: rgba(196,59,26,0.06);
         }
         .form-field::placeholder { color: rgba(255,255,255,0.18); }
         .form-field option { background: #1a1a2e; }
@@ -263,16 +263,16 @@
         /* Submit button */
         .btn-submit {
             width: 100%; padding: 16px;
-            background: linear-gradient(135deg, #C4942A, #C4942A, #C4942A);
+            background: linear-gradient(135deg, #C43B1A, #C43B1A, #C43B1A);
             color: #fff; border: none; border-radius: 12px;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
             cursor: pointer; transition: all 0.3s ease;
-            box-shadow: 0 0 32px rgba(196,148,42,0.35), 0 0 20px rgba(196,148,42,0.2);
+            box-shadow: 0 0 32px rgba(196,59,26,0.35), 0 0 20px rgba(196,59,26,0.2);
         }
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 60px rgba(196,148,42,0.5), 0 0 30px rgba(196,148,42,0.35);
+            box-shadow: 0 0 60px rgba(196,59,26,0.5), 0 0 30px rgba(196,59,26,0.35);
         }
 
         /* CTA buttons */
@@ -283,14 +283,14 @@
             font-size: 10px; font-weight: 700; letter-spacing: 2px;
             text-transform: uppercase;
             background: transparent;
-            color: #C4942A;
-            border: 1px solid rgba(196,148,42,0.5);
+            color: #C43B1A;
+            border: 1px solid rgba(196,59,26,0.5);
             transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
         .btn-primary-cta:hover {
-            background: #C4942A;
+            background: #C43B1A;
             color: #0A0906;
-            border-color: #C4942A;
+            border-color: #C43B1A;
         }
         .btn-glass-cta {
             display: inline-flex; align-items: center; justify-content: center;
@@ -305,7 +305,7 @@
         }
         .btn-glass-cta:hover {
             border-color: rgba(240,234,216,0.3);
-            color: #F0EAD8;
+            color: #E8E0D0;
         }
 
         /* Thumb gradients */
@@ -358,7 +358,7 @@
         .brand-badge:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
         /* Vgreen glow */
-        .vgreen-glow { box-shadow: 0 0 40px rgba(196,148,42,0.35); }
+        .vgreen-glow { box-shadow: 0 0 40px rgba(196,59,26,0.35); }
 
         /* Floating star decoration */
         @keyframes starFloat {
@@ -374,26 +374,26 @@
         .star-float-3 { animation: starFloat  5s ease-in-out infinite; animation-delay: 3s; }
 
         /* Neon green text */
-        .text-vgreen { color: #C4942A; }
+        .text-vgreen { color: #C43B1A; }
         /* .text-sakura 削除済み → .text-vgreen を使用 */
 
         /* Vocaloid highlight bar */
         .vocaloid-bar {
             display: inline-block;
             padding: 2px 10px;
-            background: rgba(196,148,42,0.1);
-            border-left: 2px solid #C4942A;
+            background: rgba(196,59,26,0.1);
+            border-left: 2px solid #C43B1A;
             border-radius: 0 4px 4px 0;
             font-family: 'Space Grotesk', sans-serif;
             font-size: 11px; font-weight: 700;
             letter-spacing: 1px;
-            color: #C4942A;
+            color: #C43B1A;
         }
 
         /* Cute underline wave */
         .cute-underline {
             text-decoration: underline;
-            text-decoration-color: #C4942A;
+            text-decoration-color: #C43B1A;
             text-underline-offset: 4px;
             text-decoration-thickness: 2px;
         }
@@ -404,7 +404,7 @@
             100% { background-position:  200% center; }
         }
         .shimmer-text {
-            background: linear-gradient(90deg, #C4942A, #C4942A, #C4942A, #C4942A, #C4942A);
+            background: linear-gradient(90deg, #C43B1A, #C43B1A, #C43B1A, #C43B1A, #C43B1A);
             background-size: 200% auto;
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
             animation: shimmer 6s linear infinite;
@@ -415,9 +415,9 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 9px; font-weight: 700;
             letter-spacing: 2px; text-transform: uppercase;
-            color: #C4942A;
-            background: rgba(196,148,42,0.1);
-            border: 1px solid rgba(196,148,42,0.25);
+            color: #C43B1A;
+            background: rgba(196,59,26,0.1);
+            border: 1px solid rgba(196,59,26,0.25);
             padding: 3px 10px; border-radius: 4px;
         }
 
@@ -543,18 +543,18 @@
 
         <!-- Eyebrow -->
         <div class="flex items-center gap-4 mb-10 reveal active">
-            <div style="width:36px; height:1px; background:#C4942A; flex-shrink:0;"></div>
-            <span style="font-family:'Syne',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#C4942A;">Music Entertainment — Est. 2026</span>
+            <div style="width:36px; height:1px; background:#C43B1A; flex-shrink:0;"></div>
+            <span style="font-family:'Syne',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#C43B1A;">Music Entertainment — Est. 2026</span>
         </div>
 
         <!-- Heading: 3 lines, staggered reveal -->
-        <h1 class="reveal reveal-delay-1" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:0.92; letter-spacing:-1px; color:#F0EAD8; margin-bottom:6px;">
+        <h1 class="reveal reveal-delay-1" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:0.92; letter-spacing:-1px; color:#E8E0D0; margin-bottom:6px;">
             これからの
         </h1>
-        <h1 class="reveal reveal-delay-2" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:0.92; letter-spacing:-1px; color:#F0EAD8; margin-bottom:6px;">
+        <h1 class="reveal reveal-delay-2" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:0.92; letter-spacing:-1px; color:#E8E0D0; margin-bottom:6px;">
             人間の
         </h1>
-        <h1 class="reveal reveal-delay-3" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; font-style:italic; line-height:0.92; letter-spacing:-1px; color:#C4942A; margin-bottom:36px;">
+        <h1 class="reveal reveal-delay-3" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; font-style:italic; line-height:0.92; letter-spacing:-1px; color:#C43B1A; margin-bottom:36px;">
             遊び方。
         </h1>
 
@@ -623,28 +623,28 @@
 
                 <div class="flex flex-col gap-4 reveal reveal-delay-3">
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
-                        <div class="w-px h-12 bg-gradient-to-b from-[#C4942A] to-transparent flex-shrink-0 mt-1"></div>
+                        <div class="w-px h-12 bg-gradient-to-b from-[#C43B1A] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
                             <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v1.title">革新（Innovation）</div>
                             <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v1.desc">テクノロジーの力で、音楽業界の常識を更新し続ける。</div>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
-                        <div class="w-px h-12 bg-gradient-to-b from-[#C4942A] to-transparent flex-shrink-0 mt-1"></div>
+                        <div class="w-px h-12 bg-gradient-to-b from-[#C43B1A] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
                             <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v2.title">創造（Creation）</div>
                             <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v2.desc">人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。</div>
                         </div>
                     </div>
-                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group" style="border-color:rgba(196,148,42,0.15);">
-                        <div class="w-px h-12 bg-gradient-to-b from-[#C4942A] to-transparent flex-shrink-0 mt-1"></div>
+                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group" style="border-color:rgba(196,59,26,0.15);">
+                        <div class="w-px h-12 bg-gradient-to-b from-[#C43B1A] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-[#C4942A] transition-colors duration-300" data-i18n="about.v3.title">歌声合成（Synthesis）</div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-[#C43B1A] transition-colors duration-300" data-i18n="about.v3.title">歌声合成（Synthesis）</div>
                             <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v3.desc">ボーカロイドをはじめとするAI歌声技術で、唯一無二の音楽表現を実現。</div>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
-                        <div class="w-px h-12 bg-gradient-to-b from-[#C4942A] to-transparent flex-shrink-0 mt-1"></div>
+                        <div class="w-px h-12 bg-gradient-to-b from-[#C43B1A] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
                             <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v4.title">解放（Freedom）</div>
                             <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v4.desc">規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。</div>
@@ -659,7 +659,7 @@
                     <!-- Glow center -->
                     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <div class="w-32 h-32 rounded-full"
-                             style="background: radial-gradient(circle, rgba(196,148,42,0.22), rgba(196,148,42,0.10) 50%, transparent 70%); filter: blur(30px);"></div>
+                             style="background: radial-gradient(circle, rgba(196,59,26,0.22), rgba(196,59,26,0.10) 50%, transparent 70%); filter: blur(30px);"></div>
                     </div>
 
                     <!-- Orbit rings -->
@@ -673,30 +673,30 @@
                         <circle cx="50" cy="50" r="38" fill="none"
                                 stroke="rgba(255,255,255,0.06)" stroke-dasharray="2 5"/>
                         <!-- Lines center → nodes -->
-                        <line x1="50" y1="50" x2="50" y2="12"  stroke="#C4942A" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="77" y2="23"  stroke="#C4942A" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="88" y2="50"  stroke="#C4942A" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="77" y2="77"  stroke="#C4942A" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="50" y2="88"  stroke="#C4942A" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="23" y2="77"  stroke="#C4942A" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="12" y2="50"  stroke="#C4942A" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="23" y2="23"  stroke="#C4942A" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="50" y2="12"  stroke="#C43B1A" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="77" y2="23"  stroke="#C43B1A" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="88" y2="50"  stroke="#C43B1A" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="77" y2="77"  stroke="#C43B1A" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="50" y2="88"  stroke="#C43B1A" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="23" y2="77"  stroke="#C43B1A" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="12" y2="50"  stroke="#C43B1A" stroke-width="0.4" opacity="0.6"/>
+                        <line x1="50" y1="50" x2="23" y2="23"  stroke="#C43B1A" stroke-width="0.4" opacity="0.6"/>
                         <!-- Nodes -->
-                        <circle cx="50" cy="12" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.0s" repeatCount="indefinite"/></circle>
-                        <circle cx="77" cy="23" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.4s" repeatCount="indefinite"/></circle>
-                        <circle cx="88" cy="50" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
-                        <circle cx="77" cy="77" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.2s" repeatCount="indefinite"/></circle>
-                        <circle cx="50" cy="88" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" repeatCount="indefinite"/></circle>
-                        <circle cx="23" cy="77" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.8s" repeatCount="indefinite"/></circle>
-                        <circle cx="12" cy="50" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.1s" repeatCount="indefinite"/></circle>
-                        <circle cx="23" cy="23" r="2.5" fill="#C4942A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.9s" repeatCount="indefinite"/></circle>
+                        <circle cx="50" cy="12" r="2.5" fill="#C43B1A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.0s" repeatCount="indefinite"/></circle>
+                        <circle cx="77" cy="23" r="2.5" fill="#C43B1A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.4s" repeatCount="indefinite"/></circle>
+                        <circle cx="88" cy="50" r="2.5" fill="#C43B1A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
+                        <circle cx="77" cy="77" r="2.5" fill="#C43B1A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.2s" repeatCount="indefinite"/></circle>
+                        <circle cx="50" cy="88" r="2.5" fill="#C43B1A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" repeatCount="indefinite"/></circle>
+                        <circle cx="23" cy="77" r="2.5" fill="#C43B1A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.8s" repeatCount="indefinite"/></circle>
+                        <circle cx="12" cy="50" r="2.5" fill="#C43B1A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.1s" repeatCount="indefinite"/></circle>
+                        <circle cx="23" cy="23" r="2.5" fill="#C43B1A" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.9s" repeatCount="indefinite"/></circle>
                     </svg>
 
                     <!-- Center node -->
                     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                                 w-20 h-20 rounded-full border-2 border-brand-primary
                                 bg-brand-bg flex flex-col items-center justify-center z-20"
-                         style="box-shadow: 0 0 40px rgba(196,148,42,0.45), 0 0 20px rgba(196,148,42,0.3);">
+                         style="box-shadow: 0 0 40px rgba(196,59,26,0.45), 0 0 20px rgba(196,59,26,0.3);">
                         <span class="font-display text-[22px] leading-none text-gradient">SOUL</span>
                     </div>
 
@@ -784,7 +784,7 @@
             <div class="service-card c-purple glass rounded-2xl p-8 border border-white/5 relative overflow-hidden reveal">
                 <div class="card-top-bar bar-purple"></div>
                 <div class="mb-6">
-                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C4942A">01</div>
+                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C43B1A">01</div>
                     <h3 class="font-heading font-bold text-[22px] text-white mb-3" data-i18n="services.s1.title">楽曲制作</h3>
                     <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5" data-i18n-html="services.s1.desc">
                         トレンド分析から作曲・編曲・歌詞制作まで。
@@ -804,7 +804,7 @@
             <div class="service-card c-cyan glass rounded-2xl p-8 border border-white/5 relative overflow-hidden reveal reveal-delay-1">
                 <div class="card-top-bar bar-cyan"></div>
                 <div class="mb-6">
-                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C4942A">02</div>
+                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C43B1A">02</div>
                     <h3 class="font-heading font-bold text-[22px] text-white mb-3" data-i18n="services.s2.title">PV・映像制作</h3>
                     <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5" data-i18n-html="services.s2.desc">
                         世界観コンセプトの設計から絵コンテ、
@@ -824,7 +824,7 @@
             <div class="service-card c-pink glass rounded-2xl p-8 border border-white/5 relative overflow-hidden reveal reveal-delay-2">
                 <div class="card-top-bar bar-pink"></div>
                 <div class="mb-6">
-                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C4942A">03</div>
+                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C43B1A">03</div>
                     <h3 class="font-heading font-bold text-[22px] text-white mb-3" data-i18n="services.s3.title">デジタルマーケティング</h3>
                     <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5" data-i18n-html="services.s3.desc">
                         X・Instagram・TikTok・YouTubeの各プラットフォームに
@@ -844,7 +844,7 @@
             <div class="service-card c-gold glass rounded-2xl p-8 border border-white/5 relative overflow-hidden reveal reveal-delay-3">
                 <div class="card-top-bar bar-gold"></div>
                 <div class="mb-6">
-                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C4942A">04</div>
+                    <div class="font-heading font-bold text-[11px] tracking-[2px] uppercase mb-3" style="color:#C43B1A">04</div>
                     <h3 class="font-heading font-bold text-[22px] text-white mb-3" data-i18n="services.s4.title">PR・メディア展開</h3>
                     <p class="font-jp text-brand-sub text-[14px] leading-[2] mb-5" data-i18n-html="services.s4.desc">
                         プレスリリース作成からメディアリスト構築、
@@ -978,7 +978,7 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0F]/90 to-transparent"></div>
                 </div>
                 <div class="p-8">
-                    <div class="font-heading text-[11px] font-semibold tracking-[2px] mb-3" style="color:#C4942A">2026.03.21</div>
+                    <div class="font-heading text-[11px] font-semibold tracking-[2px] mb-3" style="color:#C43B1A">2026.03.21</div>
                     <h3 class="font-heading font-bold text-[20px] text-white leading-snug mb-3" data-i18n-html="news.featured.title">
                         音楽エンタメカンパニー、正式始動。<br>
                         楽曲制作からPR展開まで一気通貫サービスを開始。
@@ -994,27 +994,27 @@
             <div class="flex flex-col gap-4 reveal reveal-delay-1">
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
-                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.03.15</div>
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C43B1A">2026.03.15</div>
                     <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n1">第1弾楽曲「Neon Cascade」のPV映像が完成</div>
                 </div>
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
-                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.02.28</div>
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C43B1A">2026.02.28</div>
                     <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n2">タイアップ・コラボ依頼の受付を開始しました</div>
                 </div>
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
-                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.02.10</div>
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C43B1A">2026.02.10</div>
                     <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n3">創業期の制作プロセスについて、ブログを公開</div>
                 </div>
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
-                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.01.20</div>
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C43B1A">2026.01.20</div>
                     <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n4">メディア各社向けのプレス資料を公開</div>
                 </div>
                 <div class="glass rounded-xl p-5 border border-white/5 cursor-pointer
                             transition-all duration-300 hover:translate-x-1.5 hover:bg-white/5 hover:border-white/10">
-                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C4942A">2026.01.05</div>
+                    <div class="font-heading text-[10px] tracking-wider mb-2" style="color:#C43B1A">2026.01.05</div>
                     <div class="font-heading font-semibold text-[14px] text-white leading-snug" data-i18n="news.n5">ブランドビジュアルアイデンティティを策定・公開</div>
                 </div>
             </div>
@@ -1031,7 +1031,7 @@
 
     <!-- Glow bg -->
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none"
-         style="background:radial-gradient(circle, rgba(196,148,42,0.07) 0%, transparent 70%); filter:blur(60px);"></div>
+         style="background:radial-gradient(circle, rgba(196,59,26,0.07) 0%, transparent 70%); filter:blur(60px);"></div>
 
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8 relative z-10">
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-20 items-start">
@@ -1191,7 +1191,7 @@
 
         <div class="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="font-heading text-[11px] text-brand-sub tracking-wide">✦ © 2026 NOCTA. All rights reserved.</div>
-            <div class="font-heading text-[11px] text-brand-sub tracking-wide" style="color:#C4942A">♪ Music × Creativity × VOCALOID × Soul ♪</div>
+            <div class="font-heading text-[11px] text-brand-sub tracking-wide" style="color:#C43B1A">♪ Music × Creativity × VOCALOID × Soul ♪</div>
         </div>
 
     </div>
@@ -1259,8 +1259,8 @@
                      class="w-full aspect-video rounded-2xl object-cover" style="display:none">
                 <div id="app-modal-thumb" class="thumb-1 w-full aspect-video rounded-2xl flex items-center justify-center">
                     <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-                        <circle cx="24" cy="24" r="22" stroke="rgba(196,148,42,0.35)" stroke-width="1"/>
-                        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(196,148,42,0.55)"/>
+                        <circle cx="24" cy="24" r="22" stroke="rgba(196,59,26,0.35)" stroke-width="1"/>
+                        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(196,59,26,0.55)"/>
                     </svg>
                 </div>
                 <div class="mt-4">
@@ -1393,8 +1393,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             '  <div class="relative aspect-video overflow-hidden">',
             '    <div class="' + w.thumbClass + ' w-full h-full flex items-center justify-center">',
             '      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">',
-            '        <circle cx="24" cy="24" r="22" stroke="rgba(196,148,42,0.35)" stroke-width="1"/>',
-            '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(196,148,42,0.55)"/>',
+            '        <circle cx="24" cy="24" r="22" stroke="rgba(196,59,26,0.35)" stroke-width="1"/>',
+            '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(196,59,26,0.55)"/>',
             '      </svg>',
             '    </div>',
             hasVideo
@@ -1565,8 +1565,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                 '  <div class="relative aspect-video overflow-hidden">',
                 '    <div class="' + a.thumbClass + ' w-full h-full flex items-center justify-center">',
                 '      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">',
-                '        <circle cx="24" cy="24" r="22" stroke="rgba(196,148,42,0.35)" stroke-width="1"/>',
-                '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(196,148,42,0.55)"/>',
+                '        <circle cx="24" cy="24" r="22" stroke="rgba(196,59,26,0.35)" stroke-width="1"/>',
+                '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(196,59,26,0.55)"/>',
                 '      </svg>',
                 '    </div>',
                 a.imgUrl ? '    <img src="' + a.imgUrl + '" alt="' + a.title.replace(/"/g, '&quot;') + '" loading="lazy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.style.display=\'none\'">' : '',
@@ -1771,7 +1771,7 @@ if (noctaForm) {
         const message = formData.get('message') || '';
         if (!name.trim() || !email.trim() || !message.trim()) {
             btn.textContent = '必須項目を入力してください';
-            btn.style.background = 'linear-gradient(135deg,#C4942A,#8b6914)';
+            btn.style.background = 'linear-gradient(135deg,#C43B1A,#8b6914)';
             setTimeout(() => {
                 btn.textContent = '送信する';
                 btn.style.background = '';
@@ -1793,9 +1793,9 @@ if (noctaForm) {
             if (response.ok) {
                 // 送信成功
                 btn.textContent = '✦ 送信完了しました';
-                btn.style.background = 'linear-gradient(135deg,#C4942A,#00b894)';
-                btn.style.color = '#05050F';
-                btn.style.boxShadow = '0 0 40px rgba(196,148,42,0.5)';
+                btn.style.background = 'linear-gradient(135deg,#C43B1A,#00b894)';
+                btn.style.color = '#0A0906';
+                btn.style.boxShadow = '0 0 40px rgba(196,59,26,0.5)';
                 btn.style.opacity = '1';
                 noctaForm.reset();
                 setTimeout(() => {
