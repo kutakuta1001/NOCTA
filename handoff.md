@@ -15,3 +15,4 @@
 2026-05-29: ツール整備デー。①Opus 4.8採用・全CLAUDE.md更新完了 ②ai-briefing.md新設（他セッション引き継ぎ用）③~/.claude/references/model-lineup.md新設（モデル棲み分けグローバル資料）④/model-reviewスキル新設（Claude+OpenAI両対応・weekly-check Step Eに組み込み済み）⑤/model-review実行→Opus 4.8有料先行確認・GPT-5.5 API提供開始・rev.2更新⑥Typelessインストール・音声入力でClaude Code運用開始。NuWordフェーズは変わらず: 次: 承認ゲート⑤（vocal_draft.svp確認）。
 2026-06-04: frontend-designプラグインインストール完了。/lp-create Phase 3とwebsite/CLAUDE.mdに統合済み（LP新規作成・HP大幅改修時に自動発動）。次: 承認ゲート⑤（vocal_draft.svp確認）変わらず。
 2026-06-04: HP Phase B完了（CSS差し替え・EB Garamond・パーティクル削除）。ブラウンスカラーパレット #C4942A全適用・stats-bar/services非表示・古色（#39FF6A/#C8A2FF）CSS内削除完了。ブラウザ確認待ち → CEO承認後にPhase A（HTML簡略化）開始。
+2026-06-04: Phase A完了（HTML全面刷新・EB Garamond・パーティクル削除・Servicesセクション削除）。DESIGN.md・CLAUDE.md更新済み。次: ブラウザ確認 → git push でGitHub Pagesデプロイ。

@@ -112,8 +112,30 @@ const NOCTA_APPS = [ ... ];
 
 - CSSフレームワーク: Tailwind CSS（CDN）
 - フォント: `font-display`（見出し）/ `font-heading`（小見出し）/ `font-jp`（日本語本文）
-- ブランドカラー: `text-brand-secondary`（グリーン系アクセント）
+- ブランドカラー: `text-brand-gold`（ゴールド #C4942A）
 - カードの画像比率: `aspect-[3/4]`（縦長・Visualカード）/ `aspect-video`（横長・他カード）
 - Visualセクションのバッジ色:
   - Works: `bg-amber-500/20 text-amber-400`
-  - Art / Music: `bg-brand-secondary/20 text-brand-secondary`
+  - Art / Music: `bg-brand-gold/20 text-brand-gold`（旧: `bg-brand-secondary/20 text-brand-secondary`）
+
+## フロントエンドデザイン強化（frontend-design スキル）
+
+新しいHTMLページを作成・大幅改修するときは、HTML生成前に `frontend-design:frontend-design` スキルを呼び出す。
+
+**呼び出すべき場面:**
+- 楽曲LP・プロダクトLP の新規作成（`/lp-create` が自動で呼び出す）
+- ブログ記事ページの新規作成
+- `index.html` のセクション大幅追加・リデザイン
+
+**NOCTA共通のコンテキスト（毎回渡す）:**
+```
+Tone: editorial serif-led dark
+Constraints: Tailwind CSS CDN, relative paths, EB Garamond/Syne/Bebas Neue fonts
+Background: #0A0906 dark base, warm cream accents (#F0EAD8)
+Accent: brand-gold gold (#C4942A)
+```
+
+**禁止パターン（スキルで回避する「AI スロップ」）:**
+- Inter フォント + 紫グラデーション + 白背景の組み合わせ
+- 対称的な均等グリッドのみのレイアウト
+- 装飾ゼロのフラットカード羅列
