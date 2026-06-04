@@ -569,18 +569,14 @@
      ============================================= -->
 <section id="contact" class="py-32 relative z-10 overflow-hidden">
 
-    <!-- Glow bg -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none"
-         style="background:radial-gradient(circle, rgba(200,162,255,0.07) 0%, transparent 70%); filter:blur(60px);"></div>
-
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8 relative z-10">
         <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-20 items-start">
 
             <!-- Info -->
             <div>
                 <p class="section-tag reveal">Contact</p>
-                <h2 class="font-jp text-[clamp(30px,4.5vw,48px)] font-bold text-white leading-tight mb-5 reveal reveal-delay-1" data-i18n-html="contact.h2">
-                    一緒に、<span class="text-gradient">未来の音楽</span>を<br>作りませんか
+                <h2 class="font-body text-[clamp(26px,4vw,40px)] font-semibold text-brand-text leading-tight mb-5 reveal reveal-delay-1">
+                    一緒に、<span class="text-[#C4942A] italic">音楽</span>を<br>作りませんか
                 </h2>
                 <p class="font-jp text-brand-sub text-[14px] leading-[2.2] mb-10 reveal reveal-delay-2" data-i18n-html="contact.subtitle">
                     楽曲制作・PV制作・マーケティング・PRなど、<br>
@@ -588,8 +584,7 @@
                 </p>
 
                 <div class="flex flex-col gap-3 reveal reveal-delay-3">
-                    <!-- TODO: href に X アカウント URL を設定 例: https://x.com/nocta_music -->
-                    <a href="#" class="social-link">
+                    <a href="https://x.com/nocta_music" target="_blank" rel="noopener" class="social-link">
                         <div class="w-8 flex-shrink-0 flex items-center justify-center">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="#F0F0F8">
                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -678,62 +673,28 @@
 <!-- =============================================
      FOOTER
      ============================================= -->
-<footer class="border-t border-white/5 bg-[#05050F] py-16">
-    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
-
-        <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-14">
-            <div>
-                <div class="font-brand text-2xl tracking-[6px] text-white font-extrabold mb-4">NOCTA</div>
-                <p class="font-jp text-brand-sub text-[13px] leading-relaxed max-w-xs" data-i18n-html="footer.tagline">
-                    AIと人間の感性が融合する、<br>
-                    新しい音楽エンタメカンパニー。<br>
-                    あなたのビジョンを現実にします。
-                </p>
+<footer>
+    <div class="max-w-[900px] mx-auto px-10 py-12">
+        <div class="flex justify-between items-end mb-7">
+            <div class="font-body font-semibold text-[22px] text-brand-text leading-snug">
+                遊び方は、<br>
+                <em class="text-[#C4942A] not-italic italic">自分で決める。</em>
             </div>
-            <div>
-                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Services</div>
-                <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
-                    <a href="#services" class="hover:text-white transition-colors duration-200" data-i18n="footer.s1">楽曲制作</a>
-                    <a href="#services" class="hover:text-white transition-colors duration-200" data-i18n="footer.s2">PV・映像制作</a>
-                    <a href="#services" class="hover:text-white transition-colors duration-200" data-i18n="footer.s3">デジタルMKT</a>
-                    <a href="#services" class="hover:text-white transition-colors duration-200" data-i18n="footer.s4">PR支援</a>
-                </div>
-            </div>
-            <div>
-                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Company</div>
-                <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
-                    <a href="#about"   class="hover:text-white transition-colors duration-200">About</a>
-                    <a href="#works"   class="hover:text-white transition-colors duration-200">Works</a>
-                    <a href="#visual"  class="hover:text-white transition-colors duration-200">Visual</a>
-                    <a href="#apps"    class="hover:text-white transition-colors duration-200">Tools</a>
-                    <a href="#blog" class="hover:text-white transition-colors duration-200">Blog</a>
-                    <a href="#news"    class="hover:text-white transition-colors duration-200">News</a>
-                    <a href="#contact" class="hover:text-white transition-colors duration-200">Contact</a>
-                </div>
-            </div>
-            <div>
-                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">The First Flower</div>
-                <div class="flex flex-col gap-3 font-jp text-[13px]">
-                    <a href="the-first-flower/index.html" class="text-[#c4942a]/70 hover:text-[#c4942a] transition-colors duration-200" data-i18n="footer.tff.link">✦ いい人生とは</a>
-                    <p class="text-brand-sub/50 text-[11px] leading-relaxed" data-i18n-html="footer.tff.desc">人生観・詩・思い・感動を<br>つづるパーソナルサイト</p>
-                </div>
-            </div>
-            <div>
-                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Connect</div>
-                <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
-                    <!-- TODO: href に X URL を設定 -->
-                    <a href="#" class="hover:text-white transition-colors duration-200">X (Twitter)</a>
-                    <!-- TODO: href に note URL を設定 -->
-                    <a href="#" class="hover:text-white transition-colors duration-200">note</a>
-                </div>
+            <a href="#contact"
+               class="font-heading text-[9px] tracking-[2px] text-brand-gold uppercase border border-[#C4942A55] px-6 py-3 hover:border-brand-gold hover:bg-[rgba(196,148,42,0.05)] transition-all duration-200 whitespace-nowrap">
+                お問い合わせ →
+            </a>
+        </div>
+        <hr class="page-rule mb-5">
+        <div class="flex justify-between items-center">
+            <div class="font-body text-[12px] italic text-[#3a2a18]">© 2024 NOCTA Music Entertainment</div>
+            <div class="flex gap-5">
+                <a href="https://x.com/nocta_music" target="_blank" rel="noopener"
+                   class="font-heading text-[9px] tracking-[2px] text-[#4a3a28] hover:text-brand-sub transition-colors uppercase">X (Twitter)</a>
+                <a href="https://www.youtube.com/@nocta_music" target="_blank" rel="noopener"
+                   class="font-heading text-[9px] tracking-[2px] text-[#4a3a28] hover:text-brand-sub transition-colors uppercase">YouTube</a>
             </div>
         </div>
-
-        <div class="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="font-heading text-[11px] text-brand-sub tracking-wide">✦ © 2026 NOCTA. All rights reserved.</div>
-            <div class="font-heading text-[11px] text-brand-sub tracking-wide" style="color:#39FF6A">♪ Music × Creativity × VOCALOID × Soul ♪</div>
-        </div>
-
     </div>
 </footer>
 
