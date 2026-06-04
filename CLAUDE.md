@@ -67,14 +67,28 @@ CEOとAIエージェントチームで完結させるスタッフゼロ型音楽
 - **Haiku 4.5**: 単純な調査・短いファイル生成・handoff.mdの更新（最安・$1/$5/MTok・コンテキスト200k・拡張思考対応あり・ナレッジカットオフ2025年2月）。phase1-trend では調査・ファイル生成のみに使用し、トレンド内容の判断はSonnet 4.6以上に委ねる。
 - **Sonnet 4.6（起案者 / Drafter）**: 楽曲仕様書・歌詞草稿・SNS文案・プレスリリース・コード生成（デフォルト）$3/$15/MTok・ナレッジカットオフ2025年8月・拡張思考・適応的思考（Adaptive Thinking）両対応
 - **Opus 4.8（批評者 / Critic）**: 承認ゲート直前の歌詞/コンセプトレビュー・重要設計変更のクリティーク・SVP生成。$5/$25/MTok
-  ※ **Opus 4.8**（`claude-opus-4-8`）を使用。適応的思考あり・拡張思考なし・コンテキスト1M tokens・最大出力 128k tokens（Sonnet 4.6の2倍）・~77 TPS・ナレッジカットオフ2026年1月以降（詳細不明）
+  ※ 公式掲載済み（`claude-opus-4-8`・Anthropic最高性能モデル）。適応的思考あり・拡張思考なし・コンテキスト1M tokens（新トークナイザー: ≒555k words。Sonnet 4.6の≒750k wordsより実質少ない点に注意）・最大出力 128k tokens（Sonnet 4.6の2倍）・ナレッジカットオフ2026年1月
+  Batch API betaヘッダー（output-300k-2026-03-24）使用時はOpus 4.8/Sonnet 4.6ともに最大300k tokens出力可能
   最重要レビュー時（③歌詞・⑥PVコンセプト）は `/effort xhigh` を付与して最大性能で実行
-  /fast コマンドで同じ知能を約2.5倍高速で利用可能（Fastモード: $10/$50/MTok・リサーチプレビュー）
+  コーディング・エージェント系タスク（SVP生成・HP作業・Agent Teams起動）にも `/effort xhigh` 推奨
+  /fast コマンドで同じ知能を約2.5倍高速で利用可能（Fastモードは4.7比3倍安価・リサーチプレビュー）
+  hooksから `CLAUDE_EFFORT` 環境変数を参照可能（v2.1.133〜）。フェーズ自動判定hookの将来設計に活用できる。
   出力が64k超になる見込みのタスク（大型SVP生成・長文仕様書等）でもOpus 4.8を優先
+  デザインデフォルト: クリーム背景・セリフ体（NuWordのデザイン言語と一致）
+  4.7からの主な改善: 長時間エージェントコーディング強化・ツール呼び出し漏れ削減・**コード欠陥の指摘確率が4倍超に向上（Critic役として特に有効）**
+  新機能: Dynamic Workflows（数百の並行サブエージェント実行対応）・mid-conversation system messages（betaヘッダー不要）・プロンプトキャッシュ最小長 1,024 tokens に短縮
+  注意: temperature / top_p / top_k はサポートなし（非デフォルト値を設定すると400エラー）。拡張思考（budget_tokens）も不可 → `thinking: {type: "adaptive"}` + `/effort` で制御
 - **Sonnet 4.6（拡張思考）**: 深いステップバイステップ推論が必要な分析タスク
 - **起案→批評フロー**: Sonnet が草稿 → Opus が批評・代替案提示 → CEO が最終選択
   適用場面: ③歌詞選択前・⑥PVコンセプト承認前・CLAUDE.md等の重要設計変更時
 - Agent Teams起動時は全員Sonnetで開始し、レビューフェーズでOpusに切り替える
+- **Opus 4.8 切替通知ルール（デフォルトはSonnet 4.6）**: 以下のタイミングになったら作業を始める前に「Opus 4.8 への切り替えを推奨します: `/model claude-opus-4-8`」と通知し、CEOの確認を待つ。切り替え不要と言われたらSonnet 4.6のまま続ける。
+  - **superpowers スキル使用時（全種）**: brainstorming / writing-plans / subagent-driven-development 等
+  - 歌詞レビュー（承認ゲート③直前）・PVコンセプトレビュー（承認ゲート⑥直前）
+  - SVP生成（/phase2-svp 実行前）
+  - CLAUDE.md 等の重要設計変更のクリティーク
+  - Agent Teams のレビューフェーズ（quality-listener・concept-critic）
+  - 出力が 64k tokens 超になる見込みの大型タスク
 
 ### R-10: CEOが必ず自分で行うことは提案もしない（役割の混乱を防ぐため）
 - CEOはStudio Oneで作曲・編曲・アレンジ・ミックス・マスタリングを自ら行う
