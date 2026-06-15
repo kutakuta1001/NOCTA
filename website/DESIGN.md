@@ -587,6 +587,30 @@ Use: service LP, product UI intro.
 ```
 Use: track LP (inheritance low), immersive.
 
+## Homepage Composition & Rhythm (index.html)
+
+The live homepage realizes the editorial principles below. Treat this section as the canonical spec for `index.html` structure.
+
+### Section order & surface rhythm
+`hero → stats → about (flat) → statement band (raised) → works (sink) → tools/apps (flat) → visual (sink) → blog (flat) → contact (flat) → footer`
+
+- **Surface rhythm:** content bands alternate between flat canvas and a recessed `bg-black/30 border-y` "sink" so the dark scroll never reads as one uniform band (Airtable principle: never repeat the same surface mode in consecutive bands). Sink bands keep glass-card contrast high. Currently `works` and `visual` are sink; `about / apps / blog` are flat.
+- Every band keeps `{spacing.section}`+ vertical rhythm (`py-32`).
+
+### Statement band (voltage moment)
+A full-bleed **raised glassy band** (`bg-white/[0.02] backdrop-blur-sm border-y`) sits between about and works, carrying a `{component.section-tag}` eyebrow ("Statement") and one large `{typography.display-hero}` line with a single italic-silver emphasis word. It is the dark-mode analog of a signature card: voltage from scale + surface lift, not from a second color. Copy is editorial/brand and CEO-owned (currently "遊ぶことで人生を彩ろう"). Keep to one such band per page.
+
+### Featured-first grid
+The Works grid renders the **first card at `lg:col-span-2`** (a wide featured card) to break the uniform 3-up "spec sheet" feel. Remaining cards stay uniform. Generated in the `NOCTA_WORKS.map` render (`i === 0`). md/mobile fall back to normal cards.
+
+### Stats bar (four pillars)
+Four data-driven counts, dynamically computed from the data arrays (auto-update as content grows):
+`楽曲数` = `NOCTA_WORKS` · `ビジュアル数` = `NOCTA_VISUALS_WORKS + ART + MUSIC` · `ブログ数` = `NOCTA_BLOG` · `アプリ数` = `NOCTA_APPS`.
+The retired stats (公開楽曲数 / 公開PV本数 / 制作中 / 可能性∞) are gone.
+
+### Multi-domain identity
+NOCTA is framed as a **multi-domain creative project, not a music-only label**. The four pillars (music / visual / words / code) appear in the stats, in the About copy ("音楽、映像、画像、言葉"), in the "越境 (Crossing)" value card, and in the footer tagline `Music × Visual × Words × Code`. Do not re-narrow copy to music-only, and do not reintroduce vocal-synthesis (歌声合成 / VOCALOID) as a headline theme.
+
 ## Brand Inheritance Guide
 
 Detail for the `/lp-create` brand-inheritance parameter.
