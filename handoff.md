@@ -17,3 +17,4 @@
 2026-06-04: HP Phase B完了（CSS差し替え・EB Garamond・パーティクル削除）。ブラウンスカラーパレット #C4942A全適用・stats-bar/services非表示・古色（#39FF6A/#C8A2FF）CSS内削除完了。ブラウザ確認待ち → CEO承認後にPhase A（HTML簡略化）開始。
 2026-06-04: Phase A完了（HTML全面刷新・EB Garamond・パーティクル削除・Servicesセクション削除）。DESIGN.md・CLAUDE.md更新済み。次: ブラウザ確認 → git push でGitHub Pagesデプロイ。
 2026-06-04: HP追加改修完了。①旧レイアウト復元（WHERE AI MEETS SOUL構造を維持）②ヒーロー左揃えエディトリアルに刷新（EB Garamond・パーティクル/星/グロー全削除・背景「2026」装飾）③カラーパレット: ゴールド→バーミリオン→シルバー(#B8B4AE)×オフホワイト(#E8E0D0)に決定④ServicesセクションとLatest Newsセクション削除⑤Contact文言をAI時代の創造的プロジェクト向け日本語に更新。次: 引き続きデザイン微調整 or 承認ゲート⑤（vocal_draft.svp確認）。
+2026-06-04〜05: 週次ルーティン完了（Steps A〜D）。Opus 4.8公式掲載確認（claude-opus-4-8）・全CLAUDE.md更新（コード欠陥指摘4倍超・Dynamic Workflows・budget_tokens不可・Fastモード4.7比3倍安価）。project_NOCTA/CLAUDE.md R-09更新（切替通知ルール追加）・trading-bot/CLAUDE.md にモデルセクション新設。design/DESIGN-airtable.md を参照資料として格納済み。次: 承認ゲート⑤（vocal_draft.svp確認）変わらず。
