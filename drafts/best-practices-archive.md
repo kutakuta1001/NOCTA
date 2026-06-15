@@ -1,5 +1,23 @@
 # ベストプラクティス 処理済みアーカイブ
 
+## 2026-06-15 アーカイブ分
+
+- [docs.anthropic.com] CHANGELOG v2.1.126 — claude project purge [path] コマンド追加（2026-05-04）
+- [docs.anthropic.com] CHANGELOG v2.1.126 — context:forkスキルのdeferred toolsバグ修正（2026-05-04）
+- [docs.anthropic.com] CHANGELOG v2.1.126 — Mac スリープ後のStream idle timeout修正（2026-05-04）
+- [docs.anthropic.com] CHANGELOG v2.1.133 — hooksにeffort.level（CLAUDE_EFFORT）渡し対応 （2026-05-12）
+- [docs.anthropic.com] CHANGELOG v2.1.139 — /goalコマンド追加（2026-05-12）
+- [docs.anthropic.com] CHANGELOG v2.1.139 — Agent View追加（2026-05-12）
+- [docs.anthropic.com] モデル一覧 — Opus 4.7新トークナイザー≒555k words（2026-05-12）
+- [docs.anthropic.com] モデル一覧 — Haiku 4.5拡張思考対応あり（2026-05-12）
+- [docs.anthropic.com] モデル一覧 — Haiku 4.5 価格: 入力 $1/MTok・出力 $5/MTok（CLAUDE.md R-09 未記載）（2026-05-18）
+- [docs.anthropic.com] モデル一覧 — Claude Sonnet 4 / Opus 4 が 2026-06-15 廃止予定（NOCTA 未使用だが記録）（2026-05-18）
+- [changelog v2.1.142] Fast mode のデフォルトモデルが Opus 4.6 → Opus 4.7 に変更（/fast 利用時に挙動変化）（2026-05-18）
+- [changelog v2.1.142] root-level SKILL.md をプロジェクトに置くとプラグインスキルとして自動検出される（2026-05-18）
+- [changelog v2.1.141] Hook 出力に terminalSequence フィールド追加・デスクトップ通知/ウィンドウタイトル生成が可能に（2026-05-18）
+- [changelog v2.1.139] Hook の args フィールドで exec form 実行（シェル経由しないコマンド指定）が可能に（2026-05-18）
+- [changelog v2.1.143] /loop の pending wakeup を Esc/Ctrl+C でキャンセル可能に（2026-05-18）
+
 ## 2026-04-06 アーカイブ分
 
 - https://x.com/L_go_mrk/status/2039298726574088496 （2026-04-06）

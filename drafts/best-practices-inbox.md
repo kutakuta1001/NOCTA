@@ -28,6 +28,14 @@
 
 ## 処理済み
 
+- [docs.anthropic.com] モデル一覧 — 【新モデル】Claude Fable 5（`claude-fable-5`）2026-06-09 一般提供開始。Mythos級・最上位の widely released モデル。1M tokens・最大出力128k・$10/$50/MTok・適応的思考常時ON・拡張思考なし（要 /model-review）（2026-06-15）
+- [docs.anthropic.com] モデル一覧 — 【新モデル】Claude Mythos 5（`claude-mythos-5`）Project Glasswing 限定提供（招待制・防御的サイバーセキュリティ向け）。$10/$50/MTok（2026-06-15）
+- [docs.anthropic.com] モデル一覧 — Opus 4.8 の `effort` パラメータは全サーフェス（API・Claude Code）でデフォルト `high`。別レベルは明示指定が必要（2026-06-15）
+- [changelog v2.1.172] サブエージェントが最大5階層までネスト可能に。plugin marketplace ブラウザに検索機能追加（2026-06-15）
+- [changelog v2.1.169] `--safe-mode` フラグで全カスタマイズ（CLAUDE.md/hooks/plugins/skills/MCP）無効化。`post-session` ライフサイクルhook追加・`/cd` でprompt cacheを壊さずセッション移動（2026-06-15）
+- [changelog v2.1.175] `enforceAvailableModels` managedセッティングでDefaultモデルを許可リストに制限可能（2026-06-15）
+- [changelog v2.1.176] セッションタイトルが会話の言語で生成。Opus 4.8 非対応組織向けのautoモードフォールバック修正（2026-06-15）
+
 - [changelog v2.1.162] `/effort` コマンドで選択レベルがデフォルト保持（2026-06-04）
 - [changelog v2.1.162] `claude agents --json` に `waitingFor` フィールド追加（2026-06-04）
 - [changelog v2.1.158] Bedrock/Vertex/Foundryでオートモード対応（2026-06-04）
@@ -42,18 +50,4 @@
 - [docs.anthropic.com] モデル一覧 — Sonnet 4.6 が適応的思考（Adaptive Thinking）に対応（2026-05-28）
 - [docs.anthropic.com] モデル一覧 — Haiku 4.5 の knowledge cutoff は 2025年2月（2026-05-28）
 
-- [docs.anthropic.com] CHANGELOG v2.1.126 — claude project purge [path] コマンド追加（2026-05-04）
-- [docs.anthropic.com] CHANGELOG v2.1.126 — context:forkスキルのdeferred toolsバグ修正（2026-05-04）
-- [docs.anthropic.com] CHANGELOG v2.1.126 — Mac スリープ後のStream idle timeout修正（2026-05-04）
-- [docs.anthropic.com] CHANGELOG v2.1.133 — hooksにeffort.level（CLAUDE_EFFORT）渡し対応 （2026-05-12）
-- [docs.anthropic.com] CHANGELOG v2.1.139 — /goalコマンド追加（2026-05-12）
-- [docs.anthropic.com] CHANGELOG v2.1.139 — Agent View追加（2026-05-12）
-- [docs.anthropic.com] モデル一覧 — Opus 4.7新トークナイザー≒555k words（2026-05-12）
-- [docs.anthropic.com] モデル一覧 — Haiku 4.5拡張思考対応あり（2026-05-12）
-- [docs.anthropic.com] モデル一覧 — Haiku 4.5 価格: 入力 $1/MTok・出力 $5/MTok（CLAUDE.md R-09 未記載）（2026-05-18）
-- [docs.anthropic.com] モデル一覧 — Claude Sonnet 4 / Opus 4 が 2026-06-15 廃止予定（NOCTA 未使用だが記録）（2026-05-18）
-- [changelog v2.1.142] Fast mode のデフォルトモデルが Opus 4.6 → Opus 4.7 に変更（/fast 利用時に挙動変化）（2026-05-18）
-- [changelog v2.1.142] root-level SKILL.md をプロジェクトに置くとプラグインスキルとして自動検出される（2026-05-18）
-- [changelog v2.1.141] Hook 出力に terminalSequence フィールド追加・デスクトップ通知/ウィンドウタイトル生成が可能に（2026-05-18）
-- [changelog v2.1.139] Hook の args フィールドで exec form 実行（シェル経由しないコマンド指定）が可能に（2026-05-18）
-- [changelog v2.1.143] /loop の pending wakeup を Esc/Ctrl+C でキャンセル可能に（2026-05-18）
+（2026-05-18 以前の処理済みエントリは drafts/best-practices-archive.md に移動）
