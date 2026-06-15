@@ -611,6 +611,9 @@ The retired stats (公開楽曲数 / 公開PV本数 / 制作中 / 可能性∞) 
 ### Multi-domain identity
 NOCTA is framed as a **multi-domain creative project, not a music-only label**. The four pillars (music / visual / words / code) appear in the stats, in the About copy ("音楽、映像、画像、言葉"), in the "越境 (Crossing)" value card, and in the footer tagline `Music × Visual × Words × Code`. Do not re-narrow copy to music-only, and do not reintroduce vocal-synthesis (歌声合成 / VOCALOID) as a headline theme.
 
+### About signature visual (four-pillar orbital)
+The About section's right column is a signature diagram: **Music / Visual / Words / Code** nodes converge by thin silver lines onto a center **living orb**. The orb is a metallic radial-gradient sphere (`.nocta-orb`: highlight top-left → silver → shadow edge) that gently breathes/floats (`orbFloat` 6s + `orbShine` 7s) — no text label (an earlier "SOUL" / "NOCTA" wordmark was removed as it read cheap). Two slow rotating rings (`orbit-1/2`) frame it. The diagram visually restates the four-pillar identity; keep the labels in sync with the stats pillars.
+
 ## Brand Inheritance Guide
 
 Detail for the `/lp-create` brand-inheritance parameter.
