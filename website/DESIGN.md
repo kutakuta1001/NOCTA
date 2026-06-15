@@ -614,6 +614,12 @@ NOCTA is framed as a **multi-domain creative project, not a music-only label**. 
 ### About signature visual (four-pillar orbital)
 The About section's right column is a signature diagram: **Music / Visual / Words / Code** nodes converge by thin silver lines onto a center **living orb**. The orb is a metallic radial-gradient sphere (`.nocta-orb`: highlight top-left → silver → shadow edge) that gently breathes/floats (`orbFloat` 6s + `orbShine` 7s) — no text label (an earlier "SOUL" / "NOCTA" wordmark was removed as it read cheap). Two slow rotating rings (`orbit-1/2`) frame it. The diagram visually restates the four-pillar identity; keep the labels in sync with the stats pillars.
 
+### Hero background loop (geometric)
+The hero's decorative background (formerly a giant faint "2026") is a **seamless geometric loop**: concentric rotating polygons + dashed rings + pulsing orbiting dots, faint silver line-art, bottom-right, behind content (`z-0`, clipped by the hero's `overflow-hidden`). Every element's period is a divisor of the **30s master loop** (30s / 15s) so the whole composition returns to its first frame exactly every 30s (rotations are individually seamless). Respects `prefers-reduced-motion`. CSS lives under `.hero-geo` / `.geo-*` with `@keyframes geoSpinCW/CCW/geoBreathe/geoPulse`.
+
+### Brand descriptor
+The public descriptor is **"Creative" / 「クリエイティブ」**, not "Music Entertainment / 音楽エンタメ" (changed 2026-06-15 across `<title>`, hero eyebrow, and footer). Keep it domain-neutral — NOCTA is not a music-only label.
+
 ## Brand Inheritance Guide
 
 Detail for the `/lp-create` brand-inheritance parameter.

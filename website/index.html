@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOCTA — Music Entertainment</title>
+    <title>NOCTA — Creative</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,6 +85,30 @@
         @keyframes orbShine {
             0%, 100% { opacity: 0.6; transform: translate(0, 0); }
             50%      { opacity: 1;   transform: translate(2px, 3px); }
+        }
+
+        /* Hero geometric loop (replaces decorative "2026") — seamless 10s master loop */
+        .hero-geo {
+            position: absolute;
+            right: -6vw; bottom: -6vw;
+            width: min(64vw, 640px);
+            aspect-ratio: 1 / 1;
+            pointer-events: none;
+        }
+        .hero-geo svg { width: 100%; height: 100%; overflow: visible; }
+        .geo-el      { transform-box: fill-box; transform-origin: center; }
+        .geo-breathe { transform-box: fill-box; transform-origin: center; animation: geoBreathe 30s ease-in-out infinite; }
+        .geo-cw-10   { animation: geoSpinCW  30s linear infinite; }
+        .geo-ccw-10  { animation: geoSpinCCW 30s linear infinite; }
+        .geo-cw-5    { animation: geoSpinCW  15s linear infinite; }
+        .geo-ccw-5   { animation: geoSpinCCW 15s linear infinite; }
+        .geo-pulse   { animation: geoPulse   15s ease-in-out infinite; }
+        @keyframes geoSpinCW  { from { transform: rotate(0deg); }  to { transform: rotate(360deg); } }
+        @keyframes geoSpinCCW { from { transform: rotate(0deg); }  to { transform: rotate(-360deg); } }
+        @keyframes geoBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes geoPulse   { 0%, 100% { opacity: 0.2; }        50% { opacity: 0.55; } }
+        @media (prefers-reduced-motion: reduce) {
+            .geo-breathe, .geo-cw-10, .geo-ccw-10, .geo-cw-5, .geo-ccw-5, .geo-pulse { animation: none; }
         }
 
         /* Glass */
@@ -558,9 +582,32 @@
      ============================================= -->
 <section id="hero" class="relative min-h-screen flex flex-col justify-end pb-24 md:pb-32 overflow-hidden">
 
-    <!-- Background year (decorative) -->
-    <div class="absolute right-0 bottom-0 pointer-events-none select-none overflow-hidden z-[0]" aria-hidden="true">
-        <span style="font-family:'Bebas Neue',sans-serif; font-size:28vw; line-height:0.82; color:rgba(240,234,216,0.025); display:block; padding-right:2vw;">2026</span>
+    <!-- Geometric loop (decorative, seamless 10s) — replaces the old "2026" -->
+    <div class="hero-geo z-[0]" aria-hidden="true">
+        <svg viewBox="0 0 200 200" fill="none" stroke="rgba(184,180,174,0.28)">
+            <g class="geo-breathe">
+                <!-- rotating dashed rings -->
+                <circle class="geo-el geo-cw-10" cx="100" cy="100" r="92" stroke-dasharray="2 8" stroke-width="0.8"/>
+                <circle class="geo-el geo-ccw-10" cx="100" cy="100" r="84" stroke-dasharray="1 6" stroke-width="0.6" stroke="rgba(184,180,174,0.16)"/>
+                <!-- counter-rotating hexagon -->
+                <polygon class="geo-el geo-ccw-10" points="100,22 167.5,61 167.5,139 100,178 32.5,139 32.5,61" stroke-width="0.8"/>
+                <!-- spinning square (2 turns / 10s) -->
+                <rect class="geo-el geo-cw-5" x="55" y="55" width="90" height="90" stroke-width="0.7" stroke="rgba(184,180,174,0.22)"/>
+                <!-- triangle -->
+                <polygon class="geo-el geo-ccw-5" points="100,46 146.8,127 53.2,127" stroke-width="0.7" stroke="rgba(184,180,174,0.30)"/>
+                <!-- inner ring -->
+                <circle class="geo-el geo-cw-10" cx="100" cy="100" r="34" stroke-width="0.6" stroke="rgba(184,180,174,0.42)"/>
+                <!-- pulsing orbiting dots -->
+                <g class="geo-el geo-cw-5 geo-pulse">
+                    <circle cx="100" cy="64"  r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="131" cy="82"  r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="131" cy="118" r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="100" cy="136" r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="69"  cy="118" r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="69"  cy="82"  r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                </g>
+            </g>
+        </svg>
     </div>
 
     <!-- Hero content: left-aligned -->
@@ -569,7 +616,7 @@
         <!-- Eyebrow -->
         <div class="flex items-center gap-4 mb-10 reveal active">
             <div style="width:36px; height:1px; background:#B8B4AE; flex-shrink:0;"></div>
-            <span style="font-family:'Syne',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#B8B4AE;">Music Entertainment — Est. 2026</span>
+            <span style="font-family:'Syne',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#B8B4AE;">Creative — Est. 2026</span>
         </div>
 
         <!-- Heading: 3 lines, staggered reveal -->
@@ -996,7 +1043,7 @@
                 <div class="font-brand text-2xl tracking-[6px] text-white font-extrabold mb-4">NOCTA</div>
                 <p class="font-jp text-brand-sub text-[13px] leading-relaxed max-w-xs" data-i18n-html="footer.tagline">
                     AIと人間の感性が融合する、<br>
-                    新しい音楽エンタメカンパニー。<br>
+                    新しいクリエイティブカンパニー。<br>
                     あなたのビジョンを現実にします。
                 </p>
             </div>
@@ -1733,7 +1780,7 @@ const I18N = {
     'services.s4.title': 'PR・メディア展開',
     'services.s4.desc': 'プレスリリース作成からメディアリスト構築、取材対応の準備まで。リリースのインパクトを最大化するPR戦略を一貫してサポートします。',
     'services.s4.t1': 'プレスリリース', 'services.s4.t2': 'メディア対応', 'services.s4.t3': 'インフルエンサー連携', 'services.s4.t4': '危機管理',
-    'news.featured.title': '音楽エンタメカンパニー、正式始動。<br>楽曲制作からPR展開まで一気通貫サービスを開始。',
+    'news.featured.title': 'クリエイティブカンパニー、正式始動。<br>楽曲制作からPR展開まで一気通貫サービスを開始。',
     'news.featured.desc': '最新テクノロジーと人間のクリエイティビティを融合した新しいプロダクション体制を構築。今後のプロジェクト受付を正式に開始します。',
     'news.n1': '第1弾楽曲「Neon Cascade」のPV映像が完成',
     'news.n2': 'タイアップ・コラボ依頼の受付を開始しました',
@@ -1756,7 +1803,7 @@ const I18N = {
     'contact.lbl.message': 'メッセージ *',
     'contact.ph.message': 'プロジェクトの内容・ご要望をお気軽にご記入ください',
     'contact.submit': '送信する',
-    'footer.tagline': 'AIと人間の感性が融合する、<br>新しい音楽エンタメカンパニー。<br>あなたのビジョンを現実にします。',
+    'footer.tagline': 'AIと人間の感性が融合する、<br>新しいクリエイティブカンパニー。<br>あなたのビジョンを現実にします。',
     'footer.s1': '楽曲制作', 'footer.s2': 'PV・映像制作', 'footer.s3': 'デジタルMKT', 'footer.s4': 'PR支援',
     'footer.tff.link': '✦ いい人生とは',
     'footer.tff.desc': '人生観・詩・思い・感動を<br>つづるパーソナルサイト',
@@ -1795,7 +1842,7 @@ const I18N = {
     'services.s4.title': 'PR & Media',
     'services.s4.desc': 'Press release writing, media list building, and interview prep — full-stack PR to maximize your release impact.',
     'services.s4.t1': 'Press Release', 'services.s4.t2': 'Media Relations', 'services.s4.t3': 'Influencer Outreach', 'services.s4.t4': 'Crisis Management',
-    'news.featured.title': 'Music Entertainment Company officially launched.<br>End-to-end services from production to PR now open.',
+    'news.featured.title': 'Creative Company officially launched.<br>End-to-end services from production to PR now open.',
     'news.featured.desc': 'Building a new production framework that fuses cutting-edge technology with human creativity. Now officially accepting project inquiries.',
     'news.n1': 'PV for debut track "Neon Cascade" is complete',
     'news.n2': 'Now accepting tie-up and collaboration requests',
@@ -1818,7 +1865,7 @@ const I18N = {
     'contact.lbl.message': 'Message *',
     'contact.ph.message': "Tell us about your project and what you're looking for.",
     'contact.submit': 'Send',
-    'footer.tagline': 'Where AI and human sensibility meet —<br>a new music entertainment company.<br>We bring your vision to life.',
+    'footer.tagline': 'Where AI and human sensibility meet —<br>a new creative company.<br>We bring your vision to life.',
     'footer.s1': 'Music Production', 'footer.s2': 'PV / Video', 'footer.s3': 'Digital MKT', 'footer.s4': 'PR Support',
     'footer.tff.link': '✦ What is a good life?',
     'footer.tff.desc': 'A personal site for life philosophy,<br>poetry, and moments that move us.',
