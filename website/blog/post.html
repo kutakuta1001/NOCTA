@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700;900&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -16,21 +16,21 @@
                 extend: {
                     colors: {
                         brand: {
-                            bg:        '#05050F',
-                            bg2:       '#0A0A16',
-                            primary:   '#C8A2FF',
-                            secondary: '#C4942A',
-                            highlight: '#E8D0FF',
-                            text:      '#E8E8F4',
-                            sub:       '#8A8A9E',
-                            gold:      '#C4942A',
-                            vgreen:    '#39FF6A',
+                            bg:        '#0A0906',
+                            bg2:       '#0F0D0A',
+                            primary:   '#B8B4AE',
+                            secondary: '#B8B4AE',
+                            highlight: '#E8E0D0',
+                            text:      '#E8E0D0',
+                            sub:       '#9A8A7A',
+                            gold:      '#B8B4AE',
+                            vgreen:    '#B8B4AE',
                         }
                     },
                     fontFamily: {
-                        heading: ['Syne', 'Space Grotesk', 'sans-serif'],
+                        heading: ['Syne', 'sans-serif'],
                         brand:   ['Syne', 'sans-serif'],
-                        body:    ['Inter', 'sans-serif'],
+                        body:    ['Noto Sans JP', 'sans-serif'],
                         jp:      ['Noto Sans JP', 'sans-serif'],
                         display: ['Bebas Neue', 'sans-serif'],
                     }
@@ -41,8 +41,8 @@
 
     <style>
         body {
-            background-color: #05050F;
-            color: #F0F0F8;
+            background-color: #0A0906;
+            color: #E8E0D0;
             overflow-x: hidden;
         }
         /* Noise overlay */
@@ -57,7 +57,7 @@
             font-family: 'Syne', sans-serif;
             font-size: 1.15rem;
             font-weight: 700;
-            color: #F0F0F8;
+            color: #E8E0D0;
             margin: 2.5rem 0 0.75rem;
             letter-spacing: 0.06em;
             text-transform: uppercase;
@@ -65,12 +65,12 @@
         .blog-content p {
             font-family: 'Noto Sans JP', sans-serif;
             font-size: 0.9375rem;
-            color: #8A8A9E;
+            color: #9A8A7A;
             line-height: 2.1;
             margin-bottom: 1.5rem;
         }
         .blog-content strong {
-            color: #E8E8F4;
+            color: #E8E0D0;
             font-weight: 600;
         }
     </style>
@@ -79,7 +79,7 @@
 
     <!-- Header -->
     <header class="fixed top-0 left-0 right-0 z-50 px-6 lg:px-10 py-4 flex justify-between items-center border-b border-white/5"
-            style="background: rgba(5,5,15,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+            style="background: rgba(10,9,6,0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
         <a href="../index.html"
            class="font-display text-[20px] tracking-[4px] uppercase text-white hover:opacity-70 transition-opacity duration-200">
             NOCTA
@@ -123,10 +123,10 @@
             document.title = post.title + ' | NOCTA'; // textContent なので エスケープ不要
 
             var badgeClass = post.cat === 'music'
-                ? 'bg-[rgba(200,162,255,0.15)] text-[#C8A2FF]'
+                ? 'bg-[rgba(184,180,174,0.15)] text-[#B8B4AE]'
                 : post.cat === 'book'
-                ? 'bg-[rgba(57,255,106,0.15)] text-[#39FF6A]'
-                : 'bg-[rgba(196,148,42,0.15)] text-[#C4942A]';
+                ? 'bg-[rgba(184,180,174,0.15)] text-[#B8B4AE]'
+                : 'bg-[rgba(184,180,174,0.15)] text-[#B8B4AE]';
             var badge = post.cat === 'music' ? 'Music' : post.cat === 'book' ? 'Book' : 'Essay';
 
             container.innerHTML =
