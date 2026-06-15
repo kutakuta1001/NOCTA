@@ -583,20 +583,20 @@
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div class="reveal">
-                <div class="stat-num">—</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.songs">公開楽曲数</div>
+                <div class="stat-num" id="stat-works">—</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.works">楽曲数</div>
             </div>
             <div class="reveal reveal-delay-1">
-                <div class="stat-num">—</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.pvs">公開PV本数</div>
+                <div class="stat-num" id="stat-visual">—</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.visual">ビジュアル数</div>
             </div>
             <div class="reveal reveal-delay-2">
-                <div class="stat-num">1</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.wip">制作中の楽曲</div>
+                <div class="stat-num" id="stat-blog">—</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.blog">ブログ数</div>
             </div>
             <div class="reveal reveal-delay-3">
-                <div class="font-display text-[clamp(48px,6vw,72px)] leading-none text-vgreen" style="font-family:'Bebas Neue',sans-serif;line-height:1;">∞</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.potential">可能性</div>
+                <div class="stat-num" id="stat-apps">—</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.apps">アプリ数</div>
             </div>
         </div>
     </div>
@@ -617,8 +617,8 @@
                     遊ぶように、作る。
                 </h2>
                 <p class="font-jp text-brand-sub text-[15px] leading-[2.1] mb-10 reveal reveal-delay-2" data-i18n-html="about.body">
-                    AIが仕事や消費の多くを担うようになる時代、人間には新しい営みが必要になります。<br><br>
-                    NOCTAは、その問いに音楽で答えます。作曲、映像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。
+                    AIが多くの仕事や消費を担う時代、人間には新しい営みが必要になります。<br><br>
+                    NOCTAは、その問いに「創作」で答えます。音楽、映像、画像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。
                 </p>
 
                 <div class="flex flex-col gap-4 reveal reveal-delay-3">
@@ -626,7 +626,7 @@
                         <div class="w-px h-12 bg-gradient-to-b from-[#B8B4AE] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
                             <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v1.title">革新（Innovation）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v1.desc">テクノロジーの力で、音楽業界の常識を更新し続ける。</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v1.desc">テクノロジーの力で、創作とエンタメの常識を更新し続ける。</div>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
@@ -639,8 +639,8 @@
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group" style="border-color:rgba(184,180,174,0.15);">
                         <div class="w-px h-12 bg-gradient-to-b from-[#B8B4AE] to-transparent flex-shrink-0 mt-1"></div>
                         <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-[#B8B4AE] transition-colors duration-300" data-i18n="about.v3.title">歌声合成（Synthesis）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v3.desc">ボーカロイドをはじめとするAI歌声技術で、唯一無二の音楽表現を実現。</div>
+                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-[#B8B4AE] transition-colors duration-300" data-i18n="about.v3.title">越境（Crossing）</div>
+                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v3.desc">音楽・映像・画像・言葉——領域を越えて、ひとつの世界観を形にする。</div>
                         </div>
                     </div>
                     <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
@@ -1025,7 +1025,7 @@
 
         <div class="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="font-heading text-[11px] text-brand-sub tracking-wide">✦ © 2026 NOCTA. All rights reserved.</div>
-            <div class="font-heading text-[11px] text-brand-sub tracking-wide" style="color:#B8B4AE">♪ Music × Creativity × VOCALOID × Soul ♪</div>
+            <div class="font-heading text-[11px] text-brand-sub tracking-wide" style="color:#B8B4AE">✦ Music × Visual × Words × Code ✦</div>
         </div>
 
     </div>
@@ -1122,6 +1122,28 @@
 <script src="visual-data.js"></script>
 <script src="apps-data.js"></script>
 <script src="blog-data.js"></script>
+
+<!-- Stats bar: データ配列から件数を動的カウント -->
+<script>
+    (function () {
+        function setCount(id, arr) {
+            var el = document.getElementById(id);
+            if (el && Array.isArray(arr)) el.textContent = arr.length;
+        }
+        setCount('stat-works', typeof NOCTA_WORKS !== 'undefined' ? NOCTA_WORKS : null);
+        setCount('stat-blog',  typeof NOCTA_BLOG  !== 'undefined' ? NOCTA_BLOG  : null);
+        setCount('stat-apps',  typeof NOCTA_APPS  !== 'undefined' ? NOCTA_APPS  : null);
+
+        // ビジュアル数 = Works + Art + Music の3配列を合算
+        var visualEl = document.getElementById('stat-visual');
+        if (visualEl) {
+            var vw = typeof NOCTA_VISUALS_WORKS !== 'undefined' ? NOCTA_VISUALS_WORKS.length : 0;
+            var va = typeof NOCTA_VISUALS_ART   !== 'undefined' ? NOCTA_VISUALS_ART.length   : 0;
+            var vm = typeof NOCTA_VISUALS_MUSIC !== 'undefined' ? NOCTA_VISUALS_MUSIC.length : 0;
+            visualEl.textContent = vw + va + vm;
+        }
+    })();
+</script>
 <script>
 /* ---- Navbar scroll ---- */
 (function () {
@@ -1665,18 +1687,18 @@ const I18N = {
     'hero.tagline': '消費するだけでも、生産するだけでもなく。',
     'hero.cta.works': 'Works を見る',
     'hero.cta.contact': 'お問い合わせ',
-    'stats.songs': '公開楽曲数',
-    'stats.pvs': '公開PV本数',
-    'stats.wip': '制作中の楽曲',
-    'stats.potential': '可能性',
+    'stats.works': '楽曲数',
+    'stats.visual': 'ビジュアル数',
+    'stats.blog': 'ブログ数',
+    'stats.apps': 'アプリ数',
     'about.h2': '遊ぶように、作る。',
-    'about.body': 'AIが仕事や消費の多くを担うようになる時代、人間には新しい営みが必要になります。<br><br>NOCTAは、その問いに音楽で答えます。作曲、映像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。',
+    'about.body': 'AIが多くの仕事や消費を担う時代、人間には新しい営みが必要になります。<br><br>NOCTAは、その問いに「創作」で答えます。音楽、映像、画像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。',
     'about.v1.title': '革新（Innovation）',
-    'about.v1.desc': 'テクノロジーの力で、音楽業界の常識を更新し続ける。',
+    'about.v1.desc': 'テクノロジーの力で、創作とエンタメの常識を更新し続ける。',
     'about.v2.title': '創造（Creation）',
     'about.v2.desc': '人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。',
-    'about.v3.title': '歌声合成（Synthesis）',
-    'about.v3.desc': 'ボーカロイドをはじめとするAI歌声技術で、唯一無二の音楽表現を実現。',
+    'about.v3.title': '越境（Crossing）',
+    'about.v3.desc': '音楽・映像・画像・言葉——領域を越えて、ひとつの世界観を形にする。',
     'about.v4.title': '解放（Freedom）',
     'about.v4.desc': '規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。',
     'works.subtitle': 'AIと感性が生んだ、作品たち',
@@ -1727,18 +1749,18 @@ const I18N = {
     'hero.tagline': '消費するだけでも、生産するだけでもなく。',
     'hero.cta.works': 'View Works',
     'hero.cta.contact': 'Contact Us',
-    'stats.songs': 'Tracks',
-    'stats.pvs': 'Music Videos',
-    'stats.wip': 'In Production',
-    'stats.potential': 'Possibilities',
+    'stats.works': 'Tracks',
+    'stats.visual': 'Visuals',
+    'stats.blog': 'Posts',
+    'stats.apps': 'Apps',
     'about.h2': '遊ぶように、作る。',
-    'about.body': 'AIが仕事や消費の多くを担うようになる時代、人間には新しい営みが必要になります。<br><br>NOCTAは、その問いに音楽で答えます。作曲、映像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。',
+    'about.body': 'In an era where AI handles much of our work and consumption, people need new ways to live. NOCTA answers that question through creation — music, video, images, and words. Crafting every medium single-handedly, we explore the boundary between play and creativity.',
     'about.v1.title': 'Innovation',
-    'about.v1.desc': 'Continuously redefining industry norms through the power of technology.',
+    'about.v1.desc': 'Continuously redefining the norms of creation and entertainment through the power of technology.',
     'about.v2.title': 'Creation',
     'about.v2.desc': 'Pursuing one-of-a-kind expression born from the fusion of human sensibility and technology.',
-    'about.v3.title': 'Synthesis',
-    'about.v3.desc': 'Realizing unique musical expression through VOCALOID and AI vocal synthesis technology.',
+    'about.v3.title': 'Crossing',
+    'about.v3.desc': 'Music, video, images, words — crossing boundaries to shape one unified world.',
     'about.v4.title': 'Freedom',
     'about.v4.desc': 'Breaking free from scale constraints to create space for pure expression and vision.',
     'works.subtitle': 'Works born from AI and human creativity.',
