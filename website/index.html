@@ -1220,9 +1220,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         const onclick  = hasVideo
             ? ' onclick="openYouTube(\'' + w.youtubeId + '\',\'' + w.title.replace(/'/g, "\\'") + '\')"'
             : '';
+        const feat = i === 0 ? ' lg:col-span-2' : '';
 
         return [
-            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 ' + cursor + ' reveal' + delay + '"',
+            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 ' + cursor + feat + ' reveal' + delay + '"',
             '     data-cat="' + w.cat + '"' + dstyle + onclick + '>',
             '  <div class="relative aspect-video overflow-hidden">',
             '    <div class="' + w.thumbClass + ' w-full h-full flex items-center justify-center">',
