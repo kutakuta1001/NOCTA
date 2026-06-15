@@ -62,6 +62,31 @@
 
         body { background-color: #0A0906; color: #E8E0D0; overflow-x: hidden; }
 
+        /* About center: living silver orb */
+        .nocta-orb {
+            background: radial-gradient(circle at 35% 28%,
+                #F2EEE4 0%, #C7C3BC 26%, #8E8A83 56%, #45413B 82%, #1C1A16 100%);
+            box-shadow: 0 0 55px rgba(184,180,174,0.40),
+                        inset -7px -9px 20px rgba(0,0,0,0.5),
+                        inset 5px 5px 14px rgba(255,255,255,0.22);
+            animation: orbFloat 6s ease-in-out infinite;
+        }
+        .nocta-orb::after {
+            content: '';
+            position: absolute; inset: 0;
+            border-radius: 9999px;
+            background: radial-gradient(circle at 32% 25%, rgba(255,255,255,0.5), transparent 38%);
+            animation: orbShine 7s ease-in-out infinite;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50%      { transform: translateY(-5px) scale(1.05); }
+        }
+        @keyframes orbShine {
+            0%, 100% { opacity: 0.6; transform: translate(0, 0); }
+            50%      { opacity: 1;   transform: translate(2px, 3px); }
+        }
+
         /* Glass */
         .glass {
             background: rgba(255,255,255,0.03);
@@ -662,49 +687,40 @@
                              style="background: radial-gradient(circle, rgba(184,180,174,0.22), rgba(184,180,174,0.10) 50%, transparent 70%); filter: blur(30px);"></div>
                     </div>
 
-                    <!-- Orbit rings -->
+                    <!-- Orbit rings (rotating) -->
                     <div class="absolute inset-0 rounded-full border border-white/5 orbit-1"></div>
-                    <div class="absolute inset-6 rounded-full border border-brand-primary/15 orbit-2"></div>
-                    <div class="absolute inset-14 rounded-full border border-brand-secondary/15 orbit-3"></div>
+                    <div class="absolute inset-10 rounded-full border border-brand-primary/15 orbit-2"></div>
 
-                    <!-- SVG connecting lines & nodes -->
+                    <!-- SVG: 4 pillars converging to center -->
                     <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-                        <!-- Outer dotted ring -->
-                        <circle cx="50" cy="50" r="38" fill="none"
-                                stroke="rgba(255,255,255,0.06)" stroke-dasharray="2 5"/>
-                        <!-- Lines center → nodes -->
-                        <line x1="50" y1="50" x2="50" y2="12"  stroke="#B8B4AE" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="77" y2="23"  stroke="#B8B4AE" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="88" y2="50"  stroke="#B8B4AE" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="77" y2="77"  stroke="#B8B4AE" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="50" y2="88"  stroke="#B8B4AE" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="23" y2="77"  stroke="#B8B4AE" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="12" y2="50"  stroke="#B8B4AE" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="23" y2="23"  stroke="#B8B4AE" stroke-width="0.4" opacity="0.6"/>
-                        <!-- Nodes -->
-                        <circle cx="50" cy="12" r="2.5" fill="#B8B4AE" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.0s" repeatCount="indefinite"/></circle>
-                        <circle cx="77" cy="23" r="2.5" fill="#B8B4AE" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.4s" repeatCount="indefinite"/></circle>
-                        <circle cx="88" cy="50" r="2.5" fill="#B8B4AE" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
-                        <circle cx="77" cy="77" r="2.5" fill="#B8B4AE" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.2s" repeatCount="indefinite"/></circle>
-                        <circle cx="50" cy="88" r="2.5" fill="#B8B4AE" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" repeatCount="indefinite"/></circle>
-                        <circle cx="23" cy="77" r="2.5" fill="#B8B4AE" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.8s" repeatCount="indefinite"/></circle>
-                        <circle cx="12" cy="50" r="2.5" fill="#B8B4AE" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="2.1s" repeatCount="indefinite"/></circle>
-                        <circle cx="23" cy="23" r="2.5" fill="#B8B4AE" opacity="0.8"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.9s" repeatCount="indefinite"/></circle>
+                        <!-- static dashed orbit -->
+                        <circle cx="50" cy="50" r="34" fill="none" stroke="rgba(255,255,255,0.06)" stroke-dasharray="1.5 4"/>
+                        <!-- lines: center -> 4 pillars -->
+                        <line x1="50" y1="50" x2="50" y2="20" stroke="#B8B4AE" stroke-width="0.35" opacity="0.55"/>
+                        <line x1="50" y1="50" x2="80" y2="50" stroke="#B8B4AE" stroke-width="0.35" opacity="0.55"/>
+                        <line x1="50" y1="50" x2="50" y2="80" stroke="#B8B4AE" stroke-width="0.35" opacity="0.55"/>
+                        <line x1="50" y1="50" x2="20" y2="50" stroke="#B8B4AE" stroke-width="0.35" opacity="0.55"/>
+                        <!-- pillar nodes -->
+                        <circle cx="50" cy="20" r="2.4" fill="#B8B4AE"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.4s" repeatCount="indefinite"/></circle>
+                        <circle cx="80" cy="50" r="2.4" fill="#B8B4AE"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.0s" repeatCount="indefinite"/></circle>
+                        <circle cx="50" cy="80" r="2.4" fill="#B8B4AE"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.6s" repeatCount="indefinite"/></circle>
+                        <circle cx="20" cy="50" r="2.4" fill="#B8B4AE"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.2s" repeatCount="indefinite"/></circle>
                     </svg>
 
-                    <!-- Center node -->
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                                w-20 h-20 rounded-full border-2 border-brand-primary
-                                bg-brand-bg flex flex-col items-center justify-center z-20"
-                         style="box-shadow: 0 0 40px rgba(184,180,174,0.45), 0 0 20px rgba(184,180,174,0.3);">
-                        <span class="font-display text-[22px] leading-none text-gradient">SOUL</span>
+                    <!-- Pillar labels -->
+                    <div class="absolute top-[5%] left-1/2 -translate-x-1/2 font-heading text-[10px] tracking-[3px] uppercase text-brand-sub">Music</div>
+                    <div class="absolute top-1/2 right-[2%] -translate-y-1/2 font-heading text-[10px] tracking-[3px] uppercase text-brand-sub">Visual</div>
+                    <div class="absolute bottom-[5%] left-1/2 -translate-x-1/2 font-heading text-[10px] tracking-[3px] uppercase text-brand-sub">Words</div>
+                    <div class="absolute top-1/2 left-[2%] -translate-y-1/2 font-heading text-[10px] tracking-[3px] uppercase text-brand-sub">Code</div>
+
+                    <!-- Center: living silver orb -->
+                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+                        <div class="relative w-24 h-24 rounded-full nocta-orb"></div>
                     </div>
 
                     <!-- Floating accent dots -->
-                    <div class="absolute top-1/4 left-1/4 w-1 h-1 rounded-full bg-brand-highlight animate-ping" style="animation-duration:2s;"></div>
-                    <div class="absolute top-2/3 left-1/3 w-1.5 h-1.5 rounded-full bg-brand-highlight animate-ping" style="animation-duration:2.8s; animation-delay:0.6s;"></div>
-                    <div class="absolute top-1/3 left-3/4 w-1 h-1 rounded-full bg-brand-secondary animate-ping" style="animation-duration:2.3s; animation-delay:1s;"></div>
-                    <div class="absolute top-3/4 left-2/3 w-1 h-1 rounded-full bg-brand-primary animate-ping" style="animation-duration:1.9s; animation-delay:0.3s;"></div>
+                    <div class="absolute top-1/4 left-1/4 w-1 h-1 rounded-full bg-brand-highlight animate-ping" style="animation-duration:2.4s;"></div>
+                    <div class="absolute top-3/4 left-2/3 w-1 h-1 rounded-full bg-brand-primary animate-ping" style="animation-duration:2.0s; animation-delay:0.5s;"></div>
                 </div>
             </div>
 
