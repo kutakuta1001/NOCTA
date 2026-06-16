@@ -620,6 +620,9 @@ The hero's decorative background (formerly a giant faint "2026") is a **seamless
 ### Brand descriptor
 The public descriptor is **"Creative" / 「クリエイティブ」**, not "Music Entertainment / 音楽エンタメ" (changed 2026-06-15 across `<title>`, hero eyebrow, and footer). Keep it domain-neutral — NOCTA is not a music-only label.
 
+### Cat motif & AI/play duality
+The page runs a narrative spine: **geometry = AI** (Hero geo loop, About orbital + silver orb, Tools — intentionally cat-free/clean) vs **play = a silver cat** that appears only **from Statement onward** and brings color. Arc: About 4-pillar dots colored red/yellow/blue/purple (the colors the cat will play with) → Statement (cat dips paint, `silver-paint.png`) → Portfolio (colorful SVG paw trail, slow) → Visual (cat sits watching, `silver-sit.png`) → Blog (cat walks, `silver-walk.png`) → paw-divider → Footer (cat sleeps, `silver-sleep.png`). Use the **silver** cat (dark bg). Keep cats **scarce** (~5 beats); never add to Hero/About/Tools. Assets in `website/img/cat/`. Full rationale: `DESIGN-NOTES.md` §7.
+
 ## Brand Inheritance Guide
 
 Detail for the `/lp-create` brand-inheritance parameter.

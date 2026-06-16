@@ -87,3 +87,46 @@
 - **未整合の独立ページ**: `brand_assets.html` / `brandkit.html` は旧パレット（gold/neon/lavender）の見本ページ。index 非リンク。機械置換でなくシルバーで**再生成が必要**な別タスク。
 - **lint**: `npx @google/design.md lint DESIGN.md`。contrast/orphaned-token の warning は仕様上の既知事項（DESIGN.md「Known Gaps」参照）。
 - 別ページ `the-first-flower/` は**独立した世界観（継承度 低）**。専用の引き継ぎ書 `the-first-flower/DESIGN-NOTES.md` を参照。
+
+---
+
+## 7. 猫モチーフとストーリー（2026-06-16 追加）
+
+NOCTA LP には縦スクロール＝物語として、**「AI＝幾何（冷たく構造的）」と「遊び＝猫（温かく色彩）」の二項対立**が通底している。
+
+### 二項対立のルール
+- **Statement より前（Hero / About / Tools）＝幾何＝AIの領域。猫は出さない。**
+  - Hero: 幾何ループ（回転多角形・リング・脈動ドット・30秒シームレス）
+  - About: 4本柱オービット＋中央の動く銀球体（`.nocta-orb`）
+  - Tools: **意図的に猫なし・装飾なしでクリーンに保つ**（希少性＝心地よさ／ここは"AIツール"の静かな区画）。幾何アクセント案も検討したが「入れない」で確定。
+- **Statement 以降＝猫が登場し、色（遊び）を持ち込む。**
+
+### ストーリーの流れ（ページ上→下）
+1. **About** — 銀球体の周囲の4本柱（Music/Visual/Words/Code）の点と線を **赤/黄/青/紫** に色付け。これは AI フェーズの4色＝後で猫が出会って「遊び」になる色の伏線。
+2. **Statement「遊ぶことで人生を彩ろう」** — 銀猫が赤い絵の具皿に前足をつける（`silver-paint.png`）。物語の起点。背後 z-0・スクロールで登場。
+3. **Portfolio** — 見出し周りの空きスペースに色付き水彩足跡（**SVG**・赤黄緑青紫）が 1/3速度でゆっくり1つずつ登場（猫が歩いて残した跡）。
+4. **Visual** — 銀猫が座って後ろ姿でギャラリーを眺める（`silver-sit.png`）。見出し脇に配置。
+5. **Blog** — 絵の具付きで歩く銀猫（`silver-walk.png`）が見出しへ向かう。
+6. **フッター直前** — 色付き足跡の水平区切り線（`paw-divider.png`）。旅の continuity。
+7. **Footer** — 猫が丸くなって眠る（`silver-sleep.png`）。旅の終わり。
+
+### なぜ銀猫か
+イラストは黒猫・銀猫の両方を用意。NOCTA はダーク（`#0A0906`）なので**銀猫（ぎんねこ）を使用**（黒猫はダーク背景で消えるため／黒猫はライト系の文脈用）。
+
+### 素材
+- **切り出し済みスプライト（repo にコミット済み）**: `website/img/cat/`
+  - 猫: `silver-paint / walk / sit / sleep / peek .png`
+  - 色付き肉球: `paw-red / amber / green / teal / blue / purple .png`
+  - 区切り線: `paw-divider.png`
+- **元シート（repo外・`project_NOCTA/visual/` にローカル保管。画像はgit管理外規約のため未コミット）**: `ぎんねこ透過.png / ２ / ３ / ４`, `くろねこ透過.png`（猫＋ラベル入りの全身ストーリーボード・透過）。新ポーズが要るときは PIL で `crop` → `getbbox()` 自動トリムで切り出す（座標はラベルを避ける）。**別PCにはこの元シートは渡らない点に注意**（スプライトは渡る）。
+- 「猫がレインボートレイルを歩く」全身バンドも試作したが**大きすぎて不採用**→ 細い `paw-divider.png` に置換。
+
+### 実装の仕組み
+- `.cat-scene`（IntersectionObserver が監視→ `.in-view` 付与）＋ `.cat-fig`（opacity/translate でフェード登場）。猫 `<img>` は各セクションの見出し/帯の中に `z-0`（本文は `z-10`）・`pointer-events:none`・`aria-hidden` で配置。
+- 足跡は `.paw-trail`>`.paw`>`.paw-svg`（`#cat-paw` シンボル＋`#watercolor` feTurbulence フィルタの色付きSVG）。**base opacity 0.55**（JS/監視が発火しなくても見える保険）、`.in-view` で `pawPress` ポップ、`animation-delay` で歩行カデンス、速度は `--paw-dur`（Portfolio は 1.8s）。
+- Observer のセレクタは `.paw-trail, .cat-scene`。`prefers-reduced-motion` で全停止。
+
+### Do / Don't
+- 猫は**間引く**（約5ビートのみ）。全セクションに入れない（Tools はクリーン維持）。
+- 猫は Statement 以降のみ。Hero / About / Tools は幾何（AI）のまま。
+- 肉球/4本柱の色（赤/黄/青/紫）は固定セット。About → 足跡 の色対応を崩さない。
