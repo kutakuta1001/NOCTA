@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NOCTA Visual 01 — Storyboard</title>
+<meta name="description" content="NOCTA Visual 01 のアニメーション・ストーリーボード。藤の花に佇む少女・3シーン。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#0A0906;
+  --surface:#0F0D0A;
+  --border:#221c10;
+  --accent:#B8B4AE;
+  --ink:#E8E0D0;
+  --muted:#9A8A7A;
+  --on-accent:#0A0906;
+  --glow:rgba(184,180,174,0.40);
+  --serif:'EB Garamond',Georgia,serif;
+  --label:'Syne',sans-serif;
+  --display:'Bebas Neue',sans-serif;
+  --jp:'Noto Sans JP',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  background:var(--canvas);
+  color:var(--ink);
+  font-family:var(--jp);
+  font-weight:300;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;gap:18px;padding:24px 16px;
+  position:relative;overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* Grain field */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+  opacity:0.04;mix-blend-mode:overlay;
+}
+::selection{background:var(--accent);color:var(--on-accent);}
+
+.brandline{position:relative;z-index:2;font-family:var(--label);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px;}
+.brandline::before{content:"";width:22px;height:1px;background:var(--accent);}
+.brandline b{color:var(--ink);font-weight:700;}
+
+/* ── Stage (3:4 letterboxed) ── */
+.stage{
+  position:relative;z-index:2;
+  aspect-ratio:3/4;
+  height:min(74vh, calc((100vw - 32px) * 4 / 3));
+  border-radius:14px;overflow:hidden;
+  border:1px solid var(--border);
+  background:#0b0a12;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6);
+}
+.stage .frame{position:absolute;inset:0;overflow:hidden;}
+.stage .photo{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;transform:scale(1.08);
+  transform-origin:50% 38%;
+  transition:transform 3000ms cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+}
+/* vignette + bottom gradient for caption legibility */
+.stage .vignette{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(10,9,6,0.55) 100%),
+             linear-gradient(to top, rgba(10,9,6,0.78) 0%, transparent 38%);}
+
+/* ── Petals ── */
+.petals{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease;}
+.stage.petals-light .petals{opacity:0.55;}
+.stage.petals-mid   .petals{opacity:0.85;}
+.stage.petals-heavy .petals{opacity:1;}
+.petal{position:absolute;top:-8%;width:14px;height:9px;
+  background:linear-gradient(135deg,#d9c6f0,#a98fce);
+  border-radius:60% 60% 60% 0;
+  filter:blur(.3px);opacity:.85;
+  animation:fall var(--dur,9s) linear infinite;animation-delay:var(--delay,0s);}
+.stage.petals-heavy .petal{animation-duration:calc(var(--dur,9s) * .7);}
+@keyframes fall{
+  0%{transform:translateY(-10%) translateX(0) rotate(0deg);opacity:0;}
+  10%{opacity:.9;}
+  90%{opacity:.85;}
+  100%{transform:translateY(120%) translateX(var(--sway,20px)) rotate(320deg);opacity:0;}
+}
+
+/* ── White flash (scene 03 → ending) ── */
+.flash{position:absolute;inset:0;background:#f4eee2;opacity:0;pointer-events:none;transition:opacity .6s ease;z-index:3;}
+
+/* ── Caption ── */
+.cap{position:absolute;left:24px;right:24px;bottom:26px;z-index:4;opacity:0;transform:translateY(8px);transition:opacity .7s ease,transform .7s ease;}
+.stage.show-cap .cap{opacity:1;transform:none;}
+.cap .tag{font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px;}
+.cap .tag::before{content:"";width:20px;height:1px;background:var(--accent);}
+.cap .mood{font-family:var(--serif);font-style:italic;font-size:clamp(20px,4.5vw,30px);color:var(--ink);margin-top:8px;line-height:1.3;}
+
+/* ── Title / End overlays ── */
+.overlay{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;
+  background:var(--canvas);opacity:0;pointer-events:none;transition:opacity 1s ease;}
+.overlay.show{opacity:1;}
+#title .eyebrow{font-family:var(--label);font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:18px;}
+#title .num{font-family:var(--display);font-size:clamp(90px,26vw,150px);line-height:.82;color:var(--ink);letter-spacing:3px;}
+#title .num .dot{color:var(--accent);}
+#title .sub{font-family:var(--serif);font-style:italic;font-size:clamp(17px,4vw,22px);color:var(--ink);margin-top:14px;}
+#title .meta{font-family:var(--label);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:22px;}
+#endcard{background:#f4eee2;}
+#endcard.todark{background:var(--canvas);}
+#endcard .logo{font-family:var(--display);font-size:clamp(46px,13vw,76px);letter-spacing:8px;color:var(--ink);opacity:0;transition:opacity 1s ease .4s;}
+#endcard .logo .dot{color:var(--accent);}
+#endcard.todark .logo{opacity:1;}
+#endcard .tl{font-family:var(--serif);font-style:italic;font-size:clamp(16px,3.6vw,20px);color:var(--ink);margin-top:14px;opacity:0;transition:opacity 1s ease .8s;}
+#endcard.todark .tl{opacity:1;}
+#endcard .fin{font-family:var(--label);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:20px;opacity:0;transition:opacity 1s ease 1.1s;}
+#endcard.todark .fin{opacity:1;}
+
+/* ── Controls ── */
+.controls{position:relative;z-index:2;display:flex;align-items:center;gap:18px;}
+.dots{display:flex;gap:9px;}
+.dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--muted);background:transparent;cursor:pointer;padding:0;transition:background .3s,border-color .3s,transform .3s;}
+.dots button.active{background:var(--accent);border-color:var(--accent);transform:scale(1.2);}
+.ctrl-btn{background:transparent;border:1px solid var(--border);color:var(--ink);font-family:var(--label);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  padding:9px 16px;border-radius:999px;cursor:pointer;transition:border-color .3s,color .3s,background .3s;}
+.ctrl-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ctrl-btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700;min-width:96px;}
+.ctrl-btn.primary:hover{box-shadow:0 0 24px var(--glow);color:var(--on-accent);}
+.hint{position:relative;z-index:2;font-family:var(--label);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+
+/* click zones */
+.navzone{position:absolute;top:0;bottom:0;width:34%;z-index:4;cursor:pointer;}
+.navzone.prev{left:0;}
+.navzone.next{right:0;width:66%;}
+
+@media (prefers-reduced-motion: reduce){
+  .stage .photo{transition:none !important;}
+  .petal{animation:none !important;display:none;}
+  .overlay{transition:opacity .2s ease;}
+}
+</style>
+</head>
+<body>
+
+  <div class="brandline"><b>NOCTA</b> Visual 01 — Storyboard</div>
+
+  <div class="stage" id="stage">
+    <div class="frame">
+      <img class="photo" id="photo" src="./visual01-key.jpg" alt="藤の花に佇む少女">
+      <div class="petals" id="petals" aria-hidden="true"></div>
+      <div class="vignette"></div>
+      <div class="flash" id="flash"></div>
+    </div>
+
+    <div class="cap" id="cap">
+      <span class="tag" id="capTag">Scene 01 · 寄り</span>
+      <span class="mood" id="capMood">静寂の中で出会う</span>
+    </div>
+
+    <!-- click zones -->
+    <div class="navzone prev" id="zPrev" aria-label="前へ"></div>
+    <div class="navzone next" id="zNext" aria-label="次へ"></div>
+
+    <!-- title -->
+    <div class="overlay show" id="title">
+      <div class="eyebrow">NOCTA — Visual Series</div>
+      <div class="num">01<span class="dot">.</span></div>
+      <div class="sub">藤の花に佇む少女</div>
+      <div class="meta">Storyboard · 3 Scenes · Silent</div>
+    </div>
+
+    <!-- end -->
+    <div class="overlay" id="endcard">
+      <div class="logo">NOCTA<span class="dot">.</span></div>
+      <div class="tl">遊ぶことで人生を彩ろう</div>
+      <div class="fin">Visual 01 — fin</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn" id="prevBtn" aria-label="前のシーン">◀ Prev</button>
+    <button class="ctrl-btn primary" id="playBtn">▶ Play</button>
+    <button class="ctrl-btn" id="nextBtn" aria-label="次のシーン">Next ▶</button>
+    <div class="dots" id="dots" role="tablist" aria-label="シーン選択"></div>
+  </div>
+  <div class="hint">← → キー / 画面クリックでシーン送り · スペースで再生・停止</div>
+
+<script>
+(function(){
+  "use strict";
+  // ── Scene definition ──
+  // type: title | scene | end ;  transform は連続するカメラワーク（前→次へ遷移）
+  var SCENES = [
+    { type:'title', dur:3000 },
+    { type:'scene', dur:9000,  tag:'Scene 01 · 寄り',     mood:'静寂の中で出会う',     tf:'scale(1.18) translate(0%, -3%)',  petals:'petals-light' },
+    { type:'scene', dur:6000,  tag:'Scene 02 · クローズ', mood:'内省 — 視線の先にあるもの', tf:'scale(1.72) translate(3%, 9%)',   petals:'petals-mid'  },
+    { type:'scene', dur:10000, tag:'Scene 03 · 引き',     mood:'世界に溶けていく',     tf:'scale(1.0) translate(0%, 0%)',    petals:'petals-heavy', whiteout:true },
+    { type:'end',   dur:4500 }
+  ];
+  // scene index（dots 用：type==='scene' のものだけ）
+  var SCENE_IDX = SCENES.map(function(s,i){return s.type==='scene'?i:-1;}).filter(function(i){return i>=0;});
+
+  var stage=document.getElementById('stage'),
+      photo=document.getElementById('photo'),
+      flash=document.getElementById('flash'),
+      cap=document.getElementById('cap'),
+      capTag=document.getElementById('capTag'),
+      capMood=document.getElementById('capMood'),
+      title=document.getElementById('title'),
+      endcard=document.getElementById('endcard'),
+      playBtn=document.getElementById('playBtn'),
+      dotsWrap=document.getElementById('dots');
+
+  var cur=0, playing=false, timer=null;
+  var PETAL_CLASSES=['petals-light','petals-mid','petals-heavy'];
+
+  // ── build petals ──
+  (function(){
+    var p=document.getElementById('petals'), n=18, html='';
+    for(var i=0;i<n;i++){
+      var left=Math.round(Math.random()*100);
+      var dur=(6+Math.random()*7).toFixed(1);
+      var delay=(-Math.random()*10).toFixed(1);
+      var sway=(Math.round((Math.random()*60-30)))+'px';
+      var sc=(0.6+Math.random()*0.9).toFixed(2);
+      html+='<span class="petal" style="left:'+left+'%;--dur:'+dur+'s;--delay:'+delay+'s;--sway:'+sway+';transform:scale('+sc+');animation-delay:'+delay+'s"></span>';
+    }
+    p.innerHTML=html;
+  })();
+
+  // ── build dots ──
+  SCENE_IDX.forEach(function(sceneI, k){
+    var b=document.createElement('button');
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-label','Scene '+(k+1));
+    b.addEventListener('click',function(){ pause(); goTo(sceneI); });
+    dotsWrap.appendChild(b);
+  });
+
+  function clearPetals(){ PETAL_CLASSES.forEach(function(c){stage.classList.remove(c);}); }
+
+  function updateDots(){
+    var kids=dotsWrap.children;
+    for(var i=0;i<kids.length;i++){
+      kids[i].classList.toggle('active', SCENE_IDX[i]===cur);
+    }
+  }
+
+  function goTo(i){
+    if(i<0) i=0;
+    if(i>SCENES.length-1) i=SCENES.length-1;
+    cur=i;
+    var s=SCENES[i];
+
+    // overlays
+    title.classList.toggle('show', s.type==='title');
+    if(s.type==='end'){
+      // 白フラッシュ済みの状態から end card を表示 → 白→warm-black へ
+      flash.style.opacity='1';
+      endcard.classList.add('show');
+      // 次フレームで暗転＋ロゴ表示
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ endcard.classList.add('todark'); }); });
+    }else{
+      endcard.classList.remove('show'); endcard.classList.remove('todark');
+    }
+
+    // caption
+    if(s.type==='scene'){
+      capTag.textContent=s.tag; capMood.textContent=s.mood;
+      stage.classList.add('show-cap');
+    }else{
+      stage.classList.remove('show-cap');
+    }
+
+    // camera transform（連続カメラワーク：transition 時間＝シーン尺）
+    if(s.type==='scene'){
+      photo.style.transitionDuration=s.dur+'ms';
+      photo.style.transform=s.tf;
+    }else if(s.type==='title'){
+      photo.style.transitionDuration='1200ms';
+      photo.style.transform='scale(1.08)';
+    } // end は直前の transform を保持
+
+    // petals
+    clearPetals();
+    if(s.type==='scene') stage.classList.add(s.petals);
+
+    // whiteout
+    if(s.type==='scene' && s.whiteout){
+      flash.style.transitionDuration=s.dur+'ms';
+      flash.style.opacity='1';
+    }else if(s.type!=='end'){
+      flash.style.transitionDuration='600ms';
+      flash.style.opacity='0';
+    }
+
+    updateDots();
+    schedule();
+  }
+
+  function schedule(){
+    if(timer){clearTimeout(timer);timer=null;}
+    if(!playing) return;
+    if(cur>=SCENES.length-1){ // end に到達
+      setPlaying(false);
+      return;
+    }
+    timer=setTimeout(function(){ goTo(cur+1); }, SCENES[cur].dur);
+  }
+
+  function setPlaying(v){
+    playing=v;
+    playBtn.textContent = v ? '❚❚ Pause' : (cur>=SCENES.length-1 ? '↻ Replay' : '▶ Play');
+    if(v) schedule(); else if(timer){clearTimeout(timer);timer=null;}
+  }
+  function play(){
+    if(cur>=SCENES.length-1){ goTo(0); }
+    setPlaying(true);
+  }
+  function pause(){ setPlaying(false); }
+  function toggle(){ playing ? pause() : play(); }
+  function next(){ pause(); if(cur<SCENES.length-1) goTo(cur+1); }
+  function prev(){ pause(); if(cur>0) goTo(cur-1); }
+
+  // ── events ──
+  playBtn.addEventListener('click', toggle);
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  document.getElementById('zNext').addEventListener('click', next);
+  document.getElementById('zPrev').addEventListener('click', prev);
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); prev(); }
+    else if(e.key===' '){ e.preventDefault(); toggle(); }
+  });
+
+  // init
+  goTo(0);
+})();
+</script>
+</body>
+</html>
