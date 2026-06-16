@@ -1,7 +1,8 @@
-const CACHE = 'still-v4';
+const CACHE = 'still-v5';
 const ASSETS = [
   './',
   './index.html',
+  './nocta-license-gate.js',
   './licenses.json',
   './audio/track-a.mp3',
   './audio/track-b.mp3',

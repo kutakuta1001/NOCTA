@@ -189,6 +189,7 @@
   <a href="https://gumroad.com" id="gate-buy" target="_blank" rel="noopener">Gumroadで購入 →</a>
 </div>
 
+<script src="./nocta-license-gate.js"></script>
 <script>
 // ══════════════════════════════════════════
 // CONFIG
@@ -651,40 +652,10 @@ function frame(ts) {
 }
 
 // ══════════════════════════════════════════
-// AUTH GATE
+// AUTH GATE — 汎用モジュール NoctaLicenseGate に委譲
+// appId:'still' で従来と同じ localStorage キー（still-auth / still-owner）を使うため
+// 既存の解錠済みユーザーはそのまま維持される。初期化はスクリプト末尾の init() で行う。
 // ══════════════════════════════════════════
-const AUTH_KEY = 'still-auth';
-const OWNER_KEY = 'still-owner';
-
-// ?setup=owner を一度アクセスするとオーナー永続認証を設定
-(function() {
-  const p = new URLSearchParams(location.search);
-  if (p.get('setup') === 'owner') {
-    localStorage.setItem(OWNER_KEY, '1');
-    history.replaceState(null, '', location.pathname);
-  }
-})();
-
-async function sha256(str) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-
-async function loadHashes() {
-  try {
-    const r = await fetch('./licenses.json', {cache:'no-store'});
-    const d = await r.json();
-    return d.hashes || [];
-  } catch { return []; }
-}
-
-async function checkAuth() {
-  if (localStorage.getItem(OWNER_KEY) === '1') return true;
-  const saved = localStorage.getItem(AUTH_KEY);
-  if (!saved) return false;
-  const hashes = await loadHashes();
-  return hashes.includes(saved);
-}
 
 function startApp() {
   resize();
@@ -692,43 +663,7 @@ function startApp() {
   requestAnimationFrame(frame);
 }
 
-async function initGate() {
-  const ok = await checkAuth();
-  if (ok) {
-    document.getElementById('gate').style.display = 'none';
-    startApp();
-    return;
-  }
-}
-
-document.getElementById('gate-btn').addEventListener('click', async () => {
-  const val = document.getElementById('gate-input').value.trim().toUpperCase();
-  if (!val) return;
-  const btn = document.getElementById('gate-btn');
-  btn.textContent = '確認中...'; btn.style.opacity = '0.5';
-  const hash = await sha256(val);
-  const hashes = await loadHashes();
-  if (hashes.includes(hash)) {
-    localStorage.setItem(AUTH_KEY, hash);
-    const gate = document.getElementById('gate');
-    gate.classList.add('hidden');
-    setTimeout(() => { gate.style.display = 'none'; startApp(); }, 600);
-  } else {
-    btn.textContent = 'はじめる'; btn.style.opacity = '1';
-    const msg = document.getElementById('gate-msg');
-    msg.textContent = 'コードが正しくありません';
-    msg.style.color = 'rgba(255,100,100,0.8)';
-    document.getElementById('gate-input').value = '';
-    setTimeout(() => {
-      msg.textContent = 'ライセンスキーを入力してください';
-      msg.style.color = '';
-    }, 2500);
-  }
-});
-
-document.getElementById('gate-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('gate-btn').click();
-});
+// ゲートの解錠判定・入力ハンドリングは NoctaLicenseGate.init()（スクリプト末尾）に集約
 
 // ══════════════════════════════════════════
 // EVENTS
@@ -790,7 +725,11 @@ document.getElementById('again-btn').addEventListener('click',restartSession);
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
-initGate();
+NoctaLicenseGate.init({
+  appId: 'still',                  // 従来と同じ localStorage キー（still-auth / still-owner）
+  buyUrl: 'https://gumroad.com',   // Gumroad 商品作成後に商品URLへ差し替え
+  onUnlock: startApp,              // 解錠後にアプリ起動
+});
 </script>
 </body>
 </html>
