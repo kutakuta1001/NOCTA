@@ -27,8 +27,7 @@ website/
 ├── blog-data.js        ← Blogセクションのデータ
 ├── works-data.js       ← Worksセクションのデータ
 ├── apps-data.js        ← Appsセクションのデータ
-├── brand_assets.html   ← ブランドアセット確認ページ
-├── brandkit.html       ← ブランドキットページ
+├── brandkit.html       ← ブランドガイド（色/書体/ロゴ/適用例。単一シルバー・multi-domain。旧 brand_assets.html を統合・2026-06-16）
 ├── success.html        ← フォーム送信完了ページ
 ├── blog/               ← ブログ記事ページ（静的HTML）
 └── the-first-flower/   ← 楽曲専用ランディングページ
