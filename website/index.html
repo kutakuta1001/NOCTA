@@ -917,13 +917,12 @@
             <!-- Info -->
             <div>
                 <p class="section-tag reveal">Contact</p>
-                <h2 class="font-jp text-[clamp(30px,4.5vw,48px)] font-bold text-white leading-tight mb-5 reveal reveal-delay-1">
-                    AIが多くを担う時代に、<br>人間に必要なのは「<span class="text-gradient">遊び</span>」だ。
+                <!-- 文節単位の inline-block で折り返し位置を制御（中途半端な位置での改行を防ぐ） -->
+                <h2 class="font-jp text-[clamp(30px,4.5vw,48px)] font-bold text-white leading-tight mb-5 reveal reveal-delay-1" data-i18n-html="contact.h2">
+                    <span class="inline-block">AIが多くを担う時代に、</span><br><span class="inline-block">人間に必要なのは</span><span class="inline-block">「<span class="text-gradient">遊び</span>」だ。</span>
                 </h2>
-                <p class="font-jp text-brand-sub text-[14px] leading-[2.2] mb-10 reveal reveal-delay-2">
-                    効率でも、消費でもなく。<br>
-                    音楽・映像・言葉・コードを越えて、遊ぶように創る。<br>
-                    その問いを面白がれる人を、いつでも歓迎します。
+                <p class="font-jp text-brand-sub text-[14px] leading-[2.2] mb-10 reveal reveal-delay-2" data-i18n-html="contact.subtitle">
+                    <span class="inline-block">効率でも、消費でもなく。</span><br><span class="inline-block">音楽・映像・言葉・コードを越えて、</span><span class="inline-block">遊ぶように創る。</span><br><span class="inline-block">その問いを面白がれる人を、</span><span class="inline-block">いつでも歓迎します。</span>
                 </p>
 
                 <div class="flex flex-col gap-3 reveal reveal-delay-3">
@@ -1745,8 +1744,8 @@ const I18N = {
     'about.v4.desc': '規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。',
     'works.subtitle': 'AIと感性が生んだ、作品たち',
     'tools.nuword': 'NuWord コンセプトページ →',
-    'contact.h2': 'AIが多くを担う時代に、<br>人間に必要なのは「<span class="text-gradient">遊び</span>」だ。',
-    'contact.subtitle': '効率でも、消費でもなく。<br>音楽・映像・言葉・コードを越えて、遊ぶように創る。<br>その問いを面白がれる人を、いつでも歓迎します。',
+    'contact.h2': '<span class="inline-block">AIが多くを担う時代に、</span><br><span class="inline-block">人間に必要なのは</span><span class="inline-block">「<span class="text-gradient">遊び</span>」だ。</span>',
+    'contact.subtitle': '<span class="inline-block">効率でも、消費でもなく。</span><br><span class="inline-block">音楽・映像・言葉・コードを越えて、</span><span class="inline-block">遊ぶように創る。</span><br><span class="inline-block">その問いを面白がれる人を、</span><span class="inline-block">いつでも歓迎します。</span>',
     'contact.social.x': '最新情報をいち早く',
     'contact.social.note': '制作ブログ・ライナーノーツ',
     'contact.lbl.name': 'お名前 *', 'contact.ph.name': '山田 太郎',
