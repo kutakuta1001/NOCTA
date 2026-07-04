@@ -14,6 +14,17 @@
  */
 const NOCTA_APPS = [
   {
+    title: "花図鑑",
+    cat: "app",
+    url: "./flora/index.html",
+    imgUrl: "",
+    thumbClass: "thumb-6",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "季節の花を静かに眺める図鑑。花言葉と誕生花、今日の一花をたずさえた、NOCTA第6のツール。",
+    descEn: "A quiet catalogue of seasonal flowers, with flower meanings, birth flowers, and a flower of the day. NOCTA's sixth tool."
+  },
+  {
     title: "宝石図鑑",
     cat: "app",
     url: "./gems/index.html",
@@ -21,8 +32,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-5",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "世界の宝石・原石を静かに眺める図鑑。彩りと銀猫の物語が息づく、NOCTA第5のツール。",
-    descEn: "A quiet catalogue of the world's gemstones. NOCTA's fifth tool, woven with color and the silver cat's story."
+    descJa: "世界の宝石36種を静かに眺める図鑑。石言葉と誕生石、今日の一石をたずさえた、NOCTA第5のツール。",
+    descEn: "A quiet catalogue of 36 gemstones, with stone meanings, birthstones, and a stone of the day. NOCTA's fifth tool."
   },
   {
     title: "NuWord still",
