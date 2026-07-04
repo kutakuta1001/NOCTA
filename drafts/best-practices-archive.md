@@ -1,5 +1,20 @@
 # ベストプラクティス 処理済みアーカイブ
 
+## 2026-07-04 アーカイブ分
+
+- [changelog v2.1.162] `/effort` コマンドで選択レベルがデフォルト保持（2026-06-04）
+- [changelog v2.1.162] `claude agents --json` に `waitingFor` フィールド追加（2026-06-04）
+- [changelog v2.1.158] Bedrock/Vertex/Foundryでオートモード対応（2026-06-04）
+- [docs.anthropic.com] モデル一覧 — 公式最新推奨はOpus 4.7・Opus 4.8は未掲載（2026-06-04）
+- [docs.anthropic.com] Claude Code 概要 — Routines: /schedule でAnthropicインフラの定期タスク実行（2026-06-04）
+- [docs.anthropic.com] Claude Code 概要 — Agent SDK: カスタムエージェントをコードで構築可能（2026-06-04）
+- [docs.anthropic.com] Claude Code 概要 — Slack連携: @Claudeメンションでバグレポート→PR自動作成（2026-06-04）
+- [changelog v2.1.152] スキルの disallowed-tools フロントマターでスキル実行時の特定ツール除外が可能（2026-05-28）
+- [changelog v2.1.149] /usageがスキル・サブエージェント・プラグイン・MCP別のコスト内訳を表示（2026-05-28）
+- [changelog v2.1.153] /modelでモデル選択をデフォルト保存可能（sキーで現セッションのみ切替）（2026-05-28）
+- [docs.anthropic.com] モデル一覧 — Sonnet 4.6 が適応的思考（Adaptive Thinking）に対応（2026-05-28）
+- [docs.anthropic.com] モデル一覧 — Haiku 4.5 の knowledge cutoff は 2025年2月（2026-05-28）
+
 ## 2026-06-15 アーカイブ分
 
 - [docs.anthropic.com] CHANGELOG v2.1.126 — claude project purge [path] コマンド追加（2026-05-04）
