@@ -14,6 +14,17 @@
  */
 const NOCTA_APPS = [
   {
+    title: "伝統色図鑑",
+    cat: "app",
+    url: "./iro/index.html",
+    imgUrl: "",
+    thumbClass: "thumb-4",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "日本の伝統色48色に浸る図鑑。色名の物語と配色、今日の一色をたずさえた、NOCTA第7のツール。",
+    descEn: "A quiet catalogue for immersing in 48 traditional Japanese colors, with their stories, pairings, and a color of the day. NOCTA's seventh tool."
+  },
+  {
     title: "花図鑑",
     cat: "app",
     url: "./flora/index.html",
