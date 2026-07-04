@@ -14,6 +14,17 @@
  */
 const NOCTA_APPS = [
   {
+    title: "宝石図鑑",
+    cat: "app",
+    url: "./gems/index.html",
+    imgUrl: "",
+    thumbClass: "thumb-5",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "世界の宝石・原石を静かに眺める図鑑。彩りと銀猫の物語が息づく、NOCTA第5のツール。",
+    descEn: "A quiet catalogue of the world's gemstones. NOCTA's fifth tool, woven with color and the silver cat's story."
+  },
+  {
     title: "NuWord still",
     cat: "app",
     url: "https://kutakuta1001.github.io/NOCTA/still/",
