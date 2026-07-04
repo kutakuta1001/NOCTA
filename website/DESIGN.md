@@ -24,7 +24,7 @@ colors:
 
 typography:
   display-hero:
-    fontFamily: "EB Garamond, serif"
+    fontFamily: "EB Garamond, Shippori Mincho, serif"
     fontSize: 100px
     fontWeight: 600
     lineHeight: 1.05
@@ -211,7 +211,9 @@ Type voice is **EB Garamond** (serif) for display and **Syne** for headings/labe
 ## Typography
 
 ### Font Family
-The system loads four families: **EB Garamond** (serif display / hero titles), **Syne** (headings, labels, nav, brand logo), **Bebas Neue** (numerals, dramatic all-caps display), and **Noto Sans JP** (Japanese body and explanatory headlines). No other font is loaded — adding one costs page speed and is off-system. (Inter and Space Grotesk appear in legacy fallback strings but are NOT loaded; treat them as dead references to remove.)
+The system loads five families: **EB Garamond** (serif display / hero titles, Latin), **Shippori Mincho** (Japanese serif display — weight 600 only; added 2026-07-04 so Japanese display headlines no longer fall back to OS-default mincho), **Syne** (headings, labels, nav, brand logo), **Bebas Neue** (numerals, dramatic all-caps display), and **Noto Sans JP** (Japanese body and explanatory headlines). No other font is loaded — adding one costs page speed and is off-system. (Inter and Space Grotesk appear in legacy fallback strings but are NOT loaded; treat them as dead references to remove.)
+
+Display stack rule: serif display headlines use `'EB Garamond','Shippori Mincho',serif` — Latin glyphs resolve to EB Garamond, Japanese glyphs to Shippori Mincho. Japanese display sets positive tracking (`0.04em`), never the negative tracking used for Latin.
 
 ### Hierarchy
 
@@ -336,7 +338,7 @@ Visual-section art cards are portrait `aspect-[3/4]`. Works (video thumbnails) a
 - Don't add a second accent color. The retired neon-green (#39FF6A) / lavender (#C8A2FF) palette and the earlier gold (#C4942A) direction are gone — do not reintroduce them.
 - Don't use a white (#FFF) background or any light-mode style. NOCTA is dark-only.
 - Don't bold serif display type past 600. Going heavier reads as a marketing-page template.
-- Don't load a new font (no Inter, no Space Grotesk). Only EB Garamond / Syne / Bebas Neue / Noto Sans JP are in-system.
+- Don't load a new font (no Inter, no Space Grotesk). Only EB Garamond / Shippori Mincho (display 600 only) / Syne / Bebas Neue / Noto Sans JP are in-system.
 - Don't set Latin text in `font-jp` (Noto Sans JP), and don't put `text-gradient` on body copy.
 - Don't leave glow on permanently, and don't drop the grain-noise overlay (the page goes flat and cheap).
 - Don't set `z-index` ≥ 9999 (collides with the noise layer).
@@ -600,6 +602,8 @@ The live homepage realizes the editorial principles below. Treat this section as
 ### Statement band (voltage moment)
 A full-bleed **raised glassy band** (`bg-white/[0.02] backdrop-blur-sm border-y`) sits between about and works, carrying a `{component.section-tag}` eyebrow ("Statement") and one large `{typography.display-hero}` line with a single italic-silver emphasis word. It is the dark-mode analog of a signature card: voltage from scale + surface lift, not from a second color. Copy is editorial/brand and CEO-owned (currently "遊ぶことで人生を彩ろう"). Keep to one such band per page.
 
+The band is also the page's single **interactive play moment** (added 2026-07-04): pointer movement (or taps on touch) leaves watercolor cat-paw prints (`#statement-paws` layer, reusing the `#cat-paw` symbol + `#watercolor` filter and the fixed four-pillar palette). The visitor literally "colors" the statement — the philosophy performed, not just stated. Capped at 60 prints, disabled under `prefers-reduced-motion`. Do not add similar interactions to other sections (scarcity keeps it special).
+
 ### Featured-first grid
 The Works grid renders the **first card at `lg:col-span-2`** (a wide featured card) to break the uniform 3-up "spec sheet" feel. Remaining cards stay uniform. Generated in the `NOCTA_WORKS.map` render (`i === 0`). md/mobile fall back to normal cards.
 
@@ -645,7 +649,7 @@ Define in a separate namespace; do not overwrite NOCTA global colors. (the-first
 - [ ] Background is `{colors.canvas}` (#0A0906) or `{colors.surface}` (#0F0D0A)
 - [ ] Text is `{colors.ink}` (#E8E0D0) or `{colors.muted}` (#9A8A7A)
 - [ ] Section opens with a `{component.section-tag}` label
-- [ ] Headings use EB Garamond (`{typography.display-hero}`) or Syne (`{typography.title-section}`)
+- [ ] Headings use EB Garamond / Shippori Mincho (`{typography.display-hero}`; JP display glyphs = Shippori Mincho) or Syne (`{typography.title-section}`)
 - [ ] Japanese body uses Noto Sans JP (`{typography.body}`)
 - [ ] Glass cards use `{component.glass-card}` + hover
 - [ ] CTA uses `{component.button-primary}` (silver)

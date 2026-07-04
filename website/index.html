@@ -4,10 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NOCTA — Creative</title>
+    <meta name="description" content="NOCTA — Music × Visual × Words × Code。AIと人間が、遊ぶように創る複数領域クリエイティブスタジオ。">
+    <meta name="theme-color" content="#0A0906">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <!-- OGP（og:image は暫定で SILENCE #1。専用バナー制作後に 1200x630 へ差し替え） -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="NOCTA">
+    <meta property="og:title" content="NOCTA — Creative">
+    <meta property="og:description" content="Music × Visual × Words × Code。AIと人間が、遊ぶように創る複数領域クリエイティブスタジオ。">
+    <meta property="og:url" content="https://kutakuta1001.github.io/NOCTA/">
+    <meta property="og:image" content="https://ipfs.io/ipfs/bafybeigjekudm2vahgkycl7zh4uyx72qymtpod2l2iny2v74ovroxh67zm">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="NOCTA — Creative">
+    <meta name="twitter:description" content="Music × Visual × Words × Code。AIと人間が、遊ぶように創る複数領域クリエイティブスタジオ。">
+    <meta name="twitter:image" content="https://ipfs.io/ipfs/bafybeigjekudm2vahgkycl7zh4uyx72qymtpod2l2iny2v74ovroxh67zm">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
     <script>
         tailwind.config = {
@@ -35,11 +49,7 @@
                         display: ['Bebas Neue', 'sans-serif'],
                     },
                     boxShadow: {
-                        'glow-purple': '0 0 50px rgba(184,180,174,0.35)',
-                        'glow-cyan':   '0 0 50px rgba(184,180,174,0.30)',
-                        'glow-pink':   '0 0 50px rgba(184,180,174,0.30)',
                         'glow-gold':   '0 0 50px rgba(184,180,174,0.40)',
-                        'glow-vgreen': '0 0 50px rgba(184,180,174,0.45)',
                     }
                 }
             }
@@ -303,27 +313,6 @@
             margin-left: 4px;
         }
 
-        /* Service card */
-        .service-card {
-            transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), border-color 0.3s ease, box-shadow 0.4s ease;
-        }
-        .service-card:hover { transform: translateY(-6px); }
-        .service-card.c-purple:hover { border-color: rgba(184,180,174,0.5); box-shadow: 0 0 60px rgba(184,180,174,0.18); }
-        .service-card.c-cyan:hover   { border-color: rgba(184,180,174,0.5);  box-shadow: 0 0 60px rgba(184,180,174,0.18); }
-        .service-card.c-pink:hover   { border-color: rgba(184,180,174,0.5);  box-shadow: 0 0 60px rgba(184,180,174,0.18); }
-        .service-card.c-gold:hover   { border-color: rgba(184,180,174,0.6);  box-shadow: 0 0 60px rgba(184,180,174,0.20); }
-
-        /* Top accent bar on card hover */
-        .card-top-bar {
-            position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .service-card:hover .card-top-bar { opacity: 1; }
-        .bar-purple { background: linear-gradient(90deg, transparent, #B8B4AE, transparent); }
-        .bar-cyan   { background: linear-gradient(90deg, transparent, #B8B4AE, transparent); }
-        .bar-pink   { background: linear-gradient(90deg, transparent, #B8B4AE, transparent); }
-        .bar-gold   { background: linear-gradient(90deg, transparent, #B8B4AE, transparent); }
-
         /* Contact form */
         .form-field {
             width: 100%;
@@ -344,13 +333,13 @@
             background: rgba(184,180,174,0.06);
         }
         .form-field::placeholder { color: rgba(255,255,255,0.18); }
-        .form-field option { background: #1a1a2e; }
+        .form-field option { background: #0F0D0A; }
 
         /* Submit button */
         .btn-submit {
             width: 100%; padding: 16px;
-            background: linear-gradient(135deg, #B8B4AE, #B8B4AE, #B8B4AE);
-            color: #fff; border: none; border-radius: 12px;
+            background: #B8B4AE;
+            color: #0A0906; border: none; border-radius: 9999px;
             font-family: 'Syne', sans-serif;
             font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
             cursor: pointer; transition: all 0.3s ease;
@@ -371,6 +360,7 @@
             background: transparent;
             color: #B8B4AE;
             border: 1px solid rgba(184,180,174,0.5);
+            border-radius: 9999px;
             transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
         .btn-primary-cta:hover {
@@ -387,6 +377,7 @@
             background: transparent;
             color: rgba(240,234,216,0.45);
             border: 1px solid rgba(240,234,216,0.15);
+            border-radius: 9999px;
             transition: color 0.2s ease, border-color 0.2s ease;
         }
         .btn-glass-cta:hover {
@@ -394,13 +385,13 @@
             color: #E8E0D0;
         }
 
-        /* Thumb gradients */
-        .thumb-1 { background: linear-gradient(135deg, #1a0a2e, #3d1480); }
-        .thumb-2 { background: linear-gradient(135deg, #001a2e, #004d60); }
-        .thumb-3 { background: linear-gradient(135deg, #2e001a, #6b0035); }
-        .thumb-4 { background: linear-gradient(135deg, #000a2e, #001480); }
-        .thumb-5 { background: linear-gradient(135deg, #001a0a, #003d1a); }
-        .thumb-6 { background: linear-gradient(135deg, #2e1a00, #6b4000); }
+        /* Thumb gradients — 単一シルバーシステム準拠（warm-black の面差のみで変化） */
+        .thumb-1 { background: linear-gradient(135deg, #14110C, #262119); }
+        .thumb-2 { background: linear-gradient(160deg, #0F0D0A, #221E17); }
+        .thumb-3 { background: linear-gradient(120deg, #17130D, #2B251B); }
+        .thumb-4 { background: linear-gradient(150deg, #121009, #201C15); }
+        .thumb-5 { background: linear-gradient(135deg, #0F0D0A, #1B1712); }
+        .thumb-6 { background: linear-gradient(145deg, #16120B, #241F16); }
 
         /* Social link */
         .social-link {
@@ -427,24 +418,6 @@
 
         /* Footer */
         footer a:hover { color: #E8E0D0; }
-        /* ===== VOCALOID / SUBCULTURE ADDITIONS ===== */
-
-        /* Cute badge pill */
-        .brand-badge {
-            display: inline-flex; align-items: center;
-            padding: 5px 14px; border-radius: 9999px;
-            font-family: 'Syne', sans-serif;
-            font-size: 10px; font-weight: 700;
-            letter-spacing: 1px;
-            border: 1px solid;
-            backdrop-filter: blur(8px);
-            background: rgba(255,255,255,0.03);
-            transition: all 0.3s ease;
-        }
-        .brand-badge:hover { transform: translateY(-2px); filter: brightness(1.2); }
-
-        /* Silver accent text (legacy token name .text-vgreen, remapped to silver) */
-        .text-vgreen { color: #B8B4AE; }
 
         /* YouTube Modal */
         #yt-modal {
@@ -585,13 +558,13 @@
         </div>
 
         <!-- Heading: 3 lines, staggered reveal -->
-        <h1 class="reveal reveal-delay-1" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:0.92; letter-spacing:-1px; color:#E8E0D0; margin-bottom:6px;">
+        <h1 class="reveal reveal-delay-1" style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:1.06; letter-spacing:0.04em; color:#E8E0D0; margin-bottom:6px;">
             これからの
         </h1>
-        <h1 class="reveal reveal-delay-2" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:0.92; letter-spacing:-1px; color:#E8E0D0; margin-bottom:6px;">
+        <h1 class="reveal reveal-delay-2" style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:1.06; letter-spacing:0.04em; color:#E8E0D0; margin-bottom:6px;">
             人間の
         </h1>
-        <h1 class="reveal reveal-delay-3" style="font-family:'EB Garamond',serif; font-size:clamp(52px,9vw,104px); font-weight:600; font-style:italic; line-height:0.92; letter-spacing:-1px; color:#B8B4AE; margin-bottom:36px;">
+        <h1 class="reveal reveal-delay-3" style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(52px,9vw,104px); font-weight:600; font-style:italic; line-height:1.06; letter-spacing:0.04em; color:#B8B4AE; margin-bottom:36px;">
             遊び方。
         </h1>
 
@@ -600,7 +573,7 @@
 
         <!-- Tagline + CTA -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 reveal reveal-delay-4">
-            <p style="font-family:'Noto Sans JP',sans-serif; font-size:14px; font-weight:300; letter-spacing:0.25em; color:#7a6a50; line-height:1.9;" data-i18n="hero.tagline">
+            <p style="font-family:'Noto Sans JP',sans-serif; font-size:14px; font-weight:300; letter-spacing:0.25em; color:#9A8A7A; line-height:1.9;" data-i18n="hero.tagline">
                 消費するだけでも、生産するだけでもなく。
             </p>
             <div class="flex gap-4 flex-shrink-0">
@@ -764,16 +737,18 @@
     </defs>
 </svg>
 
-<section class="relative z-10 border-y border-white/5 bg-white/[0.02] backdrop-blur-sm overflow-hidden">
+<section id="statement" class="relative z-10 border-y border-white/5 bg-white/[0.02] backdrop-blur-sm overflow-hidden">
     <!-- STORY ORIGIN: 銀猫が絵の具へ向かう水彩イラスト(透過PNG) -->
     <div class="cat-scene absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
         <img class="cat-fig" src="img/cat/silver-paint.png" alt=""
              style="position:absolute; left:12%; bottom:10%; width:clamp(240px,34vw,440px);">
     </div>
+    <!-- PLAY: 訪問者のポインタ/タップの軌跡に水彩の足跡が残る（「遊ぶことで彩る」の実演） -->
+    <div id="statement-paws" class="paw-trail in-view absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
     <div class="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12 py-28 md:py-36">
         <p class="section-tag reveal">Statement</p>
         <h2 class="reveal reveal-delay-1"
-            style="font-family:'EB Garamond',serif; font-size:clamp(34px,6vw,76px); font-weight:600; line-height:1.1; letter-spacing:-0.5px; color:#E8E0D0; max-width:640px; margin-top:24px;">
+            style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(34px,6vw,76px); font-weight:600; line-height:1.2; letter-spacing:0.04em; color:#E8E0D0; max-width:640px; margin-top:24px;">
             遊ぶことで人生を<span style="font-style:italic; color:#B8B4AE;">彩ろう</span>。
         </h2>
     </div>
@@ -1201,22 +1176,20 @@
 <!-- Stats bar: データ配列から件数を動的カウント -->
 <script>
     (function () {
-        function setCount(id, arr) {
+        // data-count を設定 → 後段の Count-up スクリプトがスクロール到達時に駆け上がりアニメーション
+        function setCount(id, n) {
             var el = document.getElementById(id);
-            if (el && Array.isArray(arr)) el.textContent = arr.length;
+            if (el && typeof n === 'number') { el.setAttribute('data-count', n); el.textContent = '0'; }
         }
-        setCount('stat-works', typeof NOCTA_WORKS !== 'undefined' ? NOCTA_WORKS : null);
-        setCount('stat-blog',  typeof NOCTA_BLOG  !== 'undefined' ? NOCTA_BLOG  : null);
-        setCount('stat-apps',  typeof NOCTA_APPS  !== 'undefined' ? NOCTA_APPS  : null);
+        setCount('stat-works', typeof NOCTA_WORKS !== 'undefined' ? NOCTA_WORKS.length : null);
+        setCount('stat-blog',  typeof NOCTA_BLOG  !== 'undefined' ? NOCTA_BLOG.length  : null);
+        setCount('stat-apps',  typeof NOCTA_APPS  !== 'undefined' ? NOCTA_APPS.length  : null);
 
         // ビジュアル数 = Works + Art + Music の3配列を合算
-        var visualEl = document.getElementById('stat-visual');
-        if (visualEl) {
-            var vw = typeof NOCTA_VISUALS_WORKS !== 'undefined' ? NOCTA_VISUALS_WORKS.length : 0;
-            var va = typeof NOCTA_VISUALS_ART   !== 'undefined' ? NOCTA_VISUALS_ART.length   : 0;
-            var vm = typeof NOCTA_VISUALS_MUSIC !== 'undefined' ? NOCTA_VISUALS_MUSIC.length : 0;
-            visualEl.textContent = vw + va + vm;
-        }
+        var vw = typeof NOCTA_VISUALS_WORKS !== 'undefined' ? NOCTA_VISUALS_WORKS.length : 0;
+        var va = typeof NOCTA_VISUALS_ART   !== 'undefined' ? NOCTA_VISUALS_ART.length   : 0;
+        var vm = typeof NOCTA_VISUALS_MUSIC !== 'undefined' ? NOCTA_VISUALS_MUSIC.length : 0;
+        setCount('stat-visual', vw + va + vm);
     })();
 </script>
 <script>
@@ -1225,7 +1198,7 @@
     const nav = document.getElementById('navbar');
     window.addEventListener('scroll', function () {
         if (window.scrollY > 60) {
-            nav.style.cssText = 'background:rgba(10,10,15,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07);';
+            nav.style.cssText = 'background:rgba(10,9,6,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07);';
         } else {
             nav.style.cssText = '';
         }
@@ -1281,7 +1254,7 @@
                 const ease = 1 - Math.pow(1 - p, 3);
                 e.target.textContent = Math.round(ease * target);
                 if (p < 1) requestAnimationFrame(tick);
-                else e.target.textContent = target + '+';
+                else e.target.textContent = target;
             }
             requestAnimationFrame(tick);
             obs.unobserve(e.target);
@@ -1703,10 +1676,10 @@ if (noctaForm) {
         const message = formData.get('message') || '';
         if (!name.trim() || !email.trim() || !message.trim()) {
             btn.textContent = '必須項目を入力してください';
-            btn.style.background = 'linear-gradient(135deg,#B8B4AE,#8b6914)';
+            btn.style.opacity = '0.75';
             setTimeout(() => {
                 btn.textContent = '送信する';
-                btn.style.background = '';
+                btn.style.opacity = '';
             }, 2500);
             return;
         }
@@ -1725,15 +1698,11 @@ if (noctaForm) {
             if (response.ok) {
                 // 送信成功
                 btn.textContent = '✦ 送信完了しました';
-                btn.style.background = 'linear-gradient(135deg,#B8B4AE,#00b894)';
-                btn.style.color = '#0A0906';
                 btn.style.boxShadow = '0 0 40px rgba(184,180,174,0.5)';
                 btn.style.opacity = '1';
                 noctaForm.reset();
                 setTimeout(() => {
                     btn.textContent = '送信する';
-                    btn.style.background = '';
-                    btn.style.color = '';
                     btn.style.boxShadow = '';
                     btn.disabled = false;
                 }, 5000);
@@ -1743,12 +1712,10 @@ if (noctaForm) {
         })
         .catch(() => {
             btn.textContent = '送信エラー — 再度お試しください';
-            btn.style.background = 'linear-gradient(135deg,#ff4444,#cc0000)';
             btn.style.opacity = '1';
             btn.disabled = false;
             setTimeout(() => {
                 btn.textContent = '送信する';
-                btn.style.background = '';
             }, 3500);
         });
     });
@@ -1778,27 +1745,6 @@ const I18N = {
     'about.v4.desc': '規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。',
     'works.subtitle': 'AIと感性が生んだ、作品たち',
     'tools.nuword': 'NuWord コンセプトページ →',
-    'services.h2': '音楽を生み出し、<br><span class="text-gradient">世界に届ける</span>',
-    'services.subtitle': '楽曲制作からメディア展開まで、すべてを一気通貫でご提供します。',
-    'services.s1.title': '楽曲制作',
-    'services.s1.desc': 'トレンド分析から作曲・編曲・歌詞制作まで。ジャンル・ムード・ターゲット層に最適化された楽曲を高速かつ高品質に制作します。',
-    'services.s1.t1': '作曲・編曲', 'services.s1.t2': '歌詞制作', 'services.s1.t3': 'ボーカル演出', 'services.s1.t4': 'サウンドデザイン',
-    'services.s2.title': 'PV・映像制作',
-    'services.s2.desc': '世界観コンセプトの設計から絵コンテ、最先端の映像生成技術を駆使したビジュアル制作まで。シネマティックな映像表現をスピーディに実現します。',
-    'services.s2.t1': 'コンセプト設計', 'services.s2.t2': '絵コンテ', 'services.s2.t3': '映像制作', 'services.s2.t4': 'カラーグレーディング',
-    'services.s3.title': 'デジタルマーケティング',
-    'services.s3.desc': 'X・Instagram・TikTok・YouTubeの各プラットフォームに最適化されたコンテンツ戦略と制作・運用をリリーススケジュールと連動して展開します。',
-    'services.s3.t1': 'SNS戦略', 'services.s3.t2': '広告クリエイティブ', 'services.s3.t3': 'コンテンツ制作', 'services.s3.t4': 'SEO対応',
-    'services.s4.title': 'PR・メディア展開',
-    'services.s4.desc': 'プレスリリース作成からメディアリスト構築、取材対応の準備まで。リリースのインパクトを最大化するPR戦略を一貫してサポートします。',
-    'services.s4.t1': 'プレスリリース', 'services.s4.t2': 'メディア対応', 'services.s4.t3': 'インフルエンサー連携', 'services.s4.t4': '危機管理',
-    'news.featured.title': 'クリエイティブカンパニー、正式始動。<br>楽曲制作からPR展開まで一気通貫サービスを開始。',
-    'news.featured.desc': '最新テクノロジーと人間のクリエイティビティを融合した新しいプロダクション体制を構築。今後のプロジェクト受付を正式に開始します。',
-    'news.n1': '第1弾楽曲「Neon Cascade」のPV映像が完成',
-    'news.n2': 'タイアップ・コラボ依頼の受付を開始しました',
-    'news.n3': '創業期の制作プロセスについて、ブログを公開',
-    'news.n4': 'メディア各社向けのプレス資料を公開',
-    'news.n5': 'ブランドビジュアルアイデンティティを策定・公開',
     'contact.h2': 'AIが多くを担う時代に、<br>人間に必要なのは「<span class="text-gradient">遊び</span>」だ。',
     'contact.subtitle': '効率でも、消費でもなく。<br>音楽・映像・言葉・コードを越えて、遊ぶように創る。<br>その問いを面白がれる人を、いつでも歓迎します。',
     'contact.social.x': '最新情報をいち早く',
@@ -1840,27 +1786,6 @@ const I18N = {
     'about.v4.desc': 'Breaking free from scale constraints to create space for pure expression and vision.',
     'works.subtitle': 'Works born from AI and human creativity.',
     'tools.nuword': 'NuWord Concept Page →',
-    'services.h2': 'Create Music,<br><span class="text-gradient">Reach the World</span>',
-    'services.subtitle': 'End-to-end services from music production to media outreach.',
-    'services.s1.title': 'Music Production',
-    'services.s1.desc': 'From trend analysis to composition, arrangement, and lyrics. We produce high-quality music optimized for your genre, mood, and target audience — fast.',
-    'services.s1.t1': 'Composition', 'services.s1.t2': 'Lyrics', 'services.s1.t3': 'Vocal Direction', 'services.s1.t4': 'Sound Design',
-    'services.s2.title': 'PV / Video Production',
-    'services.s2.desc': 'From world concept design and storyboards to cinematic visuals using cutting-edge generative video technology.',
-    'services.s2.t1': 'Concept Design', 'services.s2.t2': 'Storyboard', 'services.s2.t3': 'Video Production', 'services.s2.t4': 'Color Grading',
-    'services.s3.title': 'Digital Marketing',
-    'services.s3.desc': 'Platform-native content strategy across X, Instagram, TikTok, and YouTube — integrated with your release schedule.',
-    'services.s3.t1': 'Social Strategy', 'services.s3.t2': 'Ad Creative', 'services.s3.t3': 'Content Production', 'services.s3.t4': 'SEO',
-    'services.s4.title': 'PR & Media',
-    'services.s4.desc': 'Press release writing, media list building, and interview prep — full-stack PR to maximize your release impact.',
-    'services.s4.t1': 'Press Release', 'services.s4.t2': 'Media Relations', 'services.s4.t3': 'Influencer Outreach', 'services.s4.t4': 'Crisis Management',
-    'news.featured.title': 'Creative Company officially launched.<br>End-to-end services from production to PR now open.',
-    'news.featured.desc': 'Building a new production framework that fuses cutting-edge technology with human creativity. Now officially accepting project inquiries.',
-    'news.n1': 'PV for debut track "Neon Cascade" is complete',
-    'news.n2': 'Now accepting tie-up and collaboration requests',
-    'news.n3': 'A blog post on our early production process is live',
-    'news.n4': 'Press materials for media companies are now available',
-    'news.n5': 'Brand visual identity established and published',
     'contact.h2': "In an age where AI does so much,<br>what humans need is <span class=\"text-gradient\">play</span>.",
     'contact.subtitle': 'Not efficiency, not consumption —<br>creating as if at play, across music, video, words and code.<br>Anyone who finds that question fun is always welcome.',
     'contact.social.x': 'Latest news, first.',
@@ -1917,6 +1842,46 @@ function toggleLang() {
 }
 
 document.addEventListener('DOMContentLoaded', () => setLang(currentLang));
+</script>
+<!-- Statement band: 訪問者が「彩る」— ポインタ移動/タップで水彩の足跡を残す -->
+<script>
+    (function () {
+        var band  = document.getElementById('statement');
+        var layer = document.getElementById('statement-paws');
+        if (!band || !layer) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        // About の4本柱と同じ固定パレット（赤/黄/緑/青/紫）— DESIGN-NOTES.md §7
+        var COLORS = ['#CC5B4A', '#D9A441', '#4FA597', '#5586BE', '#9472B8'];
+        var MAX_PAWS = 60, MIN_DIST = 85;
+        var idx = 0, last = null;
+
+        function addPaw(clientX, clientY) {
+            var r = layer.getBoundingClientRect();
+            var x = clientX - r.left, y = clientY - r.top;
+            var size = 26 + Math.random() * 12;
+            var rot  = Math.random() * 44 - 22;
+            var paw  = document.createElement('span');
+            paw.className = 'paw';
+            paw.style.cssText = 'left:' + (x - size / 2) + 'px; top:' + (y - size / 2) + 'px; width:' + size + 'px; transform:rotate(' + rot + 'deg);';
+            paw.innerHTML = '<svg class="paw-svg" viewBox="0 0 100 100" style="color:' + COLORS[idx++ % COLORS.length] + '"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
+            layer.appendChild(paw);
+            while (layer.children.length > MAX_PAWS) layer.removeChild(layer.firstChild);
+        }
+
+        band.addEventListener('pointermove', function (e) {
+            if (e.pointerType === 'touch') return; // タッチはタップのみ（スクロール妨害を避ける）
+            if (last) {
+                var dx = e.clientX - last.x, dy = e.clientY - last.y;
+                if (dx * dx + dy * dy < MIN_DIST * MIN_DIST) return;
+            }
+            last = { x: e.clientX, y: e.clientY };
+            addPaw(e.clientX, e.clientY);
+        });
+        band.addEventListener('pointerdown', function (e) {
+            addPaw(e.clientX, e.clientY);
+        });
+    })();
 </script>
 <!-- Cat-paw trails: reveal one-by-one when scrolled into view -->
 <script>
