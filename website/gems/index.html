@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>宝石図鑑 | NOCTA Tools</title>
-<meta name="description" content="世界の宝石・原石を静かに眺める図鑑。NOCTAの第5のWebアプリ。">
+<meta name="description" content="世界の宝石・原石を静かに眺める図鑑。石言葉と誕生石をたずさえた、NOCTAの第5のWebアプリ。">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,10 +43,13 @@
   .gem-section.in-view .gem-glow{ opacity:0.16; }
   .gem-underline{ display:inline-block; width:56px; height:1px; background:var(--gem); opacity:0.75; margin:14px 0 22px; }
   .gem-chip{ border:1px solid rgba(184,180,174,0.18); color:var(--gem); }
+  .gem-chip--birth{ border-color:var(--gem); }
 
   .gem-photo-wrap{ position:relative; overflow:hidden; border-radius:2px; box-shadow:0 30px 60px -20px rgba(0,0,0,0.6); }
+  .gem-photo-wrap::before{ content:""; position:absolute; inset:0; background:var(--gem); opacity:0.1; }
+  .gem-photo-open{ display:block; width:100%; height:100%; padding:0; margin:0; border:none; background:none; cursor:zoom-in; }
   .gem-photo-wrap img{
-    display:block; width:100%; height:100%; object-fit:cover;
+    position:relative; display:block; width:100%; height:100%; object-fit:cover;
     animation:slowZoom 22s ease-in-out infinite alternate;
   }
   @keyframes slowZoom{ from{ transform:scale(1); } to{ transform:scale(1.035); } }
@@ -54,14 +57,22 @@
     position:absolute; right:0; bottom:0; left:0; padding:10px 14px 8px;
     background:linear-gradient(to top, rgba(10,9,6,0.75), transparent);
     font-size:10px; letter-spacing:0.04em; color:rgba(232,224,208,0.7);
+    pointer-events:none;
   }
+  .gem-credit a{
+    pointer-events:auto; color:inherit;
+    text-decoration:underline; text-decoration-color:rgba(232,224,208,0.3); text-underline-offset:2px;
+  }
+  .gem-credit a:hover{ color:#E8E0D0; }
+
+  .gem-kotoba{ font-size:17px; line-height:1.8; color:#E8E0D0; font-style:normal; }
 
   /* サイドレール — 進捗表示兼ジャンプナビ */
-  #gem-rail{ position:fixed; right:22px; top:50%; transform:translateY(-50%); z-index:40; display:none; flex-direction:column; gap:10px; }
+  #gem-rail{ position:fixed; right:22px; top:50%; transform:translateY(-50%); z-index:40; display:none; flex-direction:column; gap:8px; max-height:86vh; }
   @media (min-width:900px){ #gem-rail{ display:flex; } }
   .rail-dot{
-    width:7px; height:7px; border-radius:50%; background:rgba(184,180,174,0.25);
-    cursor:pointer; transition:background 0.5s ease, transform 0.3s ease; border:none; padding:0;
+    width:6px; height:6px; border-radius:50%; background:rgba(184,180,174,0.25);
+    cursor:pointer; transition:background 0.5s ease, transform 0.3s ease; border:none; padding:0; flex:none;
   }
   .rail-dot:hover{ transform:scale(1.4); }
   .rail-dot.active{ background:var(--dot-color, #B8B4AE); transform:scale(1.5); }
@@ -72,6 +83,83 @@
     animation:cueBob 2.4s ease-in-out infinite;
   }
   @keyframes cueBob{ 0%,100%{ transform:translateY(0); opacity:0.6; } 50%{ transform:translateY(6px); opacity:1; } }
+
+  /* 今日の一石 — 美術館のキャプションのような佇まい */
+  .today-card{
+    display:inline-block; margin-top:44px; padding:18px 28px 16px;
+    border:1px solid rgba(184,180,174,0.22); border-radius:2px;
+    background:rgba(10,9,6,0.45); cursor:pointer; text-align:center;
+    transition:border-color 0.4s ease, transform 0.4s ease;
+  }
+  .today-card:hover{ border-color:var(--gem); transform:translateY(-2px); }
+  .today-card .t-line{ display:block; width:34px; height:1px; background:var(--gem); margin:10px auto; opacity:0.8; }
+
+  /* 目次ボタン */
+  #index-btn{
+    position:fixed; left:22px; bottom:22px; z-index:45;
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.18em; font-weight:700; text-transform:uppercase;
+    color:#9A8A7A; border:1px solid rgba(184,180,174,0.25); border-radius:999px;
+    padding:9px 18px; cursor:pointer; background:rgba(10,9,6,0.6); backdrop-filter:blur(4px);
+    transition:color 0.3s, border-color 0.3s;
+  }
+  #index-btn:hover{ color:#E8E0D0; border-color:rgba(184,180,174,0.5); }
+
+  /* 目次オーバーレイ */
+  #index-overlay{
+    position:fixed; inset:0; z-index:60; background:rgba(10,9,6,0.97);
+    overflow-y:auto; padding:84px 24px 60px;
+  }
+  #index-overlay[hidden]{ display:none; }
+  .month-chip{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.12em; font-weight:700; text-transform:uppercase;
+    color:#9A8A7A; border:1px solid rgba(184,180,174,0.22); border-radius:999px;
+    padding:6px 13px; cursor:pointer; background:transparent; transition:all 0.3s;
+  }
+  .month-chip:hover{ color:#E8E0D0; border-color:rgba(184,180,174,0.5); }
+  .month-chip.active{ color:#0A0906; background:#B8B4AE; border-color:#B8B4AE; }
+  .index-item{
+    display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+    padding:11px 12px; border:none; border-bottom:1px solid rgba(184,180,174,0.08);
+    background:transparent; cursor:pointer; transition:background 0.3s;
+  }
+  .index-item:hover{ background:rgba(184,180,174,0.06); }
+  .index-dot{ width:10px; height:10px; border-radius:50%; flex:none; }
+  .chip-row-label{
+    font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.2em; font-weight:700; text-transform:uppercase;
+    color:#9A8A7A; margin:24px 0 8px;
+  }
+
+  /* お気に入り（肉球）ボタン — 猫がそっと押した印 */
+  .fav-btn{
+    width:34px; height:34px; border-radius:50%; border:1px solid rgba(184,180,174,0.25);
+    background:transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+    padding:0; transition:border-color 0.3s, transform 0.3s; flex:none;
+  }
+  .fav-btn:hover{ transform:scale(1.1); border-color:rgba(184,180,174,0.5); }
+  .fav-btn svg{ width:15px; height:15px; color:rgba(184,180,174,0.45); transition:color 0.3s; display:block; }
+  .fav-btn.faved{ border-color:var(--gem); }
+  .fav-btn.faved svg{ color:var(--gem); }
+  .idx-fav{ width:12px; height:12px; flex:none; margin-left:6px; }
+  .idx-fav svg{ width:100%; height:100%; display:block; }
+  .index-close{
+    position:fixed; top:18px; right:22px; z-index:61;
+    width:40px; height:40px; border-radius:50%; border:1px solid rgba(184,180,174,0.3);
+    color:#E8E0D0; background:rgba(10,9,6,0.6); font-size:16px; cursor:pointer;
+    transition:border-color 0.3s;
+  }
+  .index-close:hover{ border-color:rgba(232,224,208,0.7); }
+
+  /* ライトボックス — 全画面の鑑賞モード */
+  #lightbox{
+    position:fixed; inset:0; z-index:70; background:rgba(10,9,6,0.97);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;
+  }
+  #lightbox[hidden]{ display:none; }
+  #lightbox img{
+    max-width:92vw; max-height:74vh; object-fit:contain; border-radius:2px;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,0.85);
+  }
+  #lightbox .lb-caption{ text-align:center; margin-top:22px; max-width:640px; }
 
   /* 銀猫: 肉球トレイル（Statement帯と同一パターンの再利用） */
   .paw-trail{ pointer-events:none; }
@@ -90,6 +178,7 @@
     .reveal{ opacity:1; transform:none; transition:none; }
     .gem-photo-wrap img{ animation:none; }
     .scroll-cue{ animation:none; }
+    .today-card, .today-card:hover{ transform:none; }
   }
 </style>
 </head>
@@ -126,6 +215,9 @@
 <!-- サイドレール -->
 <nav id="gem-rail" aria-label="宝石セクションへ移動"></nav>
 
+<!-- 目次ボタン -->
+<button id="index-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="index-overlay" data-i18n="index.open">目次</button>
+
 <!-- カバー -->
 <section id="cover" class="relative min-h-screen flex items-center justify-center overflow-hidden">
   <div id="cover-paws" class="paw-trail absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
@@ -133,6 +225,7 @@
     <p class="font-heading text-[10px] tracking-[3px] uppercase text-sub mb-5" data-i18n="cover.eyebrow">NOCTA Tools — 05</p>
     <h1 class="font-display text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">宝石図鑑</h1>
     <p class="font-jp text-[14px] leading-[2] text-sub mt-6" data-i18n="cover.tagline">遊ぶことで人生を彩ろう。世界の宝石を、ただ静かに眺めるための図鑑。</p>
+    <div id="today-slot"></div>
     <div class="mt-12 flex justify-center">
       <span class="scroll-cue text-sub font-heading text-[13px]" aria-hidden="true">↓</span>
     </div>
@@ -142,12 +235,40 @@
 <!-- 宝石セクション（JSでレンダリング） -->
 <main id="gems-root"></main>
 
+<!-- 目次オーバーレイ -->
+<div id="index-overlay" role="dialog" aria-modal="true" aria-labelledby="index-title" hidden>
+  <button class="index-close" type="button" id="index-close" aria-label="目次を閉じる">×</button>
+  <div class="max-w-[760px] mx-auto">
+    <p class="font-heading text-[10px] tracking-[3px] uppercase text-sub" id="index-title" data-i18n="index.eyebrow">Index</p>
+    <h2 class="font-display text-[clamp(28px,5vw,40px)] font-semibold mt-1" style="color:#E8E0D0;" data-i18n="index.title">目次 — 石をえらぶ</h2>
+    <p class="font-jp text-[12px] text-sub mt-2 leading-relaxed" data-i18n="index.note">誕生石の月・色・お気に入りで、石をしぼりこめます。</p>
+    <p class="chip-row-label" data-i18n="index.monthLabel">誕生石の月</p>
+    <div id="month-chips" class="flex flex-wrap gap-2"></div>
+    <p class="chip-row-label" data-i18n="index.colorLabel">色</p>
+    <div id="color-chips" class="flex flex-wrap gap-2"></div>
+    <div id="index-list" class="mt-8 mb-4"></div>
+  </div>
+</div>
+
+<!-- ライトボックス -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="拡大鑑賞" hidden>
+  <button class="index-close" type="button" id="lightbox-close" aria-label="閉じる">×</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lb-caption">
+    <p class="font-heading text-[11px] tracking-[2px] uppercase" id="lightbox-en" style="color:var(--gem);"></p>
+    <p class="font-display text-[24px] font-semibold" id="lightbox-title" style="color:#E8E0D0;"></p>
+    <p class="gem-kotoba font-display mt-1" id="lightbox-kotoba"></p>
+    <p class="text-[10px] mt-3" style="color:rgba(232,224,208,0.55);"><a id="lightbox-credit" href="" target="_blank" rel="noopener noreferrer" style="color:inherit; text-decoration:underline; text-decoration-color:rgba(232,224,208,0.3); text-underline-offset:2px;"></a></p>
+  </div>
+</div>
+
 <!-- フッター -->
 <footer class="relative border-t border-white/5 py-16 px-6 text-center overflow-hidden">
   <div id="footer-cat" class="reveal absolute left-1/2 -translate-x-1/2 -top-6" aria-hidden="true">
     <img src="../img/cat/silver-sleep.png" alt="" style="width:clamp(96px,12vw,150px); opacity:0.9;">
   </div>
   <p class="font-jp text-[13px] text-sub mt-24 max-w-sm mx-auto leading-relaxed" data-i18n="footer.tagline">すべての石は、叩き台です。眺め方は自由に。</p>
+  <p class="font-jp text-[10px] max-w-md mx-auto mt-5 leading-relaxed" style="color:rgba(232,224,208,0.4);" data-i18n="footer.note">誕生石は2021年改訂の日本の誕生石リストに準拠しています。石言葉は言い伝えに基づく表現であり、効果を保証するものではありません。</p>
   <a href="../index.html" class="inline-block mt-6 font-heading text-[11px] tracking-[2px] uppercase text-sub hover:text-[#E8E0D0] transition-colors" data-i18n="footer.back">NOCTA ホームへ戻る</a>
 </footer>
 
@@ -156,7 +277,7 @@
   "use strict";
 
   var STRINGS = {
-    "nav.back":       { ja: "← NOCTA",                                                          en: "← NOCTA" },
+    "nav.back":        { ja: "← NOCTA",                                                          en: "← NOCTA" },
     "cover.eyebrow":   { ja: "NOCTA Tools — 05",                                                  en: "NOCTA Tools — 05" },
     "cover.title":     { ja: "宝石図鑑",                                                          en: "Gem Catalogue" },
     "cover.tagline":   { ja: "遊ぶことで人生を彩ろう。世界の宝石を、ただ静かに眺めるための図鑑。",     en: "Color your life through play. A quiet catalogue for gazing at the world's gemstones." },
@@ -164,8 +285,88 @@
     "footer.back":     { ja: "NOCTA ホームへ戻る",                                                en: "Back to NOCTA Home" },
     "meta.origin":     { ja: "産地",                                                              en: "Origin" },
     "meta.hardness":   { ja: "モース硬度",                                                        en: "Mohs Hardness" },
-    "meta.source":     { ja: "出典",                                                              en: "Source" }
+    "meta.source":     { ja: "出典",                                                              en: "Source" },
+    "meta.kotoba":     { ja: "石言葉",                                                            en: "Stone Meaning" },
+    "today.eyebrow":   { ja: "今日の一石",                                                        en: "Stone of the Day" },
+    "today.cta":       { ja: "この石を眺める ↓",                                                  en: "Gaze at this stone ↓" },
+    "index.open":      { ja: "目次",                                                              en: "Index" },
+    "index.eyebrow":   { ja: "Index",                                                             en: "Index" },
+    "index.title":     { ja: "目次 — 石をえらぶ",                                                 en: "Index — Choose a Stone" },
+    "index.note":      { ja: "誕生石の月・色・お気に入りで、石をしぼりこめます。",                    en: "Filter the stones by birthstone month, color, or favorites." },
+    "index.all":       { ja: "すべて",                                                            en: "All" },
+    "index.monthLabel":{ ja: "誕生石の月",                                                        en: "Birthstone Month" },
+    "index.colorLabel":{ ja: "色",                                                                en: "Color" },
+    "index.fav":       { ja: "お気に入り",                                                        en: "Favorites" },
+    "footer.note":     { ja: "誕生石は2021年改訂の日本の誕生石リストに準拠しています。石言葉は言い伝えに基づく表現であり、効果を保証するものではありません。", en: "Birthstones follow the Japanese birthstone list as revised in 2021. Stone meanings are traditional expressions and no effect is guaranteed." }
   };
+
+  var MONTHS_EN = ["", "January", "February", "March", "April", "May", "June",
+                   "July", "August", "September", "October", "November", "December"];
+
+  /* 色グループ（accentColorのHSLから自動判定） */
+  var COLOR_ORDER = ["red", "pink", "orange", "yellow", "green", "blue", "purple", "white", "black"];
+  var COLOR_LABELS = {
+    red:    { ja: "赤",   en: "Red" },
+    pink:   { ja: "ピンク", en: "Pink" },
+    orange: { ja: "橙",   en: "Orange" },
+    yellow: { ja: "黄",   en: "Yellow" },
+    green:  { ja: "緑",   en: "Green" },
+    blue:   { ja: "青",   en: "Blue" },
+    purple: { ja: "紫",   en: "Purple" },
+    white:  { ja: "白",   en: "White" },
+    black:  { ja: "黒",   en: "Black" }
+  };
+
+  function colorGroup(hex) {
+    var r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var l = (max + min) / 510, d = max - min;
+    var s = max === 0 ? 0 : d / max;
+    if (d < 25 || s < 0.12) return l < 0.45 ? 'black' : 'white';
+    var h;
+    if (max === r) h = ((g - b) / d) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h = h * 60; if (h < 0) h += 360;
+    if (h < 20 || h >= 330) return l > 0.6 ? 'pink' : 'red';
+    if (h < 42) return 'orange';
+    if (h < 70) return 'yellow';
+    if (h < 170) return 'green';
+    if (h < 255) return 'blue';
+    return 'purple';
+  }
+
+  /* お気に入り（localStorage・肉球） */
+  var FAV_KEY = 'nocta-gems-favs';
+  function loadFavs() {
+    try {
+      var v = JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  }
+  function saveFavs(f) {
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(f)); } catch (e) { /* プライベートモード等では保存しない */ }
+  }
+  var favs = loadFavs();
+
+  function cssEscape(s) {
+    return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/["\\\]]/g, '\\$&');
+  }
+
+  function toggleFav(id) {
+    var i = favs.indexOf(id);
+    if (i === -1) favs.push(id); else favs.splice(i, 1);
+    saveFavs(favs);
+    var faved = i === -1;
+    document.querySelectorAll('.fav-btn[data-fav="' + cssEscape(id) + '"]').forEach(function (b) {
+      b.classList.toggle('faved', faved);
+      b.setAttribute('aria-pressed', faved ? 'true' : 'false');
+    });
+    document.querySelectorAll('.index-item[data-id="' + cssEscape(id) + '"] .idx-fav').forEach(function (m) {
+      m.hidden = !faved;
+    });
+    if (favOnly) filterIndex();
+  }
 
   var currentLang = 'ja';
 
@@ -175,12 +376,17 @@
       var key = el.getAttribute('data-i18n');
       if (STRINGS[key]) el.textContent = STRINGS[key][currentLang];
     });
-    document.querySelectorAll('[data-title-ja]').forEach(function (el) {
-      el.textContent = currentLang === 'ja' ? el.getAttribute('data-title-ja') : el.getAttribute('data-title-en');
+    document.querySelectorAll('[data-ja]').forEach(function (el) {
+      var t = currentLang === 'ja' ? el.getAttribute('data-ja') : el.getAttribute('data-en');
+      if (t !== null) el.textContent = t;
     });
-    document.querySelectorAll('[data-desc-ja]').forEach(function (el) {
-      el.textContent = currentLang === 'ja' ? el.getAttribute('data-desc-ja') : el.getAttribute('data-desc-en');
+    document.querySelectorAll('img[data-alt-ja]').forEach(function (el) {
+      el.alt = currentLang === 'ja' ? el.getAttribute('data-alt-ja') : el.getAttribute('data-alt-en');
     });
+    if (lightboxOpen && lightboxIdx >= 0 && typeof NOCTA_GEMS !== 'undefined') {
+      var lg = NOCTA_GEMS[lightboxIdx];
+      if (lg) document.getElementById('lightbox-img').alt = currentLang === 'ja' ? lg.title : lg.titleEn;
+    }
     var btn = document.getElementById('lang-btn');
     if (btn) {
       btn.textContent = currentLang === 'ja' ? 'EN' : 'JA';
@@ -195,6 +401,35 @@
 
   function escHtml(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
   function escAttr(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  /* Wikimedia Commonsの原寸URLからサムネイルURLを導出（読み込み軽量化。失敗時は原寸へフォールバック） */
+  function thumbUrl(url, w) {
+    var m = String(url).match(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/commons)\/([0-9a-f])\/([0-9a-f]{2})\/([^\/]+)$/);
+    if (!m) return url;
+    return m[1] + '/thumb/' + m[2] + '/' + m[3] + '/' + m[4] + '/' + w + 'px-' + m[4];
+  }
+
+  /* 画面幅に応じたレスポンシブ読み込み（導出不可のURLは素のsrcのみ）
+     幅はWikimediaのサムネイル許可バケット（500/960/1280）に合わせる */
+  function imgSrcAttrs(url) {
+    var t960 = thumbUrl(url, 960);
+    if (t960 === url) return 'src="' + escAttr(url) + '"';
+    return 'src="' + escAttr(t960) + '"' +
+      ' srcset="' + escAttr(thumbUrl(url, 500)) + ' 500w, ' + escAttr(t960) + ' 960w, ' + escAttr(thumbUrl(url, 1280)) + ' 1280w"' +
+      ' sizes="(min-width:768px) 45vw, 92vw"';
+  }
+
+  function birthLabel(months, lang) {
+    if (!months || !months.length) return '';
+    if (lang === 'ja') return months.join('月・') + '月の誕生石';
+    return months.map(function (m) { return MONTHS_EN[m]; }).join(' & ') + ' Birthstone';
+  }
+
+  function kotobaText(g, lang) {
+    return lang === 'ja' ? '「' + g.kotobaJa + '」' : '“' + g.kotobaEn + '”';
+  }
+
+  var sectionIds = [];
 
   function renderGems() {
     var root = document.getElementById('gems-root');
@@ -214,24 +449,42 @@
       section.id = 'gem-' + (i + 1);
       section.style.setProperty('--gem', g.accentColor);
 
+      var birthChip = '';
+      if (g.birthMonths && g.birthMonths.length) {
+        birthChip =
+          '<span class="gem-chip gem-chip--birth font-heading text-[10px] tracking-[1px] uppercase px-3 py-1.5 rounded-full"' +
+            ' data-ja="' + escAttr(birthLabel(g.birthMonths, 'ja')) + '"' +
+            ' data-en="' + escAttr(birthLabel(g.birthMonths, 'en')) + '">' +
+            escHtml(birthLabel(g.birthMonths, 'ja')) +
+          '</span>';
+      }
+
       section.innerHTML =
         '<div class="gem-glow" aria-hidden="true"></div>' +
         '<div class="relative z-10 max-w-[1180px] mx-auto w-full grid md:grid-cols-2 gap-10 md:gap-16 items-center' + (reverse ? ' md:[direction:rtl]' : '') + '">' +
           '<div class="reveal' + (reverse ? ' md:[direction:ltr]' : '') + '">' +
             '<div class="gem-photo-wrap aspect-[4/5] md:aspect-[3/4]">' +
-              '<img src="' + escAttr(g.imgUrl) + '" alt="' + escAttr(g.title) + '" loading="lazy">' +
+              '<button type="button" class="gem-photo-open" data-lightbox="' + i + '" aria-label="' + escAttr(g.title + 'を拡大して鑑賞') + '">' +
+                '<img ' + imgSrcAttrs(g.imgUrl) + ' data-original="' + escAttr(g.imgUrl) + '" alt="' + escAttr(g.title) + '" data-alt-ja="' + escAttr(g.title) + '" data-alt-en="' + escAttr(g.titleEn) + '" loading="' + (i === 0 ? 'eager' : 'lazy') + '">' +
+              '</button>' +
               '<div class="gem-credit">' +
-                '<span data-i18n="meta.source">出典</span>: ' + escHtml(creditLine) +
+                '<span data-i18n="meta.source">出典</span>: <a href="' + escAttr(g.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escHtml(creditLine) + '</a>' +
               '</div>' +
             '</div>' +
           '</div>' +
           '<div class="reveal' + (reverse ? ' md:[direction:ltr] md:text-right' : '') + '" style="transition-delay:0.15s;">' +
             '<p class="font-heading text-[11px] tracking-[3px] uppercase text-sub mb-3">' + num + '</p>' +
             '<p class="font-heading text-[13px] tracking-[2px] uppercase" style="color:var(--gem);">' + escHtml(g.titleEn) + '</p>' +
-            '<h2 class="font-display text-[clamp(34px,5vw,54px)] font-semibold mt-1" style="color:#E8E0D0;" data-title-ja="' + escAttr(g.title) + '" data-title-en="' + escAttr(g.titleEn) + '">' + escHtml(g.title) + '</h2>' +
+            '<h2 class="font-display text-[clamp(34px,5vw,54px)] font-semibold mt-1" style="color:#E8E0D0;" data-ja="' + escAttr(g.title) + '" data-en="' + escAttr(g.titleEn) + '">' + escHtml(g.title) + '</h2>' +
             '<span class="gem-underline"></span>' +
-            '<p class="font-jp text-[15px] leading-[2] text-sub" data-desc-ja="' + escAttr(g.descJa) + '" data-desc-en="' + escAttr(g.descEn) + '">' + escHtml(g.descJa) + '</p>' +
-            '<div class="flex gap-3 mt-6' + (reverse ? ' md:justify-end' : '') + '">' +
+            '<p class="font-jp text-[15px] leading-[2] text-sub" data-ja="' + escAttr(g.descJa) + '" data-en="' + escAttr(g.descEn) + '">' + escHtml(g.descJa) + '</p>' +
+            '<div class="mt-6">' +
+              '<p class="font-heading text-[10px] tracking-[2px] uppercase mb-1" style="color:var(--gem);" data-i18n="meta.kotoba">石言葉</p>' +
+              '<p class="gem-kotoba font-display" data-ja="' + escAttr(kotobaText(g, 'ja')) + '" data-en="' + escAttr(kotobaText(g, 'en')) + '">' + escHtml(kotobaText(g, 'ja')) + '</p>' +
+            '</div>' +
+            '<div class="flex flex-wrap items-center gap-3 mt-6' + (reverse ? ' md:justify-end' : '') + '">' +
+              '<button type="button" class="fav-btn" data-fav="' + escAttr(g.titleEn) + '" aria-pressed="false" aria-label="' + escAttr('お気に入り: ' + g.title) + '"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#cat-paw"/></svg></button>' +
+              birthChip +
               '<span class="gem-chip font-heading text-[10px] tracking-[1px] uppercase px-3 py-1.5 rounded-full"><span data-i18n="meta.origin">産地</span>: ' + escHtml(g.origin) + '</span>' +
               '<span class="gem-chip font-heading text-[10px] tracking-[1px] uppercase px-3 py-1.5 rounded-full"><span data-i18n="meta.hardness">モース硬度</span>: ' + escHtml(g.hardness) + '</span>' +
             '</div>' +
@@ -239,6 +492,7 @@
         '</div>';
 
       root.appendChild(section);
+      sectionIds.push(section.id);
 
       var dot = document.createElement('button');
       dot.type = 'button';
@@ -247,13 +501,337 @@
       dot.setAttribute('aria-label', g.titleEn);
       dot.dataset.target = section.id;
       dot.addEventListener('click', function () {
-        var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        document.getElementById(section.id).scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+        scrollToSection(section.id);
       });
       rail.appendChild(dot);
     });
+
+    /* 画像フォールバック: サムネ失敗→原寸→単色プレースホルダー */
+    root.querySelectorAll('img[data-original]').forEach(function (img) {
+      img.addEventListener('error', function () {
+        var original = img.getAttribute('data-original');
+        if (img.hasAttribute('srcset')) {
+          img.removeAttribute('srcset');
+          img.removeAttribute('sizes');
+          img.src = original;
+        } else if (img.src !== original) {
+          img.src = original;
+        } else {
+          img.style.visibility = 'hidden';
+        }
+      });
+    });
   }
 
+  function scrollToSection(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+  }
+
+  /* ---- 今日の一石（日付シードの決定的選出・毎日変わる） ---- */
+  function todayIndex(total) {
+    var d = new Date();
+    var seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+    var h = seed % 2147483647;
+    h = (h * 48271) % 2147483647;
+    return h % total;
+  }
+
+  function renderToday() {
+    var slot = document.getElementById('today-slot');
+    if (!slot || typeof NOCTA_GEMS === 'undefined' || !NOCTA_GEMS.length) return;
+    var idx = todayIndex(NOCTA_GEMS.length);
+    var g = NOCTA_GEMS[idx];
+    var d = new Date();
+    var dateJa = (d.getMonth() + 1) + '月' + d.getDate() + '日';
+    var dateEn = MONTHS_EN[d.getMonth() + 1] + ' ' + d.getDate();
+
+    var card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'today-card';
+    card.style.setProperty('--gem', g.accentColor);
+    card.innerHTML =
+      '<span class="font-heading text-[10px] tracking-[3px] uppercase text-sub block">' +
+        '<span data-i18n="today.eyebrow">今日の一石</span> · <span data-ja="' + escAttr(dateJa) + '" data-en="' + escAttr(dateEn) + '">' + escHtml(dateJa) + '</span>' +
+      '</span>' +
+      '<span class="font-display text-[26px] font-semibold block mt-2" style="color:#E8E0D0;" data-ja="' + escAttr(g.title) + '" data-en="' + escAttr(g.titleEn) + '">' + escHtml(g.title) + '</span>' +
+      '<span class="t-line" aria-hidden="true"></span>' +
+      '<span class="gem-kotoba font-display block text-[15px]" data-ja="' + escAttr(kotobaText(g, 'ja')) + '" data-en="' + escAttr(kotobaText(g, 'en')) + '">' + escHtml(kotobaText(g, 'ja')) + '</span>' +
+      '<span class="font-heading text-[10px] tracking-[2px] uppercase text-sub block mt-3" data-i18n="today.cta">この石を眺める ↓</span>';
+    card.addEventListener('click', function () { scrollToSection('gem-' + (idx + 1)); });
+    slot.appendChild(card);
+  }
+
+  /* ---- 目次オーバーレイ＋誕生石月・色・お気に入りフィルタ ---- */
+  var indexOpen = false;
+  var activeMonth = 0;   /* 0 = すべて */
+  var activeColor = '';  /* '' = すべて */
+  var favOnly = false;
+
+  function setBodyLock(lock) {
+    document.body.style.overflow = lock ? 'hidden' : '';
+  }
+
+  /* ダイアログのフォーカストラップ（Tab循環）と復帰用 */
+  function focusables(container) {
+    return Array.prototype.filter.call(
+      container.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])'),
+      function (el) { return !el.disabled && el.getClientRects().length > 0; }
+    );
+  }
+
+  function trapFocus(container, e) {
+    if (e.key !== 'Tab') return;
+    var f = focusables(container);
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+    else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+  }
+
+  /* チップの選択状態をclassとariaの両方に反映 */
+  function setChip(chip, on) {
+    chip.classList.toggle('active', on);
+    chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  function buildIndex() {
+    var chipsWrap = document.getElementById('month-chips');
+    var colorWrap = document.getElementById('color-chips');
+    var list = document.getElementById('index-list');
+    if (!chipsWrap || !colorWrap || !list || typeof NOCTA_GEMS === 'undefined') return;
+
+    var allChip = document.createElement('button');
+    allChip.type = 'button';
+    allChip.className = 'month-chip active';
+    allChip.dataset.month = '0';
+    allChip.setAttribute('data-i18n', 'index.all');
+    allChip.setAttribute('aria-pressed', 'true');
+    allChip.textContent = STRINGS['index.all'][currentLang];
+    chipsWrap.appendChild(allChip);
+
+    for (var m = 1; m <= 12; m++) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'month-chip';
+      chip.dataset.month = String(m);
+      chip.setAttribute('data-ja', m + '月');
+      chip.setAttribute('data-en', MONTHS_EN[m].slice(0, 3));
+      chip.setAttribute('aria-pressed', 'false');
+      chip.textContent = m + '月';
+      chipsWrap.appendChild(chip);
+    }
+
+    chipsWrap.addEventListener('click', function (e) {
+      var chip = e.target.closest('.month-chip');
+      if (!chip) return;
+      activeMonth = parseInt(chip.dataset.month, 10);
+      if (activeMonth === 0) { /* すべて = 全フィルタ解除 */
+        activeColor = '';
+        favOnly = false;
+        colorWrap.querySelectorAll('.month-chip').forEach(function (c) { setChip(c, false); });
+      }
+      chipsWrap.querySelectorAll('.month-chip').forEach(function (c) {
+        setChip(c, c === chip);
+      });
+      filterIndex();
+    });
+
+    /* 色チップ（データに存在する色グループのみ） */
+    var groupsPresent = {};
+    NOCTA_GEMS.forEach(function (g) { groupsPresent[colorGroup(g.accentColor)] = true; });
+    COLOR_ORDER.forEach(function (key) {
+      if (!groupsPresent[key]) return;
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'month-chip';
+      chip.dataset.color = key;
+      chip.setAttribute('data-ja', COLOR_LABELS[key].ja);
+      chip.setAttribute('data-en', COLOR_LABELS[key].en);
+      chip.setAttribute('aria-pressed', 'false');
+      chip.textContent = COLOR_LABELS[key][currentLang];
+      colorWrap.appendChild(chip);
+    });
+
+    var favChip = document.createElement('button');
+    favChip.type = 'button';
+    favChip.className = 'month-chip';
+    favChip.dataset.favChip = '1';
+    favChip.setAttribute('data-i18n', 'index.fav');
+    favChip.setAttribute('aria-pressed', 'false');
+    favChip.textContent = STRINGS['index.fav'][currentLang];
+    colorWrap.appendChild(favChip);
+
+    colorWrap.addEventListener('click', function (e) {
+      var chip = e.target.closest('.month-chip');
+      if (!chip) return;
+      if (chip.dataset.favChip) {
+        favOnly = !favOnly;
+        setChip(chip, favOnly);
+      } else {
+        activeColor = chip.dataset.color === activeColor ? '' : chip.dataset.color;
+        colorWrap.querySelectorAll('.month-chip[data-color]').forEach(function (c) {
+          setChip(c, c.dataset.color === activeColor);
+        });
+      }
+      filterIndex();
+    });
+
+    NOCTA_GEMS.forEach(function (g, i) {
+      var isFav = favs.indexOf(g.titleEn) !== -1;
+      var item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'index-item';
+      item.dataset.months = (g.birthMonths || []).join(',');
+      item.dataset.color = colorGroup(g.accentColor);
+      item.dataset.id = g.titleEn;
+      item.innerHTML =
+        '<span class="index-dot" style="background:' + escAttr(g.accentColor) + ';"></span>' +
+        '<span class="font-display text-[17px] font-semibold" style="color:#E8E0D0;" data-ja="' + escAttr(g.title) + '" data-en="' + escAttr(g.titleEn) + '">' + escHtml(g.title) + '</span>' +
+        '<span class="font-heading text-[10px] tracking-[1px] uppercase text-sub">' + escHtml(g.titleEn) + '</span>' +
+        '<span class="idx-fav" style="color:' + escAttr(g.accentColor) + ';"' + (isFav ? '' : ' hidden') + '><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#cat-paw"/></svg></span>' +
+        (g.birthMonths && g.birthMonths.length
+          ? '<span class="ml-auto font-heading text-[10px] tracking-[1px] uppercase" style="color:' + escAttr(g.accentColor) + ';" data-ja="' + escAttr(birthLabel(g.birthMonths, 'ja')) + '" data-en="' + escAttr(birthLabel(g.birthMonths, 'en')) + '">' + escHtml(birthLabel(g.birthMonths, 'ja')) + '</span>'
+          : '');
+      item.addEventListener('click', function () {
+        closeIndex();
+        scrollToSection('gem-' + (i + 1));
+      });
+      list.appendChild(item);
+    });
+  }
+
+  function filterIndex() {
+    document.querySelectorAll('.index-item').forEach(function (item) {
+      var months = item.dataset.months ? item.dataset.months.split(',').map(Number) : [];
+      var show =
+        (activeMonth === 0 || months.indexOf(activeMonth) !== -1) &&
+        (!activeColor || item.dataset.color === activeColor) &&
+        (!favOnly || favs.indexOf(item.dataset.id) !== -1);
+      item.style.display = show ? '' : 'none';
+    });
+  }
+
+  var lastFocusIndex = null;
+
+  function openIndex() {
+    var ov = document.getElementById('index-overlay');
+    if (!ov) return;
+    lastFocusIndex = document.activeElement;
+    ov.hidden = false;
+    indexOpen = true;
+    setBodyLock(true);
+    document.getElementById('index-btn').setAttribute('aria-expanded', 'true');
+    document.getElementById('index-close').focus();
+  }
+
+  function closeIndex() {
+    var ov = document.getElementById('index-overlay');
+    if (!ov) return;
+    ov.hidden = true;
+    indexOpen = false;
+    setBodyLock(false);
+    document.getElementById('index-btn').setAttribute('aria-expanded', 'false');
+    if (lastFocusIndex && lastFocusIndex.focus) lastFocusIndex.focus();
+    lastFocusIndex = null;
+  }
+
+  /* ---- ライトボックス ---- */
+  var lightboxOpen = false;
+  var lightboxIdx = -1;
+  var lastFocusLightbox = null;
+
+  function openLightbox(i) {
+    var g = NOCTA_GEMS[i];
+    var lb = document.getElementById('lightbox');
+    if (!g || !lb) return;
+    lastFocusLightbox = document.activeElement;
+    lightboxIdx = i;
+    lb.style.setProperty('--gem', g.accentColor);
+    var img = document.getElementById('lightbox-img');
+    var t1280 = thumbUrl(g.imgUrl, 1280);
+    img.setAttribute('data-original', g.imgUrl);
+    img.style.visibility = '';
+    if (t1280 !== g.imgUrl) {
+      img.setAttribute('srcset', thumbUrl(g.imgUrl, 960) + ' 960w, ' + t1280 + ' 1280w');
+      img.setAttribute('sizes', '92vw');
+      img.src = t1280;
+    } else {
+      img.removeAttribute('srcset');
+      img.removeAttribute('sizes');
+      img.src = g.imgUrl;
+    }
+    img.alt = currentLang === 'ja' ? g.title : g.titleEn;
+    document.getElementById('lightbox-en').textContent = g.titleEn;
+    var t = document.getElementById('lightbox-title');
+    t.setAttribute('data-ja', g.title); t.setAttribute('data-en', g.titleEn);
+    t.textContent = currentLang === 'ja' ? g.title : g.titleEn;
+    var k = document.getElementById('lightbox-kotoba');
+    k.setAttribute('data-ja', kotobaText(g, 'ja')); k.setAttribute('data-en', kotobaText(g, 'en'));
+    k.textContent = kotobaText(g, currentLang);
+    var cr = document.getElementById('lightbox-credit');
+    cr.textContent = g.sourceName + (g.license ? ' · ' + g.license : '') + (g.credit ? ' · ' + g.credit : '');
+    cr.href = g.sourceUrl;
+    lb.hidden = false;
+    lightboxOpen = true;
+    setBodyLock(true);
+    document.getElementById('lightbox-close').focus();
+  }
+
+  function closeLightbox() {
+    var lb = document.getElementById('lightbox');
+    if (!lb) return;
+    lb.hidden = true;
+    var img = document.getElementById('lightbox-img');
+    img.removeAttribute('srcset');
+    img.removeAttribute('sizes');
+    img.src = '';
+    lightboxOpen = false;
+    lightboxIdx = -1;
+    setBodyLock(false);
+    if (lastFocusLightbox && lastFocusLightbox.focus) lastFocusLightbox.focus();
+    lastFocusLightbox = null;
+  }
+
+  /* ---- キーボードナビ（↑↓ / j k で前後の石へ） ---- */
+  var currentSectionIdx = -1;
+
+  function nearestSectionIdx() {
+    var viewportCenter = window.innerHeight / 2;
+    var best = -1, bestDist = Infinity;
+    sectionIds.forEach(function (id, i) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var r = el.getBoundingClientRect();
+      var dist = Math.abs((r.top + r.height / 2) - viewportCenter);
+      if (dist < bestDist) { bestDist = dist; best = i; }
+    });
+    return best;
+  }
+
+  function initKeyboard() {
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if (lightboxOpen) { closeLightbox(); e.preventDefault(); }
+        else if (indexOpen) { closeIndex(); e.preventDefault(); }
+        return;
+      }
+      if (indexOpen || lightboxOpen) return;
+      var dir = 0;
+      if (e.key === 'ArrowDown' || e.key === 'j') dir = 1;
+      if (e.key === 'ArrowUp' || e.key === 'k') dir = -1;
+      if (!dir) return;
+      e.preventDefault();
+      var cur = nearestSectionIdx();
+      var next = Math.min(Math.max(cur + dir, 0), sectionIds.length - 1);
+      if (next !== cur || cur === -1) scrollToSection(sectionIds[Math.max(next, 0)]);
+      currentSectionIdx = next;
+    });
+  }
+
+  /* ---- 出現アニメ・レール同期 ---- */
   function initReveal() {
     if (!('IntersectionObserver' in window)) {
       document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in-view'); });
@@ -266,12 +844,16 @@
     }, { threshold: 0.2 });
     document.querySelectorAll('.reveal').forEach(function (el) { revealObserver.observe(el); });
 
-    var intersecting = new Map();
-
+    /* activeドットは画面内にかかる全セクションから都度計算する
+       （threshold依存だと縦長セクションで取りこぼすため） */
     function updateActiveRail() {
       var viewportCenter = window.innerHeight / 2;
       var bestId = null, bestDist = Infinity;
-      intersecting.forEach(function (rect, id) {
+      sectionIds.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var rect = el.getBoundingClientRect();
+        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
         var dist = Math.abs((rect.top + rect.height / 2) - viewportCenter);
         if (dist < bestDist) { bestDist = dist; bestId = id; }
       });
@@ -286,14 +868,21 @@
     var sectionObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         entry.target.classList.toggle('in-view', entry.isIntersecting);
-        if (entry.isIntersecting) intersecting.set(entry.target.id, entry.boundingClientRect);
-        else intersecting.delete(entry.target.id);
       });
       updateActiveRail();
-    }, { threshold: 0.5 });
+    }, { threshold: 0.2 });
     document.querySelectorAll('.gem-section').forEach(function (el) { sectionObserver.observe(el); });
+
+    /* スクロール中もactiveドットを追随させる（rAFスロットル） */
+    var railTick = false;
+    window.addEventListener('scroll', function () {
+      if (railTick) return;
+      railTick = true;
+      requestAnimationFrame(function () { railTick = false; updateActiveRail(); });
+    }, { passive: true });
   }
 
+  /* ---- 銀猫: カバーの肉球トレイル ---- */
   function initCoverPaws() {
     var cover = document.getElementById('cover');
     var layer = document.getElementById('cover-paws');
@@ -329,8 +918,54 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     renderGems();
+    renderToday();
+    buildIndex();
     initReveal();
     initCoverPaws();
+    initKeyboard();
+
+    document.getElementById('index-btn').addEventListener('click', openIndex);
+    document.getElementById('index-close').addEventListener('click', closeIndex);
+    document.getElementById('index-overlay').addEventListener('click', function (e) {
+      if (e.target === this) closeIndex();
+    });
+    document.getElementById('index-overlay').addEventListener('keydown', function (e) { trapFocus(this, e); });
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox').addEventListener('click', function (e) {
+      if (e.target === this) closeLightbox();
+    });
+    document.getElementById('lightbox').addEventListener('keydown', function (e) { trapFocus(this, e); });
+
+    /* ライトボックス画像のフォールバック（サムネ失敗→原寸→非表示） */
+    var lbImg = document.getElementById('lightbox-img');
+    lbImg.addEventListener('error', function () {
+      if (!lightboxOpen || !lbImg.getAttribute('src')) return;
+      var original = lbImg.getAttribute('data-original');
+      if (lbImg.hasAttribute('srcset')) {
+        lbImg.removeAttribute('srcset');
+        lbImg.removeAttribute('sizes');
+        lbImg.src = original;
+      } else if (lbImg.src !== original) {
+        lbImg.src = original;
+      } else {
+        lbImg.style.visibility = 'hidden';
+      }
+    });
+    document.getElementById('gems-root').addEventListener('click', function (e) {
+      var fav = e.target.closest('.fav-btn');
+      if (fav) { toggleFav(fav.getAttribute('data-fav')); return; }
+      var btn = e.target.closest('[data-lightbox]');
+      if (btn) openLightbox(parseInt(btn.getAttribute('data-lightbox'), 10));
+    });
+
+    /* 保存済みお気に入りを反映 */
+    favs.forEach(function (id) {
+      document.querySelectorAll('.fav-btn[data-fav="' + cssEscape(id) + '"]').forEach(function (b) {
+        b.classList.add('faved');
+        b.setAttribute('aria-pressed', 'true');
+      });
+    });
+
     applyLang();
   });
 })();
