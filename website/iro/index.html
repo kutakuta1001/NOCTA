@@ -60,6 +60,12 @@
   .iro-chip--static:hover{ transform:none; background:transparent; }
 
   /* 配色（かさね） */
+  .kasane-band{
+    display:flex; height:26px; border-radius:999px; overflow:hidden;
+    box-shadow:inset 0 0 0 1px var(--ink-line); margin-bottom:10px; max-width:360px;
+  }
+  .kasane-band span{ flex:1; }
+  .kasane-band span:first-child{ flex:1.6; }
   .kasane-btn{
     display:inline-flex; align-items:center; gap:9px;
     border:1px solid var(--ink-line); border-radius:999px; background:transparent;
@@ -408,6 +414,20 @@
   /* 色名 → データindex の解決（配色ジャンプ用） */
   var nameToIndex = {};
 
+  /* パーマリンク用スラッグ（romajiをASCII化: Suō → suo） */
+  var slugs = [];
+  var slugToIndex = {};
+  function slugOf(romaji) {
+    return String(romaji).normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  /* 色へ移動しつつURLハッシュを更新（#akane-iro 形式のパーマリンク） */
+  function jumpToColor(i) {
+    scrollToSection('iro-' + (i + 1));
+    if (slugs[i] && history.replaceState) history.replaceState(null, '', '#' + slugs[i]);
+  }
+
   /* ---- お気に入り（localStorage・肉球） ---- */
   var FAV_KEY = 'nocta-iro-favs';
   function loadFavs() {
@@ -488,7 +508,12 @@
 
     var total = NOCTA_IRO.length;
 
-    NOCTA_IRO.forEach(function (c, i) { nameToIndex[c.name] = i; });
+    NOCTA_IRO.forEach(function (c, i) {
+      nameToIndex[c.name] = i;
+      var s = slugOf(c.romaji);
+      slugs.push(s);
+      slugToIndex[s] = i;
+    });
 
     NOCTA_IRO.forEach(function (c, i) {
       var reverse = i % 2 === 1;
@@ -506,16 +531,20 @@
       section.style.setProperty('--name-glow', inks.nameGlow);
 
       var kasaneHtml = '';
+      var bandHtml = '<span style="background:' + escAttr(c.hex) + ';"></span>';
       (c.kasane || []).forEach(function (pairName) {
         var pi = nameToIndex[pairName];
         if (pi === undefined) return;
         var p = NOCTA_IRO[pi];
+        bandHtml += '<span style="background:' + escAttr(p.hex) + ';"></span>';
         kasaneHtml +=
           '<button type="button" class="kasane-btn" data-jump="' + pi + '">' +
             '<span class="kasane-swatch" style="background:' + escAttr(p.hex) + ';"></span>' +
             '<span class="kasane-name" data-ja="' + escAttr(p.name) + '" data-en="' + escAttr(p.romaji) + '">' + escHtml(p.name) + '</span>' +
           '</button>';
       });
+      /* 配色帯: 本色＋かさね2色をひと目で見せる（装飾用） */
+      var kasaneBand = '<div class="kasane-band" aria-hidden="true">' + bandHtml + '</div>';
 
       section.innerHTML =
         '<div class="relative z-10 max-w-[1180px] mx-auto w-full grid md:grid-cols-[auto_1fr] gap-12 md:gap-20 items-center' + (reverse ? ' md:[direction:rtl]' : '') + '">' +
@@ -531,6 +560,7 @@
               '<p class="iro-story font-jp mt-5" data-ja="' + escAttr(c.storyJa) + '" data-en="' + escAttr(c.storyEn) + '">' + escHtml(c.storyJa) + '</p>' +
               '<div class="mt-6">' +
                 '<p class="font-heading text-[10px] tracking-[2px] uppercase mb-2" style="color:var(--ink); opacity:0.65;" data-i18n="meta.kasane">配色 — かさね</p>' +
+                kasaneBand +
                 '<div class="flex flex-wrap gap-2">' + kasaneHtml + '</div>' +
               '</div>' +
               '<div class="flex flex-wrap items-center gap-2 mt-6">' +
@@ -603,7 +633,7 @@
         '<span class="font-mincho text-[12px] tracking-[0.25em] text-sub block">' + escHtml(c.kana) + ' · ' + escHtml(c.hex) + '</span>' +
         '<span class="font-heading text-[10px] tracking-[2px] uppercase text-sub block mt-2" data-i18n="today.cta">この色に浸る ↓</span>' +
       '</span>';
-    card.addEventListener('click', function () { scrollToSection('iro-' + (idx + 1)); });
+    card.addEventListener('click', function () { jumpToColor(idx); });
     slot.appendChild(card);
   }
 
@@ -767,7 +797,7 @@
         '<span class="ml-auto font-heading text-[10px] tracking-[1px] uppercase text-sub" data-ja="' + escAttr(c.season + ' · ' + c.hex) + '" data-en="' + escAttr(SEASON_EN[c.season] + ' · ' + c.hex) + '">' + escHtml(c.season + ' · ' + c.hex) + '</span>';
       item.addEventListener('click', function () {
         closeIndex();
-        scrollToSection('iro-' + (i + 1));
+        jumpToColor(i);
       });
       list.appendChild(item);
     });
@@ -983,7 +1013,7 @@
       var imm = e.target.closest('[data-immerse]');
       if (imm) { openImmerse(parseInt(imm.getAttribute('data-immerse'), 10)); return; }
       var jump = e.target.closest('[data-jump]');
-      if (jump) { scrollToSection('iro-' + (parseInt(jump.getAttribute('data-jump'), 10) + 1)); return; }
+      if (jump) { jumpToColor(parseInt(jump.getAttribute('data-jump'), 10)); return; }
     });
 
     /* 保存済みお気に入りを反映 */
@@ -995,6 +1025,12 @@
     });
 
     applyLang();
+
+    /* パーマリンク（#akane-iro）で開かれたら該当色へ */
+    var initialSlug = decodeURIComponent((location.hash || '').slice(1));
+    if (Object.prototype.hasOwnProperty.call(slugToIndex, initialSlug)) {
+      setTimeout(function () { scrollToSection('iro-' + (slugToIndex[initialSlug] + 1)); }, 250);
+    }
   });
 })();
 </script>
