@@ -25,15 +25,15 @@ const NOCTA_APPS = [
     descEn: "A quiet catalogue for immersing in 48 traditional Japanese colors, with their stories, pairings, and a color of the day. NOCTA's seventh tool."
   },
   {
-    title: "花図鑑",
+    title: "Ichi",
     cat: "app",
     url: "./flora/index.html",
     imgUrl: "",
     thumbClass: "thumb-6",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "季節の花を静かに眺める図鑑。花言葉と誕生花、今日の一花をたずさえた、NOCTA第6のツール。",
-    descEn: "A quiet catalogue of seasonal flowers, with flower meanings, birth flowers, and a flower of the day. NOCTA's sixth tool."
+    descJa: "季節の花を静かに眺める図鑑「Ichi」。花言葉と誕生花、今日の一花をたずさえた、NOCTA第6のツール。",
+    descEn: "Ichi — a quiet catalogue of seasonal flowers, with flower meanings, birth flowers, and a flower of the day. NOCTA's sixth tool."
   },
   {
     title: "Gyu",

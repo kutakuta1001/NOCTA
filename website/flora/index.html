@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>花図鑑 | NOCTA Tools</title>
-<meta name="description" content="季節の花を静かに眺める図鑑。花言葉と誕生花をたずさえた、NOCTAの第6のWebアプリ。">
+<title>Ichi | NOCTA Tools</title>
+<meta name="description" content="Ichi — 季節の花を静かに眺める図鑑。花言葉と誕生花をたずさえた、NOCTAの第6のWebアプリ。">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -225,7 +225,7 @@
   <div id="cover-paws" class="paw-trail absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
   <div class="relative z-10 text-center px-6 max-w-[640px]">
     <p class="font-heading text-[10px] tracking-[3px] uppercase text-sub mb-5" data-i18n="cover.eyebrow">NOCTA Tools — 06</p>
-    <h1 class="font-display text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">花図鑑</h1>
+    <h1 class="font-display text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">Ichi</h1>
     <p class="font-jp text-[14px] leading-[2] text-sub mt-6" data-i18n="cover.tagline">遊ぶことで人生を彩ろう。季節の花を、ただ静かに眺めるための図鑑。</p>
     <div id="today-slot"></div>
     <div class="mt-12 flex justify-center">
@@ -286,7 +286,7 @@
   var STRINGS = {
     "nav.back":        { ja: "← NOCTA",                                                          en: "← NOCTA" },
     "cover.eyebrow":   { ja: "NOCTA Tools — 06",                                                  en: "NOCTA Tools — 06" },
-    "cover.title":     { ja: "花図鑑",                                                            en: "Flower Catalogue" },
+    "cover.title":     { ja: "Ichi",                                                              en: "Ichi" },
     "cover.tagline":   { ja: "遊ぶことで人生を彩ろう。季節の花を、ただ静かに眺めるための図鑑。",       en: "Color your life through play. A quiet catalogue for gazing at the flowers of the seasons." },
     "footer.tagline":  { ja: "すべての花は、叩き台です。眺め方は自由に。",                          en: "Every flower here is a starting point. Look at it however you like." },
     "footer.note":     { ja: "誕生花は代表的な月の一例です。花言葉は言い伝えに基づく表現であり、地域・品種により異なることがあります。", en: "Birth flowers shown are representative examples. Flower meanings are traditional expressions and may vary by region and variety." },
@@ -349,6 +349,8 @@
     railId: 'gem-rail',
     sectionClass: 'gem-section',
     favKey: 'nocta-flora-favs',
+    /* Ichi演出: カバーの肉球トレイルをロゴのローズピンクに（桜のロゴモチーフを一色で継承） */
+    pawColors: ['#D9788E'],
     inertIds: ['site-nav', 'cover', 'gems-root', 'gem-rail', 'index-btn', 'site-footer'],
     onLangApply: function (lang) {
       if (lightbox && lightbox.isOpen() && lightboxIdx >= 0 && typeof NOCTA_FLORA !== 'undefined') {
