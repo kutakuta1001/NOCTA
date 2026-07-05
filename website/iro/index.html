@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>伝統色図鑑 | NOCTA Tools</title>
-<meta name="description" content="日本の伝統色48色を、色に浸りながら静かに眺める図鑑。色名の物語と配色をたずさえた、NOCTAの第7のWebアプリ。">
+<title>Hare | NOCTA Tools</title>
+<meta name="description" content="Hare — 日本の伝統色48色を、色に浸りながら静かに眺める図鑑。色名の物語と配色をたずさえた、NOCTAの第7のWebアプリ。">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -240,7 +240,7 @@
   <div id="cover-paws" class="paw-trail absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
   <div class="relative z-10 text-center px-6 max-w-[680px]">
     <p class="font-heading text-[10px] tracking-[3px] uppercase text-sub mb-5" data-i18n="cover.eyebrow">NOCTA Tools — 07</p>
-    <h1 class="font-mincho text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">伝統色図鑑</h1>
+    <h1 class="font-mincho text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">Hare</h1>
     <p class="font-jp text-[14px] leading-[2] text-sub mt-6" data-i18n="cover.tagline">遊ぶことで人生を彩ろう。日本の美しい色の名前に、ただ静かに浸るための図鑑。</p>
     <div id="today-slot"></div>
     <div class="mt-12 flex justify-center">
@@ -303,7 +303,7 @@
   var STRINGS = {
     "nav.back":          { ja: "← NOCTA",                                                              en: "← NOCTA" },
     "cover.eyebrow":     { ja: "NOCTA Tools — 07",                                                      en: "NOCTA Tools — 07" },
-    "cover.title":       { ja: "伝統色図鑑",                                                            en: "Traditional Colors" },
+    "cover.title":       { ja: "Hare",                                                                  en: "Hare" },
     "cover.tagline":     { ja: "遊ぶことで人生を彩ろう。日本の美しい色の名前に、ただ静かに浸るための図鑑。", en: "Color your life through play. A quiet catalogue for immersing yourself in Japan's beautiful color names." },
     "footer.tagline":    { ja: "すべての色は、叩き台です。眺め方は自由に。",                              en: "Every color here is a starting point. Look at it however you like." },
     "footer.note":       { ja: "色の値（HEX/RGB）は出典により揺れがある慣用値の一例です。由来の物語は言い伝えに基づく表現です。", en: "HEX/RGB values are conventional examples that vary between sources. The stories are traditional expressions." },
@@ -385,6 +385,8 @@
     sectionClass: 'iro-section',
     favKey: 'nocta-iro-favs',
     solidDots: true,
+    /* Hare演出: カバーの肉球トレイルを和紙コラージュの5色に（琥珀・抹茶・紺・紫・金） */
+    pawColors: ['#C97B5C', '#8FA06B', '#2C4A63', '#8074A0', '#D4A93B'],
     slugs: SLUGS,
     inertIds: ['site-nav', 'cover', 'iro-root', 'iro-rail', 'index-btn', 'site-footer'],
     onFavChange: function () {
