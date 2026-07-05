@@ -14,37 +14,37 @@
  */
 const NOCTA_APPS = [
   {
-    title: "Hare",
+    title: "HiNa Hare",
     cat: "app",
     url: "./iro/index.html",
     imgUrl: "",
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "日本の伝統色48色に浸る図鑑「Hare」。色名の物語と配色、今日の一色をたずさえた、NOCTA第7のツール。",
-    descEn: "Hare — a quiet catalogue for immersing in 48 traditional Japanese colors, with their stories, pairings, and a color of the day. NOCTA's seventh tool."
+    descJa: "銀猫が見つけた日本の伝統色48色に浸る図鑑。色名の物語と配色、今日の一色をたずさえた、HiNaコレクション第三部。",
+    descEn: "HiNa Hare — the silver cat's quiet catalogue for immersing in 48 traditional Japanese colors, with their stories, pairings, and a color of the day."
   },
   {
-    title: "Ichi",
+    title: "HiNa Ichi",
     cat: "app",
     url: "./flora/index.html",
     imgUrl: "",
     thumbClass: "thumb-6",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "季節の花を静かに眺める図鑑「Ichi」。花言葉と誕生花、今日の一花をたずさえた、NOCTA第6のツール。",
-    descEn: "Ichi — a quiet catalogue of seasonal flowers, with flower meanings, birth flowers, and a flower of the day. NOCTA's sixth tool."
+    descJa: "銀猫が見つけた季節の花24種を静かに眺める図鑑。花言葉と誕生花、今日の一花をたずさえた、HiNaコレクション第二部。",
+    descEn: "HiNa Ichi — the silver cat's quiet catalogue of seasonal flowers, with flower meanings, birth flowers, and a flower of the day."
   },
   {
-    title: "Gyu",
+    title: "HiNa Gyu",
     cat: "app",
     url: "./gems/index.html",
     imgUrl: "",
     thumbClass: "thumb-5",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "世界の宝石36種を静かに眺める図鑑「Gyu」。石言葉と誕生石、今日の一石をたずさえた、NOCTA第5のツール。",
-    descEn: "Gyu — a quiet catalogue of 36 gemstones, with stone meanings, birthstones, and a stone of the day. NOCTA's fifth tool."
+    descJa: "銀猫が見つけた宝石36種を静かに眺める図鑑。石言葉と誕生石、今日の一石をたずさえた、HiNaコレクション第一部。",
+    descEn: "HiNa Gyu — the silver cat's quiet catalogue of 36 gemstones, with stone meanings, birthstones, and a stone of the day."
   },
   {
     title: "NuWord still",
