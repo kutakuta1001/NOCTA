@@ -221,8 +221,8 @@
             }).join('') +
           '</div>' +
           '<div class="fude-pens" role="radiogroup" aria-label="筆の種類">' +
-            '<button type="button" class="fude-pen active" role="radio" aria-checked="true" data-pen="fude">筆</button>' +
-            '<button type="button" class="fude-pen" role="radio" aria-checked="false" data-pen="calligraphy">カリグラフィ</button>' +
+            '<button type="button" class="fude-pen" role="radio" aria-checked="false" data-pen="fude">筆</button>' +
+            '<button type="button" class="fude-pen active" role="radio" aria-checked="true" data-pen="calligraphy">カリグラフィ</button>' +
           '</div>' +
           '<div class="fude-actions">' +
             '<button type="button" class="fude-btn" data-action="tegami">お手本</button>' +
@@ -246,7 +246,7 @@
     var ctx = canvas.getContext('2d');
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var ink = initialInk;
-    var pen = 'fude';
+    var pen = 'calligraphy';   /* v5: デフォルトをカリグラフィに */
     var stroke = null;   /* { last:{x,y,t}, v:平滑化速度, reservoir, ink, pen } */
 
     function resize() {
@@ -288,17 +288,22 @@
       ctx.arc(x, y, r * 1.15, 0, Math.PI * 2);   /* 少し外側までにじませる */
       ctx.fill();
     }
-    /* カリグラフィスタンプ: 斜め45°の楕円ニブ・蛍光ペン風の均一塗り
-       v3: シャープ化 — 濃度up・縁のぼやけなし・にじみゼロ */
+    /* カリグラフィスタンプ: 斜め45°の平ペン（扁平楕円ニブ）
+       v5: 「本物のカリグラフィ」の物理特性 — ニブを扁平化（5:1比）することで、
+       動く方向に応じて線の太さが自然に変わる:
+         - ニブ短軸方向(左上→右下, 逆斜め)に動かす → 太い線
+         - ニブ長軸方向(右上→左下)に動かす → 細い線
+         - 水平/垂直方向 → 中間の太さ
+       これがカリグラフィ書体の美しさの本質。ユーザーは自由に動かせる。 */
     function stampCalligraphy(x, y, w, inkHex, alpha) {
       var rgb = hex2rgb(inkHex);
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(-Math.PI / 4);
-      /* 蛍光ペン: 均一濃度をやや上げてキュッとしたコントラスト（0.72→0.85） */
       ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.85)';
       ctx.beginPath();
-      ctx.ellipse(0, 0, w / 2, Math.max(1.8, w * 0.36), 0, 0, Math.PI * 2);
+      /* 5:1の扁平楕円 — 平ペンの物理特性で方向依存の線幅変化を生む */
+      ctx.ellipse(0, 0, w / 2, Math.max(1.5, w * 0.20), 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -362,31 +367,10 @@
       var p = clientToLocal(e);
       var dx = p.x - stroke.last.x, dy = p.y - stroke.last.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
-      /* カリグラフィ限定: ストローク全体の進行方向を8方向(45°ステップ)にゆるくスナップ
-         カリグラフィは45°斜めが美しい書体特性なので、大まかにその方向で動かせば綺麗な直線になる。
-         起点からの累積方向で判定し、生座標をスナップ線上に投影する（局所ノイズに強い）。
-         書き始めの短距離では未発動で、フリーハンドの起筆を尊重する。 */
-      if (isCalli) {
-        var totalDx = p.x - stroke.start.x, totalDy = p.y - stroke.start.y;
-        var totalDist = Math.sqrt(totalDx * totalDx + totalDy * totalDy);
-        if (totalDist > 15) {
-          var raw = Math.atan2(totalDy, totalDx);
-          var step = Math.PI / 4;
-          var snapped = Math.round(raw / step) * step;
-          var d = raw - snapped;
-          while (d > Math.PI) d -= Math.PI * 2;
-          while (d < -Math.PI) d += Math.PI * 2;
-          if (Math.abs(d) < Math.PI / 5) {  /* 36°以内ならスナップ */
-            var adj = raw - d * 0.85;        /* 85%スナップ方向へ寄せる（残り15%はフリーハンドの揺らぎ） */
-            p.x = stroke.start.x + Math.cos(adj) * totalDist;
-            p.y = stroke.start.y + Math.sin(adj) * totalDist;
-            dx = p.x - stroke.last.x;
-            dy = p.y - stroke.last.y;
-            dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 0.6) return;
-          }
-        }
-      }
+      /* v5: 45°方向スナップは撤去（なぞりを阻害するため）。
+         代わりにカリグラフィペンのニブを扁平化することで、動く方向に応じて
+         線の太さが自然に変わる本物の平ペン特性（stampCalligraphy側）を活用する。
+         斜めに動かせば太い線、水平/垂直だと細い線が自然に出る。 */
       if (dist < 0.6) {
         /* 完全静止でもにじみ検出だけは走らせる（筆のみ・カリグラフィは蛍光ペンなのでにじまない） */
         if (!isCalli) {
