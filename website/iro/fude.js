@@ -148,6 +148,8 @@
         '<button class="fude-close" type="button" aria-label="閉じる">×</button>' +
         '<div class="fude-paper" style="background:' + escAttr(paper) + ';">' +
           '<canvas class="fude-canvas" aria-label="' + escAttr(colorData.name + 'の紙。ポインタで書けます') + '"></canvas>' +
+          /* 紙の内側の縁にも同じ文様（絵巻の縁取り）— 装飾用・aria-hidden */
+          '<div class="fude-paper-border" aria-hidden="true" style="background-image:' + patternUrl + ';"></div>' +
           '<div class="fude-cornername" aria-hidden="true">' +
             '<span class="fude-cn-name">' + escAttr(colorData.name) + '</span>' +
             '<span class="fude-cn-kana">' + escAttr(colorData.kana) + '</span>' +
@@ -214,28 +216,32 @@
       return { x: e.clientX - rect.left, y: e.clientY - rect.top, t: (e.timeStamp || performance.now()) };
     }
 
-    /* 筆スタンプ: 中心濃→縁淡のradial gradient */
+    /* 筆スタンプ: 中心濃→縁淡のradial gradient（にじむ・柔らかい） */
     function stampFude(x, y, w, inkHex, alpha) {
       var r = w / 2;
       var g = ctx.createRadialGradient(x, y, 0, x, y, r);
       var rgb = hex2rgb(inkHex);
       g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.85).toFixed(3) + ')');
-      g.addColorStop(0.6, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.55).toFixed(3) + ')');
+      g.addColorStop(0.5, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.55).toFixed(3) + ')');
+      g.addColorStop(0.85, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.2).toFixed(3) + ')');
       g.addColorStop(1, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.arc(x, y, r * 1.15, 0, Math.PI * 2);   /* 少し外側までにじませる */
       ctx.fill();
     }
-    /* カリグラフィスタンプ: 斜め45°の楕円ニブ */
+    /* カリグラフィスタンプ: 斜め45°の楕円ニブ・蛍光ペン風の均一塗り
+       alphaは固定・縁のフェードなし・端はhard */
     function stampCalligraphy(x, y, w, inkHex, alpha) {
       var rgb = hex2rgb(inkHex);
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(-Math.PI / 4);
-      ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.9).toFixed(3) + ')';
+      /* 蛍光ペン: 均一濃度・不透明度中（source-overで同色重ねても濃くならない特性はcompositeで担保） */
+      ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.72)';
       ctx.beginPath();
-      ctx.ellipse(0, 0, w / 2, Math.max(1.2, w * 0.28), 0, 0, Math.PI * 2);
+      /* 楕円ニブ・短径をやや太くしてマーカー感 */
+      ctx.ellipse(0, 0, w / 2, Math.max(1.8, w * 0.36), 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -243,68 +249,102 @@
       if (pen === 'calligraphy') stampCalligraphy(x, y, w, inkHex, alpha);
       else stampFude(x, y, w, inkHex, alpha);
     }
-    /* にじみブロブ（インク溜まり） */
-    function blot(x, y, w, inkHex) {
-      var r = w * 1.6;
+    /* にじみブロブ（インク溜まり）— 筆で使用 */
+    function blot(x, y, w, inkHex, strength) {
+      var s = strength || 1;
+      var r = w * 1.8 * s;
       var rgb = hex2rgb(inkHex);
       var g = ctx.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.22)');
-      g.addColorStop(0.7, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.08)');
+      g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (0.28 * s).toFixed(3) + ')');
+      g.addColorStop(0.6, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (0.12 * s).toFixed(3) + ')');
       g.addColorStop(1, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI * 2);
       ctx.fill();
     }
+    /* 筆の周辺にじみ（薄く不定形に広がる痕跡）— 数スタンプに1回 */
+    function bleed(x, y, w, inkHex) {
+      var rgb = hex2rgb(inkHex);
+      for (var i = 0; i < 3; i++) {
+        var ang = Math.random() * Math.PI * 2;
+        var dist = w * (0.4 + Math.random() * 0.7);
+        var bx = x + Math.cos(ang) * dist;
+        var by = y + Math.sin(ang) * dist;
+        var br = w * (0.5 + Math.random() * 0.5);
+        var g = ctx.createRadialGradient(bx, by, 0, bx, by, br);
+        g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.09)');
+        g.addColorStop(1, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(bx, by, br, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
 
     function begin(e) {
       if (e.button !== undefined && e.button !== 0) return;
       try { canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); } catch (_) { /* Safari/古いWebViewは無視 */ }
       var p = clientToLocal(e);
-      stroke = { last: p, v: 0, reservoir: 1.0, ink: ink, pen: pen, dwellAt: p, dwellSince: p.t, pointerId: e.pointerId };
+      stroke = { last: p, v: 0, reservoir: 1.0, ink: ink, pen: pen, dwellAt: p, dwellSince: p.t, pointerId: e.pointerId, stampCount: 0 };
       ctx.save();
-      ctx.globalCompositeOperation = 'multiply';
-      blot(p.x, p.y, 14, stroke.ink);   /* 起筆のインク溜まり */
-      stamp(p.x, p.y, 14, stroke.ink, 0.95);
+      /* 筆=multiply（紙に染みる）／カリグラフィ=source-over（蛍光ペンは重ねても濃くならない） */
+      ctx.globalCompositeOperation = stroke.pen === 'calligraphy' ? 'source-over' : 'multiply';
+      if (stroke.pen === 'fude') {
+        blot(p.x, p.y, 15, stroke.ink, 1.2);      /* 起筆のインク溜まり（強め） */
+      }
+      stamp(p.x, p.y, stroke.pen === 'calligraphy' ? 16 : 14, stroke.ink, 0.95);
       ctx.restore();
       e.preventDefault();
     }
 
     function move(e) {
       if (!stroke) return;
+      var isCalli = stroke.pen === 'calligraphy';
       var p = clientToLocal(e);
       var dx = p.x - stroke.last.x, dy = p.y - stroke.last.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
       if (dist < 0.6) {
-        /* 完全静止でもにじみ検出だけは走らせる */
-        var dwellMs0 = p.t - stroke.dwellSince;
-        if (dwellMs0 > 120) {
-          ctx.save();
-          ctx.globalCompositeOperation = 'multiply';
-          blot(stroke.last.x, stroke.last.y, 10, stroke.ink);
-          ctx.restore();
-          stroke.dwellSince = p.t + 200;
+        /* 完全静止でもにじみ検出だけは走らせる（筆のみ・カリグラフィは蛍光ペンなのでにじまない） */
+        if (!isCalli) {
+          var dwellMs0 = p.t - stroke.dwellSince;
+          if (dwellMs0 > 120) {
+            ctx.save();
+            ctx.globalCompositeOperation = 'multiply';
+            blot(stroke.last.x, stroke.last.y, 10, stroke.ink, 1.0);
+            ctx.restore();
+            stroke.dwellSince = p.t + 200;
+          }
         }
         return;
       }
       var dt = Math.max(1, p.t - stroke.last.t);
       var vInst = dist / dt;                              /* px/ms */
       stroke.v = stroke.v * 0.6 + vInst * 0.4;            /* EMA */
-      var wMax = 14, wMin = 2.5, k = 0.035;
-      var w = Math.max(wMin, Math.min(wMax, wMax - k * stroke.v * 1000));
-      /* インク残量 */
-      stroke.reservoir = Math.max(0.35, stroke.reservoir - dist / 1200);
-      var alpha = 0.85 * stroke.reservoir;
-      /* ドライブラシ: reservoir<0.5 でランダム間引き */
-      var thin = stroke.reservoir < 0.5 && Math.random() < (0.5 - stroke.reservoir);
-      /* 停留検出（にじみ追加） */
+
+      var w, alpha;
+      if (isCalli) {
+        /* カリグラフィ = 蛍光ペン: 速度非依存の均一太さ・alpha固定・reservoir/払い/かすれなし */
+        w = 16;
+        alpha = 1.0;   /* stampCalligraphy側で0.72に固定 */
+      } else {
+        /* 筆: 速度で太さが変わる */
+        var wMax = 15, wMin = 2.8, k = 0.035;
+        w = Math.max(wMin, Math.min(wMax, wMax - k * stroke.v * 1000));
+        /* インク残量 */
+        stroke.reservoir = Math.max(0.35, stroke.reservoir - dist / 1200);
+        alpha = 0.85 * stroke.reservoir;
+      }
+      /* ドライブラシ: 筆のみ・reservoir<0.5でランダム間引き */
+      var thin = !isCalli && stroke.reservoir < 0.5 && Math.random() < (0.5 - stroke.reservoir);
+      /* 停留検出（にじみ追加）— 筆のみ */
       var moved = Math.hypot(p.x - stroke.dwellAt.x, p.y - stroke.dwellAt.y);
       if (moved > 4) { stroke.dwellAt = p; stroke.dwellSince = p.t; }
       var dwellMs = p.t - stroke.dwellSince;
       ctx.save();
-      ctx.globalCompositeOperation = 'multiply';
-      if (dwellMs > 120 && stroke.v < 0.05) {
-        blot(p.x, p.y, w, stroke.ink);
+      ctx.globalCompositeOperation = isCalli ? 'source-over' : 'multiply';
+      if (!isCalli && dwellMs > 120 && stroke.v < 0.05) {
+        blot(p.x, p.y, w, stroke.ink, 1.0);
         stroke.dwellSince = p.t + 200;  /* クールダウン */
       }
       if (!thin) {
@@ -314,6 +354,11 @@
         for (var i = 1; i <= n; i++) {
           var t = i / n;
           stamp(stroke.last.x + dx * t, stroke.last.y + dy * t, w, stroke.ink, alpha);
+          stroke.stampCount++;
+          /* 筆のみ: 数スタンプに1回、周辺にじみを追加 */
+          if (!isCalli && stroke.stampCount % 5 === 0 && stroke.reservoir > 0.5) {
+            bleed(stroke.last.x + dx * t, stroke.last.y + dy * t, w, stroke.ink);
+          }
         }
       }
       ctx.restore();
@@ -322,8 +367,9 @@
 
     function end(e) {
       if (!stroke) return;
-      /* 払い: 最終速度が高ければ進行方向へ2スタンプ外挿・幅急減 */
-      if (stroke.v > 0.3) {
+      /* 払い: 筆のみ・最終速度が高ければ進行方向へ2スタンプ外挿・幅急減
+         カリグラフィは蛍光ペンなので払わない（均一の切れ味） */
+      if (stroke.pen !== 'calligraphy' && stroke.v > 0.3) {
         var p = clientToLocal(e);
         var dx = p.x - stroke.last.x, dy = p.y - stroke.last.y;
         var len = Math.sqrt(dx * dx + dy * dy) || 1;

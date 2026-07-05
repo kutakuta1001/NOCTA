@@ -61,6 +61,39 @@
   .iro-chip--static{ cursor:default; }
   .iro-chip--static:hover{ transform:none; background:transparent; }
 
+  /* 「この色で筆あそび」CTA — 他chipから独立・その色の塗りで主役化 */
+  .fude-cta{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:11px 20px 11px 16px; border-radius:999px;
+    background:var(--iro); color:var(--ink-name, var(--ink));
+    border:1px solid var(--ink-line); cursor:pointer;
+    font-family:'Shippori Mincho','EB Garamond',serif;
+    font-size:14px; letter-spacing:0.14em; font-weight:600;
+    box-shadow:0 8px 24px -12px rgba(10,9,6,0.35);
+    transition:transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    position:relative; overflow:hidden;
+  }
+  .fude-cta::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(120deg, transparent 30%, rgba(255,252,244,0.22) 50%, transparent 70%);
+    transform:translateX(-100%); transition:transform 0.7s ease;
+  }
+  .fude-cta:hover{
+    transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(10,9,6,0.45);
+    filter:brightness(1.05);
+  }
+  .fude-cta:hover::before{ transform:translateX(100%); }
+  .fude-cta-ico{ width:18px; height:18px; flex:none; }
+  .fude-cta-arrow{
+    font-family:'Syne',sans-serif; font-size:16px; margin-left:2px; opacity:0.85;
+    transition:transform 0.3s ease;
+  }
+  .fude-cta:hover .fude-cta-arrow{ transform:translateX(3px); }
+  @media (prefers-reduced-motion:reduce){
+    .fude-cta, .fude-cta:hover{ transform:none; }
+    .fude-cta::before{ display:none; }
+  }
+
   /* 配色（かさね） */
   .kasane-band{
     display:flex; height:26px; border-radius:999px; overflow:hidden;
@@ -188,6 +221,18 @@
     position:relative; width:min(88vw, 720px); aspect-ratio:3/4;
     max-height:82vh; border-radius:2px; overflow:hidden;
     box-shadow:0 24px 80px -20px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(28,26,23,0.06);
+  }
+  /* 紙の内側の縁を回る文様帯（絵巻の縁取りのように書き場は真ん中に残す）
+     inset 0 の絶対配置＋ maskで中央のみくり抜くことで、上下左右の細い帯だけ表示する */
+  .fude-paper-border{
+    position:absolute; inset:0; pointer-events:none; z-index:1;
+    background-repeat:repeat; background-size:auto;
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+            mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite:exclude;
+    padding:min(6vw, 42px);
+    opacity:0.78;
   }
   .fude-canvas{
     position:absolute; inset:0; width:100%; height:100%; display:block;
@@ -372,7 +417,7 @@
     "index.fav":         { ja: "お気に入り",                                                            en: "Favorites" },
     "meta.season":       { ja: "季節",                                                                  en: "Season" },
     "meta.kasane":       { ja: "配色 — かさね",                                                         en: "Pairing — Kasane" },
-    "meta.immerse":      { ja: "この色に浸る",                                                          en: "Immerse" },
+    "meta.immerse":      { ja: "この色で筆あそび",                                                        en: "Play with this color" },
     "copy.done":         { ja: "写しました",                                                            en: "Copied" },
     "copy.fail":         { ja: "写せませんでした",                                                      en: "Copy failed" }
   };
@@ -511,7 +556,14 @@
                 '<button type="button" class="iro-chip" data-copy="' + escAttr(c.hex) + '">' + escHtml(c.hex) + '</button>' +
                 '<button type="button" class="iro-chip" data-copy="' + escAttr(hexToRgbText(c.hex)) + '">' + escHtml(hexToRgbText(c.hex)) + '</button>' +
                 '<span class="iro-chip iro-chip--static"><span data-i18n="meta.season">季節</span>: <span data-ja="' + escAttr(c.season) + '" data-en="' + escAttr(SEASON_EN[c.season]) + '">' + escHtml(c.season) + '</span></span>' +
-                '<button type="button" class="iro-chip" data-immerse="' + i + '" data-i18n="meta.immerse">この色に浸る</button>' +
+              '</div>' +
+              /* 遊びのCTA — 他のchipから独立させて主役化（塗り・筆アイコン・大きめ） */
+              '<div class="mt-5' + (reverse ? ' md:flex md:justify-end' : '') + '">' +
+                '<button type="button" class="fude-cta" data-immerse="' + i + '" aria-label="' + escAttr(c.name + 'で筆あそび') + '">' +
+                  '<svg class="fude-cta-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L14 10 L18 14 L8 20 Z M14 10 L18 6 L20 8 L18 10 L18 14 Z" fill="currentColor" opacity="0.9"/><circle cx="6.5" cy="17.5" r="1.3" fill="currentColor"/></svg>' +
+                  '<span data-i18n="meta.immerse">この色で筆あそび</span>' +
+                  '<span class="fude-cta-arrow" aria-hidden="true">→</span>' +
+                '</button>' +
               '</div>' +
             '</div>' +
           '</div>' +
