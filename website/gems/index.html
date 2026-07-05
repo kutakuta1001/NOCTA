@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./gems-data.js"></script>
+<script src="../zukan/zukan-core.js?v=1"></script>
 <style>
   :root { --gem: #B8B4AE; }
   *{ box-sizing:border-box; }
@@ -207,7 +208,7 @@
 </svg>
 
 <!-- ミニマルナビ -->
-<nav class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-10 py-5" style="background:linear-gradient(to bottom, rgba(10,9,6,0.85), transparent);">
+<nav id="site-nav" class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-10 py-5" style="background:linear-gradient(to bottom, rgba(10,9,6,0.85), transparent);">
   <a href="../index.html#apps" class="font-heading text-[11px] tracking-[2px] uppercase text-sub hover:text-[#E8E0D0] transition-colors" data-i18n="nav.back">← NOCTA</a>
   <button class="lang-btn" id="lang-btn" onclick="toggleLang()" aria-label="Switch language to English">EN</button>
 </nav>
@@ -236,11 +237,11 @@
 <main id="gems-root"></main>
 
 <!-- 目次オーバーレイ -->
-<div id="index-overlay" role="dialog" aria-modal="true" aria-labelledby="index-title" hidden>
+<div id="index-overlay" role="dialog" aria-modal="true" aria-labelledby="index-heading" hidden>
   <button class="index-close" type="button" id="index-close" aria-label="目次を閉じる">×</button>
   <div class="max-w-[760px] mx-auto">
-    <p class="font-heading text-[10px] tracking-[3px] uppercase text-sub" id="index-title" data-i18n="index.eyebrow">Index</p>
-    <h2 class="font-display text-[clamp(28px,5vw,40px)] font-semibold mt-1" style="color:#E8E0D0;" data-i18n="index.title">目次 — 石をえらぶ</h2>
+    <p class="font-heading text-[10px] tracking-[3px] uppercase text-sub" data-i18n="index.eyebrow">Index</p>
+    <h2 id="index-heading" class="font-display text-[clamp(28px,5vw,40px)] font-semibold mt-1" style="color:#E8E0D0;" data-i18n="index.title">目次 — 石をえらぶ</h2>
     <p class="font-jp text-[12px] text-sub mt-2 leading-relaxed" data-i18n="index.note">誕生石の月・色・お気に入りで、石をしぼりこめます。</p>
     <p class="chip-row-label" data-i18n="index.monthLabel">誕生石の月</p>
     <div id="month-chips" class="flex flex-wrap gap-2"></div>
@@ -263,7 +264,7 @@
 </div>
 
 <!-- フッター -->
-<footer class="relative border-t border-white/5 py-16 px-6 text-center overflow-hidden">
+<footer id="site-footer" class="relative border-t border-white/5 py-16 px-6 text-center overflow-hidden">
   <div id="footer-cat" class="reveal absolute left-1/2 -translate-x-1/2 -top-6" aria-hidden="true">
     <img src="../img/cat/silver-sleep.png" alt="" style="width:clamp(96px,12vw,150px); opacity:0.9;">
   </div>
@@ -275,6 +276,11 @@
 <script>
 (function () {
   "use strict";
+
+  var Z = window.NoctaZukan;
+  if (!Z) { if (window.console && console.error) console.error('NoctaZukan core (../zukan/zukan-core.js) が読み込めませんでした'); return; }
+  var escHtml = Z.escHtml, escAttr = Z.escAttr;
+  var MONTHS_EN = Z.MONTHS_EN;
 
   var STRINGS = {
     "nav.back":        { ja: "← NOCTA",                                                          en: "← NOCTA" },
@@ -299,9 +305,6 @@
     "index.fav":       { ja: "お気に入り",                                                        en: "Favorites" },
     "footer.note":     { ja: "誕生石は2021年改訂の日本の誕生石リストに準拠しています。石言葉は言い伝えに基づく表現であり、効果を保証するものではありません。", en: "Birthstones follow the Japanese birthstone list as revised in 2021. Stone meanings are traditional expressions and no effect is guaranteed." }
   };
-
-  var MONTHS_EN = ["", "January", "February", "March", "April", "May", "June",
-                   "July", "August", "September", "October", "November", "December"];
 
   /* 色グループ（accentColorのHSLから自動判定） */
   var COLOR_ORDER = ["red", "pink", "orange", "yellow", "green", "blue", "purple", "white", "black"];
@@ -336,88 +339,24 @@
     return 'purple';
   }
 
-  /* お気に入り（localStorage・肉球） */
-  var FAV_KEY = 'nocta-gems-favs';
-  function loadFavs() {
-    try {
-      var v = JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
-      return Array.isArray(v) ? v : [];
-    } catch (e) { return []; }
-  }
-  function saveFavs(f) {
-    try { localStorage.setItem(FAV_KEY, JSON.stringify(f)); } catch (e) { /* プライベートモード等では保存しない */ }
-  }
-  var favs = loadFavs();
+  var lightboxIdx = -1;
+  var indexDialog = null, lightbox = null;
 
-  function cssEscape(s) {
-    return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/["\\\]]/g, '\\$&');
-  }
-
-  function toggleFav(id) {
-    var i = favs.indexOf(id);
-    if (i === -1) favs.push(id); else favs.splice(i, 1);
-    saveFavs(favs);
-    var faved = i === -1;
-    document.querySelectorAll('.fav-btn[data-fav="' + cssEscape(id) + '"]').forEach(function (b) {
-      b.classList.toggle('faved', faved);
-      b.setAttribute('aria-pressed', faved ? 'true' : 'false');
-    });
-    document.querySelectorAll('.index-item[data-id="' + cssEscape(id) + '"] .idx-fav').forEach(function (m) {
-      m.hidden = !faved;
-    });
-    if (favOnly) filterIndex();
-  }
-
-  var currentLang = 'ja';
-
-  function applyLang() {
-    document.documentElement.lang = currentLang;
-    document.querySelectorAll('[data-i18n]').forEach(function (el) {
-      var key = el.getAttribute('data-i18n');
-      if (STRINGS[key]) el.textContent = STRINGS[key][currentLang];
-    });
-    document.querySelectorAll('[data-ja]').forEach(function (el) {
-      var t = currentLang === 'ja' ? el.getAttribute('data-ja') : el.getAttribute('data-en');
-      if (t !== null) el.textContent = t;
-    });
-    document.querySelectorAll('img[data-alt-ja]').forEach(function (el) {
-      el.alt = currentLang === 'ja' ? el.getAttribute('data-alt-ja') : el.getAttribute('data-alt-en');
-    });
-    if (lightboxOpen && lightboxIdx >= 0 && typeof NOCTA_GEMS !== 'undefined') {
-      var lg = NOCTA_GEMS[lightboxIdx];
-      if (lg) document.getElementById('lightbox-img').alt = currentLang === 'ja' ? lg.title : lg.titleEn;
-    }
-    var btn = document.getElementById('lang-btn');
-    if (btn) {
-      btn.textContent = currentLang === 'ja' ? 'EN' : 'JA';
-      btn.setAttribute('aria-label', currentLang === 'ja' ? 'Switch language to English' : '日本語に切り替え');
-    }
-  }
-
-  window.toggleLang = function () {
-    currentLang = currentLang === 'ja' ? 'en' : 'ja';
-    applyLang();
-  };
-
-  function escHtml(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
-  function escAttr(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-
-  /* Wikimedia Commonsの原寸URLからサムネイルURLを導出（読み込み軽量化。失敗時は原寸へフォールバック） */
-  function thumbUrl(url, w) {
-    var m = String(url).match(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/commons)\/([0-9a-f])\/([0-9a-f]{2})\/([^\/]+)$/);
-    if (!m) return url;
-    return m[1] + '/thumb/' + m[2] + '/' + m[3] + '/' + m[4] + '/' + w + 'px-' + m[4];
-  }
-
-  /* 画面幅に応じたレスポンシブ読み込み（導出不可のURLは素のsrcのみ）
-     幅はWikimediaのサムネイル許可バケット（500/960/1280）に合わせる */
-  function imgSrcAttrs(url) {
-    var t960 = thumbUrl(url, 960);
-    if (t960 === url) return 'src="' + escAttr(url) + '"';
-    return 'src="' + escAttr(t960) + '"' +
-      ' srcset="' + escAttr(thumbUrl(url, 500)) + ' 500w, ' + escAttr(t960) + ' 960w, ' + escAttr(thumbUrl(url, 1280)) + ' 1280w"' +
-      ' sizes="(min-width:768px) 45vw, 92vw"';
-  }
+  var app = Z.createApp({
+    strings: STRINGS,
+    idPrefix: 'gem',
+    railId: 'gem-rail',
+    sectionClass: 'gem-section',
+    favKey: 'nocta-gems-favs',
+    inertIds: ['site-nav', 'cover', 'gems-root', 'gem-rail', 'index-btn', 'site-footer'],
+    onLangApply: function (lang) {
+      if (lightbox && lightbox.isOpen() && lightboxIdx >= 0 && typeof NOCTA_GEMS !== 'undefined') {
+        var lg = NOCTA_GEMS[lightboxIdx];
+        if (lg) document.getElementById('lightbox-img').alt = lang === 'ja' ? lg.title : lg.titleEn;
+      }
+    },
+    onFavChange: function () { if (favOnly) filterIndex(); }
+  });
 
   function birthLabel(months, lang) {
     if (!months || !months.length) return '';
@@ -429,11 +368,8 @@
     return lang === 'ja' ? '「' + g.kotobaJa + '」' : '“' + g.kotobaEn + '”';
   }
 
-  var sectionIds = [];
-
   function renderGems() {
     var root = document.getElementById('gems-root');
-    var rail = document.getElementById('gem-rail');
     if (!root || typeof NOCTA_GEMS === 'undefined') return;
 
     var total = NOCTA_GEMS.length;
@@ -465,7 +401,7 @@
           '<div class="reveal' + (reverse ? ' md:[direction:ltr]' : '') + '">' +
             '<div class="gem-photo-wrap aspect-[4/5] md:aspect-[3/4]">' +
               '<button type="button" class="gem-photo-open" data-lightbox="' + i + '" aria-label="' + escAttr(g.title + 'を拡大して鑑賞') + '">' +
-                '<img ' + imgSrcAttrs(g.imgUrl) + ' data-original="' + escAttr(g.imgUrl) + '" alt="' + escAttr(g.title) + '" data-alt-ja="' + escAttr(g.title) + '" data-alt-en="' + escAttr(g.titleEn) + '" loading="' + (i === 0 ? 'eager' : 'lazy') + '">' +
+                '<img ' + Z.imgSrcAttrs(g.imgUrl) + ' data-original="' + escAttr(g.imgUrl) + '" alt="' + escAttr(g.title) + '" data-alt-ja="' + escAttr(g.title) + '" data-alt-en="' + escAttr(g.titleEn) + '" loading="' + (i === 0 ? 'eager' : 'lazy') + '">' +
               '</button>' +
               '<div class="gem-credit">' +
                 '<span data-i18n="meta.source">出典</span>: <a href="' + escAttr(g.sourceUrl) + '" target="_blank" rel="noopener noreferrer">' + escHtml(creditLine) + '</a>' +
@@ -492,57 +428,17 @@
         '</div>';
 
       root.appendChild(section);
-      sectionIds.push(section.id);
-
-      var dot = document.createElement('button');
-      dot.type = 'button';
-      dot.className = 'rail-dot';
-      dot.style.setProperty('--dot-color', g.accentColor);
-      dot.setAttribute('aria-label', g.titleEn);
-      dot.dataset.target = section.id;
-      dot.addEventListener('click', function () {
-        scrollToSection(section.id);
-      });
-      rail.appendChild(dot);
+      app.trackSection(section, g.accentColor, g.titleEn);
     });
 
-    /* 画像フォールバック: サムネ失敗→原寸→単色プレースホルダー */
-    root.querySelectorAll('img[data-original]').forEach(function (img) {
-      img.addEventListener('error', function () {
-        var original = img.getAttribute('data-original');
-        if (img.hasAttribute('srcset')) {
-          img.removeAttribute('srcset');
-          img.removeAttribute('sizes');
-          img.src = original;
-        } else if (img.src !== original) {
-          img.src = original;
-        } else {
-          img.style.visibility = 'hidden';
-        }
-      });
-    });
+    Z.attachImgFallback(root);
   }
 
-  function scrollToSection(id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
-  }
-
-  /* ---- 今日の一石（日付シードの決定的選出・毎日変わる） ---- */
-  function todayIndex(total) {
-    var d = new Date();
-    var seed = d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-    var h = seed % 2147483647;
-    h = (h * 48271) % 2147483647;
-    return h % total;
-  }
-
+  /* ---- 今日の一石 ---- */
   function renderToday() {
     var slot = document.getElementById('today-slot');
     if (!slot || typeof NOCTA_GEMS === 'undefined' || !NOCTA_GEMS.length) return;
-    var idx = todayIndex(NOCTA_GEMS.length);
+    var idx = Z.todayIndex(NOCTA_GEMS.length);
     var g = NOCTA_GEMS[idx];
     var d = new Date();
     var dateJa = (d.getMonth() + 1) + '月' + d.getDate() + '日';
@@ -560,42 +456,14 @@
       '<span class="t-line" aria-hidden="true"></span>' +
       '<span class="gem-kotoba font-display block text-[15px]" data-ja="' + escAttr(kotobaText(g, 'ja')) + '" data-en="' + escAttr(kotobaText(g, 'en')) + '">' + escHtml(kotobaText(g, 'ja')) + '</span>' +
       '<span class="font-heading text-[10px] tracking-[2px] uppercase text-sub block mt-3" data-i18n="today.cta">この石を眺める ↓</span>';
-    card.addEventListener('click', function () { scrollToSection('gem-' + (idx + 1)); });
+    card.addEventListener('click', function () { app.jumpTo(idx); });
     slot.appendChild(card);
   }
 
   /* ---- 目次オーバーレイ＋誕生石月・色・お気に入りフィルタ ---- */
-  var indexOpen = false;
   var activeMonth = 0;   /* 0 = すべて */
   var activeColor = '';  /* '' = すべて */
   var favOnly = false;
-
-  function setBodyLock(lock) {
-    document.body.style.overflow = lock ? 'hidden' : '';
-  }
-
-  /* ダイアログのフォーカストラップ（Tab循環）と復帰用 */
-  function focusables(container) {
-    return Array.prototype.filter.call(
-      container.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])'),
-      function (el) { return !el.disabled && el.getClientRects().length > 0; }
-    );
-  }
-
-  function trapFocus(container, e) {
-    if (e.key !== 'Tab') return;
-    var f = focusables(container);
-    if (!f.length) return;
-    var first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
-    else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
-  }
-
-  /* チップの選択状態をclassとariaの両方に反映 */
-  function setChip(chip, on) {
-    chip.classList.toggle('active', on);
-    chip.setAttribute('aria-pressed', on ? 'true' : 'false');
-  }
 
   function buildIndex() {
     var chipsWrap = document.getElementById('month-chips');
@@ -609,7 +477,7 @@
     allChip.dataset.month = '0';
     allChip.setAttribute('data-i18n', 'index.all');
     allChip.setAttribute('aria-pressed', 'true');
-    allChip.textContent = STRINGS['index.all'][currentLang];
+    allChip.textContent = STRINGS['index.all'][app.lang()];
     chipsWrap.appendChild(allChip);
 
     for (var m = 1; m <= 12; m++) {
@@ -631,10 +499,10 @@
       if (activeMonth === 0) { /* すべて = 全フィルタ解除 */
         activeColor = '';
         favOnly = false;
-        colorWrap.querySelectorAll('.month-chip').forEach(function (c) { setChip(c, false); });
+        colorWrap.querySelectorAll('.month-chip').forEach(function (c) { app.setChip(c, false); });
       }
       chipsWrap.querySelectorAll('.month-chip').forEach(function (c) {
-        setChip(c, c === chip);
+        app.setChip(c, c === chip);
       });
       filterIndex();
     });
@@ -651,7 +519,7 @@
       chip.setAttribute('data-ja', COLOR_LABELS[key].ja);
       chip.setAttribute('data-en', COLOR_LABELS[key].en);
       chip.setAttribute('aria-pressed', 'false');
-      chip.textContent = COLOR_LABELS[key][currentLang];
+      chip.textContent = COLOR_LABELS[key][app.lang()];
       colorWrap.appendChild(chip);
     });
 
@@ -661,7 +529,7 @@
     favChip.dataset.favChip = '1';
     favChip.setAttribute('data-i18n', 'index.fav');
     favChip.setAttribute('aria-pressed', 'false');
-    favChip.textContent = STRINGS['index.fav'][currentLang];
+    favChip.textContent = STRINGS['index.fav'][app.lang()];
     colorWrap.appendChild(favChip);
 
     colorWrap.addEventListener('click', function (e) {
@@ -669,18 +537,18 @@
       if (!chip) return;
       if (chip.dataset.favChip) {
         favOnly = !favOnly;
-        setChip(chip, favOnly);
+        app.setChip(chip, favOnly);
       } else {
         activeColor = chip.dataset.color === activeColor ? '' : chip.dataset.color;
         colorWrap.querySelectorAll('.month-chip[data-color]').forEach(function (c) {
-          setChip(c, c.dataset.color === activeColor);
+          app.setChip(c, c.dataset.color === activeColor);
         });
       }
       filterIndex();
     });
 
     NOCTA_GEMS.forEach(function (g, i) {
-      var isFav = favs.indexOf(g.titleEn) !== -1;
+      var isFav = app.favs.has(g.titleEn);
       var item = document.createElement('button');
       item.type = 'button';
       item.className = 'index-item';
@@ -696,8 +564,8 @@
           ? '<span class="ml-auto font-heading text-[10px] tracking-[1px] uppercase" style="color:' + escAttr(g.accentColor) + ';" data-ja="' + escAttr(birthLabel(g.birthMonths, 'ja')) + '" data-en="' + escAttr(birthLabel(g.birthMonths, 'en')) + '">' + escHtml(birthLabel(g.birthMonths, 'ja')) + '</span>'
           : '');
       item.addEventListener('click', function () {
-        closeIndex();
-        scrollToSection('gem-' + (i + 1));
+        indexDialog.close();
+        app.jumpTo(i);
       });
       list.appendChild(item);
     });
@@ -709,53 +577,24 @@
       var show =
         (activeMonth === 0 || months.indexOf(activeMonth) !== -1) &&
         (!activeColor || item.dataset.color === activeColor) &&
-        (!favOnly || favs.indexOf(item.dataset.id) !== -1);
+        (!favOnly || app.favs.has(item.dataset.id));
       item.style.display = show ? '' : 'none';
     });
   }
 
-  var lastFocusIndex = null;
-
-  function openIndex() {
-    var ov = document.getElementById('index-overlay');
-    if (!ov) return;
-    lastFocusIndex = document.activeElement;
-    ov.hidden = false;
-    indexOpen = true;
-    setBodyLock(true);
-    document.getElementById('index-btn').setAttribute('aria-expanded', 'true');
-    document.getElementById('index-close').focus();
-  }
-
-  function closeIndex() {
-    var ov = document.getElementById('index-overlay');
-    if (!ov) return;
-    ov.hidden = true;
-    indexOpen = false;
-    setBodyLock(false);
-    document.getElementById('index-btn').setAttribute('aria-expanded', 'false');
-    if (lastFocusIndex && lastFocusIndex.focus) lastFocusIndex.focus();
-    lastFocusIndex = null;
-  }
-
-  /* ---- ライトボックス ---- */
-  var lightboxOpen = false;
-  var lightboxIdx = -1;
-  var lastFocusLightbox = null;
-
-  function openLightbox(i) {
+  /* ---- ライトボックスの中身（開閉・フォーカス・ロックはcoreが担う） ---- */
+  function populateLightbox(i) {
     var g = NOCTA_GEMS[i];
     var lb = document.getElementById('lightbox');
     if (!g || !lb) return;
-    lastFocusLightbox = document.activeElement;
     lightboxIdx = i;
     lb.style.setProperty('--gem', g.accentColor);
     var img = document.getElementById('lightbox-img');
-    var t1280 = thumbUrl(g.imgUrl, 1280);
+    var t1280 = Z.thumbUrl(g.imgUrl, 1280);
     img.setAttribute('data-original', g.imgUrl);
     img.style.visibility = '';
     if (t1280 !== g.imgUrl) {
-      img.setAttribute('srcset', thumbUrl(g.imgUrl, 960) + ' 960w, ' + t1280 + ' 1280w');
+      img.setAttribute('srcset', Z.thumbUrl(g.imgUrl, 960) + ' 960w, ' + t1280 + ' 1280w');
       img.setAttribute('sizes', '92vw');
       img.src = t1280;
     } else {
@@ -763,183 +602,50 @@
       img.removeAttribute('sizes');
       img.src = g.imgUrl;
     }
-    img.alt = currentLang === 'ja' ? g.title : g.titleEn;
+    img.alt = app.lang() === 'ja' ? g.title : g.titleEn;
     document.getElementById('lightbox-en').textContent = g.titleEn;
     var t = document.getElementById('lightbox-title');
     t.setAttribute('data-ja', g.title); t.setAttribute('data-en', g.titleEn);
-    t.textContent = currentLang === 'ja' ? g.title : g.titleEn;
+    t.textContent = app.lang() === 'ja' ? g.title : g.titleEn;
     var k = document.getElementById('lightbox-kotoba');
     k.setAttribute('data-ja', kotobaText(g, 'ja')); k.setAttribute('data-en', kotobaText(g, 'en'));
-    k.textContent = kotobaText(g, currentLang);
+    k.textContent = kotobaText(g, app.lang());
     var cr = document.getElementById('lightbox-credit');
     cr.textContent = g.sourceName + (g.license ? ' · ' + g.license : '') + (g.credit ? ' · ' + g.credit : '');
     cr.href = g.sourceUrl;
-    lb.hidden = false;
-    lightboxOpen = true;
-    setBodyLock(true);
-    document.getElementById('lightbox-close').focus();
-  }
-
-  function closeLightbox() {
-    var lb = document.getElementById('lightbox');
-    if (!lb) return;
-    lb.hidden = true;
-    var img = document.getElementById('lightbox-img');
-    img.removeAttribute('srcset');
-    img.removeAttribute('sizes');
-    img.src = '';
-    lightboxOpen = false;
-    lightboxIdx = -1;
-    setBodyLock(false);
-    if (lastFocusLightbox && lastFocusLightbox.focus) lastFocusLightbox.focus();
-    lastFocusLightbox = null;
-  }
-
-  /* ---- キーボードナビ（↑↓ / j k で前後の石へ） ---- */
-  var currentSectionIdx = -1;
-
-  function nearestSectionIdx() {
-    var viewportCenter = window.innerHeight / 2;
-    var best = -1, bestDist = Infinity;
-    sectionIds.forEach(function (id, i) {
-      var el = document.getElementById(id);
-      if (!el) return;
-      var r = el.getBoundingClientRect();
-      var dist = Math.abs((r.top + r.height / 2) - viewportCenter);
-      if (dist < bestDist) { bestDist = dist; best = i; }
-    });
-    return best;
-  }
-
-  function initKeyboard() {
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        if (lightboxOpen) { closeLightbox(); e.preventDefault(); }
-        else if (indexOpen) { closeIndex(); e.preventDefault(); }
-        return;
-      }
-      if (indexOpen || lightboxOpen) return;
-      var dir = 0;
-      if (e.key === 'ArrowDown' || e.key === 'j') dir = 1;
-      if (e.key === 'ArrowUp' || e.key === 'k') dir = -1;
-      if (!dir) return;
-      e.preventDefault();
-      var cur = nearestSectionIdx();
-      var next = Math.min(Math.max(cur + dir, 0), sectionIds.length - 1);
-      if (next !== cur || cur === -1) scrollToSection(sectionIds[Math.max(next, 0)]);
-      currentSectionIdx = next;
-    });
-  }
-
-  /* ---- 出現アニメ・レール同期 ---- */
-  function initReveal() {
-    if (!('IntersectionObserver' in window)) {
-      document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in-view'); });
-      return;
-    }
-    var revealObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) entry.target.classList.add('in-view');
-      });
-    }, { threshold: 0.2 });
-    document.querySelectorAll('.reveal').forEach(function (el) { revealObserver.observe(el); });
-
-    /* activeドットは画面内にかかる全セクションから都度計算する
-       （threshold依存だと縦長セクションで取りこぼすため） */
-    function updateActiveRail() {
-      var viewportCenter = window.innerHeight / 2;
-      var bestId = null, bestDist = Infinity;
-      sectionIds.forEach(function (id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        var rect = el.getBoundingClientRect();
-        if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
-        var dist = Math.abs((rect.top + rect.height / 2) - viewportCenter);
-        if (dist < bestDist) { bestDist = dist; bestId = id; }
-      });
-      document.querySelectorAll('.rail-dot').forEach(function (d) {
-        var isActive = d.dataset.target === bestId;
-        d.classList.toggle('active', isActive);
-        if (isActive) d.setAttribute('aria-current', 'true');
-        else d.removeAttribute('aria-current');
-      });
-    }
-
-    var sectionObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        entry.target.classList.toggle('in-view', entry.isIntersecting);
-      });
-      updateActiveRail();
-    }, { threshold: 0.2 });
-    document.querySelectorAll('.gem-section').forEach(function (el) { sectionObserver.observe(el); });
-
-    /* スクロール中もactiveドットを追随させる（rAFスロットル） */
-    var railTick = false;
-    window.addEventListener('scroll', function () {
-      if (railTick) return;
-      railTick = true;
-      requestAnimationFrame(function () { railTick = false; updateActiveRail(); });
-    }, { passive: true });
-  }
-
-  /* ---- 銀猫: カバーの肉球トレイル ---- */
-  function initCoverPaws() {
-    var cover = document.getElementById('cover');
-    var layer = document.getElementById('cover-paws');
-    if (!cover || !layer) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var MAX_PAWS = 40, MIN_DIST = 90, last = null;
-
-    function addPaw(clientX, clientY) {
-      var r = layer.getBoundingClientRect();
-      var x = clientX - r.left, y = clientY - r.top;
-      var size = 24 + Math.random() * 10;
-      var rot = Math.random() * 40 - 20;
-      var paw = document.createElement('span');
-      paw.className = 'paw';
-      paw.style.cssText = 'left:' + (x - size / 2) + 'px; top:' + (y - size / 2) + 'px; width:' + size + 'px; transform:rotate(' + rot + 'deg);';
-      paw.innerHTML = '<svg class="paw-svg" viewBox="0 0 100 100" style="color:#B8B4AE"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
-      layer.appendChild(paw);
-      while (layer.children.length > MAX_PAWS) layer.removeChild(layer.firstChild);
-    }
-
-    cover.addEventListener('pointermove', function (e) {
-      if (e.pointerType === 'touch') return;
-      if (last) {
-        var dx = e.clientX - last.x, dy = e.clientY - last.y;
-        if (dx * dx + dy * dy < MIN_DIST * MIN_DIST) return;
-      }
-      last = { x: e.clientX, y: e.clientY };
-      addPaw(e.clientX, e.clientY);
-    });
-    cover.addEventListener('pointerdown', function (e) { addPaw(e.clientX, e.clientY); });
   }
 
   document.addEventListener('DOMContentLoaded', function () {
     renderGems();
     renderToday();
-    buildIndex();
-    initReveal();
-    initCoverPaws();
-    initKeyboard();
 
-    document.getElementById('index-btn').addEventListener('click', openIndex);
-    document.getElementById('index-close').addEventListener('click', closeIndex);
-    document.getElementById('index-overlay').addEventListener('click', function (e) {
-      if (e.target === this) closeIndex();
+    indexDialog = app.registerDialog('index', {
+      el: document.getElementById('index-overlay'),
+      closeBtn: document.getElementById('index-close'),
+      trigger: document.getElementById('index-btn')
     });
-    document.getElementById('index-overlay').addEventListener('keydown', function (e) { trapFocus(this, e); });
-    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-    document.getElementById('lightbox').addEventListener('click', function (e) {
-      if (e.target === this) closeLightbox();
+    lightbox = app.registerDialog('lightbox', {
+      el: document.getElementById('lightbox'),
+      closeBtn: document.getElementById('lightbox-close'),
+      onOpen: populateLightbox,
+      onClose: function () {
+        var img = document.getElementById('lightbox-img');
+        img.removeAttribute('srcset');
+        img.removeAttribute('sizes');
+        img.src = '';
+        lightboxIdx = -1;
+      }
     });
-    document.getElementById('lightbox').addEventListener('keydown', function (e) { trapFocus(this, e); });
+
+    buildIndex();
+    app.initObservers();
+    app.initCoverPaws();
+    app.initKeyboardNav();
 
     /* ライトボックス画像のフォールバック（サムネ失敗→原寸→非表示） */
     var lbImg = document.getElementById('lightbox-img');
     lbImg.addEventListener('error', function () {
-      if (!lightboxOpen || !lbImg.getAttribute('src')) return;
+      if (!lightbox.isOpen() || !lbImg.getAttribute('src')) return;
       var original = lbImg.getAttribute('data-original');
       if (lbImg.hasAttribute('srcset')) {
         lbImg.removeAttribute('srcset');
@@ -951,22 +657,16 @@
         lbImg.style.visibility = 'hidden';
       }
     });
+
     document.getElementById('gems-root').addEventListener('click', function (e) {
       var fav = e.target.closest('.fav-btn');
-      if (fav) { toggleFav(fav.getAttribute('data-fav')); return; }
+      if (fav) { app.favs.toggle(fav.getAttribute('data-fav')); return; }
       var btn = e.target.closest('[data-lightbox]');
-      if (btn) openLightbox(parseInt(btn.getAttribute('data-lightbox'), 10));
+      if (btn) lightbox.open(parseInt(btn.getAttribute('data-lightbox'), 10));
     });
 
-    /* 保存済みお気に入りを反映 */
-    favs.forEach(function (id) {
-      document.querySelectorAll('.fav-btn[data-fav="' + cssEscape(id) + '"]').forEach(function (b) {
-        b.classList.add('faved');
-        b.setAttribute('aria-pressed', 'true');
-      });
-    });
-
-    applyLang();
+    app.favs.initDom();
+    app.applyLang();
   });
 })();
 </script>
