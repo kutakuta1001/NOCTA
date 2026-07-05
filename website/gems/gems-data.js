@@ -20,11 +20,12 @@
  * descEn      : 英語の短い鑑賞的説明文（言語トグル用）
  *
  * 【3D宝石（Gyu「光にかざす」）用の任意フィールド・website/gems/gem3d.js が使用】
- * cut         : "brilliant"|"oval"|"step"|"cabochon"|"crystal"（カット形状）。未指定=写真のみ
+ * cut         : "round"|"brilliant"|"oval"|"pear"|"marquise"|"cushion"|"trillion"|"step"|"cabochon"|"crystal"|"rose"（カット形状）。未指定=写真のみ
  * gem3d       : "transparent"|"opaque"|"iridescent"（マテリアルプリセット）
  * ior         : 屈折率（実物値。ダイヤ2.42/コランダム1.77/ベリル1.58/水晶1.55…）
  * dispersion  : 分散（ファイア）の視覚強度 0〜1（任意・省略時0.5）。ダイヤは分散が強いので高め
- *   cut/gem3d/ior が揃った石だけライトボックスに Photo/Gem トグルが出る（Phase 1は先頭5石+オパール）
+ * hardness    : モース硬度（既存フィールドを流用）。軟らかい石ほど表面roughnessを上げ自然な曇りを出す
+ *   cut/gem3d/ior が揃った石だけライトボックスに Photo/Gem トグルが出る（現在13石に3Dデータを付与）
  *
  * 出典・ライセンスは全件 2026-07-04 にWebFetchで実在確認済み。
  */
@@ -80,7 +81,7 @@ const NOCTA_GEMS = [
     license: "CC BY-SA 3.0",
     credit: "Gemsphoto",
     accentColor: "#E8B923",
-    cut: "brilliant",
+    cut: "cushion",
     gem3d: "transparent",
     ior: 1.77,
     dispersion: 0.45,
@@ -122,7 +123,7 @@ const NOCTA_GEMS = [
     license: "CC BY-SA 4.0",
     credit: "Didier Descouens",
     accentColor: "#9966CC",
-    cut: "brilliant",
+    cut: "pear",
     gem3d: "transparent",
     ior: 1.55,
     dispersion: 0.35,
@@ -163,6 +164,10 @@ const NOCTA_GEMS = [
     license: "CC BY-SA 3.0",
     credit: "Géry Parent",
     accentColor: "#18C2B4",
+    cut: "trillion",
+    gem3d: "transparent",
+    ior: 1.62,
+    dispersion: 0.2,
     hardness: "7-7.5",
     origin: "ブラジル、パライバ州、バタリャ鉱山",
     kotobaJa: "生命力・希望",
@@ -180,6 +185,10 @@ const NOCTA_GEMS = [
     license: "CC BY-SA 4.0",
     credit: "Gemsphoto",
     accentColor: "#6BB8E0",
+    cut: "marquise",
+    gem3d: "transparent",
+    ior: 1.62,
+    dispersion: 0.28,
     hardness: "8",
     origin: "ブラジル 他",
     kotobaJa: "誠実・友情・希望",
@@ -197,6 +206,10 @@ const NOCTA_GEMS = [
     license: "CC BY 3.0",
     credit: "Humanfeather",
     accentColor: "#7B1113",
+    cut: "round",
+    gem3d: "transparent",
+    ior: 1.79,
+    dispersion: 0.35,
     hardness: "6.5-7.5",
     origin: "インド、アフリカ各地",
     kotobaJa: "真実・友愛・勝利",
@@ -214,6 +227,10 @@ const NOCTA_GEMS = [
     license: "CC0 1.0",
     credit: null,
     accentColor: "#9FD8DE",
+    cut: "cushion",
+    gem3d: "transparent",
+    ior: 1.577,
+    dispersion: 0.2,
     hardness: "7.5-8",
     origin: "ブラジル、ミナスジェライス州",
     kotobaJa: "沈着・勇敢・聡明",
@@ -316,6 +333,10 @@ const NOCTA_GEMS = [
     license: "CC BY 2.0",
     credit: "James St. John",
     accentColor: "#0F52BA",
+    cut: "oval",
+    gem3d: "transparent",
+    ior: 1.77,
+    dispersion: 0.45,
     hardness: "9",
     origin: "ミャンマー、スリランカ、カシミール",
     kotobaJa: "慈愛・誠実・徳望",
@@ -384,6 +405,10 @@ const NOCTA_GEMS = [
     license: "CC BY-SA 4.0",
     credit: "Raimond Spekking",
     accentColor: "#D4A017",
+    cut: "crystal",
+    gem3d: "transparent",
+    ior: 1.55,
+    dispersion: 0.2,
     hardness: "7",
     origin: "ブラジル、マダガスカル",
     kotobaJa: "繁栄・生命力・友情",
@@ -401,6 +426,10 @@ const NOCTA_GEMS = [
     license: "Public Domain",
     credit: null,
     accentColor: "#F7CAC9",
+    cut: "rose",
+    gem3d: "transparent",
+    ior: 1.55,
+    dispersion: 0.15,
     hardness: "7",
     origin: "ブラジル、マダガスカル",
     kotobaJa: "愛・優しさ・和らぎ",

@@ -10,7 +10,9 @@
  *
  * 公開: NoctaGem3d.mount(container, gemData, opts) → { setTilt, detach, isReady }
  *   container: canvasを入れる要素
- *   gemData: { cut, gem3d, ior, accentColor, name }
+ *   gemData: { cut, gem3d, ior, accentColor, name, hardness, dispersion }
+ *     hardness: モース硬度（number か "6.5-7.5" 等の範囲文字列）。roughness算出に使用
+ *     dispersion: 分散（ファイア）強度 0〜1
  *   opts.reduce: prefers-reduced-motion
  *
  * WebGL不可・three読込失敗時は mount が null を返す（呼び出し側は写真フォールバック）。
@@ -34,17 +36,55 @@ function hexToColor(hex) {
  * すべて flat shading（面法線）前提で、ファセットの境界を鋭く保つ。
  * ================================================================ */
 
+/* 決定論的乱数（石ごとに固有だが毎回同じ）。個体差（微小な非対称）に使う。
+   本物の研磨石はミクロン単位で左右非対称。完全対称のCADメッシュは「偽物っぽさ」の一因。 */
+function makeRng(seed) {
+  var s = (seed >>> 0) || 1;
+  return function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
+}
+function hashSeed(str) {
+  var h = 2166136261 >>> 0; str = String(str || '');
+  for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+
+/* ガードル輪郭（アウトライン）関数のライブラリ。angle→半径スケールを返す。
+   これでブリリアントの検証済みトポロジー（テーブル/クラウン/パビリオン/キュレット）を保ったまま
+   断面形だけを変形し、ラウンド/オーバル/ペア/マーキス/クッション/トリリアントを1関数から安全に生成する。 */
+function ellipseR(a, ra, rb) {
+  var c = Math.cos(a), s = Math.sin(a);
+  return (ra * rb) / Math.sqrt(rb * rb * c * c + ra * ra * s * s);
+}
+var OUTLINES = {
+  round: function () { return 1; },
+  oval: function (a) { return ellipseR(a, 1.22, 0.82); },
+  /* マーキス（舟型）: 縦長楕円の両端(θ=0,π)を絞って尖らせる */
+  marquise: function (a) { return ellipseR(a, 1.5, 0.6) * (0.8 + 0.2 * Math.abs(Math.sin(a))); },
+  /* ペアシェイプ（涙型）: +x側の先端を局所的に絞り、-x側は丸いまま */
+  pear: function (a) { var c = Math.cos(a); return ellipseR(a, 1.28, 0.92) * (1 - 0.34 * Math.pow(Math.max(0, c), 3)); },
+  /* クッション（角丸四角）: スーパー楕円。軸方向が辺、45°方向が丸い角 */
+  cushion: function (a) { var n = 3.0, c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a)); return 0.92 / Math.pow(Math.pow(c, n) + Math.pow(s, n), 1 / n); },
+  /* トリリアント（三角）: cos(3θ)で3つの角を持つ丸みのある三角。tsumuri参照石と同型 */
+  trillion: function (a) { return 0.92 * (1 + 0.24 * Math.cos(3 * (a - Math.PI / 2))); }
+};
+
 /* ラウンドブリリアントカット（本物の58面構造に近づけたモデル）
  *
  * 標準ブリリアントは主要8方位（メイン）＋その中間（half）でファセットが割れる。
- * ここでは mains=8 として、各セクター内をさらに分割することで
+ * 各セクター内をさらに分割することで
  *   クラウン: テーブル / ベゼルファセット / スターファセット / アッパーガードルファセット
  *   ガードル: 薄い帯（ジグザグの上下エッジ）
  *   パビリオン: パビリオンメインファセット / ロウワーガードルファセット（頂点は1点キュレット）
  * を表現する。全ファセット flat shading で境界を鋭く保ち、傾けたとき多点で瞬く。
+ *
+ * opts.outline(angle)→半径スケールで断面形を変形（ペア/マーキス/クッション等）。
+ * opts.seed で個体差（ガードルの微小な半径・高さジッターと基準回転）を与える。
  */
-function brilliantGeometry(mains) {
+function brilliantGeometry(mains, opts) {
   mains = mains || 8;
+  opts = opts || {};
+  var outline = opts.outline || OUTLINES.round;
+  var rng = makeRng(opts.seed || 1);
   var N = mains * 2;      /* ガードルの頂点数（メイン+ハーフ） */
   var positions = [];
 
@@ -64,14 +104,21 @@ function brilliantGeometry(mains) {
   var pavMidR = 0.55;     /* パビリオンメインとロウワーガードルの境の半径 */
   var pavMidY = -0.38;
 
+  /* outline(angle)で断面形を変形。半径は角度依存スケールで乗算する */
   function P(radius, y, angle) {
-    return new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
+    var sc = outline(angle);
+    return new THREE.Vector3(Math.cos(angle) * radius * sc, y, Math.sin(angle) * radius * sc);
   }
   function pushTri(a, b, c) {
     positions.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
   }
 
   var da = (Math.PI * 2) / N;   /* ガードル頂点1つあたりの角度 */
+
+  /* 個体差: ガードル各頂点に微小な半径・高さのジッター（±2.5%・±0.012）。
+     完全対称を崩し、傾けたとき本物の研磨石のように不規則にきらめく */
+  var jitR = [], jitY = [];
+  for (var k = 0; k < N; k++) { jitR.push(1 + (rng() - 0.5) * 0.05); jitY.push((rng() - 0.5) * 0.024); }
 
   /* --- テーブル面（上面の正多角形・mains角） --- */
   var tableCenter = new THREE.Vector3(0, crownY, 0);
@@ -87,11 +134,11 @@ function brilliantGeometry(mains) {
   /* ガードル上リングの頂点（メイン位置=谷、ハーフ位置=山にわずかにジグザグ） */
   function girdleTop(i) {
     var y = (i % 2 === 0) ? girdleTopY : girdleTopY + 0.02;
-    return P(girdleR, y, i * da);
+    return P(girdleR * jitR[i], y + jitY[i], i * da);
   }
   function girdleBot(i) {
     var y = (i % 2 === 0) ? girdleBotY - 0.02 : girdleBotY;
-    return P(girdleR, y, i * da);
+    return P(girdleR * jitR[i], y + jitY[i], i * da);
   }
 
   for (var s = 0; s < mains; s++) {
@@ -145,14 +192,9 @@ function brilliantGeometry(mains) {
   var geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geo.computeVertexNormals();   /* flat: 各三角の面法線 */
+  /* 個体差: 石ごとに基準の向きを少しずらす（同じカットでも並べたとき同一に見えない） */
+  geo.rotateY(rng() * Math.PI * 2);
   geo.computeBoundingSphere();
-  return geo;
-}
-
-/* オーバル/クッション: ブリリアントをXZ非等方スケール */
-function ovalGeometry(mains) {
-  var geo = brilliantGeometry(mains || 9);
-  geo.scale(1.25, 1.0, 0.85);
   return geo;
 }
 
@@ -264,14 +306,63 @@ function crystalGeometry() {
   return geo;
 }
 
-function makeGeometry(cut) {
+/* ローズカット（アンティーク）: 平らな底面＋放射状の三角ファセットで低いドームを組む。
+   キュレットもテーブルも無く、頂点に向かって三角形が集まる歴史的なカット。
+   段を2層にして「二重ローズ」に近づけ、シードで各層の回転をずらして個体差を出す。 */
+function roseGeometry(seed) {
+  var rng = makeRng(seed || 1);
+  var positions = [];
+  function pushTri(a, b, c) { positions.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z); }
+  function ring(radius, y, n, phase) {
+    var pts = [];
+    for (var i = 0; i < n; i++) { var a = (i / n) * Math.PI * 2 + phase; pts.push(new THREE.Vector3(Math.cos(a) * radius, y, Math.sin(a) * radius)); }
+    return pts;
+  }
+  var n = 8;
+  var base = ring(1.0, 0.0, n, 0);                 /* 平らな底の外周 */
+  var mid = ring(0.62, 0.42, n, Math.PI / n + (rng() - 0.5) * 0.1);  /* 中段（オフセットでジグザグ） */
+  var apex = new THREE.Vector3(0, 0.86, 0);
+  var baseC = new THREE.Vector3(0, 0.0, 0);
+  for (var i = 0; i < n; i++) {
+    var nx = (i + 1) % n;
+    /* 底面（下向き） */
+    pushTri(base[i], baseC, base[nx]);
+    /* 下段クラウンファセット: 底外周→中段（三角2枚でジグザグ） */
+    pushTri(base[i], base[nx], mid[i]);
+    pushTri(base[nx], mid[nx], mid[i]);
+    /* 上段: 中段→頂点 */
+    pushTri(mid[i], mid[nx], apex);
+  }
+  var geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.computeVertexNormals();
+  geo.rotateY(rng() * Math.PI * 2);
+  geo.computeBoundingSphere();
+  return geo;
+}
+
+/* ブリリアント系（同一トポロジーをアウトラインで変形）のカット定義 */
+var BRILLIANT_SHAPES = {
+  brilliant: { mains: 8, outline: OUTLINES.round },
+  round: { mains: 8, outline: OUTLINES.round },
+  oval: { mains: 9, outline: OUTLINES.oval },
+  pear: { mains: 9, outline: OUTLINES.pear },
+  marquise: { mains: 9, outline: OUTLINES.marquise },
+  cushion: { mains: 8, outline: OUTLINES.cushion },
+  trillion: { mains: 9, outline: OUTLINES.trillion }
+};
+
+function makeGeometry(cut, seed) {
+  if (BRILLIANT_SHAPES[cut]) {
+    var sh = BRILLIANT_SHAPES[cut];
+    return brilliantGeometry(sh.mains, { outline: sh.outline, seed: seed });
+  }
   switch (cut) {
-    case 'oval': return ovalGeometry();
     case 'step': return stepGeometry();
     case 'cabochon': return cabochonGeometry();
     case 'crystal': return crystalGeometry();
-    case 'brilliant':
-    default: return brilliantGeometry();
+    case 'rose': return roseGeometry(seed);
+    default: return brilliantGeometry(8, { outline: OUTLINES.round, seed: seed });
   }
 }
 
@@ -348,6 +439,15 @@ function makeMaterial(gemData) {
   var kind = gemData.gem3d || 'transparent';
   var ior = gemData.ior || 1.9;
 
+  /* 硬度依存の表面粗さ（記事の知見: 完全な透明roughness=0は「作り物臭い/安っぽい」。
+     硬度の低い石ほど表面を軽く曇らせ透過光を適度にぼかすと自然な深みが出る）。
+     モース硬度10(ダイヤ)=0 → 6=約0.04。roughnessは屈折のぼかしも兼ねるので控えめに上限0.05。 */
+  /* "6.5-7.5"等の範囲は parseFloat が下限を返す（=より軟らかい側=わずかに曇る方向）。
+     保守的に曇り寄りへ倒す意図で下限採用。数値・範囲文字列どちらも可 */
+  var hardness = parseFloat(gemData.hardness);
+  if (!(hardness > 0)) hardness = 8;
+  var rough = Math.max(0, Math.min(0.05, (10 - hardness) * 0.01));
+
   if (kind === 'opaque') {
     return new THREE.MeshPhysicalMaterial({
       color: color,
@@ -380,7 +480,7 @@ function makeMaterial(gemData) {
     transmission: 1.0,
     thickness: 1.8,
     ior: ior,
-    roughness: 0.0,
+    roughness: rough,   /* 硬度依存: 軟らかい石ほど微かに曇り透過に深みが出る */
     metalness: 0.0,
     reflectivity: 0.55,
     attenuationColor: color,
@@ -394,8 +494,12 @@ function makeMaterial(gemData) {
     side: THREE.DoubleSide,   /* 透明石は屈折で内部の裏面ファセットも見えるため両面描画 */
     flatShading: true
   });
-  /* 分散（ファイア）: three r167+ で対応。石別のdispersion（データ未指定は0.5） */
-  if ('dispersion' in mat) mat.dispersion = (typeof gemData.dispersion === 'number') ? gemData.dispersion : 0.5;
+  /* 分散（ファイア）: three r167+ で対応。石別のdispersion（データ未指定は0.5）。
+     不正値に備え0〜1にクランプ */
+  if ('dispersion' in mat) {
+    var disp = (typeof gemData.dispersion === 'number') ? gemData.dispersion : 0.5;
+    mat.dispersion = Math.max(0, Math.min(1, disp));
+  }
   return mat;
 }
 
@@ -476,7 +580,9 @@ function mount(container, gemData, opts) {
     fill.position.set(2.6, -1.2, 2.2);
     scene.add(fill);
 
-    var geo = makeGeometry(gemData.cut);
+    /* 石名からシードを作り、同じカットでも石ごとに微妙に違う個体差を与える */
+    var seed = hashSeed(gemData.name || gemData.title || gemData.cut || 'gem');
+    var geo = makeGeometry(gemData.cut, seed);
     var mat = makeMaterial(gemData);
     mesh = new THREE.Mesh(geo, mat);
     /* ジオメトリを画面に収める正規化 */
@@ -525,6 +631,11 @@ function mount(container, gemData, opts) {
   }
 
   /* ---- 傾き入力 → 目標回転 ---- */
+  /* 基準の見下ろし角: テーブル（上面）を手前に倒し、カットの輪郭（ペアの尖り/マーキスの舟型/
+     トリリアントの三角/クッションの角丸）が一目で分かるようにする。きらめきも増える。
+     カボション/ローズ/原石は上面が主役ではないので浅めにする */
+  var flatTop = (gemData.cut === 'cabochon' || gemData.cut === 'rose' || gemData.cut === 'crystal');
+  var baseTiltX = flatTop ? 0.12 : 0.32;
   var targetRX = 0, targetRY = 0;
   var curRX = 0, curRY = 0;
   var autoSpin = !reduce;
@@ -547,7 +658,7 @@ function mount(container, gemData, opts) {
     curRX += (targetRX - curRX) * 0.09;
     curRY += (targetRY - curRY) * 0.09;
     if (mesh) {
-      mesh.rotation.x = curRX;
+      mesh.rotation.x = baseTiltX + curRX;   /* 基準の見下ろし＋ユーザー傾き */
       mesh.rotation.y = curRY + (autoSpin ? clock.elapsedTime * 0.25 : 0);
     }
     if (composer) composer.render();

@@ -713,7 +713,7 @@
       onReady = function () { cleanup(); resolve(window.NoctaGem3d); };
       timer = setTimeout(function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d load timeout')); }, 8000);
       window.addEventListener('noctagem3d-ready', onReady);
-      s.textContent = "import './gem3d.js?v=2'; window.dispatchEvent(new Event('noctagem3d-ready'));";
+      s.textContent = "import './gem3d.js?v=3'; window.dispatchEvent(new Event('noctagem3d-ready'));";
       s.onerror = function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d script error')); };
       document.head.appendChild(s);
     });
@@ -740,7 +740,8 @@
       if (stale()) return;
       teardownGem3d();
       var inst = mod.mount(host, {
-        cut: g.cut, gem3d: g.gem3d, ior: g.ior, accentColor: g.accentColor, name: g.title
+        cut: g.cut, gem3d: g.gem3d, ior: g.ior, accentColor: g.accentColor, name: g.title,
+        hardness: g.hardness, dispersion: g.dispersion   /* 硬度依存roughness・石別dispersionに必要 */
       }, { reduce: reduceMotion });
       if (stale()) { if (inst) inst.detach(); return; }   /* mount中にstale化したら即破棄 */
       if (!inst) { setMode('photo'); return; }             /* WebGL不可等 → 写真へ */
