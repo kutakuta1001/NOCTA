@@ -19,7 +19,10 @@
 /* import は bare specifier。実URLは index.html の <script type="importmap"> で解決する
    （RoomEnvironment等の examples モジュールが内部で 'three' を bare import するため統一が必要）*/
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 /* ---- 色ユーティリティ ---- */
 function hexToColor(hex) {
@@ -31,44 +34,106 @@ function hexToColor(hex) {
  * すべて flat shading（面法線）前提で、ファセットの境界を鋭く保つ。
  * ================================================================ */
 
-/* ラウンドブリリアントカット
- * ガードル(N角形の腰) + クラウン(上・テーブル面と星ファセット) + パビリオン(下・尖った底) */
-function brilliantGeometry(segments) {
-  segments = segments || 16;
+/* ラウンドブリリアントカット（本物の58面構造に近づけたモデル）
+ *
+ * 標準ブリリアントは主要8方位（メイン）＋その中間（half）でファセットが割れる。
+ * ここでは mains=8 として、各セクター内をさらに分割することで
+ *   クラウン: テーブル / ベゼルファセット / スターファセット / アッパーガードルファセット
+ *   ガードル: 薄い帯（ジグザグの上下エッジ）
+ *   パビリオン: パビリオンメインファセット / ロウワーガードルファセット（頂点は1点キュレット）
+ * を表現する。全ファセット flat shading で境界を鋭く保ち、傾けたとき多点で瞬く。
+ */
+function brilliantGeometry(mains) {
+  mains = mains || 8;
+  var N = mains * 2;      /* ガードルの頂点数（メイン+ハーフ） */
   var positions = [];
+
+  /* 寸法（girdle半径=1.0基準・実物のプロポーションに近い比率） */
   var girdleR = 1.0;
-  var girdleY = 0.0;
-  var tableR = 0.55;      /* テーブル面（上面）の半径 */
-  var crownY = 0.42;      /* クラウンの高さ */
-  var pavilionY = -0.95;  /* パビリオンの尖端 */
+  var girdleTopY = 0.04, girdleBotY = -0.04;  /* ガードル帯の厚み */
+  var tableR = 0.53;
+  var crownY = 0.34;      /* テーブル面の高さ */
+  var starMidY = 0.20;    /* スターとベゼルの境の高さ */
+  var pavilionY = -1.0;   /* キュレット（尖端） */
+  var pavMidR = 0.62;     /* パビリオンメインとロウワーガードルの境の半径 */
+  var pavMidY = -0.42;
 
-  function ring(radius, y, n, offset) {
-    var pts = [];
-    for (var i = 0; i < n; i++) {
-      var a = (i / n) * Math.PI * 2 + (offset || 0);
-      pts.push(new THREE.Vector3(Math.cos(a) * radius, y, Math.sin(a) * radius));
-    }
-    return pts;
+  function P(radius, y, angle) {
+    return new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
   }
-
-  var girdle = ring(girdleR, girdleY, segments, 0);
-  var table = ring(tableR, crownY, segments, 0);
-  var apex = new THREE.Vector3(0, pavilionY, 0);
-  var tableCenter = new THREE.Vector3(0, crownY, 0);
-
   function pushTri(a, b, c) {
     positions.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z);
   }
 
-  for (var i = 0; i < segments; i++) {
-    var next = (i + 1) % segments;
-    /* クラウン: ガードル→テーブルへ向かうファセット（2三角で台形） */
-    pushTri(girdle[i], table[i], girdle[next]);
-    pushTri(girdle[next], table[i], table[next]);
-    /* テーブル面（上面の多角形をファンで埋める） */
-    pushTri(table[i], tableCenter, table[next]);
-    /* パビリオン: ガードル→尖端 */
-    pushTri(girdle[i], girdle[next], apex);
+  var da = (Math.PI * 2) / N;   /* ガードル頂点1つあたりの角度 */
+
+  /* --- テーブル面（上面の正多角形・mains角） --- */
+  var tableCenter = new THREE.Vector3(0, crownY, 0);
+  var tablePts = [];
+  for (var m = 0; m < mains; m++) {
+    tablePts.push(P(tableR, crownY, m * 2 * da));
+  }
+  for (var t = 0; t < mains; t++) {
+    pushTri(tablePts[t], tableCenter, tablePts[(t + 1) % mains]);
+  }
+
+  /* --- クラウン: ベゼル（メイン方位の菱形）＋スター（テーブル辺から降りる三角）＋アッパーガードル --- */
+  /* ガードル上リングの頂点（メイン位置=谷、ハーフ位置=山にわずかにジグザグ） */
+  function girdleTop(i) {
+    var y = (i % 2 === 0) ? girdleTopY : girdleTopY + 0.02;
+    return P(girdleR, y, i * da);
+  }
+  function girdleBot(i) {
+    var y = (i % 2 === 0) ? girdleBotY - 0.02 : girdleBotY;
+    return P(girdleR, y, i * da);
+  }
+
+  for (var s = 0; s < mains; s++) {
+    var aMain = s * 2 * da;          /* メイン方位（ベゼルの中心） */
+    var tThis = tablePts[s];
+    var tNext = tablePts[(s + 1) % mains];
+    /* スター頂点: テーブル辺の中点の外側・少し下 */
+    var starA = aMain + da;
+    var starPt = P((tableR + girdleR) * 0.5, starMidY + 0.04, starA);
+    /* ベゼル頂点: メイン方位のガードル上（谷） */
+    var bezThis = girdleTop(s * 2);              /* メイン位置 */
+    var bezNext = girdleTop(((s + 1) % mains) * 2);
+    /* スター三角: テーブル辺(tThis-tNext)から starPt へ */
+    pushTri(tThis, tNext, starPt);
+    /* ベゼルファセット: テーブル頂点とスターとガードル谷で構成（菱形を2三角） */
+    pushTri(tThis, starPt, bezThis);
+    pushTri(tNext, bezNext, starPt);
+    /* アッパーガードルファセット: スターからガードルの山(ハーフ位置)へ降りる小三角 */
+    var halfTop = girdleTop(s * 2 + 1);
+    pushTri(starPt, bezNext, halfTop);
+    pushTri(starPt, halfTop, bezThis);
+  }
+
+  /* --- ガードル帯（上リング→下リングの側面） --- */
+  for (var g = 0; g < N; g++) {
+    var gn = (g + 1) % N;
+    var gt0 = girdleTop(g), gt1 = girdleTop(gn);
+    var gb0 = girdleBot(g), gb1 = girdleBot(gn);
+    /* 外向きwinding（CCW）に揃える */
+    pushTri(gt0, gt1, gb0);
+    pushTri(gt1, gb1, gb0);
+  }
+
+  /* --- パビリオン: メインファセット＋ロウワーガードル、キュレットへ収束 --- */
+  var culet = new THREE.Vector3(0, pavilionY, 0);
+  for (var p = 0; p < mains; p++) {
+    var aMainP = p * 2 * da;
+    /* パビリオンメイン方位の中段頂点 */
+    var pavMid = P(pavMidR, pavMidY, aMainP);
+    var gbMain = girdleBot(p * 2);                    /* メイン位置ガードル下 */
+    var gbNext = girdleBot(((p + 1) % mains) * 2);
+    var gbHalf = girdleBot(p * 2 + 1);                /* ハーフ位置ガードル下 */
+    /* ロウワーガードルファセット: ガードル下(メイン→ハーフ→次メイン)から中段へ・外向きwinding */
+    pushTri(gbMain, gbHalf, pavMid);
+    pushTri(gbHalf, gbNext, pavMid);
+    /* パビリオンメインファセット: 中段からキュレットへ（隣の中段と共有）・外向きwinding */
+    var pavMidNext = P(pavMidR, pavMidY, ((p + 1) % mains) * 2 * da);
+    pushTri(pavMid, pavMidNext, culet);
   }
 
   var geo = new THREE.BufferGeometry();
@@ -79,8 +144,8 @@ function brilliantGeometry(segments) {
 }
 
 /* オーバル/クッション: ブリリアントをXZ非等方スケール */
-function ovalGeometry(segments) {
-  var geo = brilliantGeometry(segments || 18);
+function ovalGeometry(mains) {
+  var geo = brilliantGeometry(mains || 9);
   geo.scale(1.25, 1.0, 0.85);
   return geo;
 }
@@ -205,6 +270,48 @@ function makeGeometry(cut) {
 }
 
 /* ================================================================
+ * 宝石ショーケース環境シーン（PMREM用）
+ * warm-blackの暗い空間に、明るいライトカードを複数配置。
+ * ファセット1枚ごとに光源が映り込み、傾けると多点できらめく。
+ * ================================================================ */
+function buildShowcaseScene() {
+  var scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0A0906);   /* NOCTA warm-black */
+
+  /* MeshBasicMaterialは通常0-1だが、環境マップ用に高輝度(>1)にして
+     ファセットに強く映り込ませる。色×係数で明るさを表現 */
+  function bright(hex, k) {
+    var c = new THREE.Color(hex);
+    c.multiplyScalar(k || 1);
+    return c;
+  }
+  function cardB(w, h, hex, k, x, y, z, rx, ry) {
+    var geo = new THREE.PlaneGeometry(w, h);
+    var mat = new THREE.MeshBasicMaterial({ color: bright(hex, k), side: THREE.DoubleSide, toneMapped: false });
+    var m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    if (rx) m.rotation.x = rx;
+    if (ry) m.rotation.y = ry;
+    scene.add(m);
+  }
+
+  /* 上方の大きな柔らかい光（キー・全体を持ち上げる） */
+  cardB(7, 3, 0xfff4e2, 3.0, 0, 5, 1, -Math.PI / 2.2, 0);
+  /* 前面左右の縦長ストリップ（ブリリアンスの帯） */
+  cardB(0.7, 5.5, 0xffffff, 4.5, -3.6, 0, 3, 0, Math.PI / 5);
+  cardB(0.7, 5.5, 0xeef2ff, 4.0, 3.6, 0, 3, 0, -Math.PI / 5);
+  /* 斜め上の高輝度スポット（ファイア用の点光） */
+  cardB(1.4, 1.4, 0xffffff, 6.0, -2.5, 3.2, 2, -Math.PI / 3, Math.PI / 6);
+  cardB(1.1, 1.1, 0xfff0dd, 5.0, 3, 3, -1, -Math.PI / 3, -Math.PI / 4);
+  /* 正面下からの照り返し（パビリオンに光を返す） */
+  cardB(5, 2, 0xd8e0f0, 1.6, 0, -3.5, 3.5, Math.PI / 3, 0);
+  /* 背面のリム光 */
+  cardB(5, 4, 0x8892a8, 1.4, 0, 1, -5, 0, 0);
+
+  return scene;
+}
+
+/* ================================================================
  * マテリアルプリセット
  * ================================================================ */
 function makeMaterial(gemData) {
@@ -237,23 +344,27 @@ function makeMaterial(gemData) {
     });
   }
 
-  /* transparent（デフォルト）— 屈折・分散・色吸収で本物の宝石らしさ */
+  /* transparent（デフォルト）— 屈折・分散・色吸収で本物の宝石らしさ
+     v2: thickness増で屈折の深み・attenuationDistance調整・dispersionは石別 */
   var mat = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(0xffffff),
     transmission: 1.0,
-    thickness: 1.4,
+    thickness: 1.8,
     ior: ior,
-    roughness: 0.02,
+    roughness: 0.0,
     metalness: 0.0,
-    reflectivity: 0.5,
+    reflectivity: 0.55,
     attenuationColor: color,
-    attenuationDistance: 1.2,
+    attenuationDistance: 2.2,
     specularIntensity: 1.0,
-    clearcoat: 0.4,
+    clearcoat: 0.5,
+    clearcoatRoughness: 0.02,
+    envMapIntensity: 1.6,
+    side: THREE.DoubleSide,   /* 透明石は屈折で内部の裏面ファセットも見えるため両面描画 */
     flatShading: true
   });
-  /* 分散（ファイア）: three r167+ で対応 */
-  if ('dispersion' in mat) mat.dispersion = 0.28;
+  /* 分散（ファイア）: three r167+ で対応。石別のdispersion（データ未指定は0.5） */
+  if ('dispersion' in mat) mat.dispersion = (typeof gemData.dispersion === 'number') ? gemData.dispersion : 0.5;
   return mat;
 }
 
@@ -267,18 +378,26 @@ function mount(container, gemData, opts) {
   var width = container.clientWidth || 400;
   var height = container.clientHeight || 500;
 
-  var renderer, scene, camera, mesh, envRT, pmrem, roomEnv;
+  var renderer, scene, camera, mesh, envRT, pmrem, envScene, composer, bloomPass;
+  /* Bloomは高負荷なので、reduce-motionと狭幅（モバイル相当）では無効化して素のレンダリングに。
+     width<480でoff、さらにコア数が取得でき2以下なら低性能機とみなしoff */
+  var lowCores = (typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 2);
+  var useBloom = !reduce && width >= 480 && !lowCores;
+
+  function disposeEnvScene() {
+    if (envScene && envScene.traverse) {
+      envScene.traverse(function (o) {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material) { if (Array.isArray(o.material)) o.material.forEach(function (m) { m.dispose(); }); else o.material.dispose(); }
+      });
+    }
+  }
 
   /* mount途中で失敗した場合に、生成済みリソースを全解放してからnullを返す */
   function cleanupPartial() {
     try {
       if (mesh) { if (mesh.geometry) mesh.geometry.dispose(); if (mesh.material) mesh.material.dispose(); }
-      if (roomEnv && roomEnv.traverse) {
-        roomEnv.traverse(function (o) {
-          if (o.geometry) o.geometry.dispose();
-          if (o.material) { if (Array.isArray(o.material)) o.material.forEach(function (m) { m.dispose(); }); else o.material.dispose(); }
-        });
-      }
+      disposeEnvScene();
       if (envRT) envRT.dispose();
       if (pmrem) pmrem.dispose();
       if (renderer) {
@@ -297,31 +416,28 @@ function mount(container, gemData, opts) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
     renderer.setSize(width, height);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.4;
     container.appendChild(renderer.domElement);
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
     camera.position.set(0, 0, 4.2);
 
-    /* 環境マップ: warm-blackの部屋。RoomEnvironmentをベースに暗く
-       roomEnvは後でtraverse disposeするため変数保持 */
+    /* 環境マップ: 宝石ショーケース（暗背景＋複数のライトカード）を専用構築。
+       ファセットに光源が映り込むことがきらめきの本体。envSceneはdispose用に保持 */
     pmrem = new THREE.PMREMGenerator(renderer);
-    roomEnv = new RoomEnvironment();
-    envRT = pmrem.fromScene(roomEnv, 0.02);
+    envScene = buildShowcaseScene();
+    envRT = pmrem.fromScene(envScene, 0.015);
     scene.environment = envRT.texture;
-    scene.environmentIntensity = 1.35;
+    scene.environmentIntensity = 1.6;
 
-    /* 高輝度光源（宝石のきらめきの光源）— きらめきは主に環境マップ由来とし方向光で補助 */
-    var key = new THREE.DirectionalLight(0xfff6e6, 1.4);
+    /* 補助の方向光（環境マップだけでは出ない鋭いスペキュラを足す） */
+    var key = new THREE.DirectionalLight(0xfff6e6, 1.2);
     key.position.set(-2.4, 2.0, 2.5);
     scene.add(key);
-    var fill = new THREE.DirectionalLight(0xe8f0ff, 0.8);
+    var fill = new THREE.DirectionalLight(0xe8f0ff, 0.6);
     fill.position.set(2.6, -1.2, 2.2);
     scene.add(fill);
-    var rim = new THREE.PointLight(0xffffff, 2.0, 12, 2);
-    rim.position.set(0, 1.5, -2.5);
-    scene.add(rim);
 
     var geo = makeGeometry(gemData.cut);
     var mat = makeMaterial(gemData);
@@ -330,6 +446,29 @@ function mount(container, gemData, opts) {
     var r = geo.boundingSphere ? geo.boundingSphere.radius : 1;
     mesh.scale.setScalar(1.35 / r);
     scene.add(mesh);
+
+    /* Bloomポストプロセス（最輝ファセットを滲ませて宝石の「キラッ」を再現）
+       composer構築失敗時は素のrenderer.renderにフォールバック */
+    if (useBloom) {
+      var tmpComposer = null, tmpBloom = null;
+      try {
+        tmpComposer = new EffectComposer(renderer);
+        tmpComposer.addPass(new RenderPass(scene, camera));
+        tmpBloom = new UnrealBloomPass(new THREE.Vector2(width, height), 0.55, 0.6, 0.85);
+        /* strength 0.55・radius 0.6・threshold 0.85（明るい部分だけ滲む） */
+        tmpComposer.addPass(tmpBloom);
+        tmpComposer.addPass(new OutputPass());
+        composer = tmpComposer; bloomPass = tmpBloom;
+      } catch (be) {
+        /* 構築途中の失敗でも作成済みのpass/composerを解放してからフォールバック */
+        try {
+          if (tmpComposer && tmpComposer.passes) tmpComposer.passes.forEach(function (p) { if (p.dispose) p.dispose(); });
+          if (tmpBloom && tmpBloom.dispose) tmpBloom.dispose();
+          if (tmpComposer && tmpComposer.dispose) tmpComposer.dispose();
+        } catch (_) {}
+        composer = null; bloomPass = null; useBloom = false;
+      }
+    }
   } catch (e) {
     /* 生成失敗時は生成済みリソースを完全解放してnull（呼び出し側フォールバック） */
     cleanupPartial();
@@ -362,14 +501,17 @@ function mount(container, gemData, opts) {
       mesh.rotation.x = curRX;
       mesh.rotation.y = curRY + (autoSpin ? clock.elapsedTime * 0.25 : 0);
     }
-    renderer.render(scene, camera);
+    if (composer) composer.render();
+    else renderer.render(scene, camera);
   }
   loop();
 
   function resize() {
     var w = container.clientWidth || width;
     var h = container.clientHeight || height;
+    width = w; height = h;   /* 次回fallback用に保持値を更新 */
     renderer.setSize(w, h);
+    if (composer) composer.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
   }
@@ -386,15 +528,15 @@ function mount(container, gemData, opts) {
       window.removeEventListener('resize', onWinResize);
       try {
         if (mesh) { mesh.geometry.dispose(); mesh.material.dispose(); }
-        /* RoomEnvironment内部のmesh/material/geometryも解放 */
-        if (roomEnv && roomEnv.traverse) {
-          roomEnv.traverse(function (o) {
-            if (o.geometry) o.geometry.dispose();
-            if (o.material) { if (Array.isArray(o.material)) o.material.forEach(function (m) { m.dispose(); }); else o.material.dispose(); }
-          });
-        }
+        /* 環境シーン内部のmesh/material/geometryも解放 */
+        disposeEnvScene();
         if (envRT) envRT.dispose();
         if (pmrem) pmrem.dispose();
+        /* UnrealBloomPass等は独自render targetを持つのでpass個別にdispose後composerをdispose */
+        if (composer) {
+          if (composer.passes) composer.passes.forEach(function (p) { if (p.dispose) p.dispose(); });
+          if (composer.dispose) composer.dispose();
+        }
         renderer.dispose();
         /* ライトボックス用途で開閉を繰り返すため、WebGL contextを明示的に失わせる */
         if (renderer.forceContextLoss) renderer.forceContextLoss();

@@ -23,7 +23,8 @@
  * cut         : "brilliant"|"oval"|"step"|"cabochon"|"crystal"（カット形状）。未指定=写真のみ
  * gem3d       : "transparent"|"opaque"|"iridescent"（マテリアルプリセット）
  * ior         : 屈折率（実物値。ダイヤ2.42/コランダム1.77/ベリル1.58/水晶1.55…）
- *   3フィールドが揃った石だけライトボックスに Photo/Gem トグルが出る（Phase 1は先頭5石+オパール）
+ * dispersion  : 分散（ファイア）の視覚強度 0〜1（任意・省略時0.5）。ダイヤは分散が強いので高め
+ *   cut/gem3d/ior が揃った石だけライトボックスに Photo/Gem トグルが出る（Phase 1は先頭5石+オパール）
  *
  * 出典・ライセンスは全件 2026-07-04 にWebFetchで実在確認済み。
  */
@@ -40,6 +41,7 @@ const NOCTA_GEMS = [
     cut: "brilliant",
     gem3d: "transparent",
     ior: 2.42,
+    dispersion: 0.7,
     hardness: "10",
     origin: "南アフリカ、ロシア、ボツワナ 他",
     kotobaJa: "永遠の絆・純潔・不屈",
@@ -60,6 +62,7 @@ const NOCTA_GEMS = [
     cut: "oval",
     gem3d: "transparent",
     ior: 1.77,
+    dispersion: 0.4,
     hardness: "9",
     origin: "ミャンマー、タイ、スリランカ",
     kotobaJa: "情熱・勇気・威厳",
@@ -80,6 +83,7 @@ const NOCTA_GEMS = [
     cut: "brilliant",
     gem3d: "transparent",
     ior: 1.77,
+    dispersion: 0.45,
     hardness: "9",
     origin: "スリランカ",
     kotobaJa: "慈愛・誠実・集中",
@@ -100,6 +104,7 @@ const NOCTA_GEMS = [
     cut: "step",
     gem3d: "transparent",
     ior: 1.58,
+    dispersion: 0.3,
     hardness: "7.5-8",
     origin: "コロンビア",
     kotobaJa: "幸運・幸福・安定",
@@ -120,6 +125,7 @@ const NOCTA_GEMS = [
     cut: "brilliant",
     gem3d: "transparent",
     ior: 1.55,
+    dispersion: 0.35,
     hardness: "7",
     origin: "ブラジル、ウルグアイ",
     kotobaJa: "誠実・心の平和",
