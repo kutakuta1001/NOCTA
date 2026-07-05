@@ -18,6 +18,35 @@
   var SUMI = "#1C1A17";
   var PAPER_TINT_RATIO = 0.06;  /* 紙にその色を6%混ぜる */
 
+  /* お手本モチーフ — なぞり用の薄墨SVG（漢字1〜2画・かな1字・記号など8種）
+     viewBoxは全て0 0 100 100・stroke経路として書き順の骨格を表現 */
+  var TEGAMI = [
+    /* 一 */
+    { label: '一', paths: ['M12 52 C 30 48, 70 48, 88 52'] },
+    /* 二 */
+    { label: '二', paths: ['M18 34 C 34 30, 66 30, 82 34', 'M12 66 C 30 62, 70 62, 88 66'] },
+    /* 川 */
+    { label: '川', paths: ['M30 18 C 26 40, 26 62, 26 84', 'M50 14 C 46 40, 46 62, 50 88', 'M72 20 C 74 42, 74 64, 78 86'] },
+    /* 山 */
+    { label: '山', paths: ['M20 78 L 20 40', 'M20 78 L 80 78', 'M50 78 L 50 20', 'M80 78 L 80 40'] },
+    /* 月 */
+    { label: '月', paths: ['M30 20 L 30 82 L 72 82 L 72 20 Z', 'M30 40 L 72 40', 'M30 60 L 72 60'] },
+    /* の（かな） */
+    { label: 'の', paths: ['M62 22 C 32 22, 20 42, 30 62 C 40 78, 68 78, 76 60 C 82 46, 72 32, 58 34 C 46 36, 42 50, 50 60'] },
+    /* さ（かな・簡略） */
+    { label: 'さ', paths: ['M32 26 C 46 22, 62 22, 74 28', 'M46 14 C 42 30, 40 50, 44 70', 'M64 40 C 50 46, 40 56, 50 74 C 58 84, 74 72, 66 60'] },
+    /* 花（略字風の記号） */
+    { label: '花', paths: ['M50 20 C 40 30, 40 44, 50 50 C 60 44, 60 30, 50 20 Z', 'M30 40 C 40 30, 40 30, 50 50', 'M70 40 C 60 30, 60 30, 50 50', 'M35 65 C 45 55, 55 55, 65 65', 'M50 50 L 50 88'] }
+  ];
+
+  function tegamiSvg(index) {
+    var m = TEGAMI[index % TEGAMI.length];
+    var paths = m.paths.map(function (d) {
+      return '<path d="' + d + '" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>';
+    }).join('');
+    return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="お手本: ' + m.label + '">' + paths + '</svg>';
+  }
+
   /* ---- 色ユーティリティ ---- */
   function hex2rgb(hex) {
     return {
@@ -147,6 +176,8 @@
       '<div class="fude-stage" style="background-color:' + escAttr(patternBgColor) + '; background-image:' + patternUrl + '; background-repeat:repeat;">' +
         '<button class="fude-close" type="button" aria-label="閉じる">×</button>' +
         '<div class="fude-paper" style="background:' + escAttr(paper) + ';">' +
+          /* なぞり手本レイヤ（canvasの下・薄墨） — 「お手本」ボタンでランダム表示/消去 */
+          '<div class="fude-tegami" aria-hidden="true"></div>' +
           '<canvas class="fude-canvas" aria-label="' + escAttr(colorData.name + 'の紙。ポインタで書けます') + '"></canvas>' +
           /* 紙の内側の縁にも同じ文様（絵巻の縁取り）— 装飾用・aria-hidden */
           '<div class="fude-paper-border" aria-hidden="true" style="background-image:' + patternUrl + ';"></div>' +
@@ -168,6 +199,7 @@
             '<button type="button" class="fude-pen" role="radio" aria-checked="false" data-pen="calligraphy">カリグラフィ</button>' +
           '</div>' +
           '<div class="fude-actions">' +
+            '<button type="button" class="fude-btn" data-action="tegami">お手本</button>' +
             '<button type="button" class="fude-btn" data-action="clear">まっさらに</button>' +
             '<button type="button" class="fude-btn" data-action="save">写しを残す</button>' +
           '</div>' +
@@ -231,16 +263,15 @@
       ctx.fill();
     }
     /* カリグラフィスタンプ: 斜め45°の楕円ニブ・蛍光ペン風の均一塗り
-       alphaは固定・縁のフェードなし・端はhard */
+       v3: シャープ化 — 濃度up・縁のぼやけなし・にじみゼロ */
     function stampCalligraphy(x, y, w, inkHex, alpha) {
       var rgb = hex2rgb(inkHex);
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate(-Math.PI / 4);
-      /* 蛍光ペン: 均一濃度・不透明度中（source-overで同色重ねても濃くならない特性はcompositeで担保） */
-      ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.72)';
+      /* 蛍光ペン: 均一濃度をやや上げてキュッとしたコントラスト（0.72→0.85） */
+      ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.85)';
       ctx.beginPath();
-      /* 楕円ニブ・短径をやや太くしてマーカー感 */
       ctx.ellipse(0, 0, w / 2, Math.max(1.8, w * 0.36), 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
@@ -291,8 +322,9 @@
       /* 筆=multiply（紙に染みる）／カリグラフィ=source-over（蛍光ペンは重ねても濃くならない） */
       ctx.globalCompositeOperation = stroke.pen === 'calligraphy' ? 'source-over' : 'multiply';
       if (stroke.pen === 'fude') {
-        blot(p.x, p.y, 15, stroke.ink, 1.2);      /* 起筆のインク溜まり（強め） */
+        blot(p.x, p.y, 15, stroke.ink, 1.2);      /* 起筆のインク溜まり（強め・にじみ用） */
       }
+      /* カリグラフィは起筆時から均一の16px・にじみブロブなしでキュッと始まる */
       stamp(p.x, p.y, stroke.pen === 'calligraphy' ? 16 : 14, stroke.ink, 0.95);
       ctx.restore();
       e.preventDefault();
@@ -328,15 +360,16 @@
         w = 16;
         alpha = 1.0;   /* stampCalligraphy側で0.72に固定 */
       } else {
-        /* 筆: 速度で太さが変わる */
-        var wMax = 15, wMin = 2.8, k = 0.035;
+        /* 筆: 速度で太さが変わる（幅の下限を上げてストローク後半が細くなりすぎない）
+           v3改善: wMin 2.8→5.0・k 0.035→0.025 で速く動いても太さを維持
+           reservoir減衰も緩めて（1200→2800px）ストローク全長で濃度キープ */
+        var wMax = 15, wMin = 5.0, k = 0.025;
         w = Math.max(wMin, Math.min(wMax, wMax - k * stroke.v * 1000));
-        /* インク残量 */
-        stroke.reservoir = Math.max(0.35, stroke.reservoir - dist / 1200);
+        stroke.reservoir = Math.max(0.55, stroke.reservoir - dist / 2800);
         alpha = 0.85 * stroke.reservoir;
       }
-      /* ドライブラシ: 筆のみ・reservoir<0.5でランダム間引き */
-      var thin = !isCalli && stroke.reservoir < 0.5 && Math.random() < (0.5 - stroke.reservoir);
+      /* ドライブラシ: 筆のみ・reservoir<0.6でランダム間引き（v3: 発動条件を緩和） */
+      var thin = !isCalli && stroke.reservoir < 0.6 && Math.random() < (0.6 - stroke.reservoir);
       /* 停留検出（にじみ追加）— 筆のみ */
       var moved = Math.hypot(p.x - stroke.dwellAt.x, p.y - stroke.dwellAt.y);
       if (moved > 4) { stroke.dwellAt = p; stroke.dwellSince = p.t; }
@@ -486,11 +519,32 @@
       if (act) {
         var a = act.getAttribute('data-action');
         if (a === 'clear') engine.clear();
+        else if (a === 'tegami') toggleTegami();
         else if (a === 'save') savePng(canvas, {
           paper: meta.paper, name: colorData.name, romaji: colorData.romaji, hex: colorData.hex
         }, colorData.slug || colorData.romaji);
       }
     };
+
+    /* お手本のトグル: 表示中はランダムに次の一字へ・非表示に切替 */
+    var tegamiIdx = -1;
+    function toggleTegami() {
+      var el = container.querySelector('.fude-tegami');
+      if (!el) return;
+      if (el.classList.contains('on')) {
+        /* 表示中→非表示に */
+        el.classList.remove('on');
+        setTimeout(function () { el.innerHTML = ''; }, 500);
+        tegamiIdx = -1;
+      } else {
+        /* 非表示→ランダム表示（直前と別のものを選ぶ） */
+        var next = Math.floor(Math.random() * TEGAMI.length);
+        if (TEGAMI.length > 1 && next === tegamiIdx) next = (next + 1) % TEGAMI.length;
+        tegamiIdx = next;
+        el.innerHTML = tegamiSvg(next);
+        el.classList.add('on');
+      }
+    }
     container.addEventListener('click', onClick);
 
     /* 閉じるボタンはコアのregisterDialogが処理する（fude.js内でハンドリングしない） */

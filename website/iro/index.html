@@ -239,6 +239,17 @@
     cursor:crosshair; touch-action:none;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
   }
+  /* なぞり手本レイヤ — canvasの下に敷いて上からなぞる（canvas背景は元々ノイズだけで透明度が高いので薄墨が透ける） */
+  .fude-tegami{
+    position:absolute; inset:0; pointer-events:none;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity 0.5s ease;
+  }
+  .fude-tegami.on{ opacity:1; }
+  .fude-tegami svg{
+    width:64%; height:64%; display:block; overflow:visible;
+    color:rgba(28,26,23,0.18);   /* 薄墨のお手本 */
+  }
   .fude-cornername{
     position:absolute; right:14px; bottom:12px; text-align:right; pointer-events:none;
     color:rgba(28,26,23,0.55);
