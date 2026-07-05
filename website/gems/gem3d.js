@@ -48,15 +48,21 @@ function brilliantGeometry(mains) {
   var N = mains * 2;      /* ガードルの頂点数（メイン+ハーフ） */
   var positions = [];
 
-  /* 寸法（girdle半径=1.0基準・実物のプロポーションに近い比率） */
+  /* 寸法 — 実物の標準ラウンドブリリアントの理想プロポーション（Tolkowsky系）
+     girdle半径=1.0基準。直径=2.0に対する各比率を換算:
+       テーブル径 53%          → tableR = 0.53
+       クラウン角 34.5°        → クラウン高 = (1-0.53)*tan(34.5°) = 0.323
+       パビリオン角 40.75°     → パビリオン深 = 1.0*tan(40.75°) = 0.862（全反射で光が返る鍵）
+       ガードル厚 ~3%          → 帯を薄く
+     パビリオンを浅く正確にすることで、光がキュレットへ抜けず正面に返る（ライトリターン）。 */
   var girdleR = 1.0;
-  var girdleTopY = 0.04, girdleBotY = -0.04;  /* ガードル帯の厚み */
+  var girdleTopY = 0.03, girdleBotY = -0.03;  /* ガードル帯の厚み（薄く） */
   var tableR = 0.53;
-  var crownY = 0.34;      /* テーブル面の高さ */
-  var starMidY = 0.20;    /* スターとベゼルの境の高さ */
-  var pavilionY = -1.0;   /* キュレット（尖端） */
-  var pavMidR = 0.62;     /* パビリオンメインとロウワーガードルの境の半径 */
-  var pavMidY = -0.42;
+  var crownY = 0.323;     /* クラウン角34.5°に対応するテーブル面の高さ */
+  var starMidY = 0.16;    /* スターとベゼルの境の高さ */
+  var pavilionY = -0.862; /* パビリオン角40.75°のキュレット深さ（全反射角） */
+  var pavMidR = 0.55;     /* パビリオンメインとロウワーガードルの境の半径 */
+  var pavMidY = -0.38;
 
   function P(radius, y, angle) {
     return new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius);
@@ -308,6 +314,29 @@ function buildShowcaseScene() {
   /* 背面のリム光 */
   cardB(5, 4, 0x8892a8, 1.4, 0, 1, -5, 0, 0);
 
+  /* シンチレーション用の小さな高輝度スポット群 — 前面ドーム状に散りばめる。
+     傾けたとき多数のファセットが次々に白く瞬く（本物の宝石の煌めき）。
+     角度は擬似乱数（決定的）で分散させ、Math.randomは使わない */
+  var seed = 1234;
+  function rnd() { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
+  for (var i = 0; i < 16; i++) {
+    var az = rnd() * Math.PI * 2;
+    var el = (rnd() - 0.3) * Math.PI * 0.7;   /* 前面上寄りに分布 */
+    var dist = 4 + rnd() * 2;
+    var sx = Math.cos(el) * Math.sin(az) * dist;
+    var sy = Math.sin(el) * dist + 1.0;
+    var sz = Math.cos(el) * Math.cos(az) * dist + 1.5;   /* カメラ側(+z)寄り */
+    var sp = 0.18 + rnd() * 0.22;
+    var warmth = rnd() > 0.5 ? 0xffffff : 0xfff2e0;
+    var m = new THREE.Mesh(
+      new THREE.PlaneGeometry(sp, sp),
+      new THREE.MeshBasicMaterial({ color: bright(warmth, 7.0), side: THREE.DoubleSide, toneMapped: false })
+    );
+    m.position.set(sx, sy, sz);
+    m.lookAt(0, 0, 0);
+    scene.add(m);
+  }
+
   return scene;
 }
 
@@ -357,9 +386,11 @@ function makeMaterial(gemData) {
     attenuationColor: color,
     attenuationDistance: 2.2,
     specularIntensity: 1.0,
-    clearcoat: 0.5,
-    clearcoatRoughness: 0.02,
-    envMapIntensity: 1.6,
+    /* clearcoatを強めるとフラットシェーディングのファセット境界でフレネル反射が際立ち、
+       稜線がキラッと光る（ベベルの視覚効果をジオメトリを増やさず材質で得る） */
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.0,
+    envMapIntensity: 1.9,
     side: THREE.DoubleSide,   /* 透明石は屈折で内部の裏面ファセットも見えるため両面描画 */
     flatShading: true
   });
@@ -380,9 +411,11 @@ function mount(container, gemData, opts) {
 
   var renderer, scene, camera, mesh, envRT, pmrem, envScene, composer, bloomPass;
   /* Bloomは高負荷なので、reduce-motionと狭幅（モバイル相当）では無効化して素のレンダリングに。
-     width<480でoff、さらにコア数が取得でき2以下なら低性能機とみなしoff */
+     width<480でoff、コア数が取得でき2以下なら低性能機とみなしoff。
+     さらにタッチ端末（coarse pointer）は内蔵GPUが弱くBloom+MSAAで発熱・カクつきしやすいのでoff */
   var lowCores = (typeof navigator.hardwareConcurrency === 'number' && navigator.hardwareConcurrency <= 2);
-  var useBloom = !reduce && width >= 480 && !lowCores;
+  var coarse = (typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches);
+  var useBloom = !reduce && width >= 480 && !lowCores && !coarse;
 
   function disposeEnvScene() {
     if (envScene && envScene.traverse) {
@@ -413,7 +446,11 @@ function mount(container, gemData, opts) {
   try {
     /* WebGLRenderer生成自体の失敗（WebGL不可）をここで捕捉。preflight用の別contextは作らない */
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+    /* エッジのギザつきを抑えて研磨石の精度感を出す。デスクトップは上限2.5（高精細ディスプレイで効く）。
+       Bloom+MSAA併用時はレンダーターゲットが巨大化するため2.0に、
+       タッチ/低コア端末は発熱・電池消費を避けるため1.75に抑える（非Bloom経路でも上限を下げる） */
+    var dprCap = (coarse || lowCores) ? 1.75 : (useBloom ? 2.0 : 2.5);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));
     renderer.setSize(width, height);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.4;
@@ -450,9 +487,21 @@ function mount(container, gemData, opts) {
     /* Bloomポストプロセス（最輝ファセットを滲ませて宝石の「キラッ」を再現）
        composer構築失敗時は素のrenderer.renderにフォールバック */
     if (useBloom) {
-      var tmpComposer = null, tmpBloom = null;
+      var tmpComposer = null, tmpBloom = null, msaaRT = null;
       try {
-        tmpComposer = new EffectComposer(renderer);
+        /* MSAA付きレンダーターゲットでcomposerを作る（Bloom経路でもエッジをアンチエイリアス）。
+           サイズはgetDrawingBufferSize（=論理サイズ×pixelRatio）を使う。これはThree.js公式の
+           「composerにsamples付きRTを渡す」MSAAパターンと同一で、DPRの二重適用を避ける。
+           WebGL2ではsamplesが効く。作れない環境では通常のcomposerにフォールバック */
+        var dbs = renderer.getDrawingBufferSize(new THREE.Vector2());
+        try {
+          msaaRT = new THREE.WebGLRenderTarget(dbs.x, dbs.y, { samples: 4 });
+          tmpComposer = new EffectComposer(renderer, msaaRT);
+        } catch (rtErr) {
+          if (msaaRT && msaaRT.dispose) msaaRT.dispose();
+          msaaRT = null;
+          tmpComposer = new EffectComposer(renderer);
+        }
         tmpComposer.addPass(new RenderPass(scene, camera));
         tmpBloom = new UnrealBloomPass(new THREE.Vector2(width, height), 0.55, 0.6, 0.85);
         /* strength 0.55・radius 0.6・threshold 0.85（明るい部分だけ滲む） */
