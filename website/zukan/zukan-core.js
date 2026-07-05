@@ -444,6 +444,12 @@
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       var MAX_PAWS = 40, MIN_DIST = 90, last = null;
+      var palette = config.pawColors; /* 未指定なら既定のシルバー単色（既存アプリの見た目を維持） */
+
+      function pawColor() {
+        if (palette && palette.length) return palette[Math.floor(Math.random() * palette.length)];
+        return '#B8B4AE';
+      }
 
       function addPaw(clientX, clientY) {
         var r = layer.getBoundingClientRect();
@@ -453,7 +459,7 @@
         var paw = document.createElement('span');
         paw.className = 'paw';
         paw.style.cssText = 'left:' + (x - size / 2) + 'px; top:' + (y - size / 2) + 'px; width:' + size + 'px; transform:rotate(' + rot + 'deg);';
-        paw.innerHTML = '<svg class="paw-svg" viewBox="0 0 100 100" style="color:#B8B4AE"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
+        paw.innerHTML = '<svg class="paw-svg" viewBox="0 0 100 100" style="color:' + pawColor() + '"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
         layer.appendChild(paw);
         while (layer.children.length > MAX_PAWS) layer.removeChild(layer.firstChild);
       }

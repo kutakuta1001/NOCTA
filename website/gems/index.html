@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>宝石図鑑 | NOCTA Tools</title>
-<meta name="description" content="世界の宝石・原石を静かに眺める図鑑。石言葉と誕生石をたずさえた、NOCTAの第5のWebアプリ。">
+<title>Gyu | NOCTA Tools</title>
+<meta name="description" content="Gyu — 世界の宝石・原石を静かに眺める図鑑。石言葉と誕生石をたずさえた、NOCTAの第5のWebアプリ。">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -224,7 +224,7 @@
   <div id="cover-paws" class="paw-trail absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
   <div class="relative z-10 text-center px-6 max-w-[640px]">
     <p class="font-heading text-[10px] tracking-[3px] uppercase text-sub mb-5" data-i18n="cover.eyebrow">NOCTA Tools — 05</p>
-    <h1 class="font-display text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">宝石図鑑</h1>
+    <h1 class="font-display text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">Gyu</h1>
     <p class="font-jp text-[14px] leading-[2] text-sub mt-6" data-i18n="cover.tagline">遊ぶことで人生を彩ろう。世界の宝石を、ただ静かに眺めるための図鑑。</p>
     <div id="today-slot"></div>
     <div class="mt-12 flex justify-center">
@@ -285,7 +285,7 @@
   var STRINGS = {
     "nav.back":        { ja: "← NOCTA",                                                          en: "← NOCTA" },
     "cover.eyebrow":   { ja: "NOCTA Tools — 05",                                                  en: "NOCTA Tools — 05" },
-    "cover.title":     { ja: "宝石図鑑",                                                          en: "Gem Catalogue" },
+    "cover.title":     { ja: "Gyu",                                                              en: "Gyu" },
     "cover.tagline":   { ja: "遊ぶことで人生を彩ろう。世界の宝石を、ただ静かに眺めるための図鑑。",     en: "Color your life through play. A quiet catalogue for gazing at the world's gemstones." },
     "footer.tagline":  { ja: "すべての石は、叩き台です。眺め方は自由に。",                          en: "Every stone here is a starting point. Look at it however you like." },
     "footer.back":     { ja: "NOCTA ホームへ戻る",                                                en: "Back to NOCTA Home" },
@@ -348,6 +348,8 @@
     railId: 'gem-rail',
     sectionClass: 'gem-section',
     favKey: 'nocta-gems-favs',
+    /* Gyu演出: カバーの肉球トレイルを5色ランダムに（銀猫が絵の具を踏んだイメージ） */
+    pawColors: ['#E2574C', '#E8B923', '#4F8FCE', '#9966CC', '#2FB8A6'],
     inertIds: ['site-nav', 'cover', 'gems-root', 'gem-rail', 'index-btn', 'site-footer'],
     onLangApply: function (lang) {
       if (lightbox && lightbox.isOpen() && lightboxIdx >= 0 && typeof NOCTA_GEMS !== 'undefined') {

@@ -36,15 +36,15 @@ const NOCTA_APPS = [
     descEn: "A quiet catalogue of seasonal flowers, with flower meanings, birth flowers, and a flower of the day. NOCTA's sixth tool."
   },
   {
-    title: "宝石図鑑",
+    title: "Gyu",
     cat: "app",
     url: "./gems/index.html",
     imgUrl: "",
     thumbClass: "thumb-5",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "世界の宝石36種を静かに眺める図鑑。石言葉と誕生石、今日の一石をたずさえた、NOCTA第5のツール。",
-    descEn: "A quiet catalogue of 36 gemstones, with stone meanings, birthstones, and a stone of the day. NOCTA's fifth tool."
+    descJa: "世界の宝石36種を静かに眺める図鑑「Gyu」。石言葉と誕生石、今日の一石をたずさえた、NOCTA第5のツール。",
+    descEn: "Gyu — a quiet catalogue of 36 gemstones, with stone meanings, birthstones, and a stone of the day. NOCTA's fifth tool."
   },
   {
     title: "NuWord still",
