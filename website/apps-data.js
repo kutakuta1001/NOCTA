@@ -43,8 +43,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-5",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "銀猫が見つけた宝石36種を静かに眺める図鑑。石言葉と誕生石、今日の一石をたずさえた、HiNaコレクション第一部。",
-    descEn: "HiNa Gyu — the silver cat's quiet catalogue of 36 gemstones, with stone meanings, birthstones, and a stone of the day."
+    descJa: "銀猫が見つけた宝石36種を静かに眺める図鑑。石言葉と誕生石、そして手のひらで光にかざしてきらめきを見る臨場感をたずさえた、HiNaコレクション第一部。",
+    descEn: "HiNa Gyu — the silver cat's quiet catalogue of 36 gemstones, with stone meanings, birthstones, and the intimate feeling of holding each stone up to the light."
   },
   {
     title: "NuWord still",

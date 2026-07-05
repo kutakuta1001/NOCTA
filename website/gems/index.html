@@ -12,6 +12,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./gems-data.js"></script>
 <script src="../zukan/zukan-core.js?v=1"></script>
+<script src="./kazasu.js?v=1"></script>
 <style>
   :root { --gem: #B8B4AE; }
   *{ box-sizing:border-box; }
@@ -150,17 +151,63 @@
   }
   .index-close:hover{ border-color:rgba(232,224,208,0.7); }
 
-  /* ライトボックス — 全画面の鑑賞モード */
+  /* ライトボックス — 「光にかざす」モード
+     宝石を手で持って光にかざしているような臨場感を出すため、
+     3D傾き＋スペキュラハイライト＋プリズム反射＋深い影を重ねる */
   #lightbox{
     position:fixed; inset:0; z-index:70; background:rgba(10,9,6,0.97);
     display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px;
   }
   #lightbox[hidden]{ display:none; }
-  #lightbox img{
-    max-width:92vw; max-height:74vh; object-fit:contain; border-radius:2px;
+  .gyu-gem-wrap{
+    position:relative; max-width:92vw; max-height:74vh; width:min(92vw, 720px);
+    aspect-ratio:3/4; perspective:1400px;
+    /* pointerイベントを子まで通す */
+    touch-action:none;
+    /* z-index積層を安定させる（負z-indexがlightbox背景まで潜らないよう明示的にstacking context生成） */
+    isolation:isolate;
+  }
+  .gyu-gem-inner{
+    position:absolute; inset:0; z-index:1;
+    display:flex; align-items:center; justify-content:center;
+    transform-style:preserve-3d;
+  }
+  .gyu-gem-img{
+    max-width:100%; max-height:100%; object-fit:contain; border-radius:2px;
     box-shadow:0 40px 90px -30px rgba(0,0,0,0.85);
+    transition:filter 0.25s ease;
+    will-change:transform, filter;
+    display:block;
+  }
+  /* 深い影（宝石の下・柔らかい楕円） z-index:0 で isolate 内の最下層 */
+  .gyu-shadow{
+    position:absolute; left:50%; bottom:6%; z-index:0;
+    width:52%; height:8%; transform:translateX(-50%);
+    background:radial-gradient(ellipse at center, rgba(10,9,6,0.55) 0%, rgba(10,9,6,0.25) 40%, transparent 70%);
+    filter:blur(4px);
+    pointer-events:none;
+  }
+  /* スペキュラハイライト（マウス位置に追随） z-index:2 で宝石より上 */
+  .gyu-highlight{
+    position:absolute; left:50%; top:50%; width:60%; height:60%; z-index:2;
+    transform:translate(-50%, -50%);
+    background:radial-gradient(ellipse at 50% 50%, rgba(255,252,244,0.35) 0%, rgba(255,252,244,0.1) 30%, transparent 60%);
+    mix-blend-mode:screen; pointer-events:none;
+    transition:left 0.15s ease-out, top 0.15s ease-out;
+  }
+  /* 縁のプリズム反射（虹色・薄く） z-index:0 で影と同層 */
+  .gyu-prism{
+    position:absolute; inset:-6%; z-index:0;
+    border-radius:50%;
+    opacity:0.35; mix-blend-mode:screen;
+    filter:blur(20px);
+    pointer-events:none;
   }
   #lightbox .lb-caption{ text-align:center; margin-top:22px; max-width:640px; }
+  @media (prefers-reduced-motion:reduce){
+    .gyu-gem-img{ transition:none; will-change:auto; }
+    .gyu-highlight{ transition:none; }
+  }
 
   /* 銀猫: 肉球トレイル（Statement帯と同一パターンの再利用） */
   .paw-trail{ pointer-events:none; }
@@ -250,10 +297,17 @@
   </div>
 </div>
 
-<!-- ライトボックス -->
-<div id="lightbox" role="dialog" aria-modal="true" aria-label="拡大鑑賞" hidden>
+<!-- 光にかざす（旧ライトボックスの進化） -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="光にかざす" hidden>
   <button class="index-close" type="button" id="lightbox-close" aria-label="閉じる">×</button>
-  <img id="lightbox-img" src="" alt="">
+  <div class="gyu-gem-wrap" id="gyu-wrap">
+    <div class="gyu-prism" aria-hidden="true"></div>
+    <div class="gyu-gem-inner">
+      <img id="lightbox-img" class="gyu-gem-img" src="" alt="">
+    </div>
+    <div class="gyu-highlight" aria-hidden="true"></div>
+    <div class="gyu-shadow" aria-hidden="true"></div>
+  </div>
   <div class="lb-caption">
     <p class="font-heading text-[11px] tracking-[2px] uppercase" id="lightbox-en" style="color:var(--gem);"></p>
     <p class="font-display text-[24px] font-semibold" id="lightbox-title" style="color:#E8E0D0;"></p>
@@ -400,7 +454,7 @@
         '<div class="relative z-10 max-w-[1180px] mx-auto w-full grid md:grid-cols-2 gap-10 md:gap-16 items-center' + (reverse ? ' md:[direction:rtl]' : '') + '">' +
           '<div class="reveal' + (reverse ? ' md:[direction:ltr]' : '') + '">' +
             '<div class="gem-photo-wrap aspect-[4/5] md:aspect-[3/4]">' +
-              '<button type="button" class="gem-photo-open" data-lightbox="' + i + '" aria-label="' + escAttr(g.title + 'を拡大して鑑賞') + '">' +
+              '<button type="button" class="gem-photo-open" data-lightbox="' + i + '" aria-label="' + escAttr(g.title + 'を光にかざす') + '">' +
                 '<img ' + Z.imgSrcAttrs(g.imgUrl) + ' data-original="' + escAttr(g.imgUrl) + '" alt="' + escAttr(g.title) + '" data-alt-ja="' + escAttr(g.title) + '" data-alt-en="' + escAttr(g.titleEn) + '" loading="' + (i === 0 ? 'eager' : 'lazy') + '">' +
               '</button>' +
               '<div class="gem-credit">' +
@@ -582,7 +636,13 @@
     });
   }
 
-  /* ---- ライトボックスの中身（開閉・フォーカス・ロックはcoreが担う） ---- */
+  /* ---- 光にかざす（旧ライトボックス）の中身
+     開閉・フォーカス・ロックはcoreが担う。中身の光沢エンジンはNoctaKazasu が担当
+     Codex指摘対応: rAFで遅延attachされる間に閉じ/再open が起きても、
+     世代トークンとcancelAnimationFrameでリークを防ぐ */
+  var kazasuInstance = null;
+  var kazasuAttachRafId = null;
+  var kazasuGen = 0;
   function populateLightbox(i) {
     var g = NOCTA_GEMS[i];
     var lb = document.getElementById('lightbox');
@@ -613,6 +673,23 @@
     var cr = document.getElementById('lightbox-credit');
     cr.textContent = g.sourceName + (g.license ? ' · ' + g.license : '') + (g.credit ? ' · ' + g.credit : '');
     cr.href = g.sourceUrl;
+    /* 光沢エンジンを取り付け（前回のインスタンス・pending rAFがあれば破棄）
+       hidden解除後のレイアウト確定を待ってから attach するため rAF を1回挟む */
+    if (kazasuInstance) { kazasuInstance.detach(); kazasuInstance = null; }
+    if (kazasuAttachRafId) { cancelAnimationFrame(kazasuAttachRafId); kazasuAttachRafId = null; }
+    var myGen = ++kazasuGen;
+    if (window.NoctaKazasu) {
+      var wrap = document.getElementById('gyu-wrap');
+      if (wrap) {
+        kazasuAttachRafId = requestAnimationFrame(function () {
+          kazasuAttachRafId = null;
+          /* 世代トークンが変わっていたら（閉じられたor再オープン）attachしない */
+          if (myGen !== kazasuGen) return;
+          if (!lightbox || !lightbox.isOpen()) return;
+          kazasuInstance = window.NoctaKazasu.attach(wrap, { accentColor: g.accentColor });
+        });
+      }
+    }
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -629,10 +706,16 @@
       closeBtn: document.getElementById('lightbox-close'),
       onOpen: populateLightbox,
       onClose: function () {
+        /* 光沢エンジンを破棄・pending rAFもキャンセル・世代トークン更新 */
+        if (kazasuAttachRafId) { cancelAnimationFrame(kazasuAttachRafId); kazasuAttachRafId = null; }
+        kazasuGen++;
+        if (kazasuInstance) { kazasuInstance.detach(); kazasuInstance = null; }
         var img = document.getElementById('lightbox-img');
         img.removeAttribute('srcset');
         img.removeAttribute('sizes');
         img.src = '';
+        img.style.transform = '';
+        img.style.filter = '';
         lightboxIdx = -1;
       }
     });
