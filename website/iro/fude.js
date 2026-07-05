@@ -18,51 +18,26 @@
   var SUMI = "#1C1A17";
   var PAPER_TINT_RATIO = 0.06;  /* 紙にその色を6%混ぜる */
 
-  /* お手本モチーフ — 幾何学的な意匠8種（カリグラフィで45°斜めを引くと綺麗になる）
-     viewBoxは全て0 0 100 100・カリグラフィの45°スナップと相性の良い形を選定 */
+  /* お手本モチーフ — 書道の漢字・かな8種
+     viewBoxは全て0 0 100 100・カリグラフィで平ペン特性が活きる筆順の骨格
+     v6: v3の書道モチーフに復帰（幾何学より書き応えがあるとのCEO判断） */
   var TEGAMI = [
-    /* 八角星: 45°交差の代表 */
-    { label: 'octagon-star', paths: [
-      'M50 8 L 62 38 L 92 50 L 62 62 L 50 92 L 38 62 L 8 50 L 38 38 Z',
-      'M22 22 L 78 78', 'M78 22 L 22 78'
-    ]},
-    /* 六角の花・雪の結晶風 */
-    { label: 'hexagon-flower', paths: [
-      'M50 10 L 79 27 L 79 63 L 50 80 L 21 63 L 21 27 Z',
-      'M50 10 L 50 80', 'M21 27 L 79 63', 'M79 27 L 21 63',
-      'M50 45 L 50 55', 'M45 50 L 55 50'
-    ]},
-    /* 五芒星 */
-    { label: 'pentagram', paths: [
-      'M50 10 L 61 40 L 92 40 L 66 58 L 76 88 L 50 68 L 24 88 L 34 58 L 8 40 L 39 40 Z'
-    ]},
-    /* 対角十字＋直角十字（45°スナップの練習に最適） */
-    { label: 'cross-diagonal', paths: [
-      'M15 15 L 85 85', 'M85 15 L 15 85',
-      'M15 50 L 85 50', 'M50 15 L 50 85'
-    ]},
-    /* 螺旋 */
-    { label: 'spiral', paths: [
-      'M50 50 Q 40 40, 60 40 Q 75 40, 75 55 Q 75 78, 45 78 Q 15 78, 15 50 Q 15 15, 55 15 Q 90 15, 88 55'
-    ]},
-    /* 三菱重ね（アラベスク風） */
-    { label: 'three-lozenges', paths: [
-      'M50 12 L 68 30 L 50 48 L 32 30 Z',
-      'M28 42 L 46 60 L 28 78 L 10 60 Z',
-      'M72 42 L 90 60 L 72 78 L 54 60 Z',
-      'M32 62 L 50 80 L 68 62'
-    ]},
-    /* 円中正方形（対角補助線＝45°ガイド） */
-    { label: 'square-in-circle', paths: [
-      'M50 15 A 35 35 0 1 1 49.99 15 Z',
-      'M25 25 L 75 25 L 75 75 L 25 75 Z',
-      'M25 25 L 75 75', 'M75 25 L 25 75'
-    ]},
-    /* ジグザグ二段（45°斜めの反復） */
-    { label: 'zigzag', paths: [
-      'M12 32 L 28 48 L 44 32 L 60 48 L 76 32 L 92 48',
-      'M12 68 L 28 52 L 44 68 L 60 52 L 76 68 L 92 52'
-    ]}
+    /* 一 */
+    { label: 'ichi', paths: ['M12 52 C 30 48, 70 48, 88 52'] },
+    /* 二 */
+    { label: 'ni', paths: ['M18 34 C 34 30, 66 30, 82 34', 'M12 66 C 30 62, 70 62, 88 66'] },
+    /* 川 */
+    { label: 'kawa', paths: ['M30 18 C 26 40, 26 62, 26 84', 'M50 14 C 46 40, 46 62, 50 88', 'M72 20 C 74 42, 74 64, 78 86'] },
+    /* 山 */
+    { label: 'yama', paths: ['M20 78 L 20 40', 'M20 78 L 80 78', 'M50 78 L 50 20', 'M80 78 L 80 40'] },
+    /* 月 */
+    { label: 'tsuki', paths: ['M30 20 L 30 82 L 72 82 L 72 20 Z', 'M30 40 L 72 40', 'M30 60 L 72 60'] },
+    /* の（かな） */
+    { label: 'no', paths: ['M62 22 C 32 22, 20 42, 30 62 C 40 78, 68 78, 76 60 C 82 46, 72 32, 58 34 C 46 36, 42 50, 50 60'] },
+    /* さ（かな・簡略） */
+    { label: 'sa', paths: ['M32 26 C 46 22, 62 22, 74 28', 'M46 14 C 42 30, 40 50, 44 70', 'M64 40 C 50 46, 40 56, 50 74 C 58 84, 74 72, 66 60'] },
+    /* 花（略字風の記号） */
+    { label: 'hana', paths: ['M50 20 C 40 30, 40 44, 50 50 C 60 44, 60 30, 50 20 Z', 'M30 40 C 40 30, 40 30, 50 50', 'M70 40 C 60 30, 60 30, 50 50', 'M35 65 C 45 55, 55 55, 65 65', 'M50 50 L 50 88'] }
   ];
 
   function tegamiSvg(index) {
@@ -274,18 +249,25 @@
       return { x: e.clientX - rect.left, y: e.clientY - rect.top, t: (e.timeStamp || performance.now()) };
     }
 
-    /* 筆スタンプ: 中心濃→縁淡のradial gradient（にじむ・柔らかい） */
+    /* 筆スタンプ v6b: 実線コア + 縁のソフトフェードの2層構造（さらに強化）
+       - 内側 (半径 w/2 * 0.92): ほぼ全径を均一濃度の実線に → 送り中の存在感を最大化
+       - 外側 (半径 w/2 * 0.92 〜 w/2 * 1.25): 徐々にフェード → 縁のにじみ感 */
     function stampFude(x, y, w, inkHex, alpha) {
-      var r = w / 2;
-      var g = ctx.createRadialGradient(x, y, 0, x, y, r);
       var rgb = hex2rgb(inkHex);
-      g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.85).toFixed(3) + ')');
-      g.addColorStop(0.5, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.55).toFixed(3) + ')');
-      g.addColorStop(0.85, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.2).toFixed(3) + ')');
+      var coreR = w / 2 * 0.92;
+      var outerR = w / 2 * 1.25;
+      /* 内側コア（実線・ほぼ不透明で送り中の太さを担保） */
+      ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.95).toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.arc(x, y, coreR, 0, Math.PI * 2);
+      ctx.fill();
+      /* 外側の縁フェード（にじみ感） */
+      var g = ctx.createRadialGradient(x, y, coreR, x, y, outerR);
+      g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.6).toFixed(3) + ')');
       g.addColorStop(1, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(x, y, r * 1.15, 0, Math.PI * 2);   /* 少し外側までにじませる */
+      ctx.arc(x, y, outerR, 0, Math.PI * 2);
       ctx.fill();
     }
     /* カリグラフィスタンプ: 斜め45°の平ペン（扁平楕円ニブ）
@@ -353,10 +335,11 @@
       /* 筆=multiply（紙に染みる）／カリグラフィ=source-over（蛍光ペンは重ねても濃くならない） */
       ctx.globalCompositeOperation = stroke.pen === 'calligraphy' ? 'source-over' : 'multiply';
       if (stroke.pen === 'fude') {
-        blot(p.x, p.y, 15, stroke.ink, 1.2);      /* 起筆のインク溜まり（強め・にじみ用） */
+        /* v6b: 起筆のインク溜まり（送りが太くなったので相対的にやや控えめ） */
+        blot(p.x, p.y, 22, stroke.ink, 1.3);
       }
-      /* カリグラフィは起筆時から均一の16px・にじみブロブなしでキュッと始まる */
-      stamp(p.x, p.y, stroke.pen === 'calligraphy' ? 16 : 14, stroke.ink, 0.95);
+      /* 筆はwMax相当の24pxで存在感のある起筆点・カリグラフィは16pxでキュッと */
+      stamp(p.x, p.y, stroke.pen === 'calligraphy' ? 16 : 24, stroke.ink, 0.95);
       ctx.restore();
       e.preventDefault();
     }
@@ -395,13 +378,14 @@
         w = 16;
         alpha = 1.0;   /* stampCalligraphy側で0.72に固定 */
       } else {
-        /* 筆: 速度で太さが変わる（幅の下限を上げてストローク後半が細くなりすぎない）
-           v3改善: wMin 2.8→5.0・k 0.035→0.025 で速く動いても太さを維持
-           reservoir減衰も緩めて（1200→2800px）ストローク全長で濃度キープ */
-        var wMax = 15, wMin = 5.0, k = 0.025;
+        /* 筆: 「入り太・送り太・抜き細」の三段構成を実現（v6b: さらに太く）
+             wMax 24px: 起筆と送りで存在感のある太い線
+             wMin 15px: 速度が上がっても細くなりすぎない
+             k 0.008:   速度依存を弱める */
+        var wMax = 24, wMin = 15, k = 0.008;
         w = Math.max(wMin, Math.min(wMax, wMax - k * stroke.v * 1000));
-        stroke.reservoir = Math.max(0.55, stroke.reservoir - dist / 2800);
-        alpha = 0.85 * stroke.reservoir;
+        stroke.reservoir = Math.max(0.75, stroke.reservoir - dist / 5000);
+        alpha = 0.95 * stroke.reservoir;
       }
       /* ドライブラシ: 筆のみ・reservoir<0.6でランダム間引き（v3: 発動条件を緩和） */
       var thin = !isCalli && stroke.reservoir < 0.6 && Math.random() < (0.6 - stroke.reservoir);
@@ -435,18 +419,20 @@
 
     function end(e) {
       if (!stroke) return;
-      /* 払い: 筆のみ・最終速度が高ければ進行方向へ2スタンプ外挿・幅急減
-         カリグラフィは蛍光ペンなので払わない（均一の切れ味） */
+      /* 払い: 筆のみ・最終速度が高ければ進行方向へ3スタンプ外挿・幅を急減
+         v6: 筆の太さに合わせて払いを長くし、送り太→抜き細のコントラストを強調 */
       if (stroke.pen !== 'calligraphy' && stroke.v > 0.3) {
         var p = clientToLocal(e);
         var dx = p.x - stroke.last.x, dy = p.y - stroke.last.y;
         var len = Math.sqrt(dx * dx + dy * dy) || 1;
         ctx.save();
         ctx.globalCompositeOperation = 'multiply';
-        for (var i = 1; i <= 2; i++) {
+        /* 送り幅(11〜18)→抜き幅(1.5)へ、3段階でテーパー */
+        var startW = Math.max(8, 12 - stroke.v * 4);
+        for (var i = 1; i <= 3; i++) {
           var t = i * 6;
-          var w = Math.max(1.2, 5 - i * 1.6);
-          stamp(stroke.last.x + (dx / len) * t, stroke.last.y + (dy / len) * t, w, stroke.ink, 0.4 * stroke.reservoir);
+          var w = Math.max(1.5, startW - i * 3);
+          stamp(stroke.last.x + (dx / len) * t, stroke.last.y + (dy / len) * t, w, stroke.ink, 0.5 * stroke.reservoir);
         }
         ctx.restore();
       }
