@@ -176,12 +176,14 @@
     container.innerHTML =
       '<div class="fude-stage" style="background-color:' + escAttr(patternBgColor) + '; background-image:' + patternUrl + '; background-repeat:repeat;">' +
         '<button class="fude-close" type="button" aria-label="閉じる">×</button>' +
-        '<div class="fude-paper" style="background:' + escAttr(paper) + ';">' +
+        '<div class="fude-paper" style="background:' + escAttr(paper) + '; --paper-color:' + escAttr(paper) + ';">' +
           /* なぞり手本レイヤ（canvasの下・薄墨） — 「お手本」ボタンでランダム表示/消去 */
           '<div class="fude-tegami" aria-hidden="true"></div>' +
           '<canvas class="fude-canvas" aria-label="' + escAttr(colorData.name + 'の紙。ポインタで書けます') + '"></canvas>' +
           /* 紙の内側の縁にも同じ文様（絵巻の縁取り）— 装飾用・aria-hidden */
           '<div class="fude-paper-border" aria-hidden="true" style="background-image:' + patternUrl + ';"></div>' +
+          /* リセット時の拭き取りアニメ用のオーバーレイ帯（普段はopacity 0） */
+          '<div class="fude-sweep" aria-hidden="true"></div>' +
           '<div class="fude-cornername" aria-hidden="true">' +
             '<span class="fude-cn-name">' + escAttr(colorData.name) + '</span>' +
             '<span class="fude-cn-kana">' + escAttr(colorData.kana) + '</span>' +
@@ -341,6 +343,7 @@
       /* 筆はwMax相当の24pxで存在感のある起筆点・カリグラフィは16pxでキュッと */
       stamp(p.x, p.y, stroke.pen === 'calligraphy' ? 16 : 24, stroke.ink, 0.95);
       ctx.restore();
+      stroke.recentDirs = [];    /* v7: 払いの向き安定化用の方向履歴 */
       e.preventDefault();
     }
 
@@ -371,6 +374,11 @@
       var dt = Math.max(1, p.t - stroke.last.t);
       var vInst = dist / dt;                              /* px/ms */
       stroke.v = stroke.v * 0.6 + vInst * 0.4;            /* EMA */
+      /* v7: 直近5点の進行方向を保持（endの払いで平均方向として使う・向き安定化） */
+      if (stroke.recentDirs) {
+        stroke.recentDirs.push({ ux: dx / dist, uy: dy / dist });
+        if (stroke.recentDirs.length > 5) stroke.recentDirs.shift();
+      }
 
       var w, alpha;
       if (isCalli) {
@@ -419,22 +427,44 @@
 
     function end(e) {
       if (!stroke) return;
-      /* 払い: 筆のみ・最終速度が高ければ進行方向へ3スタンプ外挿・幅を急減
-         v6: 筆の太さに合わせて払いを長くし、送り太→抜き細のコントラストを強調 */
-      if (stroke.pen !== 'calligraphy' && stroke.v > 0.3) {
-        var p = clientToLocal(e);
-        var dx = p.x - stroke.last.x, dy = p.y - stroke.last.y;
-        var len = Math.sqrt(dx * dx + dy * dy) || 1;
-        ctx.save();
-        ctx.globalCompositeOperation = 'multiply';
-        /* 送り幅(11〜18)→抜き幅(1.5)へ、3段階でテーパー */
-        var startW = Math.max(8, 12 - stroke.v * 4);
-        for (var i = 1; i <= 3; i++) {
-          var t = i * 6;
-          var w = Math.max(1.5, startW - i * 3);
-          stamp(stroke.last.x + (dx / len) * t, stroke.last.y + (dy / len) * t, w, stroke.ink, 0.5 * stroke.reservoir);
+      /* 払い（はらい）— 筆のみ・書道の「収筆」を表現
+         v7強化: 直近5点の平均方向で払いを外挿し、向きを安定化。
+         尾を長く（〜120px）、送り太→抜き細の二重テーパー、筆先の揺らぎで浮遊感。 */
+      if (stroke.pen !== 'calligraphy' && stroke.v > 0.2 && stroke.recentDirs && stroke.recentDirs.length > 0) {
+        /* 直近5点の平均方向（ノイズに強い） */
+        var avgUx = 0, avgUy = 0;
+        stroke.recentDirs.forEach(function (d) { avgUx += d.ux; avgUy += d.uy; });
+        avgUx /= stroke.recentDirs.length; avgUy /= stroke.recentDirs.length;
+        var mag = Math.sqrt(avgUx * avgUx + avgUy * avgUy);
+        if (mag > 0.01) {
+          var ux = avgUx / mag, uy = avgUy / mag;
+          var nx = -uy, ny = ux;                  /* 揺らぎ用の法線 */
+          /* 尾の長さは速度に応じて（速いほど長く伸ばす）*/
+          var tailLen = Math.min(120, 30 + stroke.v * 100);
+          var steps = 8;
+          /* 起点は送り幅と連続 */
+          var w0 = 22;
+          ctx.save();
+          ctx.globalCompositeOperation = 'multiply';
+          for (var i = 1; i <= steps; i++) {
+            var frac = i / steps;
+            /* 距離は非線形（前半緩やか・後半加速）で自然な尾の伸び */
+            var t = tailLen * Math.pow(frac, 1.15);
+            /* 幅テーパー: 起点22→最終0.6px（消える） */
+            var wFade = Math.pow(1 - frac, 1.5);
+            var w = Math.max(0.6, w0 * wFade);
+            /* 濃度フェード: 最終は0付近 */
+            var aFade = Math.pow(1 - frac, 1.7);
+            /* 筆先が浮く揺らぎ（後半ほど大きく揺れる・穂先の割れ感） */
+            var jitter = frac * 5;
+            var jx = (Math.random() - 0.5) * jitter;
+            var jy = (Math.random() - 0.5) * jitter;
+            var px = stroke.last.x + ux * t + nx * jx;
+            var py = stroke.last.y + uy * t + ny * jy;
+            stamp(px, py, w, stroke.ink, 0.9 * stroke.reservoir * aFade);
+          }
+          ctx.restore();
         }
-        ctx.restore();
       }
       try {
         if (canvas.hasPointerCapture && canvas.hasPointerCapture(e.pointerId)) {
@@ -452,15 +482,16 @@
     canvas.addEventListener('pointercancel', end);
     canvas.addEventListener('pointerleave', onLeave);
 
+    function clearNow() {
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
     return {
       setInk: function (v) { ink = v; },
       setPen: function (v) { pen = v; },
-      clear: function () {
-        ctx.save();
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.restore();
-      },
+      clear: clearNow,
       resize: resize,
       canvas: canvas,
       detach: function () {
@@ -539,13 +570,38 @@
       var act = e.target.closest('[data-action]');
       if (act) {
         var a = act.getAttribute('data-action');
-        if (a === 'clear') engine.clear();
+        if (a === 'clear') triggerClearSweep();
         else if (a === 'tegami') toggleTegami();
         else if (a === 'save') savePng(canvas, {
           paper: meta.paper, name: colorData.name, romaji: colorData.romaji, hex: colorData.hex
         }, colorData.slug || colorData.romaji);
       }
     };
+
+    /* 「まっさらに」の拭き取りアニメ — sweep帯が左から右へ通り抜けるあいだにcanvasをクリア
+       - CSSキーフレームで帯を移動（900ms、reduce-motionではフェードのみ300ms）
+       - 帯が画面中央を過ぎるタイミングでclearNow()を呼び、視覚的に「拭いたら消えた」感を出す */
+    var sweepBusy = false;
+    function triggerClearSweep() {
+      if (sweepBusy) return;
+      var sweep = container.querySelector('.fude-sweep');
+      if (!sweep) { engine.clear(); return; }
+      sweepBusy = true;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var duration = reduce ? 300 : 900;
+      /* 前回のアニメ状態を確実にリセットしてから開始 */
+      sweep.classList.remove('animate');
+      /* 強制リフローで再アニメを効かせる */
+      void sweep.offsetWidth;
+      sweep.classList.add('animate');
+      /* 中盤でクリア（帯が中央を横切るタイミング） */
+      setTimeout(function () { engine.clear(); }, duration * 0.5);
+      /* アニメ完了時にクラスを外す */
+      setTimeout(function () {
+        sweep.classList.remove('animate');
+        sweepBusy = false;
+      }, duration + 40);
+    }
 
     /* お手本のトグル: 表示中はランダムに次の一字へ・非表示に切替 */
     var tegamiIdx = -1;
