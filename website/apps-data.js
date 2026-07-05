@@ -21,8 +21,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "銀猫が見つけた日本の伝統色48色に浸る図鑑。色名の物語と配色、今日の一色をたずさえた、HiNaコレクション第三部。",
-    descEn: "HiNa Hare — the silver cat's quiet catalogue for immersing in 48 traditional Japanese colors, with their stories, pairings, and a color of the day."
+    descJa: "銀猫が見つけた日本の伝統色48色に浸る図鑑。色の物語とかさね配色、そして選んだ色のインクで筆あそびできる小さな書斎をたずさえた、HiNaコレクション第三部。",
+    descEn: "HiNa Hare — the silver cat's quiet catalogue of 48 traditional Japanese colors, with their stories, pairings, and a little writing room where you can play with ink in the color you choose."
   },
   {
     title: "HiNa Ichi",

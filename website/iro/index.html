@@ -12,6 +12,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./iro-data.js"></script>
 <script src="../zukan/zukan-core.js?v=1"></script>
+<script src="./fude.js?v=1"></script>
 <style>
   :root { --iro: #B8B4AE; --ink: #F2EBDD; }
   *{ box-sizing:border-box; }
@@ -168,16 +169,75 @@
   }
   .palette-swatch:hover{ flex-grow:1.6; }
 
-  /* 全画面鑑賞（浸る） */
-  #immerse{ position:fixed; inset:0; z-index:70; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  /* 筆あそび（浸るモードから進化） — その色の小さな書斎 */
+  #immerse{ position:fixed; inset:0; z-index:70; }
   #immerse[hidden]{ display:none; }
-  #immerse .imm-name{
-    writing-mode:vertical-rl; text-orientation:upright;
-    font-family:'Shippori Mincho',serif; font-weight:600;
-    font-size:clamp(56px,13vh,130px); letter-spacing:0.18em; line-height:1;
-    text-shadow:0 0 34px var(--name-glow, transparent);
+  .fude-stage{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    padding:clamp(20px,4vw,64px); background-repeat:repeat; background-size:auto;
   }
-  #immerse .imm-meta{ position:absolute; bottom:34px; left:0; right:0; text-align:center; }
+  .fude-close{
+    position:absolute; top:18px; right:22px; z-index:5;
+    width:40px; height:40px; border-radius:50%;
+    border:1px solid rgba(28,26,23,0.35); color:#1C1A17;
+    background:rgba(245,239,224,0.75); backdrop-filter:blur(4px);
+    font-size:16px; cursor:pointer; transition:border-color 0.3s;
+  }
+  .fude-close:hover{ border-color:rgba(28,26,23,0.7); }
+  .fude-paper{
+    position:relative; width:min(88vw, 720px); aspect-ratio:3/4;
+    max-height:82vh; border-radius:2px; overflow:hidden;
+    box-shadow:0 24px 80px -20px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(28,26,23,0.06);
+  }
+  .fude-canvas{
+    position:absolute; inset:0; width:100%; height:100%; display:block;
+    cursor:crosshair; touch-action:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  }
+  .fude-cornername{
+    position:absolute; right:14px; bottom:12px; text-align:right; pointer-events:none;
+    color:rgba(28,26,23,0.55);
+  }
+  .fude-cn-name{
+    display:block; font-family:'Shippori Mincho',serif; font-size:15px; letter-spacing:0.2em; font-weight:600;
+  }
+  .fude-cn-kana{
+    display:block; font-family:'Shippori Mincho',serif; font-size:10px; letter-spacing:0.28em; opacity:0.7; margin-top:2px;
+  }
+  .fude-bar{
+    position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap; justify-content:center;
+    padding:10px 14px; border-radius:999px;
+    background:rgba(245,239,224,0.85); backdrop-filter:blur(6px);
+    box-shadow:0 12px 32px -12px rgba(0,0,0,0.35);
+    max-width:min(92vw, 640px);
+  }
+  .fude-inks, .fude-pens, .fude-actions{ display:flex; gap:6px; align-items:center; }
+  .fude-inks{ padding-right:12px; border-right:1px solid rgba(28,26,23,0.15); }
+  .fude-pens{ padding-right:12px; border-right:1px solid rgba(28,26,23,0.15); }
+  .fude-ink{
+    width:26px; height:26px; border-radius:50%; border:2px solid rgba(28,26,23,0.15);
+    cursor:pointer; padding:0; transition:transform 0.2s, border-color 0.2s;
+  }
+  .fude-ink:hover{ transform:scale(1.08); }
+  .fude-ink.active{ border-color:#1C1A17; transform:scale(1.12); }
+  .fude-pen, .fude-btn{
+    font-family:'Shippori Mincho',serif; font-size:12px; letter-spacing:0.12em;
+    color:#1C1A17; border:1px solid rgba(28,26,23,0.25); border-radius:999px;
+    padding:5px 12px; background:transparent; cursor:pointer;
+    transition:background 0.2s, border-color 0.2s;
+  }
+  .fude-pen:hover, .fude-btn:hover{ background:rgba(28,26,23,0.06); border-color:rgba(28,26,23,0.5); }
+  .fude-pen.active{ background:#1C1A17; color:#F5EFE0; border-color:#1C1A17; }
+  .fude-btn{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.14em; font-weight:700; text-transform:uppercase;
+  }
+  @media (max-width:600px){
+    .fude-paper{ width:94vw; max-height:70vh; }
+    .fude-bar{ gap:8px; padding:8px 10px; bottom:14px; }
+    .fude-inks, .fude-pens{ padding-right:8px; }
+    .fude-pen, .fude-btn{ font-size:11px; padding:4px 10px; }
+  }
 
   /* 銀猫: 肉球トレイル */
   .paw-trail{ pointer-events:none; }
@@ -270,15 +330,8 @@
   </div>
 </div>
 
-<!-- 全画面鑑賞（浸る） -->
-<div id="immerse" role="dialog" aria-modal="true" aria-label="全画面で色を眺める" hidden>
-  <button class="index-close" type="button" id="immerse-close" aria-label="閉じる">×</button>
-  <p class="imm-name" id="immerse-name"></p>
-  <div class="imm-meta">
-    <p class="font-mincho text-[14px] tracking-[0.3em]" id="immerse-kana"></p>
-    <p class="font-heading text-[10px] tracking-[2px] uppercase mt-2" id="immerse-hex" style="opacity:0.75;"></p>
-  </div>
-</div>
+<!-- 筆あそび（浸るモードから進化） — その色の小さな書斎 -->
+<div id="immerse" role="dialog" aria-modal="true" aria-label="その色で筆あそび" tabindex="-1" hidden></div>
 
 <!-- フッター -->
 <footer id="site-footer" class="relative border-t border-white/5 py-16 px-6 text-center overflow-hidden">
@@ -639,18 +692,40 @@
     });
   }
 
-  /* ---- 全画面鑑賞（浸る）の中身（開閉・フォーカス・ロックはcoreが担う） ---- */
+  /* ---- 筆あそび（浸るモードから進化） ---- */
+  /* 開閉・フォーカス・ロックはcoreが担い、中身の生成・破棄はNoctaFudeが担う */
+  var fudeInstance = null;
+
   function populateImmerse(i) {
     var c = NOCTA_IRO[i];
     var im = document.getElementById('immerse');
     if (!c || !im) return;
-    var inks = inkFor(c.hex);
-    im.style.background = c.hex;
-    im.style.color = inks.nameInk;
-    im.style.setProperty('--name-glow', inks.nameGlow);
-    document.getElementById('immerse-name').textContent = c.name;
-    document.getElementById('immerse-kana').textContent = c.kana;
-    document.getElementById('immerse-hex').textContent = c.romaji + ' · ' + c.hex;
+    /* かさねのhex解決 */
+    var hexes = (c.kasane || []).map(function (n) {
+      var idx = nameToIndex[n];
+      return idx !== undefined ? NOCTA_IRO[idx].hex : c.hex;
+    });
+    /* 前回のインスタンスがあれば破棄 */
+    if (fudeInstance) { fudeInstance.detach(); fudeInstance = null; }
+    /* NoctaFudeで筆あそび画面を構築 */
+    fudeInstance = window.NoctaFude.mount(im, {
+      name: c.name, kana: c.kana, romaji: c.romaji, hex: c.hex,
+      season: c.season, kasane: c.kasane || [], hexes: hexes,
+      slug: (SLUGS && SLUGS[i]) ? SLUGS[i] : (c.romaji || 'iro').toLowerCase()
+    });
+    /* onOpenはcoreのhidden=false前に呼ばれるため、rAF×2でレイアウト確定を待ってからresize
+       （setTimeoutより低速端末で安定・初回1x1描画を防ぐ） */
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (fudeInstance) fudeInstance.resize();
+      });
+    });
+  }
+
+  function teardownImmerse() {
+    if (fudeInstance) { fudeInstance.detach(); fudeInstance = null; }
+    var im = document.getElementById('immerse');
+    if (im) im.innerHTML = '';
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -662,15 +737,20 @@
       closeBtn: document.getElementById('index-close'),
       trigger: document.getElementById('index-btn')
     });
+    /* 筆あそび画面のダイアログ登録
+       - onOpenでNoctaFudeマウント（.fude-closeがHTMLに現れる）
+       - onCloseでNoctaFudeを破棄
+       - 閉じるボタンは動的生成なのでイベント委譲で処理
+       - 背景クリック閉じるは廃止（canvas描画と衝突するため）— ESCと×ボタンのみで閉じる */
     immerseDialog = app.registerDialog('immerse', {
       el: document.getElementById('immerse'),
-      closeBtn: document.getElementById('immerse-close'),
-      onOpen: populateImmerse
+      closeBtn: null,
+      onOpen: populateImmerse,
+      onClose: teardownImmerse,
+      backdropClose: false
     });
-
-    /* 浸るモードは色面のどこをタップしても閉じる（coreの背景クリックに加えて全域） */
     document.getElementById('immerse').addEventListener('click', function (e) {
-      if (e.target !== this) immerseDialog.close();
+      if (e.target.closest('.fude-close')) immerseDialog.close();
     });
 
     buildIndex();
