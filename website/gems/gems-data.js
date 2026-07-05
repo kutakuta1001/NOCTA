@@ -19,6 +19,12 @@
  * descJa      : 日本語の短い鑑賞的説明文
  * descEn      : 英語の短い鑑賞的説明文（言語トグル用）
  *
+ * 【3D宝石（Gyu「光にかざす」）用の任意フィールド・website/gems/gem3d.js が使用】
+ * cut         : "brilliant"|"oval"|"step"|"cabochon"|"crystal"（カット形状）。未指定=写真のみ
+ * gem3d       : "transparent"|"opaque"|"iridescent"（マテリアルプリセット）
+ * ior         : 屈折率（実物値。ダイヤ2.42/コランダム1.77/ベリル1.58/水晶1.55…）
+ *   3フィールドが揃った石だけライトボックスに Photo/Gem トグルが出る（Phase 1は先頭5石+オパール）
+ *
  * 出典・ライセンスは全件 2026-07-04 にWebFetchで実在確認済み。
  */
 const NOCTA_GEMS = [
@@ -31,6 +37,9 @@ const NOCTA_GEMS = [
     license: "Public Domain",
     credit: null,
     accentColor: "#6E93C4",
+    cut: "brilliant",
+    gem3d: "transparent",
+    ior: 2.42,
     hardness: "10",
     origin: "南アフリカ、ロシア、ボツワナ 他",
     kotobaJa: "永遠の絆・純潔・不屈",
@@ -48,6 +57,9 @@ const NOCTA_GEMS = [
     license: "CC BY-SA 4.0",
     credit: "Sasaki kijinuko",
     accentColor: "#9B111E",
+    cut: "oval",
+    gem3d: "transparent",
+    ior: 1.77,
     hardness: "9",
     origin: "ミャンマー、タイ、スリランカ",
     kotobaJa: "情熱・勇気・威厳",
@@ -65,6 +77,9 @@ const NOCTA_GEMS = [
     license: "CC BY-SA 3.0",
     credit: "Gemsphoto",
     accentColor: "#E8B923",
+    cut: "brilliant",
+    gem3d: "transparent",
+    ior: 1.77,
     hardness: "9",
     origin: "スリランカ",
     kotobaJa: "慈愛・誠実・集中",
@@ -82,6 +97,9 @@ const NOCTA_GEMS = [
     license: "CC BY 2.0",
     credit: "Cliff (Carl Clifford)",
     accentColor: "#0F5C3D",
+    cut: "step",
+    gem3d: "transparent",
+    ior: 1.58,
     hardness: "7.5-8",
     origin: "コロンビア",
     kotobaJa: "幸運・幸福・安定",
@@ -99,6 +117,9 @@ const NOCTA_GEMS = [
     license: "CC BY-SA 4.0",
     credit: "Didier Descouens",
     accentColor: "#9966CC",
+    cut: "brilliant",
+    gem3d: "transparent",
+    ior: 1.55,
     hardness: "7",
     origin: "ブラジル、ウルグアイ",
     kotobaJa: "誠実・心の平和",
@@ -116,6 +137,9 @@ const NOCTA_GEMS = [
     license: "CC BY 2.0",
     credit: "James St. John",
     accentColor: "#C9E4E0",
+    cut: "cabochon",
+    gem3d: "iridescent",
+    ior: 1.45,
     hardness: "5.5-6.5",
     origin: "米国アイダホ州、スペンサー・オパール鉱山",
     kotobaJa: "希望・純真無垢",

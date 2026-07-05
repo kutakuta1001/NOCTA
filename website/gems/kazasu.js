@@ -13,6 +13,7 @@
  *   wrap: 光沢を適用するコンテナ（内側に img.gyu-gem-img が存在する必要）
  *   opts.reduce: boolean (省略時はprefers-reduced-motionから自動判定)
  *   opts.accentColor: string (虹色プリズムの主色として使う。省略時は白系のニュートラル)
+ *   opts.onTilt: function(nx, ny) (入力の正規化座標-1〜1を外部通知。3Dジェムの傾き駆動等に使う)
  */
 (function () {
   "use strict";
@@ -60,18 +61,23 @@
     }
     applyPrismBg();
 
+    /* 入力を外部に通知するコールバック（3Dジェムの傾き駆動などに使う） */
+    var onTilt = typeof opts.onTilt === 'function' ? opts.onTilt : null;
+
     /* マウス座標を -1〜1 に正規化 */
     function setFromClient(clientX, clientY) {
       var rect = wrap.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) return;
       currentX = Math.max(-1, Math.min(1, (clientX - rect.left) / rect.width * 2 - 1));
       currentY = Math.max(-1, Math.min(1, (clientY - rect.top) / rect.height * 2 - 1));
+      if (onTilt) onTilt(currentX, currentY);
       scheduleRender();
     }
 
     function setFromNormalized(x, y) {
       currentX = Math.max(-1, Math.min(1, x));
       currentY = Math.max(-1, Math.min(1, y));
+      if (onTilt) onTilt(currentX, currentY);
       scheduleRender();
     }
 
