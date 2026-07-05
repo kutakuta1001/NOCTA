@@ -18,25 +18,51 @@
   var SUMI = "#1C1A17";
   var PAPER_TINT_RATIO = 0.06;  /* 紙にその色を6%混ぜる */
 
-  /* お手本モチーフ — なぞり用の薄墨SVG（漢字1〜2画・かな1字・記号など8種）
-     viewBoxは全て0 0 100 100・stroke経路として書き順の骨格を表現 */
+  /* お手本モチーフ — 幾何学的な意匠8種（カリグラフィで45°斜めを引くと綺麗になる）
+     viewBoxは全て0 0 100 100・カリグラフィの45°スナップと相性の良い形を選定 */
   var TEGAMI = [
-    /* 一 */
-    { label: '一', paths: ['M12 52 C 30 48, 70 48, 88 52'] },
-    /* 二 */
-    { label: '二', paths: ['M18 34 C 34 30, 66 30, 82 34', 'M12 66 C 30 62, 70 62, 88 66'] },
-    /* 川 */
-    { label: '川', paths: ['M30 18 C 26 40, 26 62, 26 84', 'M50 14 C 46 40, 46 62, 50 88', 'M72 20 C 74 42, 74 64, 78 86'] },
-    /* 山 */
-    { label: '山', paths: ['M20 78 L 20 40', 'M20 78 L 80 78', 'M50 78 L 50 20', 'M80 78 L 80 40'] },
-    /* 月 */
-    { label: '月', paths: ['M30 20 L 30 82 L 72 82 L 72 20 Z', 'M30 40 L 72 40', 'M30 60 L 72 60'] },
-    /* の（かな） */
-    { label: 'の', paths: ['M62 22 C 32 22, 20 42, 30 62 C 40 78, 68 78, 76 60 C 82 46, 72 32, 58 34 C 46 36, 42 50, 50 60'] },
-    /* さ（かな・簡略） */
-    { label: 'さ', paths: ['M32 26 C 46 22, 62 22, 74 28', 'M46 14 C 42 30, 40 50, 44 70', 'M64 40 C 50 46, 40 56, 50 74 C 58 84, 74 72, 66 60'] },
-    /* 花（略字風の記号） */
-    { label: '花', paths: ['M50 20 C 40 30, 40 44, 50 50 C 60 44, 60 30, 50 20 Z', 'M30 40 C 40 30, 40 30, 50 50', 'M70 40 C 60 30, 60 30, 50 50', 'M35 65 C 45 55, 55 55, 65 65', 'M50 50 L 50 88'] }
+    /* 八角星: 45°交差の代表 */
+    { label: 'octagon-star', paths: [
+      'M50 8 L 62 38 L 92 50 L 62 62 L 50 92 L 38 62 L 8 50 L 38 38 Z',
+      'M22 22 L 78 78', 'M78 22 L 22 78'
+    ]},
+    /* 六角の花・雪の結晶風 */
+    { label: 'hexagon-flower', paths: [
+      'M50 10 L 79 27 L 79 63 L 50 80 L 21 63 L 21 27 Z',
+      'M50 10 L 50 80', 'M21 27 L 79 63', 'M79 27 L 21 63',
+      'M50 45 L 50 55', 'M45 50 L 55 50'
+    ]},
+    /* 五芒星 */
+    { label: 'pentagram', paths: [
+      'M50 10 L 61 40 L 92 40 L 66 58 L 76 88 L 50 68 L 24 88 L 34 58 L 8 40 L 39 40 Z'
+    ]},
+    /* 対角十字＋直角十字（45°スナップの練習に最適） */
+    { label: 'cross-diagonal', paths: [
+      'M15 15 L 85 85', 'M85 15 L 15 85',
+      'M15 50 L 85 50', 'M50 15 L 50 85'
+    ]},
+    /* 螺旋 */
+    { label: 'spiral', paths: [
+      'M50 50 Q 40 40, 60 40 Q 75 40, 75 55 Q 75 78, 45 78 Q 15 78, 15 50 Q 15 15, 55 15 Q 90 15, 88 55'
+    ]},
+    /* 三菱重ね（アラベスク風） */
+    { label: 'three-lozenges', paths: [
+      'M50 12 L 68 30 L 50 48 L 32 30 Z',
+      'M28 42 L 46 60 L 28 78 L 10 60 Z',
+      'M72 42 L 90 60 L 72 78 L 54 60 Z',
+      'M32 62 L 50 80 L 68 62'
+    ]},
+    /* 円中正方形（対角補助線＝45°ガイド） */
+    { label: 'square-in-circle', paths: [
+      'M50 15 A 35 35 0 1 1 49.99 15 Z',
+      'M25 25 L 75 25 L 75 75 L 25 75 Z',
+      'M25 25 L 75 75', 'M75 25 L 25 75'
+    ]},
+    /* ジグザグ二段（45°斜めの反復） */
+    { label: 'zigzag', paths: [
+      'M12 32 L 28 48 L 44 32 L 60 48 L 76 32 L 92 48',
+      'M12 68 L 28 52 L 44 68 L 60 52 L 76 68 L 92 52'
+    ]}
   ];
 
   function tegamiSvg(index) {
@@ -317,7 +343,7 @@
       if (e.button !== undefined && e.button !== 0) return;
       try { canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); } catch (_) { /* Safari/古いWebViewは無視 */ }
       var p = clientToLocal(e);
-      stroke = { last: p, v: 0, reservoir: 1.0, ink: ink, pen: pen, dwellAt: p, dwellSince: p.t, pointerId: e.pointerId, stampCount: 0 };
+      stroke = { last: p, start: { x: p.x, y: p.y }, v: 0, reservoir: 1.0, ink: ink, pen: pen, dwellAt: p, dwellSince: p.t, pointerId: e.pointerId, stampCount: 0 };
       ctx.save();
       /* 筆=multiply（紙に染みる）／カリグラフィ=source-over（蛍光ペンは重ねても濃くならない） */
       ctx.globalCompositeOperation = stroke.pen === 'calligraphy' ? 'source-over' : 'multiply';
@@ -336,6 +362,31 @@
       var p = clientToLocal(e);
       var dx = p.x - stroke.last.x, dy = p.y - stroke.last.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
+      /* カリグラフィ限定: ストローク全体の進行方向を8方向(45°ステップ)にゆるくスナップ
+         カリグラフィは45°斜めが美しい書体特性なので、大まかにその方向で動かせば綺麗な直線になる。
+         起点からの累積方向で判定し、生座標をスナップ線上に投影する（局所ノイズに強い）。
+         書き始めの短距離では未発動で、フリーハンドの起筆を尊重する。 */
+      if (isCalli) {
+        var totalDx = p.x - stroke.start.x, totalDy = p.y - stroke.start.y;
+        var totalDist = Math.sqrt(totalDx * totalDx + totalDy * totalDy);
+        if (totalDist > 15) {
+          var raw = Math.atan2(totalDy, totalDx);
+          var step = Math.PI / 4;
+          var snapped = Math.round(raw / step) * step;
+          var d = raw - snapped;
+          while (d > Math.PI) d -= Math.PI * 2;
+          while (d < -Math.PI) d += Math.PI * 2;
+          if (Math.abs(d) < Math.PI / 5) {  /* 36°以内ならスナップ */
+            var adj = raw - d * 0.85;        /* 85%スナップ方向へ寄せる（残り15%はフリーハンドの揺らぎ） */
+            p.x = stroke.start.x + Math.cos(adj) * totalDist;
+            p.y = stroke.start.y + Math.sin(adj) * totalDist;
+            dx = p.x - stroke.last.x;
+            dy = p.y - stroke.last.y;
+            dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 0.6) return;
+          }
+        }
+      }
       if (dist < 0.6) {
         /* 完全静止でもにじみ検出だけは走らせる（筆のみ・カリグラフィは蛍光ペンなのでにじまない） */
         if (!isCalli) {
