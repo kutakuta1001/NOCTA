@@ -721,7 +721,7 @@
       onReady = function () { cleanup(); resolve(window.NoctaGem3d); };
       timer = setTimeout(function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d load timeout')); }, 8000);
       window.addEventListener('noctagem3d-ready', onReady);
-      s.textContent = "import './gem3d.js?v=4'; window.dispatchEvent(new Event('noctagem3d-ready'));";
+      s.textContent = "import './gem3d.js?v=5'; window.dispatchEvent(new Event('noctagem3d-ready'));";
       s.onerror = function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d script error')); };
       document.head.appendChild(s);
     });

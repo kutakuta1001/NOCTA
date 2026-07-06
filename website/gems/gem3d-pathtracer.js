@@ -40,6 +40,11 @@ export function createDeveloper(opts) {
   var ptRenderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
   ptRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   ptRenderer.setSize(size.x, size.y);
+  /* 現像像の明るさ: PBRと同じACESフィルミックトーンマッピングを使い、露出はPBR(1.4)より
+     高めの1.7に。パストレースは屈折で光が減衰し暗く沈みやすいため、静止画を少し持ち上げる。
+     WebGLPathTracer は最終出力に renderer のトーンマッピング/露出を反映する。 */
+  ptRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  ptRenderer.toneMappingExposure = 1.7;
 
   var pt = new WebGLPathTracer(ptRenderer);
   pt.tiles.set(2, 2); /* 1フレームを分割してGPU占有時間を抑える */
@@ -51,8 +56,8 @@ export function createDeveloper(opts) {
      差し込んで取り込ませ、直後に呼び出し前の値へ復帰する（PBR側の PMREM env を汚さない）。
      env の主管理はこの developer 側（gem3d.js の withPtEnv は PMREM の一時退避のみを担う）。 */
   var ptEnv = new GradientEquirectTexture();
-  ptEnv.topColor.set(0x3a3630);
-  ptEnv.bottomColor.set(0x0a0906);
+  ptEnv.topColor.set(0x6a6156);      /* 環境光を明るめに（上方の柔らかいフィル光を増やす） */
+  ptEnv.bottomColor.set(0x1a1712);   /* 下側もわずかに持ち上げ、底の黒沈みを緩和 */
   ptEnv.update();
 
   /* setScene / resync を「PT環境を差した状態」で通すラッパー。
