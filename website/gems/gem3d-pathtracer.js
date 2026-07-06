@@ -56,8 +56,10 @@ export function createDeveloper(opts) {
      差し込んで取り込ませ、直後に呼び出し前の値へ復帰する（PBR側の PMREM env を汚さない）。
      env の主管理はこの developer 側（gem3d.js の withPtEnv は PMREM の一時退避のみを担う）。 */
   var ptEnv = new GradientEquirectTexture();
-  ptEnv.topColor.set(0x6a6156);      /* 環境光を明るめに（上方の柔らかいフィル光を増やす） */
-  ptEnv.bottomColor.set(0x1a1712);   /* 下側もわずかに持ち上げ、底の黒沈みを緩和 */
+  ptEnv.topColor.set(0x7c7264);      /* 環境光を明るめに（上方の柔らかいフィル光） */
+  ptEnv.bottomColor.set(0x3a3327);   /* 地平〜下側を持ち上げる。宝石の外周（グレージング角）は
+                                        環境を強く反射するため、ここを明るくすると輪郭が反射光を拾って
+                                        黒背景から分離する（縁が暗く溶ける問題への本質的対処）。 */
   ptEnv.update();
 
   /* setScene / resync を「PT環境を差した状態」で通すラッパー。

@@ -825,7 +825,7 @@ function mount(container, gemData, opts) {
       return;
     }
     if (devReq) return; devReq = true;
-    import('./gem3d-pathtracer.js?v=2').then(function (mod) {
+    import('./gem3d-pathtracer.js?v=3').then(function (mod) {
       /* import 解決＝in-flight 完了。ラッチを解除する（成功・早期return どちらの経路も一箇所で解除）。
          これがないと、傾け等で下の renderMode ガードにより早期returnしたとき devReq が true のまま固着し、
          以後 develop が永久に起動しなくなる。 */

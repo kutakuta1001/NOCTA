@@ -222,6 +222,23 @@
     filter:blur(20px);
     pointer-events:none;
   }
+  /* 分離用ハロ: 暗い宝石（特に濃色石）の外周輪郭が黒背景に溶けないよう、
+     宝石の背後に柔らかな光だまりを敷いて輪郭をシルエットとして浮かせる。
+     宝石(canvas z3)より奥の z0。3Dモードのみ表示（写真は自前の背景を持つ）。 */
+  .gyu-halo{
+    position:absolute; left:50%; top:49%; width:128%; height:70%; z-index:0;
+    transform:translate(-50%, -50%);
+    /* 宝石背後の光だまり（ベロアにスポット）。暗い外周輪郭が黒に溶けず「浮く」よう、
+       宝石の全幅(左右の尖端)まで明るさを残す。中心は宝石で覆われるので、
+       明るさのピークをやや広く保つ横長楕円にする。 */
+    background:radial-gradient(ellipse 50% 50% at 50% 50%,
+      rgba(176,166,146,0.55) 0%,
+      rgba(150,140,120,0.44) 46%,
+      rgba(120,110,95,0.20) 66%,
+      transparent 82%);
+    filter:blur(34px); opacity:0; transition:opacity 0.6s ease; pointer-events:none;
+  }
+  .gyu-gem-wrap.mode-gem .gyu-halo{ opacity:1; }
   /* 3D宝石の描画先 — 写真レイヤと切り替え（重ねない） */
   .gyu-3d{
     position:absolute; inset:0; z-index:3;
@@ -344,6 +361,7 @@
 <div id="lightbox" role="dialog" aria-modal="true" aria-label="光にかざす" hidden>
   <button class="index-close" type="button" id="lightbox-close" aria-label="閉じる">×</button>
   <div class="gyu-gem-wrap" id="gyu-wrap">
+    <div class="gyu-halo" aria-hidden="true"></div>
     <div class="gyu-prism" aria-hidden="true"></div>
     <div class="gyu-gem-inner">
       <img id="lightbox-img" class="gyu-gem-img" src="" alt="">
@@ -721,7 +739,7 @@
       onReady = function () { cleanup(); resolve(window.NoctaGem3d); };
       timer = setTimeout(function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d load timeout')); }, 8000);
       window.addEventListener('noctagem3d-ready', onReady);
-      s.textContent = "import './gem3d.js?v=5'; window.dispatchEvent(new Event('noctagem3d-ready'));";
+      s.textContent = "import './gem3d.js?v=6'; window.dispatchEvent(new Event('noctagem3d-ready'));";
       s.onerror = function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d script error')); };
       document.head.appendChild(s);
     });
