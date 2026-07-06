@@ -12,6 +12,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./flora-data.js"></script>
 <script src="../zukan/zukan-core.js?v=1"></script>
+<script src="./hana.js?v=1"></script>
 <style>
   :root { --gem: #B8B4AE; }
   *{ box-sizing:border-box; }
@@ -175,6 +176,91 @@
   }
   .lang-btn:hover{ color:#E8E0D0; border-color:rgba(184,180,174,0.5); }
 
+  /* 「咲かせて遊ぶ」CTA — Ichiの遊びレイヤーへの入口。iro（Hare）の.fude-ctaと対称。
+     coverセクションは花ごとの--gemを持たないため、:rootの既定シルバーに委ねる。 */
+  .hana-cta{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 22px; border-radius:999px;
+    background:var(--gem); color:#0A0906;
+    border:1px solid rgba(184,180,174,0.4); cursor:pointer;
+    font-family:'EB Garamond','Shippori Mincho',serif;
+    font-size:14px; letter-spacing:0.05em; font-weight:600;
+    box-shadow:0 8px 24px -12px rgba(10,9,6,0.4);
+    transition:transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    position:relative; overflow:hidden;
+  }
+  .hana-cta::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(120deg, transparent 30%, rgba(255,252,244,0.3) 50%, transparent 70%);
+    transform:translateX(-100%); transition:transform 0.7s ease;
+  }
+  .hana-cta:hover{
+    transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(10,9,6,0.5);
+    filter:brightness(1.05);
+  }
+  .hana-cta:hover::before{ transform:translateX(100%); }
+  @media (prefers-reduced-motion:reduce){
+    .hana-cta, .hana-cta:hover{ transform:none; }
+    .hana-cta::before{ display:none; }
+  }
+
+  /* 咲かせる（Ichiの遊びレイヤー） — iro（Hare）の#immerse/筆あそびと対称の全画面ビュー */
+  #hana-view{ position:fixed; inset:0; z-index:70; background:#0A0906; }
+  #hana-view[hidden]{ display:none; }
+  #hana-mount{ position:relative; width:100%; height:100%; display:flex; flex-direction:column; }
+  .hana-stage{ position:relative; flex:1; overflow:hidden; }
+  .hana-canvas{ display:block; width:100%; height:100%; touch-action:none; cursor:crosshair; }
+  .hana-tools{
+    position:relative; z-index:2;
+    display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px;
+    padding:14px 18px; background:rgba(10,9,6,0.92);
+    border-top:1px solid rgba(184,180,174,0.15);
+  }
+  .hana-seasons{ display:flex; gap:6px; padding-right:12px; border-right:1px solid rgba(184,180,174,0.2); }
+  .hana-season{
+    font-family:'Shippori Mincho','EB Garamond',serif; font-size:13px; letter-spacing:0.08em;
+    color:#E8E0D0; border:1px solid rgba(184,180,174,0.3); border-radius:999px;
+    padding:6px 15px; background:transparent; cursor:pointer;
+    transition:background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  }
+  .hana-season:hover{ border-color:rgba(184,180,174,0.6); }
+  .hana-season.is-on{ background:var(--gem); color:#0A0906; border-color:var(--gem); }
+  .hana-clear, .hana-press{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.12em; font-weight:700; text-transform:uppercase;
+    color:#E8E0D0; border:1px solid rgba(184,180,174,0.3); border-radius:999px;
+    padding:9px 16px; background:transparent; cursor:pointer;
+    transition:background 0.25s ease, border-color 0.25s ease;
+  }
+  .hana-clear:hover, .hana-press:hover{ background:rgba(184,180,174,0.12); border-color:rgba(184,180,174,0.6); }
+
+  /* 「真っさらにする」の拭き取りアニメ — hana.jsが.hana-stageに直接hana-sweepクラスを
+     付け外しする（iroの独立オーバーレイ要素とは異なる構造のため::afterで代替）。
+     タイミング・イージングはiroの.fude-sweepと同一（900ms・同じcubic-bezier）。 */
+  .hana-stage.hana-sweep::after{
+    content:""; position:absolute; inset:-4% 0; z-index:3; pointer-events:none;
+    background:linear-gradient(105deg,
+      transparent 0%,
+      #0A0906 22%,
+      #0A0906 78%,
+      transparent 100%);
+    animation:hana-sweep 900ms cubic-bezier(0.5, 0.1, 0.4, 1) forwards;
+  }
+  @keyframes hana-sweep{
+    0%   { transform:translateX(-140%); opacity:0; }
+    15%  { opacity:1; }
+    50%  { transform:translateX(-20%); opacity:1; }
+    85%  { opacity:1; }
+    100% { transform:translateX(140%); opacity:0; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hana-stage.hana-sweep::after{ animation:hana-sweep-fade 300ms ease forwards; }
+  }
+  @keyframes hana-sweep-fade{
+    0%   { transform:none; opacity:0; }
+    50%  { transform:none; opacity:0.6; }
+    100% { transform:none; opacity:0; }
+  }
+
   @media (prefers-reduced-motion:reduce){
     html{ scroll-behavior:auto; }
     .reveal{ opacity:1; transform:none; transition:none; }
@@ -227,6 +313,9 @@
     <h1 class="font-display text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">Ichi</h1>
     <p class="font-jp text-[14px] leading-[2] text-sub mt-6" data-i18n="cover.tagline">遊ぶことで人生を彩ろう。季節の花を、ただ静かに眺めるための図鑑。</p>
     <div id="today-slot"></div>
+    <div class="mt-8">
+      <button type="button" class="hana-cta" id="hana-open" aria-haspopup="dialog" aria-expanded="false" aria-controls="hana-view" data-i18n="cover.sakaseru">咲かせて遊ぶ →</button>
+    </div>
     <div class="mt-12 flex justify-center">
       <span class="scroll-cue text-sub font-heading text-[13px]" aria-hidden="true">↓</span>
     </div>
@@ -263,6 +352,12 @@
   </div>
 </div>
 
+<!-- 咲かせる（Ichiの遊びレイヤー） -->
+<div id="hana-view" role="dialog" aria-modal="true" aria-label="咲かせる" hidden>
+  <button class="index-close" type="button" id="hana-close" aria-label="閉じる">×</button>
+  <div id="hana-mount"></div>
+</div>
+
 <!-- フッター -->
 <footer id="site-footer" class="relative border-t border-white/5 py-16 px-6 text-center overflow-hidden">
   <div id="footer-cat" class="reveal absolute left-1/2 -translate-x-1/2 -top-6" aria-hidden="true">
@@ -289,6 +384,7 @@
     "footer.tagline":  { ja: "すべての花は、叩き台です。眺め方は自由に。",                          en: "Every flower here is a starting point. Look at it however you like." },
     "footer.note":     { ja: "誕生花は代表的な月の一例です。花言葉は言い伝えに基づく表現であり、地域・品種により異なることがあります。", en: "Birth flowers shown are representative examples. Flower meanings are traditional expressions and may vary by region and variety." },
     "footer.back":     { ja: "NOCTA ホームへ戻る",                                                en: "Back to NOCTA Home" },
+    "cover.sakaseru":  { ja: "咲かせて遊ぶ →",                                                    en: "Play — make flowers bloom →" },
     "meta.origin":     { ja: "原産",                                                              en: "Origin" },
     "meta.season":     { ja: "開花期",                                                            en: "In Bloom" },
     "meta.source":     { ja: "出典",                                                              en: "Source" },
@@ -340,6 +436,7 @@
 
   var lightboxIdx = -1;
   var indexDialog = null, lightbox = null;
+  var hanaInstance = null, hanaDialog = null;
 
   var app = Z.createApp({
     strings: STRINGS,
@@ -637,6 +734,30 @@
         img.src = '';
         lightboxIdx = -1;
       }
+    });
+    /* 咲かせる（Ichiの遊びレイヤー）のダイアログ登録
+       - trigger/closeBtnとも静的な単一要素のため、iroの目次/ライトボックスと同じ直接登録で足りる
+         （iroの筆あそびはCTAが色ごとに複数あるため引数付きopen()を使うが、flora側のCTAは1つだけ）
+       - onOpenはcoreのel.hidden=false**前**に呼ばれる。#hana-viewがまだdisplay:noneの間に
+         NoctaHana.mountするため、内部canvasの初期resize()は0サイズで走ってしまう。
+         hana.jsはwindow 'resize' イベントで再計算するため、hidden解除後にrAF×2でwindowへ
+         resizeイベントを送り、レイアウト確定後の実寸でcanvasを合わせ直す
+         （iroの筆あそび呼び出し側と同じ「rAF×2待ち」戦略・hana.js自体は変更しない） */
+    hanaDialog = app.registerDialog('hana', {
+      el: document.getElementById('hana-view'),
+      closeBtn: document.getElementById('hana-close'),
+      trigger: document.getElementById('hana-open'),
+      onOpen: function () {
+        if (!window.NoctaHana) return;
+        hanaInstance = window.NoctaHana.mount(document.getElementById('hana-mount'), {});
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });
+        });
+      },
+      onClose: function () {
+        if (hanaInstance) { hanaInstance.detach(); hanaInstance = null; }
+      },
+      backdropClose: false
     });
 
     buildIndex();
