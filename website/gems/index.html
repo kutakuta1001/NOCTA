@@ -13,12 +13,17 @@
 <script src="./gems-data.js"></script>
 <script src="../zukan/zukan-core.js?v=1"></script>
 <script src="./kazasu.js?v=1"></script>
+<!-- PTハイブリッドの純粋関数（対応判定・静止判定）。gem3d.js は動的importなので通常scriptで先に読む -->
+<script src="./gem3d-pt-util.js?v=1"></script>
 <!-- 3D宝石(gem3d.js)用のThree.js解決マップ。bare specifier 'three' / 'three/addons/' をCDN ESMへ -->
 <script type="importmap">
 {
   "imports": {
     "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+    "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/",
+    "three-mesh-bvh": "https://cdn.jsdelivr.net/npm/three-mesh-bvh@0.9.10/build/index.module.js",
+    "three-gpu-pathtracer": "https://cdn.jsdelivr.net/npm/three-gpu-pathtracer@0.0.24/build/index.module.js"
   }
 }
 </script>
@@ -694,6 +699,9 @@
   var gem3dModulePromise = null;   /* gem3d.js の遅延import（成功時のみ保持・失敗でnull） */
   var currentMode = 'gem';         /* 'gem' | 'photo' — 3Dデータを持つ石の初期はgem */
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* ?nopt=1 で静止時パストレース現像を明示的に無効化（PBRのみ・デバッグ/非対応確認用） */
+  var noPt = false;
+  try { noPt = new URLSearchParams(window.location.search).get('nopt') === '1'; } catch (e) {}
 
   function has3d(g) { return g && g.cut && g.gem3d && typeof g.ior === 'number'; }
 
@@ -713,7 +721,7 @@
       onReady = function () { cleanup(); resolve(window.NoctaGem3d); };
       timer = setTimeout(function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d load timeout')); }, 8000);
       window.addEventListener('noctagem3d-ready', onReady);
-      s.textContent = "import './gem3d.js?v=3'; window.dispatchEvent(new Event('noctagem3d-ready'));";
+      s.textContent = "import './gem3d.js?v=4'; window.dispatchEvent(new Event('noctagem3d-ready'));";
       s.onerror = function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d script error')); };
       document.head.appendChild(s);
     });
@@ -742,7 +750,7 @@
       var inst = mod.mount(host, {
         cut: g.cut, gem3d: g.gem3d, ior: g.ior, accentColor: g.accentColor, name: g.title,
         hardness: g.hardness, dispersion: g.dispersion   /* 硬度依存roughness・石別dispersionに必要 */
-      }, { reduce: reduceMotion });
+      }, { reduce: reduceMotion, noPt: noPt });
       if (stale()) { if (inst) inst.detach(); return; }   /* mount中にstale化したら即破棄 */
       if (!inst) { setMode('photo'); return; }             /* WebGL不可等 → 写真へ */
       gem3dInstance = inst;

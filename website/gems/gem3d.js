@@ -432,6 +432,45 @@ function buildShowcaseScene() {
 }
 
 /* ================================================================
+ * PT（現像）用の実光源群
+ * three-gpu-pathtracer は emissive な MeshStandardMaterial（emissive色 × emissiveIntensity）
+ * のみを光源として拾う。上の buildShowcaseScene のライトカードは MeshBasicMaterial で、
+ * PBR用の PMREM 環境マップにベイクするためのものであり、PT の scene に実体として置いても発光しない
+ * （PT のシーン生成は traverseVisible でメッシュを集め、発光は material.emissive*emissiveIntensity で判定する）。
+ * そこで PT 専用に、ショーケースと似た配置・輝度感の emissive 板群を Group として用意する。
+ * develop 中だけ visible=true にして setScene に拾わせ、宝石ファセット越しの多重反射・干渉模様を生む。
+ * PBR時は visible=false（PBRは PMREM env + DirectionalLight で描くため、この群は描画も照明も一切しない）。
+ * ================================================================ */
+function buildEmissiveLightGroup() {
+  var g = new THREE.Group();
+  /* pos=位置 / size=板の一辺 / color=発光色 / intensity=emissiveIntensity。
+     ショーケース（上方キー・前面左右ストリップ・斜め上スポット・下からの照り返し相当）を
+     emissive 板で近似。強めの intensity で宝石内部に強い映り込みと分散を起こす。 */
+  var specs = [
+    { pos: [-2.4, 2.2, 2.6], size: 2.2, color: 0xfff2dc, intensity: 6 },
+    { pos: [ 2.6, 1.6, 2.2], size: 1.8, color: 0xe8f0ff, intensity: 5 },
+    { pos: [ 0.0, 3.0, 0.4], size: 2.6, color: 0xffffff, intensity: 7 },
+    { pos: [-1.8, -1.2, 2.4], size: 1.4, color: 0xffe9cf, intensity: 4 },
+    { pos: [ 2.2, -0.6, 1.6], size: 1.4, color: 0xd8e6ff, intensity: 4 }
+  ];
+  specs.forEach(function (s) {
+    var m = new THREE.Mesh(
+      new THREE.PlaneGeometry(s.size, s.size),
+      new THREE.MeshStandardMaterial({
+        color: 0x000000,
+        emissive: new THREE.Color(s.color),
+        emissiveIntensity: s.intensity,
+        side: THREE.DoubleSide
+      })
+    );
+    m.position.set(s.pos[0], s.pos[1], s.pos[2]);
+    m.lookAt(0, 0, 0);
+    g.add(m);
+  });
+  return g;
+}
+
+/* ================================================================
  * マテリアルプリセット
  * ================================================================ */
 function makeMaterial(gemData) {
@@ -473,8 +512,13 @@ function makeMaterial(gemData) {
     });
   }
 
+  /* 色吸収の個体差（Beer-Lambert的）: 濃い（暗い）色の石ほど光の減衰距離を短く＝色濃く、
+     淡い（明るい）色の石は減衰距離を長く＝光を通す。fixed 2.2 から石別に。 */
+  var lum = (color.r + color.g + color.b) / 3;
+  var attenDist = 1.4 + lum * 2.0;
+
   /* transparent（デフォルト）— 屈折・分散・色吸収で本物の宝石らしさ
-     v2: thickness増で屈折の深み・attenuationDistance調整・dispersionは石別 */
+     v2: thickness増で屈折の深み・attenuationは色の明度で石別・dispersionは石別 */
   var mat = new THREE.MeshPhysicalMaterial({
     color: new THREE.Color(0xffffff),
     transmission: 1.0,
@@ -484,7 +528,7 @@ function makeMaterial(gemData) {
     metalness: 0.0,
     reflectivity: 0.55,
     attenuationColor: color,
-    attenuationDistance: 2.2,
+    attenuationDistance: attenDist,
     specularIntensity: 1.0,
     /* clearcoatを強めるとフラットシェーディングのファセット境界でフレネル反射が際立ち、
        稜線がキラッと光る（ベベルの視覚効果をジオメトリを増やさず材質で得る） */
@@ -513,7 +557,7 @@ function mount(container, gemData, opts) {
   var width = container.clientWidth || 400;
   var height = container.clientHeight || 500;
 
-  var renderer, scene, camera, mesh, envRT, pmrem, envScene, composer, bloomPass;
+  var renderer, scene, camera, mesh, envRT, pmrem, envScene, composer, bloomPass, ptLightGroup;
   /* Bloomは高負荷なので、reduce-motionと狭幅（モバイル相当）では無効化して素のレンダリングに。
      width<480でoff、コア数が取得でき2以下なら低性能機とみなしoff。
      さらにタッチ端末（coarse pointer）は内蔵GPUが弱くBloom+MSAAで発熱・カクつきしやすいのでoff */
@@ -530,11 +574,22 @@ function mount(container, gemData, opts) {
     }
   }
 
+  /* PT用 emissive 光源群の geometry/material を解放（PlaneGeometry + MeshStandardMaterial） */
+  function disposePtLightGroup() {
+    if (ptLightGroup && ptLightGroup.traverse) {
+      ptLightGroup.traverse(function (o) {
+        if (o.geometry) o.geometry.dispose();
+        if (o.material) { if (Array.isArray(o.material)) o.material.forEach(function (m) { m.dispose(); }); else o.material.dispose(); }
+      });
+    }
+  }
+
   /* mount途中で失敗した場合に、生成済みリソースを全解放してからnullを返す */
   function cleanupPartial() {
     try {
       if (mesh) { if (mesh.geometry) mesh.geometry.dispose(); if (mesh.material) mesh.material.dispose(); }
       disposeEnvScene();
+      disposePtLightGroup();
       if (envRT) envRT.dispose();
       if (pmrem) pmrem.dispose();
       if (renderer) {
@@ -556,6 +611,9 @@ function mount(container, gemData, opts) {
     var dprCap = (coarse || lowCores) ? 1.75 : (useBloom ? 2.0 : 2.5);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, dprCap));
     renderer.setSize(width, height);
+    /* 屈折像（transmission）のレンダリング解像度を最大に保つ（既定で下がる版に備え明示）。
+       ファセット越しに見える背後の像がシャープになり、研磨石の精度感が上がる。 */
+    if ('transmissionResolutionScale' in renderer) renderer.transmissionResolutionScale = 1.0;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.4;
     container.appendChild(renderer.domElement);
@@ -589,6 +647,38 @@ function mount(container, gemData, opts) {
     var r = geo.boundingSphere ? geo.boundingSphere.radius : 1;
     mesh.scale.setScalar(1.35 / r);
     scene.add(mesh);
+
+    /* PT（現像）専用の emissive 実光源群。scene に常駐させ、初期は visible=false。
+       develop 中だけ visible=true にして PT の setScene(traverseVisible) に拾わせる。
+       PBR時は不可視なので描画にもPBR照明にも一切影響しない（PBRは PMREM env + DirectionalLight）。 */
+    ptLightGroup = buildEmissiveLightGroup();
+    ptLightGroup.visible = false;
+    scene.add(ptLightGroup);
+
+    /* テスト・診断用フック（本番挙動は変えない・window.__gem3dMode と同じ位置づけ）。
+       scene 内の emissive 実光源メッシュの数と、そのうち実効的に可視（自身と全祖先が visible）な
+       ものの数を返す。detach で null 化する。
+       「実光源」の判定は PT が光源として拾う条件と同じ = emissive色×emissiveIntensity が非ゼロ。
+       宝石本体（MeshPhysicalMaterial は isMeshStandardMaterial===true・emissiveIntensity 既定1）は
+       emissive が黒(0,0,0)なので放射ゼロ＝光源ではなく、ここから除外される。 */
+    if (typeof window !== 'undefined') {
+      window.__gem3dInspectPtLights = function () {
+        var info = { count: 0, visibleCount: 0 };
+        if (!scene) return info;
+        scene.traverse(function (o) {
+          if (!(o.isMesh && o.material && o.material.isMeshStandardMaterial)) return;
+          var mm = o.material;
+          var e = mm.emissive;
+          var emits = mm.emissiveIntensity > 0 && e && (e.r + e.g + e.b) > 0;
+          if (!emits) return;
+          info.count++;
+          var vis = true, p = o;
+          while (p) { if (p.visible === false) { vis = false; break; } p = p.parent; }
+          if (vis) info.visibleCount++;
+        });
+        return info;
+      };
+    }
 
     /* Bloomポストプロセス（最輝ファセットを滲ませて宝石の「キラッ」を再現）
        composer構築失敗時は素のrenderer.renderにフォールバック */
@@ -642,18 +732,151 @@ function mount(container, gemData, opts) {
   var running = true;
   var rafId = null;
 
+  /* ================================================================
+   * ハイブリッド状態機械（動=PBR / 静=PT現像）
+   *   renderMode: 'pbr'（動いている・PBR描画）
+   *             | 'developing'（静止しPTを累積中・PTcanvasをフェードイン）
+   *             | 'still'（PT現像完了・PTcanvasを表示したまま保持）
+   * 傾け入力が来たら現像中でも即PBRへ戻す（体験の最優先事項）。
+   * ================================================================ */
+  var lastTiltMs = 0;                 /* 直近setTilt時刻 */
+  var spinUntilMs = (typeof performance !== 'undefined' ? performance.now() : Date.now()) + 5000; /* autospin継続時間 */
+  var renderMode = 'pbr';             /* 'pbr'|'developing'|'still' */
+  var developer = null, devReq = false, ptCanvas = null, devProgress = 0;
+  function nowMs() { return (typeof performance !== 'undefined' ? performance.now() : Date.now()); }
+  /* テスト・診断用に現在のモードをwindowへ反映（本番挙動は変えない）。
+     毎フレーム呼ばれるが renderMode が変化したときだけ書き込む（無駄なグローバル書き込みを避ける）。
+     getRenderMode() が正規の観測APIで、これは補助のデバッグフック。 */
+  var publishedMode;
+  function publishMode() {
+    if (renderMode === publishedMode) return;
+    publishedMode = renderMode;
+    if (typeof window !== 'undefined') window.__gem3dMode = renderMode;
+  }
+
+  /* PT対応判定（Task1の純粋関数 NoctaGemPTUtil.canPathtrace に環境を渡す）。
+     coarse/lowCores は mount 冒頭で算出済みの値を再利用。opts.noPt で明示的に無効化できる */
+  var ptEnv = {
+    webgl2: (renderer.capabilities && renderer.capabilities.isWebGL2) || false,
+    reduce: reduce,
+    coarse: coarse,
+    lowCores: lowCores,
+    floatBuf: !!(renderer.extensions && renderer.extensions.get('EXT_color_buffer_float'))
+  };
+  var ptAllowed = !!(window.NoctaGemPTUtil && window.NoctaGemPTUtil.canPathtrace(ptEnv)) && !opts.noPt;
+
+  /* PBRへ復帰（PT canvasを隠し、累積をリセット） */
+  function switchToPbr() {
+    renderMode = 'pbr';
+    if (ptCanvas) ptCanvas.style.opacity = '0';
+    /* PT用実光源を消す。以後 PBR を描いても発光板は traverseVisible に拾われず
+       PBRの見た目・照明は一切変わらない（発光板は PT scene 専用）。 */
+    if (ptLightGroup) ptLightGroup.visible = false;
+    if (developer) developer.reset();
+    devProgress = 0;
+    /* devReq ラッチを解除して、傾け→再静止での再現像を許可する。
+       import 未解決のまま PBR 復帰した場合も、次の静止で再度 import を試せるようにする
+       （多重生成は beginDevelop の import 解決時ガードで防ぐ）。*/
+    devReq = false;
+    publishMode();
+  }
+
+  /* setScene を通る処理（createDeveloper / resync）の間だけ PBR用の PMREM env を外す。
+     three-gpu-pathtracer@0.0.24 は scene.environment を equirect HDR として読むため、
+     PMREM RenderTarget texture が入ったまま setScene() を呼ぶと例外を投げるためである。
+     直後に savedEnv へ復帰させ、PBRの環境マップは維持する。
+     役割分担（二重管理の回避）:
+       - env の主管理は developer 側。PT が実際に使う環境（GradientEquirectTexture・上=暖色明/下=暗）は
+         gem3d-pathtracer.js の createDeveloper が保持し、setScene の瞬間だけ scene.environment に差す。
+       - gem3d 側（ここ）は PBR用 PMREM の一時退避だけを担う。
+       - PT用 emissive 光源群の可視化は develop 状態と連動させる
+         （beginDevelop で setScene 直前に visible=true / switchToPbr で false）。ここでは触らない。 */
+  function withPtEnv(fn) {
+    var savedEnv = scene.environment;
+    scene.environment = null;
+    try { return fn(); }
+    finally { scene.environment = savedEnv; }
+  }
+
+  /* 静止時のPT現像を開始。初回は gem3d-pathtracer.js を遅延importし、PT専用canvasを
+     containerにabsolute配置してopacityでフェードインする。2回目以降は既存developerを
+     現在姿勢へ再同期して使い回す。 */
+  function beginDevelop() {
+    if (!ptAllowed) return;
+    renderMode = 'developing';
+    publishMode();
+    if (developer) {
+      /* 再利用: サンプル累積をゼロ化したうえで、現在の mesh 姿勢で BVH を再ベイクする。
+         reset() だけだと WebGLPathTracer が初回姿勢のBVHを保持し、別の向きで静止しても
+         初回の向きの像を現像してしまう。resync()（内部 setScene）で現在姿勢へ同期する。 */
+      developer.reset();
+      /* setScene(=resync)は traverseVisible で発光板を集めるので、resync の前に光源を可視化する。
+         この時点は develop 分岐直前でありPBRは描かないため、可視化による見た目の副作用はない。 */
+      ptLightGroup.visible = true;
+      try {
+        withPtEnv(function () { developer.resync(); });
+      } catch (e) {
+        /* resync(内部setScene)失敗時は develop を諦めPBRへ戻す。
+           visible=true / renderMode='developing' の固着を防ぐ（初回import経路のcatchと対称）。 */
+        ptAllowed = false; renderMode = 'pbr';
+        if (ptLightGroup) ptLightGroup.visible = false;
+        publishMode();
+      }
+      return;
+    }
+    if (devReq) return; devReq = true;
+    import('./gem3d-pathtracer.js?v=1').then(function (mod) {
+      /* import 解決＝in-flight 完了。ラッチを解除する（成功・早期return どちらの経路も一箇所で解除）。
+         これがないと、傾け等で下の renderMode ガードにより早期returnしたとき devReq が true のまま固着し、
+         以後 develop が永久に起動しなくなる。 */
+      devReq = false;
+      if (!running || renderMode !== 'developing') return;
+      /* switchToPbr の devReq 解除により、in-flight 中に2度目の import が走った場合の多重生成を防ぐ。
+         先に解決した側が developer を生成済みなら、後続の解決は何もしない。 */
+      if (developer) return;
+      /* 光源の可視化は「setScene 直前・かつ develop 継続が確定した後」に行う。
+         import 待ちの間（developer 未生成）に可視化すると、その間 loop が PBR を描くため
+         発光板がPBR画面に映ってしまう。上のガードを通過した直後（＝この行）に立てることで、
+         次フレームは develop 分岐に入りPBRを描かない。傾けで早期returnした場合は visible=false のまま。 */
+      ptLightGroup.visible = true;
+      developer = withPtEnv(function () {
+        return mod.createDeveloper({ THREE: THREE, renderer: renderer, scene: scene, camera: camera, maxSamples: 160 });
+      });
+      ptCanvas = developer.getCanvas();
+      ptCanvas.className = 'gyu-pt-canvas';   /* PBR canvasと区別（テスト・スタイル用） */
+      ptCanvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .4s ease;pointer-events:none;';
+      container.appendChild(ptCanvas);
+    }).catch(function () { devReq = false; ptAllowed = false; renderMode = 'pbr'; if (ptLightGroup) ptLightGroup.visible = false; publishMode(); });
+  }
+
   function setTilt(nx, ny) {
     /* nx,ny: -1〜1（kazasuの正規化座標） */
+    stopAutoSpin();         /* 触ったら自動回転を止める（スピン角を curRY に畳み込み、瞬間回転を防ぐ） */
     targetRY = nx * 0.9;    /* 左右傾き */
     targetRX = ny * 0.7;    /* 上下傾き */
-    autoSpin = false;       /* 触ったら自動回転を止める */
+    lastTiltMs = nowMs();   /* settle判定の基準時刻 */
+    if (renderMode !== 'pbr') switchToPbr();   /* 現像中でも即PBR復帰（即応性が最優先） */
   }
 
   var clock = new THREE.Clock();
+
+  /* autoSpin を止める瞬間に、加算スピン角（rotation.y に足していた elapsedTime*0.25）を
+     curRY と targetRY に畳み込む。これをしないと autoSpin=false になった瞬間に加算項が消え、
+     石が約72°（5秒で約1.25rad）瞬間回転してしまう。畳み込み後は rotation.y=curRY で連続になる
+     （autoSpin=false 時の rotation.y 式は加算項を含まないので二重には効かない）。 */
+  function stopAutoSpin() {
+    if (!autoSpin) return;
+    var spun = (clock.elapsedTime * 0.25) % (Math.PI * 2);
+    curRY += spun;
+    targetRY += spun;
+    autoSpin = false;
+  }
+
   function loop() {
     if (!running) return;
     rafId = requestAnimationFrame(loop);
     var dt = clock.getDelta();
+    if (autoSpin && nowMs() > spinUntilMs) stopAutoSpin();   /* 一定時間でautospin停止→静止へ（角度を畳み込み連続に） */
     /* 補間 */
     curRX += (targetRX - curRX) * 0.09;
     curRY += (targetRY - curRY) * 0.09;
@@ -661,6 +884,30 @@ function mount(container, gemData, opts) {
       mesh.rotation.x = baseTiltX + curRX;   /* 基準の見下ろし＋ユーザー傾き */
       mesh.rotation.y = curRY + (autoSpin ? clock.elapsedTime * 0.25 : 0);
     }
+
+    /* 静止判定（Task1の純粋関数）: autospin停止・目標との差が十分小さい・傾け後500ms経過 */
+    var dTarget = Math.abs(targetRX - curRX) + Math.abs(targetRY - curRY);
+    var still = window.NoctaGemPTUtil && window.NoctaGemPTUtil.isStill({ autoSpin: autoSpin, dTarget: dTarget, msSinceTilt: nowMs() - lastTiltMs });
+
+    if (ptAllowed && still && renderMode === 'pbr') beginDevelop();
+
+    if (renderMode === 'developing' && developer) {
+      /* PTは共有scene/cameraと mesh の現在姿勢を読む。静止済みなので像はブレない。
+         1フレーム1サンプル累積し、序盤で素早くフェードインさせる */
+      devProgress = developer.renderSample();
+      if (ptCanvas) ptCanvas.style.opacity = String(Math.min(1, devProgress * 3));
+      if (devProgress >= 1) {
+        renderMode = 'still';
+        /* 累積完了。以後この分岐に入らずPBRが裏で描かれるため、PBRを汚さぬよう光源を消す
+           （PT canvasがopacity=1で覆うので見た目は現像像のまま。不変条件「PBR時は光源非表示」を厳密化）*/
+        if (ptLightGroup) ptLightGroup.visible = false;
+      }
+      publishMode();
+      /* 現像中はPBR描画をスキップしPTに委ねる（負荷削減） */
+      return;
+    }
+
+    publishMode();
     if (composer) composer.render();
     else renderer.render(scene, camera);
   }
@@ -682,14 +929,23 @@ function mount(container, gemData, opts) {
     setTilt: setTilt,
     resize: resize,
     isReady: function () { return true; },
+    getRenderMode: function () { return renderMode; },   /* テスト・診断用 */
     detach: function () {
       running = false;
       if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener('resize', onWinResize);
+      if (typeof window !== 'undefined') { window.__gem3dMode = null; window.__gem3dInspectPtLights = null; }
       try {
+        /* PT現像リソースの解放（PT専用renderer/canvasを含む）。PT環境(GradientEquirect)は
+           developer.dispose() 側で解放される。 */
+        if (developer) { try { developer.dispose(); } catch (e) {} developer = null; }
+        if (ptCanvas && ptCanvas.parentNode) ptCanvas.parentNode.removeChild(ptCanvas);
+        ptCanvas = null;
         if (mesh) { mesh.geometry.dispose(); mesh.material.dispose(); }
         /* 環境シーン内部のmesh/material/geometryも解放 */
         disposeEnvScene();
+        /* PT用 emissive 光源群の geometry/material を解放 */
+        disposePtLightGroup();
         if (envRT) envRT.dispose();
         if (pmrem) pmrem.dispose();
         /* UnrealBloomPass等は独自render targetを持つのでpass個別にdispose後composerをdispose */
