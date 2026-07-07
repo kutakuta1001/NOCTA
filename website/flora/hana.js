@@ -159,7 +159,7 @@
       var depth = rng();                              /* 0..1 空気遠近 */
       var f = {
         x: x, y: y,
-        r: (14 + vigor * 22) * (0.9 + rng() * 0.2),   /* 遅い=大 */
+        r: (14 + vigor * 22) * (0.6 + rng() * 1.0),   /* 遅い=大の傾向＋大小のランダム揺らぎ(×0.6〜1.6) */
         baseRot: rng() * Math.PI * 2,
         form: pickForm(rng),
         seed: seedCounter++,
