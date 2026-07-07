@@ -115,7 +115,57 @@
 
 ---
 
-## 参考（リサーチ要約の出典）
+## 6. 類似サービス調査録（引き継ぎ用）
 
-- 花・植物体験: teamLab（Infinity of Flowers / Flowers and People）、weavesilk、piellardj/flowers-webgl（Verlet物理・6万花びら）、Kuwahara水彩シェーダ、BHL/Kew植物画アーカイブ、Awwwards（Botanic Expo・Mother Paris）、くらしのこよみ（七十二候）ほか14件
-- 瞑想体験: Pause (ustwo・実証研究あり)、A Soft Murmur、Pixel Thoughts（MGH試験・不安29%減）、thisissand、禅ガーデン系3種、Box Breathing、Calm Breathe、Generative.fm、Endel、Moodlapse ほか15件
+次のセッション・実装フェーズで参照できるよう、各サービスの工夫と特徴を記録する。
+「Ichiへの示唆」列が本提案書のどの項目に接続するかを併記。
+
+### 6-1. 花・植物のデジタル体験
+
+| サービス | URL | 工夫・特徴 | Ichiへの示唆 |
+|---|---|---|---|
+| teamLab「Infinity of Flowers」 | teamlab.art/w/infinity-of-flowers/ | 録画再生ではなく**プログラムがリアルタイムに花を生成し続ける**ことを明言。触れると花が舞い踊る | 「常に生成中・二度と同じ画にならない」が本物感の核（原則3・B-4） |
+| teamLab「Flowers and People」 | teamlab.art/w/flowersandpeople-hour/ | 1時間で1年分の花が咲き散る。**人が動くと散り、立ち止まると咲く**逆説的インタラクション | 静止を報酬にする設計の原型（B-1遅さの報酬化・A-5呼吸する静止） |
+| Silk (weavesilk) | weavesilk.com | マウスの軌跡を対称・鏡映の絹模様に変換。音と動きが連動。**結果の巧拙より描く行為自体が鎮静**。ログイン不要・即体験 | なぞる行為自体を報酬化する参照実装。操作音の連動（B-5） |
+| piellardj/flowers-webgl | piellardj.github.io/flowers-webgl/ | 茎をバネ接続ノードとして**Verlet積分+制約緩和で物理シミュレーション**。400株・6万花びらをWebGLで2ms/フレーム（Canvas2Dだと50ms） | 風に揺れる花の技術参照。Canvas2Dでは少数花に留めるべきという性能上限も判明（A-5） |
+| Maxime Heckel「Painterly Shaders」 | blog.maximeheckel.com | **Kuwaharaフィルター**（周辺セクターの分散最小色を採用）で筆致・絵画的質感。異方性版は構造テンソルでエッジ追従 | ベタ塗り→水彩化の最有力技法だがWebGL/GLSL必須でコスト大。「やらないこと」に分類（効果は最大なので将来候補） |
+| BHL / Kew 植物画アーカイブ | blog.biodiversitylibrary.org | 200年・20万点超のボタニカルアートをオープンアクセス公開 | 花の「多様さを思い出させる」参照資料。将来の図鑑拡充・作画の色参照に |
+| Google Arts & Culture 植物特集 | artsandculture.google.com | 高精細画像＋ストーリー形式。1点をゆっくり見せる編集 | 1画面1種の見せ方の裏付け（C-1） |
+| Ukiyo-e.org（花鳥絵） | ukiyo-e.org | 24機関・21万点の浮世絵検索。花鳥絵という伝統ジャンル | 和の花表現の様式参照（花形デザインの次の引き出し） |
+| くらしのこよみ | kurashikata.com/app/ | **七十二候（5日ごとの季節暦）**を和風デザイン・俳句で見せる | 「今日だけの景色」の設計原型（C-2季節連動） |
+| Awwwards「Botanic Expo」 | awwwards.com/sites/botanic-expo | **2色限定パレット**（深緑灰#3F4E49×ベージュ#CFC4A6）でアニメーション評価8.20/10 | 色数を絞るほど上質に見える実証例（原則1） |
+| Awwwards「Mother Paris」 | awwwards.com/sites/mother-paris | 生け花アーティストのサイト。**モノクロームのみ・余白最優先** | 生け花の「間」の思想=一本の花+周囲の空気に意味（C-1） |
+| Calm / Headspace | calm.com | 開く前から自然映像+環境音を流し「**開いた瞬間に肩の力が抜ける**」。設計原則 "restraint is care"（抑制こそ配慮） | 入場の儀式（B-3）と引き算の原則（§3「やらないこと」） |
+
+### 6-2. 瞑想・アンビエントのインタラクティブ体験
+
+| サービス | URL | 工夫・特徴 | Ichiへの示唆 |
+|---|---|---|---|
+| Pause (ustwo) | ustwo.com/work/pause/ | 指でブロブを**ごく微速で動かすだけ**。速い操作には反応を返さない。研究で精神的作業負荷の低下を確認 | **遅さの報酬化の実証元**（B-1の根拠）。速い操作を罰せず、遅い操作を美しくする |
+| A Soft Murmur | asoftmurmur.com | 雨・波・暖炉など10音源をスライダーで混ぜるだけ。「**スライダーが機能の付属物ではなく体験そのもの**」。フィード・通知・評価なし | UI自体を体験にする発想。音を足すなら1〜3層のミニマルミキサー方式（B-5の将来形） |
+| Pixel Thoughts | pixelthoughts.co | 悩みを星に書き60秒で縮小・消滅。**MGH臨床試験で不安29%減**。ログイン・広告ゼロ | 60秒という短い儀式でも効果が実証されている。入退場の儀式（B-3）の時間感覚の参考 |
+| thisissand / Silent Sand / Paint.toys禅ガーデン | thisissand.com 他 | 砂を注ぐ・レーキで線を引くだけ。**ゴールも勝敗もスコアもないことを明言** | 「目的のなさ」自体が価値（原則4）。ゲーミフィケーション排除の根拠 |
+| Digital Zen Garden (Cory Trimm) | corytrimm.com/zen-garden/ | 「事業計画もメトリクスもコンバージョン目標もない」と明言 | 同上。「何のためでもない場所」の宣言が体験を守る |
+| Box Breathing | box-breathing.org | 4-4-4-4秒の円の拡大収縮のみ。呼吸と視覚の同期 | 開花を呼吸のテンポに載せる（B-2）の時間構造の参考（4秒単位） |
+| Calm「Breathe Bubble」 | calm.com/breathe | ブロックサイト訪問時に**強制的に数呼吸させてから選択肢を出す**導線 | 入場フェードイン（B-3）に「一呼吸置かせる」機能を持たせられる |
+| Generative.fm | generative.fm | Tone.js/Web Audioで**ループなしに永遠に鳴り続ける生成音楽**。「同じ再生が二度とない」 | 一回性の音の理想形。ただし実装コスト中〜大なので初期は見送り（B-5注記） |
+| Endel | endel.io | 心拍・天候・時刻を入力に生成音が変化。体験に**開始・中間・終末の三部構成**（Scenario） | 体験に「終わり」を設計する発想（B-3退場の儀式・B-4無常） |
+| Moodlapse | — | **花の開花タイムラプス映像**+バイノーラル音のマインドフルネス | 「花が開く」こと自体が瞑想コンテンツとして成立する裏付け |
+| Bloom / BreathOn / Smell the Flower | App Store | 呼吸で木を育てる・花びらが開く呼吸アニメ・「花の香りを吸って蝋燭を消す」1タップ儀式 | 花×呼吸の組み合わせは瞑想アプリの定番。Ichiは「なぞる」でこの系譜に連なれる |
+
+### 6-3. 横断的な発見（要点の再掲）
+
+1. **制約が上質さを作る**: 2色パレット・モノクローム・機能の少なさ。「何を削るかが最大の設計判断」
+2. **遅さ・静止を報酬にする**: Pause（実証研究）と teamLab（止まるほど咲く）が同じ結論に到達している
+3. **一回性が本物感を作る**: teamLab「常に生成中」・Generative.fm「二度と同じ演奏がない」・七十二候「今日だけの景色」
+4. **無音でも瞑想は成立する**: Pause・thisissand・禅ガーデン系は無音。音は「説得の一層」であり必須ではない
+5. **儀式が日常と区切る**: 入場のフェード・数呼吸の強制・60秒の消滅・終末フェーズ。開始と終了の設計が体験の格を決める
+6. **グレイン・質感は「気づかれない程度」（2〜5%）**: 過剰にすると逆に安っぽくなる
+
+### 6-4. 技術メモ（実装フェーズへの引き継ぎ）
+
+- 現行 hana.js は Canvas 2D・パラメトリック手続き花（drawFlower）。A層は全て延長で実装可能
+- Verlet物理の揺れは Canvas 2D では少数花に留める（WebGL移行しない限り大量は不可・piellardj実測）
+- Kuwahara水彩化は WebGL/GLSL 必須（フラグメントシェーダ）。効果最大・コスト大の将来候補
+- 音は Web Audio API の生成音（sine/triangle減衰）なら素材ファイル不要・ライセンスリスクゼロ。
+  ブラウザ自動再生制限により初回ユーザー操作後のみ再生可・デフォルトオフ+分かりやすいオンUIが必須
