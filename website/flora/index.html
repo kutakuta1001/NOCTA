@@ -12,7 +12,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./flora-data.js"></script>
 <script src="../zukan/zukan-core.js?v=1"></script>
-<script src="./hana.js?v=1"></script>
+<script src="./hana.js?v=2"></script>
 <style>
   :root { --gem: #B8B4AE; }
   *{ box-sizing:border-box; }
@@ -204,12 +204,20 @@
     .hana-cta::before{ display:none; }
   }
 
-  /* 咲かせる（Ichiの遊びレイヤー） — iro（Hare）の#immerse/筆あそびと対称の全画面ビュー */
-  #hana-view{ position:fixed; inset:0; z-index:70; background:#0A0906; }
+  /* 咲かせる（Ichiの遊びレイヤー） — iro（Hare）の#immerse/筆あそびと対称の全画面ビュー
+     入退場フェード(B-3): opacity:0を初期状態にし、開いたらJSでopacity:1へ（rAFでフェードイン）。
+     閉じるときはfarewell(花が閉じる演出)を待ってからhiddenにする(closeHana参照)。 */
+  #hana-view{ position:fixed; inset:0; z-index:70; background:#0A0906; opacity:0; transition:opacity 0.9s ease; }
   #hana-view[hidden]{ display:none; }
   #hana-mount{ position:relative; width:100%; height:100%; display:flex; flex-direction:column; }
-  .hana-stage{ position:relative; flex:1; overflow:hidden; }
+  /* 背景の空気(A-2): 季節に応じてhana.jsがinline styleでbackgroundを差し替える際、ふわっと変わるように */
+  .hana-stage{ position:relative; flex:1; overflow:hidden; transition:background 0.6s ease; }
   .hana-canvas{ display:block; width:100%; height:100%; touch-action:none; cursor:crosshair; }
+  /* 粒子ノイズ質感(A-4) — 既存HPの.grainと同一SVG。pointer-events:noneのためツールバー操作は妨げない */
+  .hana-grain{
+    position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0.045; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
   .hana-tools{
     position:relative; z-index:2;
     display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px;
@@ -267,6 +275,8 @@
     .gem-photo-wrap img{ animation:none; }
     .scroll-cue{ animation:none; }
     .today-card, .today-card:hover{ transform:none; }
+    #hana-view{ transition:none; }
+    .hana-stage{ transition:none; }
   }
 </style>
 </head>
@@ -353,8 +363,9 @@
 </div>
 
 <!-- 咲かせる（Ichiの遊びレイヤー） -->
-<div id="hana-view" role="dialog" aria-modal="true" aria-label="咲かせる" hidden>
+<div id="hana-view" role="dialog" aria-modal="true" aria-label="咲かせる" tabindex="-1" hidden>
   <button class="index-close" type="button" id="hana-close" aria-label="閉じる">×</button>
+  <div class="hana-grain" aria-hidden="true"></div>
   <div id="hana-mount"></div>
 </div>
 
@@ -436,7 +447,7 @@
 
   var lightboxIdx = -1;
   var indexDialog = null, lightbox = null;
-  var hanaInstance = null, hanaDialog = null;
+  var hanaInstance = null, hanaDialog = null, hanaView = null;
 
   var app = Z.createApp({
     strings: STRINGS,
@@ -736,17 +747,24 @@
       }
     });
     /* 咲かせる（Ichiの遊びレイヤー）のダイアログ登録
-       - trigger/closeBtnとも静的な単一要素のため、iroの目次/ライトボックスと同じ直接登録で足りる
-         （iroの筆あそびはCTAが色ごとに複数あるため引数付きopen()を使うが、flora側のCTAは1つだけ）
+       - closeBtnはcoreに渡さず自前で配線する（closeHana参照）。coreのcloseDialogは
+         onClose呼び出しより前にel.hidden=trueを同期実行するため、そのままではB-3の
+         「花が閉じてから隠す」farewell演出を挟めない。iroのimmerseDialogがcloseBtn:null+
+         delegationで対応した前例と同型で、静的な#hana-closeにも同じ形を適用する。
        - onOpenはcoreのel.hidden=false**前**に呼ばれる。#hana-viewがまだdisplay:noneの間に
          NoctaHana.mountするため、内部canvasの初期resize()は0サイズで走ってしまう。
          hana.jsはwindow 'resize' イベントで再計算するため、hidden解除後にrAF×2でwindowへ
          resizeイベントを送り、レイアウト確定後の実寸でcanvasを合わせ直す
          （iroの筆あそび呼び出し側と同じ「rAF×2待ち」戦略・hana.js自体は変更しない） */
+    hanaView = document.getElementById('hana-view');
+    var hanaOpenBtn = document.getElementById('hana-open');
+    var hanaCloseBtn = document.getElementById('hana-close');
+    var hanaReduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
     hanaDialog = app.registerDialog('hana', {
-      el: document.getElementById('hana-view'),
-      closeBtn: document.getElementById('hana-close'),
-      trigger: document.getElementById('hana-open'),
+      el: hanaView,
+      closeBtn: null,
+      trigger: hanaOpenBtn,
       onOpen: function () {
         if (!window.NoctaHana) return;
         hanaInstance = window.NoctaHana.mount(document.getElementById('hana-mount'), {});
@@ -756,8 +774,36 @@
       },
       onClose: function () {
         if (hanaInstance) { hanaInstance.detach(); hanaInstance = null; }
+        if (hanaView) hanaView.style.opacity = '0';
       },
       backdropClose: false
+    });
+
+    /* 入場フェード(B-3): coreのtriggerリスナー（openDialog、hidden解除は同期実行）が先に
+       登録されているため、同じclickイベントに対して後から登録した本リスナーは常に
+       hidden解除**後**に発火する（同一要素・同一イベントのリスナーは登録順に発火するDOM仕様）。
+       reduce時はtransitionがCSS側で無効化されるため即時にopacity:1を設定するだけでよい。 */
+    hanaOpenBtn.addEventListener('click', function () {
+      if (!hanaView) return;
+      if (hanaReduceMotion) { hanaView.style.opacity = '1'; return; }
+      requestAnimationFrame(function () { hanaView.style.opacity = '1'; });
+    });
+
+    /* 退場フェード(B-3)+farewell閉じ: ×クリックはcoreの通常close pipelineを経由させず、
+       まずhana.jsのfarewell(花が閉じるアニメ)を待ち、完了後にhanaDialog.close()を呼ぶ
+       （hidden化・overflow解除・aria-expanded・フォーカス復帰はcoreにそのまま委譲する）。
+       hanaInstanceは呼び出し直後にnull化して二重クリック時のfarewell多重発火を防ぐ。
+       ESCはcoreのinitKeyboardNavが直接closeDialogを呼ぶため対象外（即時close・既存動作を維持）。 */
+    function closeHana() {
+      if (!hanaInstance) return;
+      var inst = hanaInstance;
+      hanaInstance = null;
+      var finish = function () { inst.detach(); hanaDialog.close(); };
+      if (inst.farewell) inst.farewell(finish); else finish();
+    }
+    hanaCloseBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      closeHana();
     });
 
     buildIndex();

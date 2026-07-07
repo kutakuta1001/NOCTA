@@ -25,6 +25,13 @@
     return h >>> 0;
   }
   function easeOutCubic(t) { var u = 1 - t; return 1 - u * u * u; }
+  function hexToRgb(hex) {
+    var h = String(hex).replace('#', '');
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return { r: parseInt(h.slice(0,2),16), g: parseInt(h.slice(2,4),16), b: parseInt(h.slice(4,6),16) };
+  }
+  function rgba(c, a) { return 'rgba(' + Math.round(c.r) + ',' + Math.round(c.g) + ',' + Math.round(c.b) + ',' + a + ')'; }
+  function mixRgb(a, b, t) { return { r: a.r+(b.r-a.r)*t, g: a.g+(b.g-a.g)*t, b: a.b+(b.b-a.b)*t }; }
   function shouldSpawn(distAccum, step) { return distAccum >= step; }
   var FORMS = ['sakura', 'kiku', 'tulip', 'komori'];
   function pickForm(rng) { return FORMS[Math.floor(rng() * FORMS.length) % FORMS.length]; }
@@ -40,33 +47,52 @@
   function drawFlower(ctx, o) {
     var bloom = Math.max(0, Math.min(1, o.bloom));
     if (bloom <= 0.001) return;
-    var r = o.r * (0.35 + 0.65 * bloom);          /* つぼみ(小)→満開(大) */
+    var vigor = (typeof o.vigor === 'number') ? o.vigor : 1;   /* 0=速い/淡, 1=遅い/豊か */
+    var depth = (typeof o.depth === 'number') ? o.depth : 0;   /* 0=手前, 1=奥 */
+    var r = o.r * (0.35 + 0.65 * bloom) * (1 - depth * 0.4);
     var pal = o.palette, rng = o.rng || makeRng(1);
-    var petalColor = pal.petals[Math.floor(rng() * pal.petals.length) % pal.petals.length];
+    var baseA = (0.60 + 0.32 * vigor) * (1 - depth * 0.45);    /* 豊か/手前ほど濃い */
+    var ground = hexToRgb(pal.ground);
     var form = o.form;
     var counts = { sakura: 5, kiku: 14, tulip: 4, komori: 5 };
     var n = counts[form] || 5;
-    var openAng = (0.55 + 0.45 * bloom);           /* 開き具合 */
+    var openAng = (0.55 + 0.45 * bloom);
     ctx.save();
     ctx.translate(o.x, o.y);
     ctx.rotate(o.rot || 0);
+    if (depth > 0.5) { ctx.shadowColor = rgba(hexToRgb(pal.petals[0]), 0.5); ctx.shadowBlur = r * 0.5; } /* 奥は柔らかく */
     for (var i = 0; i < n; i++) {
       ctx.save();
       ctx.rotate((i / n) * Math.PI * 2);
       ctx.scale(openAng, openAng);
-      ctx.fillStyle = petalColor;
-      ctx.globalAlpha = 0.92;
+      /* 花びら毎の色ゆらぎ（ベタ感の解消） */
+      var baseCol = hexToRgb(pal.petals[Math.floor(rng() * pal.petals.length) % pal.petals.length]);
+      var jitter = (rng() - 0.5) * 24;
+      var pc = { r: baseCol.r + jitter, g: baseCol.g + jitter * 0.6, b: baseCol.b + jitter * 0.4 };
+      var len = (form === 'kiku') ? r * 1.25 : (form === 'tulip') ? r * 1.05 : r;
+      /* 付け根=濃 → 先端=淡・地色寄り・低alpha（光の透過感） */
+      var grad = ctx.createLinearGradient(0, 0, 0, -len);
+      grad.addColorStop(0, rgba(pc, baseA));
+      grad.addColorStop(0.6, rgba(pc, baseA * 0.92));
+      grad.addColorStop(1, rgba(mixRgb(pc, ground, 0.55), baseA * 0.38));
+      ctx.fillStyle = grad;
       if (form === 'kiku') { petal(ctx, r * 1.25, r * 0.12); }
       else if (form === 'tulip') { petal(ctx, r * 1.05, r * 0.42); }
-      else if (form === 'komori') { /* 丸弁 */ ctx.beginPath(); ctx.arc(0, -r * 0.6, r * 0.42, 0, Math.PI * 2); }
-      else { /* sakura: 先に切れ込み */ petal(ctx, r, r * 0.34); }
+      else if (form === 'komori') { ctx.beginPath(); ctx.arc(0, -r * 0.6, r * 0.42, 0, Math.PI * 2); }
+      else { petal(ctx, r, r * 0.34); }
       ctx.fill();
-      if (form === 'sakura') { /* 切れ込みを地色で */ ctx.fillStyle = pal.ground; ctx.globalAlpha = 0.9; ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r * 0.09, -r * 0.8); ctx.lineTo(-r * 0.09, -r * 0.8); ctx.closePath(); ctx.fill(); }
+      if (form === 'sakura') { ctx.fillStyle = rgba(ground, baseA * 0.9); ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r * 0.09, -r * 0.8); ctx.lineTo(-r * 0.09, -r * 0.8); ctx.closePath(); ctx.fill(); }
       ctx.restore();
     }
-    /* 花芯 */
-    ctx.fillStyle = pal.core; ctx.globalAlpha = 1;
-    ctx.beginPath(); ctx.arc(0, 0, r * (form === 'kiku' ? 0.28 : 0.2), 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    /* 花芯: 中心明→縁濃のラジアル */
+    var coreR = r * (form === 'kiku' ? 0.28 : 0.2);
+    var core = hexToRgb(pal.core);
+    var cg = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR);
+    cg.addColorStop(0, rgba(mixRgb(core, { r: 255, g: 255, b: 255 }, 0.4), 1));
+    cg.addColorStop(1, rgba(core, 1));
+    ctx.fillStyle = cg;
+    ctx.beginPath(); ctx.arc(0, 0, coreR, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   }
 
@@ -77,9 +103,10 @@
     var ctx = canvas.getContext('2d');
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var seasonName = opts.season || 'spring';
-    var flowers = [];        /* {x,y,r,rot,form,palette,seed,bornT,dur} */
+    var flowers = [];        /* {x,y,r,baseRot,form,seed,bornT,dur,depth,vigor,swayPhase,swayW} */
     var rafId = null, running = false;
     var seedCounter = 1;
+    var farewelling = false, farewellT = 0, lastFrameT = 0;
 
     function resize() {
       var rect = canvas.getBoundingClientRect();
@@ -94,35 +121,57 @@
       var rect = canvas.getBoundingClientRect();
       ctx.clearRect(0, 0, rect.width, rect.height);
       var t = now();
-      for (var i = 0; i < flowers.length; i++) {
-        var f = flowers[i];
-        var bloom = reduce ? 1 : Math.min(1, easeOutCubic((t - f.bornT) / f.dur));
-        drawFlower(ctx, { x: f.x, y: f.y, r: f.r, rot: f.rot, bloom: bloom, form: f.form, palette: SEASONS[seasonName], rng: makeRng(f.seed) });
+      /* 描画は奥(depth大)から。保持はFIFO配列のまま、描画時だけdepth降順のコピーを使う
+         （保持順を崩さないことで容量超過時の間引きが「最古を削除」で正しく働く） */
+      var order = flowers.slice().sort(function (a, b) { return b.depth - a.depth; });
+      for (var i = 0; i < order.length; i++) {
+        var f = order[i];
+        var bloom;
+        if (farewelling) {
+          bloom = Math.max(0, 1 - (t - farewellT) / 800);        /* 退場: 1→0 */
+        } else {
+          bloom = reduce ? 1 : Math.min(1, easeOutCubic((t - f.bornT) / f.dur));
+        }
+        var sway = reduce ? 0 : 0.035 * Math.sin(t * f.swayW + f.swayPhase); /* A-5 微風 */
+        drawFlower(ctx, {
+          x: f.x, y: f.y, r: f.r, rot: f.baseRot + sway, bloom: bloom,
+          form: f.form, palette: SEASONS[seasonName], rng: makeRng(f.seed),
+          vigor: f.vigor, depth: f.depth
+        });
       }
     }
-    function anyBlooming() {
-      if (reduce) return false;
-      var t = now();
-      for (var i = 0; i < flowers.length; i++) { if (t - flowers[i].bornT < flowers[i].dur) return true; }
-      return false;
+    function needLoop() {
+      if (farewelling) return true;                 /* 退場アニメ中は回す */
+      if (reduce) return false;                     /* reduce: 即満開・微風なし → 1描画で停止(省電力) */
+      return flowers.length > 0;                    /* 非reduce: 花があれば微風のため継続・無ければ停止 */
     }
     function loop() {
-      redraw();
-      if (anyBlooming()) { rafId = requestAnimationFrame(loop); } else { running = false; rafId = null; }
+      var t = now();
+      if (t - lastFrameT >= 33) { lastFrameT = t; redraw(); }  /* 約30fpsスロットル */
+      if (needLoop()) { rafId = requestAnimationFrame(loop); } else { running = false; rafId = null; }
     }
-    function kick() { if (!running && !reduce) { running = true; rafId = requestAnimationFrame(loop); } else { redraw(); } }
+    function kick() { if (!running) { running = true; lastFrameT = 0; rafId = requestAnimationFrame(loop); } else { /* 継続中 */ } }
 
     function spawn(x, y, speed) {
       var rng = makeRng(seedCounter);
+      var vmax = 2.2;
+      var vigor = 1 - Math.min(1, speed / vmax);      /* 遅い=1(豊か) / 速い=0(淡) */
+      var depth = rng();                              /* 0..1 空気遠近 */
       var f = {
         x: x, y: y,
-        r: 12 + (1 - Math.min(1, speed / 2)) * 22,   /* 遅い=大 / 速い=小 */
-        rot: rng() * Math.PI * 2,
+        r: (14 + vigor * 22) * (0.9 + rng() * 0.2),   /* 遅い=大 */
+        baseRot: rng() * Math.PI * 2,
         form: pickForm(rng),
         seed: seedCounter++,
         bornT: now(),
-        dur: 700
+        dur: 1500,                                    /* B-2 呼吸テンポ(開花を緩める) */
+        depth: depth,
+        vigor: vigor,
+        swayPhase: rng() * Math.PI * 2,
+        swayW: 0.0006 + rng() * 0.0006                /* 微風の角速度(rad/ms) */
       };
+      /* FIFO保持（描画順は redraw 側で depth ソート）。容量超過時は最古(先頭)を削除。
+         depth順に挿入して shift すると新規花自身が消え得るバグを避けるため push+shift にする。 */
       flowers.push(f);
       if (flowers.length > MAX_FLOWERS) flowers.shift();
       kick();
@@ -141,11 +190,12 @@
          同一座標への積み重なり（速い/粗いストロークで団子になる）を防ぐ。fude.js のスタンプ補間と同法。
          accum は「前回spawnからの残距離(0..STEP)」。この区間の最初のspawnは need=STEP-accum の位置。 */
       var ux = dx / d, uy = dy / d;
-      var need = STEP - accum;
+      var effStep = STEP * (1 + Math.min(1.6, speed * 0.9));   /* 速いほど間隔広=まばら */
+      var need = effStep - accum;
       if (need > d) { accum += d; last = p; return; }
       var s = need;
-      while (s <= d) { spawn(last.x + ux * s, last.y + uy * s, speed); s += STEP; }
-      accum = d - (s - STEP);
+      while (s <= d) { spawn(last.x + ux * s, last.y + uy * s, speed); s += effStep; }
+      accum = d - (s - effStep);
       last = p;
     }
     function end() { drawing = false; last = null; }
@@ -191,6 +241,22 @@
         return out.toDataURL('image/png');
       },
       snapshotCount: function () { return flowers.length; },
+      invite: function () {
+        var rect = canvas.getBoundingClientRect();
+        spawn(rect.width / 2, rect.height * 0.5, 0);
+        flowers[flowers.length - 1].dur = 2500;   /* 招待はさらにゆっくり */
+      },
+      farewell: function (done) {
+        if (farewelling) return;                                   /* 再入ガード(二重doneを防ぐ) */
+        if (reduce || flowers.length === 0) { if (done) done(); return; }
+        farewelling = true; farewellT = now(); kick();
+        setTimeout(function () {
+          /* 退場完了: 花を消し、状態を戻す。閉じずに再利用されても清浄な空庭に戻る
+             （farewellingが立ちっぱなしだと新規花が二度と描かれない不具合を防ぐ） */
+          flowers = []; farewelling = false;
+          if (done) done();
+        }, 820);
+      },
       detach: function () {
         running = false; if (rafId) cancelAnimationFrame(rafId);
         canvas.removeEventListener('pointerdown', begin);
@@ -219,6 +285,18 @@
       '</div>';
   }
 
+  /* 季節→光だまり色マップ。.hana-stage の背景を季節に連動させる。 */
+  var SEASON_GLOW = {
+    spring: 'rgba(120,70,90,0.40)', summer: 'rgba(50,70,120,0.40)',
+    autumn: 'rgba(120,70,40,0.42)', winter: 'rgba(90,96,110,0.36)'
+  };
+  function applyStageBg(container, season) {
+    var stage = container.querySelector('.hana-stage');
+    if (stage) stage.style.background =
+      'radial-gradient(ellipse 70% 60% at 50% 62%, ' + (SEASON_GLOW[season] || SEASON_GLOW.spring) +
+      ' 0%, rgba(14,12,9,0.85) 55%, #0A0906 100%)';
+  }
+
   /* container 内に咲かせるビューを構築し { detach } を返す */
   function mount(container, opts) {
     opts = opts || {};
@@ -226,6 +304,24 @@
     buildUi(container);
     var canvas = container.querySelector('.hana-canvas');
     var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring' });
+    applyStageBg(container, opts.season || 'spring');
+    /* 入場の招待花（reduce時は空庭で開始）。
+       index.html 経由の open では core の openDialog が onOpen を el.hidden=false の *前* に呼ぶため、
+       この時点で #hana-view はまだ display:none。canvas は 0×0 で、いま invite() すると
+       中央(rect.width/2, rect.height*0.5)でなく (0,0)=左上隅に咲いてしまう。
+       canvas が実寸を得る（hidden 解除後の次フレーム）まで rAF で待ってから咲かせる。
+       ・可視コンテナに直接 mount した場合（テスト等）は初回同期呼びで既に実寸→即 invite（従来どおり count>=1）。
+       ・detach 済み（canvas が DOM から外れた）なら中止。数フレーム待っても 0 のままなら best-effort で咲かせる。 */
+    if (!reduce) {
+      var inviteWhenSized = function (tries) {
+        if (!canvas.isConnected) return;
+        var rect = canvas.getBoundingClientRect();
+        if ((rect.width > 0 && rect.height > 0) || tries <= 0) { garden.invite(); return; }
+        requestAnimationFrame(function () { inviteWhenSized(tries - 1); });
+      };
+      if (typeof requestAnimationFrame === 'function') inviteWhenSized(10);
+      else garden.invite();
+    }
     function publishCount() { if (typeof window !== 'undefined') window.__hanaCount = garden.snapshotCount(); }
     var countTimer = setInterval(publishCount, 200);
 
@@ -235,6 +331,7 @@
         container.querySelectorAll('.hana-season').forEach(function (b) { b.classList.remove('is-on'); });
         s.classList.add('is-on');
         garden.setSeason(s.getAttribute('data-season'));
+        applyStageBg(container, s.getAttribute('data-season'));
         return;
       }
       if (e.target.closest('.hana-clear')) {
@@ -260,6 +357,7 @@
     container.addEventListener('click', onClick);
 
     return {
+      farewell: function (done) { garden.farewell(done); },
       detach: function () {
         clearInterval(countTimer);
         container.removeEventListener('click', onClick);
@@ -270,7 +368,7 @@
   }
 
   /* テスト用に純粋関数を露出 */
-  window.NoctaHana = { _: { SEASONS: SEASONS, makeRng: makeRng, hashSeed: hashSeed, easeOutCubic: easeOutCubic, shouldSpawn: shouldSpawn, pickForm: pickForm, drawFlower: drawFlower } };
+  window.NoctaHana = { _: { SEASONS: SEASONS, makeRng: makeRng, hashSeed: hashSeed, easeOutCubic: easeOutCubic, shouldSpawn: shouldSpawn, pickForm: pickForm, drawFlower: drawFlower, hexToRgb: hexToRgb, rgba: rgba, mixRgb: mixRgb } };
   window.NoctaHana.mount = mount;
   window.NoctaHana.createGarden = createGarden;
 })();
