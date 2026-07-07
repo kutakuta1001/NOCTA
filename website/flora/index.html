@@ -12,7 +12,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./flora-data.js?v=2"></script>
 <script src="../zukan/zukan-core.js?v=1"></script>
-<script src="./hana.js?v=4"></script>
+<script src="./hana.js?v=5"></script>
 <style>
   :root { --gem: #B8B4AE; }
   *{ box-sizing:border-box; }
@@ -111,6 +111,16 @@
   }
   .today-card:hover{ border-color:var(--gem); transform:translateY(-2px); }
   .today-card .t-line{ display:block; width:34px; height:1px; background:var(--gem); margin:10px auto; opacity:0.8; }
+
+  /* 今日カードから直接その花を咲かせる導線 — カード本体(眺める↓/スクロール)より控えめな、
+     下線リンク調の小さな二次ボタン(today-cardの淡いトーンに調和・hoverで--gemへ) */
+  .hana-sow-today{
+    display:block; margin:14px auto 0; padding:2px 0;
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.08em; font-weight:700; text-transform:uppercase;
+    color:rgba(154,138,122,0.85); background:none; border:none; border-bottom:1px solid rgba(184,180,174,0.3);
+    cursor:pointer; transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .hana-sow-today:hover{ color:var(--gem); border-color:var(--gem); }
 
   /* 目次ボタン */
   #index-btn{
@@ -248,13 +258,14 @@
   }
   .hana-season:hover{ border-color:rgba(184,180,174,0.6); }
   .hana-season.is-on{ background:var(--gem); color:#0A0906; border-color:var(--gem); }
-  .hana-clear, .hana-press{
+  .hana-clear, .hana-press, .hana-oto{
     font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.12em; font-weight:700; text-transform:uppercase;
     color:#E8E0D0; border:1px solid rgba(184,180,174,0.3); border-radius:999px;
     padding:9px 16px; background:transparent; cursor:pointer;
     transition:background 0.25s ease, border-color 0.25s ease;
   }
-  .hana-clear:hover, .hana-press:hover{ background:rgba(184,180,174,0.12); border-color:rgba(184,180,174,0.6); }
+  .hana-clear:hover, .hana-press:hover, .hana-oto:hover{ background:rgba(184,180,174,0.12); border-color:rgba(184,180,174,0.6); }
+  .hana-oto[aria-pressed="true"]{ color:#0A0906; background:#B8B4AE; border-color:#B8B4AE; }
 
   /* 「真っさらにする」の拭き取りアニメ — hana.jsが.hana-stageに直接hana-sweepクラスを
      付け外しする（iroの独立オーバーレイ要素とは異なる構造のため::afterで代替）。
@@ -463,7 +474,12 @@
 
   var lightboxIdx = -1;
   var indexDialog = null, lightbox = null;
-  var hanaInstance = null, hanaDialog = null, hanaView = null;
+  var hanaInstance = null, hanaDialog = null, hanaView = null, hanaClosing = false;
+  /* DOMContentLoaded内で実体を代入する関数参照(T5)。renderToday()はトップレベルのクロージャで
+     実行されるためDOMContentLoaded内で宣言されるopenHanaを直接参照できない。事前にvar宣言して
+     おき、DOMContentLoaded側で`openHana = function(...){...}`と代入することで、
+     今日カードの「この花を咲かせる」ボタンからも呼べるようにする。 */
+  var openHana = null;
 
   var app = Z.createApp({
     strings: STRINGS,
@@ -585,6 +601,18 @@
       '<span class="font-heading text-[10px] tracking-[2px] uppercase text-sub block mt-3" data-i18n="today.cta">この花を眺める ↓</span>';
     card.addEventListener('click', function () { app.jumpTo(idx); });
     slot.appendChild(card);
+    /* 「咲かせる」導線はカードの外（直後の兄弟）に置く。today-card自体が<button>のため、
+       中にボタンを入れ子にするとHTML非準拠（button-in-button）になるのを避ける。
+       openHanaはDOMContentLoaded内で代入される関数参照(上でvar宣言)。 */
+    var sowTodayBtn = document.createElement('button');
+    sowTodayBtn.type = 'button';
+    sowTodayBtn.className = 'hana-sow-today';
+    sowTodayBtn.setAttribute('data-i18n', 'meta.sow');
+    sowTodayBtn.setAttribute('aria-label', f.title + 'を咲かせる');
+    sowTodayBtn.style.setProperty('--gem', f.accentColor);
+    sowTodayBtn.textContent = 'この花を咲かせる →';
+    sowTodayBtn.addEventListener('click', function () { if (openHana) openHana(idx); });
+    slot.appendChild(sowTodayBtn);
   }
 
   /* ---- 目次オーバーレイ＋誕生花月・色・お気に入りフィルタ ---- */
@@ -822,7 +850,7 @@
         var seed = null;
         if (typeof flowerIdx === 'number' && typeof NOCTA_FLORA !== 'undefined' && NOCTA_FLORA[flowerIdx]) {
           var f = NOCTA_FLORA[flowerIdx];
-          seed = { form: f.hanaForm || 'sakura', accentColor: f.accentColor, seasonName: seasonFromFlower(f), name: f.titleEn };
+          seed = { form: f.hanaForm || 'sakura', accentColor: f.accentColor, seasonName: seasonFromFlower(f), name: f.titleEn, nameJa: f.title };
         }
         hanaInstance = window.NoctaHana.mount(document.getElementById('hana-mount'),
           seed ? { seed: seed } : { season: currentSeason() });
@@ -832,6 +860,8 @@
            各花入口だとopacity:0のまま＝不可視になっていた不具合を修正）。 */
         requestAnimationFrame(function () {
           requestAnimationFrame(function () {
+            /* 即ESC等でrAF発火前に閉じられた場合はopacityを書かない(次回openのフェード初期値を守る) */
+            if (!hanaDialog || !hanaDialog.isOpen || !hanaDialog.isOpen()) return;
             if (hanaView) hanaView.style.opacity = '1';
             window.dispatchEvent(new Event('resize'));
           });
@@ -839,17 +869,20 @@
       },
       onClose: function () {
         if (hanaInstance) { hanaInstance.detach(); hanaInstance = null; }
+        hanaClosing = false;   /* farewell待ち中のESC閉じでもフラグを戻し、次の×を効かせる */
         if (hanaView) hanaView.style.opacity = '0';
       },
       backdropClose: false
     });
 
-    /* 各花セクションの.hana-sowから呼ぶ入口。汎用CTA(#hana-open)はcoreのtriggerが
-       openDialog('hana')を引数なしで呼ぶため、そちらは従来通りseedなしのまま。 */
-    function openHana(flowerIdx) {
+    /* 各花セクションの.hana-sowと今日カードの.hana-sow-todayから呼ぶ入口。汎用CTA(#hana-open)は
+       coreのtriggerがopenDialog('hana')を引数なしで呼ぶため、そちらは従来通りseedなしのまま。
+       トップレベルで宣言済みのopenHana変数へ代入する(function宣言ではなく式)ことで、
+       DOMContentLoadedの外側にあるrenderToday()のクロージャからも呼べるようにしている(T5)。 */
+    openHana = function (flowerIdx) {
       if (!hanaDialog) return;
       hanaDialog.open(flowerIdx);
-    }
+    };
 
     /* 入場フェード(B-3)のopacity:1設定は onOpen の rAF×2 内へ集約済み
        （汎用CTAと各花入口の両経路で通るようにするため。ここに専用リスナーは持たない）。 */
@@ -857,13 +890,21 @@
     /* 退場フェード(B-3)+farewell閉じ: ×クリックはcoreの通常close pipelineを経由させず、
        まずhana.jsのfarewell(花が閉じるアニメ)を待ち、完了後にhanaDialog.close()を呼ぶ
        （hidden化・overflow解除・aria-expanded・フォーカス復帰はcoreにそのまま委譲する）。
-       hanaInstanceは呼び出し直後にnull化して二重クリック時のfarewell多重発火を防ぐ。
-       ESCはcoreのinitKeyboardNavが直接closeDialogを呼ぶため対象外（即時close・既存動作を維持）。 */
+       二重クリックは hanaClosing フラグで防ぐ。hanaInstance は finish まで保持する:
+       farewell待ち(820ms)中にESC(coreのcloseDialog→onClose)で閉じられた場合、onCloseが
+       instをdetachし(farewellTimerも解除され) finish は発火しない。仮に発火しても
+       identity guard(hanaInstance===inst)で新しいmountを消さない。 */
     function closeHana() {
-      if (!hanaInstance) return;
+      if (!hanaInstance || hanaClosing) return;
       var inst = hanaInstance;
-      hanaInstance = null;
-      var finish = function () { inst.detach(); hanaDialog.close(); };
+      hanaClosing = true;
+      var finish = function () {
+        hanaClosing = false;
+        if (hanaInstance !== inst) return;   /* ESC等で既に閉じ/再オープン済みなら何もしない */
+        hanaInstance = null;
+        inst.detach();
+        hanaDialog.close();
+      };
       if (inst.farewell) inst.farewell(finish); else finish();
     }
     hanaCloseBtn.addEventListener('click', function (e) {

@@ -43,6 +43,16 @@
     return { petals: [accentHex, toHex(lighten), toHex(tint)], core: base.core, ground: base.ground };
   }
   function shouldSpawn(distAccum, step) { return distAccum >= step; }
+  /* 漢数字の日付（押し花に「七月七日」と添える・今日だけの景色を留める） */
+  var KANJI_NUM = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
+  function kanjiNum(n) {
+    n = Math.floor(n);
+    if (!(n >= 1 && n <= 31)) return String(n);   /* 月日想定の範囲外は算用数字にフォールバック */
+    if (n <= 10) return KANJI_NUM[n];
+    if (n < 20) return '十' + KANJI_NUM[n - 10];
+    return KANJI_NUM[Math.floor(n / 10)] + '十' + (n % 10 ? KANJI_NUM[n % 10] : '');
+  }
+  function kanjiDate(m, d) { return kanjiNum(m) + '月' + kanjiNum(d) + '日'; }
   var FORMS = ['sakura', 'kiku', 'tulip', 'komori'];
   function pickForm(rng) { return FORMS[Math.floor(rng() * FORMS.length) % FORMS.length]; }
 
@@ -139,11 +149,16 @@
     var flowers = [];        /* {x,y,r,baseRot,form,seed,bornT,dur,depth,vigor,swayPhase,swayW,holdMs,shed,nextShedT,maxShed} */
     var rafId = null, running = false;
     var seedCounter = 1;
-    var farewelling = false, farewellT = 0, lastFrameT = 0;
+    var farewelling = false, farewellT = 0, lastFrameT = 0, farewellTimer = null;
     var petals = [];              /* 落下花びらパーティクル(無常) */
     var fastAge = !!opts.__fastAge;  /* テスト短縮用: 本番未使用 */
     var lastAgeT = 0;
     var PART_MAX = 120;
+    /* 風の一吹き: 40〜90秒(テスト短縮時は約1.2秒)に一度、庭全体がそよぎ、
+       加齢期の花から花びらが数枚舞う。reduce/farewell時は発火しない(redraw側で判定)。 */
+    var wind = { until: 0, start: 0, dir: 1, strength: 0 };
+    var nextWindT = 0; var fastWind = !!opts.__fastWind;  /* テスト短縮用: 本番未使用 */
+    function scheduleWind(t) { nextWindT = t + (fastWind ? 1200 : (40000 + Math.random() * 50000)); }
 
     function resize() {
       var rect = canvas.getBoundingClientRect();
@@ -158,6 +173,27 @@
       var rect = canvas.getBoundingClientRect();
       ctx.clearRect(0, 0, rect.width, rect.height);
       var t = now();
+      if (!reduce && !farewelling && t >= nextWindT) {
+        wind.start = t; wind.until = t + 2500; wind.dir = Math.random() < 0.5 ? -1 : 1;
+        wind.strength = 0.6 + Math.random() * 0.4;
+        scheduleWind(t);
+        /* 加齢期の花から最大3輪、花びらを1枚余分に舞わせる（風方向へ強めのドリフト） */
+        var blown = 0;
+        for (var wi = 0; wi < flowers.length && blown < 3; wi++) {
+          var wf = flowers[wi];
+          if (wf.maxShed > 0 && wf.shed < wf.maxShed && petals.length < PART_MAX) {
+            petals.push({ x: wf.x, y: wf.y - wf.r * 0.4, vx: wind.dir * (0.05 + Math.random() * 0.04), vy: 0.015 + Math.random() * 0.015,
+              rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.006, r: wf.r * 0.42,
+              color: currentPalette().petals[0], bornT: t, life: 2800 });
+            wf.shed++; blown++;
+          }
+        }
+      }
+      var windAmt = 0;
+      if (t < wind.until) {
+        var wp = (t - wind.start) / 2500;                     /* 0..1 */
+        windAmt = Math.sin(Math.PI * Math.min(1, wp)) * wind.strength;  /* ease in-out */
+      }
       /* 描画は奥(depth大)から。保持はFIFO配列のまま、描画時だけdepth降順のコピーを使う
          （保持順を崩さないことで容量超過時の間引きが「最古を削除」で正しく働く） */
       var order = flowers.slice().sort(function (a, b) { return b.depth - a.depth; });
@@ -169,7 +205,7 @@
         } else {
           bloom = reduce ? 1 : Math.min(1, easeOutCubic((t - f.bornT) / f.dur));
         }
-        var sway = reduce ? 0 : 0.035 * Math.sin(t * f.swayW + f.swayPhase); /* A-5 微風 */
+        var sway = reduce ? 0 : (0.035 * Math.sin(t * f.swayW + f.swayPhase) + windAmt * 0.12 * wind.dir * (1 - f.depth * 0.6)); /* A-5 微風 + 風の一吹き */
         /* 加齢＝花びらを1枚ずつ落とす（無常）。reduce時は行わない */
         if (!reduce && !farewelling) {
           if (f.maxShed === 0) f.maxShed = Math.max(1, Math.floor(petalCount(f.form) * 0.4));
@@ -244,16 +280,41 @@
          depth順に挿入して shift すると新規花自身が消え得るバグを避けるため push+shift にする。 */
       flowers.push(f);
       if (flowers.length > MAX_FLOWERS) flowers.shift();
+      if (opts.onSpawn) { try { opts.onSpawn(f); } catch (_) {} }
+      kick();
+    }
+
+    /* 長押しで大輪（taika）: 動かさず600ms待つと、その場に特別大きな一輪(通常の約2倍)が
+       ゆっくり(3500ms)開く。「遅さの報酬」の極致。move で8px超動くとキャンセル。 */
+    var holdTimer = null, holdPos = null;
+    function clearHold() { if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; } holdPos = null; }
+    function spawnGrand(x, y) {
+      var rng = makeRng(seedCounter);
+      var f = { x: x, y: y,
+        r: 40 + rng() * 12, baseRot: rng() * Math.PI * 2,
+        form: seed ? seed.form : pickForm(rng), seed: seedCounter++,
+        bornT: now(), dur: 3500, depth: 0, vigor: 1,
+        swayPhase: rng() * Math.PI * 2, swayW: 0.0005 + rng() * 0.0004,
+        holdMs: (fastAge ? 600 : (20000 + rng() * 10000)), shed: 0, nextShedT: 0, maxShed: 0 };
+      flowers.push(f); if (flowers.length > MAX_FLOWERS) flowers.shift();
+      if (opts.onSpawn) { try { opts.onSpawn(f); } catch (_) {} }
       kick();
     }
 
     /* pointer 操作 */
     var drawing = false, last = null, accum = 0;
     function local(e) { var r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, t: (e.timeStamp || now()) }; }
-    function begin(e) { drawing = true; var p = local(e); last = p; accum = 0; spawn(p.x, p.y, 0); if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (_) {} } }
+    function begin(e) {
+      clearHold();   /* マルチタッチ/連続入力で前の長押しタイマーが残らないよう先に解除 */
+      drawing = true; var p = local(e); last = p; accum = 0; spawn(p.x, p.y, 0);
+      if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (_) {} }
+      holdPos = { x: p.x, y: p.y };
+      holdTimer = setTimeout(function () { if (holdPos) spawnGrand(holdPos.x, holdPos.y); clearHold(); }, 600);
+    }
     function move(e) {
       if (!drawing) return;
       var p = local(e), dx = p.x - last.x, dy = p.y - last.y, d = Math.sqrt(dx * dx + dy * dy);
+      if (holdPos) { var hdx = p.x - holdPos.x, hdy = p.y - holdPos.y; if (hdx * hdx + hdy * hdy > 64) clearHold(); }
       if (d < 0.0001) { last = p; return; }
       var dt = Math.max(1, p.t - last.t), speed = d / dt;
       /* last→p を STEP 間隔で線形補間して花を置く（軌跡に沿って等間隔に咲かせる）。
@@ -268,7 +329,7 @@
       accum = d - (s - effStep);
       last = p;
     }
-    function end() { drawing = false; last = null; }
+    function end() { drawing = false; last = null; clearHold(); }
 
     canvas.addEventListener('pointerdown', begin);
     canvas.addEventListener('pointermove', move);
@@ -277,6 +338,9 @@
     canvas.addEventListener('pointerleave', end);
     var onWinResize = function () { resize(); };
     window.addEventListener('resize', onWinResize);
+    /* 風の初回スケジュールは初回描画(resize内のredraw)より前に行う。
+       後だと nextWindT=0 のまま最初の redraw が走り、開いた瞬間に風が発火してしまう */
+    scheduleWind(now());
     resize();
 
     return {
@@ -300,12 +364,16 @@
         /* 細い枠 */
         octx.strokeStyle = 'rgba(60,54,42,0.35)'; octx.lineWidth = Math.max(1, w * 0.004);
         octx.strokeRect(w * 0.03, h * 0.03, w * 0.94, h * 0.94);
-        /* 季節ラベル＋署名 */
+        /* ラベル（季節または花の名前）＋漢数字の日付＋署名。
+           seed時は花の名で「薔薇 の 押し花 · 七月七日」、非seedは季節で「春 の 押し花 · 七月七日」。 */
         var labels = { spring: '春', summer: '夏', autumn: '秋', winter: '冬' };
+        var today = new Date();
+        var dateLabel = kanjiDate(today.getMonth() + 1, today.getDate());
+        var head = (seed && seed.nameJa) ? seed.nameJa : (labels[seasonName] || '');
         octx.fillStyle = 'rgba(40,36,30,0.72)';
         octx.font = '600 ' + Math.round(w * 0.028) + 'px "Shippori Mincho","EB Garamond",serif';
         octx.textAlign = 'left'; octx.textBaseline = 'bottom';
-        octx.fillText((labels[seasonName] || '') + ' の 押し花', w * 0.05, h * 0.955);
+        octx.fillText(head + ' の 押し花 · ' + dateLabel, w * 0.05, h * 0.955);
         octx.textAlign = 'right';
         octx.fillText('Ichi', w * 0.95, h * 0.955);
         return out.toDataURL('image/png');
@@ -320,15 +388,20 @@
         if (farewelling) return;                                   /* 再入ガード(二重doneを防ぐ) */
         if (reduce || flowers.length === 0) { if (done) done(); return; }
         farewelling = true; farewellT = now(); kick();
-        setTimeout(function () {
+        farewellTimer = setTimeout(function () {
           /* 退場完了: 花を消し、状態を戻す。閉じずに再利用されても清浄な空庭に戻る
              （farewellingが立ちっぱなしだと新規花が二度と描かれない不具合を防ぐ） */
+          farewellTimer = null;
           flowers = []; petals = []; farewelling = false;
           if (done) done();
         }, 820);
       },
       detach: function () {
         running = false; if (rafId) cancelAnimationFrame(rafId);
+        clearHold();
+        /* farewell待ち中に別経路(ESC等)でdetachされた場合、遅延callbackが後から
+           走って古いdoneが発火しないようタイマーを解除する */
+        if (farewellTimer) { clearTimeout(farewellTimer); farewellTimer = null; }
         canvas.removeEventListener('pointerdown', begin);
         canvas.removeEventListener('pointermove', move);
         canvas.removeEventListener('pointerup', end);
@@ -351,6 +424,7 @@
           '<button type="button" class="hana-season" data-season="winter">冬</button>' +
         '</div>' +
         '<button type="button" class="hana-clear">真っさらにする</button>' +
+        '<button type="button" class="hana-oto" aria-pressed="false">音を添える</button>' +
         '<button type="button" class="hana-press">押し花にする</button>' +
       '</div>';
   }
@@ -384,8 +458,33 @@
         b.classList.toggle('is-on', b.getAttribute('data-season') === opts.season);
       });
     }
+    /* なぞり音（oto）: デフォルトオフ・トグルonのユーザージェスチャでのみ AudioContext を生成する。
+       エンジン(createGarden)は音を知らず、spawn毎に呼ばれる opts.onSpawn 経由で接続するのみ。 */
+    var oto = { enabled: false, ctx: null, lastT: -1, played: 0 };  /* lastT負値: トグルON直後の最初の一音も鳴らす */
+    function otoPublish() { if (typeof window !== 'undefined') window.__hanaOto = { played: oto.played, ctxCreated: !!oto.ctx }; }
+    function otoPlay(f) {
+      if (!oto.enabled || !oto.ctx) return;
+      var t = oto.ctx.currentTime;
+      if ((t - oto.lastT) < 0.09) return;              /* 最小発音間隔90ms */
+      oto.lastT = t;
+      /* 鈴/水滴の間の短い減衰音。花が大きいほど低く（460〜830Hz帯） */
+      var size01 = Math.max(0, Math.min(1, (f.r - 10) / 40));
+      var freq = 830 - size01 * 370;
+      var g = oto.ctx.createGain();
+      g.gain.setValueAtTime(0.05, t);
+      g.gain.exponentialRampToValueAtTime(0.0004, t + 0.5);
+      g.connect(oto.ctx.destination);
+      var o1 = oto.ctx.createOscillator(); o1.type = 'sine'; o1.frequency.setValueAtTime(freq, t);
+      var o2 = oto.ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.setValueAtTime(freq * 2.01, t);
+      var g2 = oto.ctx.createGain(); g2.gain.value = 0.25; o2.connect(g2); g2.connect(g);
+      o1.connect(g);
+      o1.start(t); o2.start(t); o1.stop(t + 0.55); o2.stop(t + 0.55);
+      oto.played++; otoPublish();
+    }
+    otoPublish();   /* デフォルトオフの初期状態を即時公開（テスト観測 __hanaOto を待たせない） */
+
     var canvas = container.querySelector('.hana-canvas');
-    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge });
+    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, onSpawn: otoPlay });
     applyStageBg(container, seed ? seed.seasonName : (opts.season || 'spring'));
     /* 入場の招待花（reduce時は空庭で開始）。
        index.html 経由の open では core の openDialog が onOpen を el.hidden=false の *前* に呼ぶため、
@@ -421,6 +520,21 @@
         if (stage && !reduce) { stage.classList.add('hana-sweep'); setTimeout(function () { stage.classList.remove('hana-sweep'); }, 900); }
         garden.clear(); publishCount(); return;
       }
+      var otoBtn = e.target.closest('.hana-oto');
+      if (otoBtn) {
+        oto.enabled = !oto.enabled;
+        if (oto.enabled && !oto.ctx) {
+          /* 初回onのクリック時にのみ AudioContext を生成する（自動再生制限適合・ユーザージェスチャ内） */
+          try {
+            oto.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (oto.ctx && oto.ctx.resume) { try { oto.ctx.resume(); } catch (_) {} }
+          } catch (_) {}
+        }
+        otoBtn.setAttribute('aria-pressed', oto.enabled ? 'true' : 'false');
+        otoBtn.textContent = oto.enabled ? '音を消す' : '音を添える';
+        otoPublish();
+        return;
+      }
       if (e.target.closest('.hana-press')) {
         /* seed時は季節チップが非表示(springがis-onのまま)なので seed.seasonName を使う。
            非seed時は選択中チップから取る。保存ファイル名 ichi-<season>.png に反映。 */
@@ -448,12 +562,13 @@
         container.removeEventListener('click', onClick);
         garden.detach();
         container.innerHTML = '';
+        try { if (oto.ctx) oto.ctx.close(); } catch (_) {}
       }
     };
   }
 
   /* テスト用に純粋関数を露出 */
-  window.NoctaHana = { _: { SEASONS: SEASONS, makeRng: makeRng, hashSeed: hashSeed, easeOutCubic: easeOutCubic, shouldSpawn: shouldSpawn, pickForm: pickForm, drawFlower: drawFlower, hexToRgb: hexToRgb, rgba: rgba, mixRgb: mixRgb, deriveSeededPalette: deriveSeededPalette } };
+  window.NoctaHana = { _: { SEASONS: SEASONS, makeRng: makeRng, hashSeed: hashSeed, easeOutCubic: easeOutCubic, shouldSpawn: shouldSpawn, pickForm: pickForm, drawFlower: drawFlower, hexToRgb: hexToRgb, rgba: rgba, mixRgb: mixRgb, deriveSeededPalette: deriveSeededPalette, kanjiDate: kanjiDate } };
   window.NoctaHana.mount = mount;
   window.NoctaHana.createGarden = createGarden;
 })();
