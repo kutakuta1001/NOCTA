@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="./flora-data.js"></script>
+<script src="./flora-data.js?v=2"></script>
 <script src="../zukan/zukan-core.js?v=1"></script>
-<script src="./hana.js?v=2"></script>
+<script src="./hana.js?v=3"></script>
 <style>
   :root { --gem: #B8B4AE; }
   *{ box-sizing:border-box; }
@@ -46,6 +46,15 @@
   .gem-underline{ display:inline-block; width:56px; height:1px; background:var(--gem); opacity:0.75; margin:14px 0 22px; }
   .gem-chip{ border:1px solid rgba(184,180,174,0.18); color:var(--gem); }
   .gem-chip--birth{ border-color:var(--gem); }
+
+  /* 「この花を咲かせる」入口 — 各花セクションから、その花の色(--gem)・形・季節でhanaへ入場する */
+  .hana-sow{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.1em; font-weight:700; text-transform:uppercase;
+    border:1px solid var(--gem); color:var(--gem); border-radius:999px;
+    padding:6px 14px; background:transparent; cursor:pointer;
+    transition:background 0.3s ease, color 0.3s ease;
+  }
+  .hana-sow:hover{ background:rgba(184,180,174,0.14); color:#E8E0D0; }
 
   .gem-photo-wrap{ position:relative; overflow:hidden; border-radius:2px; box-shadow:0 30px 60px -20px rgba(0,0,0,0.6); }
   .gem-photo-wrap::before{ content:""; position:absolute; inset:0; background:var(--gem); opacity:0.1; }
@@ -400,6 +409,7 @@
     "meta.season":     { ja: "開花期",                                                            en: "In Bloom" },
     "meta.source":     { ja: "出典",                                                              en: "Source" },
     "meta.kotoba":     { ja: "花言葉",                                                            en: "Flower Meaning" },
+    "meta.sow":        { ja: "この花を咲かせる",                                                  en: "Sow this flower" },
     "today.eyebrow":   { ja: "今日の一花",                                                        en: "Flower of the Day" },
     "today.cta":       { ja: "この花を眺める ↓",                                                  en: "Gaze at this flower ↓" },
     "index.open":      { ja: "目次",                                                              en: "Index" },
@@ -533,6 +543,7 @@
               birthChip +
               '<span class="gem-chip font-heading text-[10px] tracking-[1px] uppercase px-3 py-1.5 rounded-full"><span data-i18n="meta.season">開花期</span>: ' + escHtml(f.season) + '</span>' +
               '<span class="gem-chip font-heading text-[10px] tracking-[1px] uppercase px-3 py-1.5 rounded-full"><span data-i18n="meta.origin">原産</span>: ' + escHtml(f.origin) + '</span>' +
+              '<button type="button" class="hana-sow" data-sakaseru="' + i + '" data-i18n="meta.sow" aria-label="' + escAttr(f.title + 'を咲かせる') + '">この花を咲かせる</button>' +
             '</div>' +
           '</div>' +
         '</div>';
@@ -759,17 +770,41 @@
     hanaView = document.getElementById('hana-view');
     var hanaOpenBtn = document.getElementById('hana-open');
     var hanaCloseBtn = document.getElementById('hana-close');
-    var hanaReduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    /* 誕生月(birthMonths[0])から季節バケットを導く。既定は春。
+       この花の入口(.hana-sow)がseedのseasonNameを決めるために使う。 */
+    function seasonFromFlower(f) {
+      var m = (f && f.birthMonths && f.birthMonths.length) ? f.birthMonths[0] : null;
+      if (m === 3 || m === 4 || m === 5) return 'spring';
+      if (m === 6 || m === 7 || m === 8) return 'summer';
+      if (m === 9 || m === 10 || m === 11) return 'autumn';
+      if (m === 12 || m === 1 || m === 2) return 'winter';
+      return 'spring';
+    }
 
     hanaDialog = app.registerDialog('hana', {
       el: hanaView,
       closeBtn: null,
       trigger: hanaOpenBtn,
-      onOpen: function () {
+      /* flowerIdx指定時(各花の.hana-sowから)はその花の色・形・季節でseedを組み、
+         mount({seed})でhana.jsに渡す。未指定(汎用CTA #hana-open)はseedなし=従来通り。 */
+      onOpen: function (flowerIdx) {
         if (!window.NoctaHana) return;
-        hanaInstance = window.NoctaHana.mount(document.getElementById('hana-mount'), {});
+        var seed = null;
+        if (typeof flowerIdx === 'number' && typeof NOCTA_FLORA !== 'undefined' && NOCTA_FLORA[flowerIdx]) {
+          var f = NOCTA_FLORA[flowerIdx];
+          seed = { form: f.hanaForm || 'sakura', accentColor: f.accentColor, seasonName: seasonFromFlower(f), name: f.titleEn };
+        }
+        hanaInstance = window.NoctaHana.mount(document.getElementById('hana-mount'), seed ? { seed: seed } : {});
+        /* onOpenはcoreがel.hidden=false する前に呼ばれるため、rAF×2後（hidden解除済み）に
+           入場フェード(B-3)のopacity:1とcanvas実寸用のresizeを行う。汎用CTA・各花入口(.hana-sow)の
+           両経路で必ず通るのでここに集約する（以前は#hana-openのクリックにのみ紐づき、
+           各花入口だとopacity:0のまま＝不可視になっていた不具合を修正）。 */
         requestAnimationFrame(function () {
-          requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });
+          requestAnimationFrame(function () {
+            if (hanaView) hanaView.style.opacity = '1';
+            window.dispatchEvent(new Event('resize'));
+          });
         });
       },
       onClose: function () {
@@ -779,15 +814,15 @@
       backdropClose: false
     });
 
-    /* 入場フェード(B-3): coreのtriggerリスナー（openDialog、hidden解除は同期実行）が先に
-       登録されているため、同じclickイベントに対して後から登録した本リスナーは常に
-       hidden解除**後**に発火する（同一要素・同一イベントのリスナーは登録順に発火するDOM仕様）。
-       reduce時はtransitionがCSS側で無効化されるため即時にopacity:1を設定するだけでよい。 */
-    hanaOpenBtn.addEventListener('click', function () {
-      if (!hanaView) return;
-      if (hanaReduceMotion) { hanaView.style.opacity = '1'; return; }
-      requestAnimationFrame(function () { hanaView.style.opacity = '1'; });
-    });
+    /* 各花セクションの.hana-sowから呼ぶ入口。汎用CTA(#hana-open)はcoreのtriggerが
+       openDialog('hana')を引数なしで呼ぶため、そちらは従来通りseedなしのまま。 */
+    function openHana(flowerIdx) {
+      if (!hanaDialog) return;
+      hanaDialog.open(flowerIdx);
+    }
+
+    /* 入場フェード(B-3)のopacity:1設定は onOpen の rAF×2 内へ集約済み
+       （汎用CTAと各花入口の両経路で通るようにするため。ここに専用リスナーは持たない）。 */
 
     /* 退場フェード(B-3)+farewell閉じ: ×クリックはcoreの通常close pipelineを経由させず、
        まずhana.jsのfarewell(花が閉じるアニメ)を待ち、完了後にhanaDialog.close()を呼ぶ
@@ -830,6 +865,8 @@
     document.getElementById('gems-root').addEventListener('click', function (e) {
       var fav = e.target.closest('.fav-btn');
       if (fav) { app.favs.toggle(fav.getAttribute('data-fav')); return; }
+      var sow = e.target.closest('.hana-sow');
+      if (sow) { openHana(parseInt(sow.getAttribute('data-sakaseru'), 10)); return; }
       var btn = e.target.closest('[data-lightbox]');
       if (btn) lightbox.open(parseInt(btn.getAttribute('data-lightbox'), 10));
     });
