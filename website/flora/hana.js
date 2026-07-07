@@ -83,6 +83,26 @@
     ctx.save();
     ctx.translate(o.x, o.y);
     ctx.rotate(o.rot || 0);
+    if (o.leaves && o.leaves.length) {
+      var greenBase = { r: 0x6E, g: 0x7A, b: 0x55 };   /* セージグリーン */
+      for (var li = 0; li < o.leaves.length; li++) {
+        var lf = o.leaves[li];
+        ctx.save();
+        ctx.rotate(lf.ang);
+        ctx.scale(openAng, openAng);
+        var ll = r * (lf.len || 1.2);
+        var lg = ctx.createLinearGradient(0, 0, 0, -ll);
+        lg.addColorStop(0, rgba(greenBase, 0.82));
+        lg.addColorStop(1, rgba(mixRgb(greenBase, ground, 0.5), 0.42));
+        ctx.fillStyle = lg;
+        petal(ctx, ll, ll * 0.32);                 /* しずく形の葉 */
+        ctx.fill();
+        ctx.strokeStyle = rgba(mixRgb(greenBase, { r: 0, g: 0, b: 0 }, 0.25), 0.4);
+        ctx.lineWidth = Math.max(0.5, ll * 0.02);
+        ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -ll * 0.9); ctx.stroke();  /* 葉脈 */
+        ctx.restore();
+      }
+    }
     if (depth > 0.5) { ctx.shadowColor = rgba(hexToRgb(pal.petals[0]), 0.5); ctx.shadowBlur = r * 0.5; } /* 奥は柔らかく */
     for (var i = 0; i < n - shed; i++) {
       ctx.save();
@@ -154,11 +174,11 @@
     var fastAge = !!opts.__fastAge;  /* テスト短縮用: 本番未使用 */
     var lastAgeT = 0;
     var PART_MAX = 120;
-    /* 風の一吹き: 40〜90秒(テスト短縮時は約1.2秒)に一度、庭全体がそよぎ、
+    /* 風の一吹き: 16〜34秒(テスト短縮時は約1.2秒)に一度、庭全体がそよぎ、
        加齢期の花から花びらが数枚舞う。reduce/farewell時は発火しない(redraw側で判定)。 */
     var wind = { until: 0, start: 0, dir: 1, strength: 0 };
     var nextWindT = 0; var fastWind = !!opts.__fastWind;  /* テスト短縮用: 本番未使用 */
-    function scheduleWind(t) { nextWindT = t + (fastWind ? 1200 : (40000 + Math.random() * 50000)); }
+    function scheduleWind(t) { nextWindT = t + (fastWind ? 1200 : (16000 + Math.random() * 18000)); }
 
     function resize() {
       var rect = canvas.getBoundingClientRect();
@@ -173,13 +193,13 @@
       var rect = canvas.getBoundingClientRect();
       ctx.clearRect(0, 0, rect.width, rect.height);
       var t = now();
-      if (!reduce && !farewelling && t >= nextWindT) {
+      if (!reduce && !farewelling && flowers.length > 0 && t >= nextWindT) {
         wind.start = t; wind.until = t + 2500; wind.dir = Math.random() < 0.5 ? -1 : 1;
         wind.strength = 0.6 + Math.random() * 0.4;
         scheduleWind(t);
-        /* 加齢期の花から最大3輪、花びらを1枚余分に舞わせる（風方向へ強めのドリフト） */
+        /* 加齢期の花から最大5輪、花びらを1枚余分に舞わせる（風方向へ強めのドリフト） */
         var blown = 0;
-        for (var wi = 0; wi < flowers.length && blown < 3; wi++) {
+        for (var wi = 0; wi < flowers.length && blown < 5; wi++) {
           var wf = flowers[wi];
           if (wf.maxShed > 0 && wf.shed < wf.maxShed && petals.length < PART_MAX) {
             petals.push({ x: wf.x, y: wf.y - wf.r * 0.4, vx: wind.dir * (0.05 + Math.random() * 0.04), vy: 0.015 + Math.random() * 0.015,
@@ -188,6 +208,7 @@
             wf.shed++; blown++;
           }
         }
+        if (opts.onWind) { try { opts.onWind(); } catch (_) {} }
       }
       var windAmt = 0;
       if (t < wind.until) {
@@ -205,7 +226,7 @@
         } else {
           bloom = reduce ? 1 : Math.min(1, easeOutCubic((t - f.bornT) / f.dur));
         }
-        var sway = reduce ? 0 : (0.035 * Math.sin(t * f.swayW + f.swayPhase) + windAmt * 0.12 * wind.dir * (1 - f.depth * 0.6)); /* A-5 微風 + 風の一吹き */
+        var sway = reduce ? 0 : (0.035 * Math.sin(t * f.swayW + f.swayPhase) + windAmt * 0.2 * wind.dir * (1 - f.depth * 0.6)); /* A-5 微風 + 風の一吹き */
         /* 加齢＝花びらを1枚ずつ落とす（無常）。reduce時は行わない */
         if (!reduce && !farewelling) {
           if (f.maxShed === 0) f.maxShed = Math.max(1, Math.floor(petalCount(f.form) * 0.4));
@@ -226,7 +247,7 @@
         drawFlower(ctx, {
           x: f.x, y: f.y, r: f.r, rot: f.baseRot + sway, bloom: bloom,
           form: f.form, palette: currentPalette(), rng: makeRng(f.seed),
-          vigor: f.vigor, depth: f.depth, shed: f.shed
+          vigor: f.vigor, depth: f.depth, shed: f.shed, leaves: f.leaves
         });
       }
       /* 落下花びらパーティクル */
@@ -276,6 +297,11 @@
         holdMs: (fastAge ? 600 : (12000 + rng() * 10000)),   /* 満開後この時間で加齢開始 */
         shed: 0, nextShedT: 0, maxShed: 0             /* maxShedはredraw初回に n*0.4 で確定 */
       };
+      var leafN = (rng() < 0.5) ? (rng() < 0.4 ? 2 : 1) : 0;   /* 約半数に1〜2枚 */
+      f.leaves = [];
+      for (var lk = 0; lk < leafN; lk++) {
+        f.leaves.push({ ang: (lk === 0 ? 2.35 : -2.35) + (rng() - 0.5) * 0.5, len: 1.05 + rng() * 0.5 });
+      }
       /* FIFO保持（描画順は redraw 側で depth ソート）。容量超過時は最古(先頭)を削除。
          depth順に挿入して shift すると新規花自身が消え得るバグを避けるため push+shift にする。 */
       flowers.push(f);
@@ -284,18 +310,29 @@
       kick();
     }
 
-    /* 長押しで大輪（taika）: 動かさず600ms待つと、その場に特別大きな一輪(通常の約2倍)が
-       ゆっくり(3500ms)開く。「遅さの報酬」の極致。move で8px超動くとキャンセル。 */
+    /* 長押しで大輪（taika）: 動かさず600ms待つと、その場に特別大きな一輪(通常の花の約3〜4倍・
+       旧spawnGrand比で約2倍に拡大・2026-07-07)が、葉を添えてゆっくり(3500ms)開く。
+       「遅さの報酬」の極致。move で8px超動くとキャンセル。 */
     var holdTimer = null, holdPos = null;
     function clearHold() { if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; } holdPos = null; }
     function spawnGrand(x, y) {
       var rng = makeRng(seedCounter);
+      var r = 82 + rng() * 22;
+      /* 大輪は花弁・葉が r*1.2〜1.3 まで伸びるため、画面端/ツールバー際でクリップされないよう
+         ローカル座標系(rect.width/height)でクランプする。r は確定済みの値を使う。 */
+      var rect = canvas.getBoundingClientRect();
+      /* 実効margin: 極小/0幅canvasでも上限<下限で枠外に飛ばないよう rect の半分で頭打ち(中央寄せ)。 */
+      var mx = Math.min(r * 1.35, rect.width / 2);
+      var my = Math.min(r * 1.35, rect.height / 2);
+      x = Math.max(mx, Math.min(rect.width - mx, x));
+      y = Math.max(my, Math.min(rect.height - my, y));
       var f = { x: x, y: y,
-        r: 40 + rng() * 12, baseRot: rng() * Math.PI * 2,
+        r: r, baseRot: rng() * Math.PI * 2,
         form: seed ? seed.form : pickForm(rng), seed: seedCounter++,
         bornT: now(), dur: 3500, depth: 0, vigor: 1,
         swayPhase: rng() * Math.PI * 2, swayW: 0.0005 + rng() * 0.0004,
         holdMs: (fastAge ? 600 : (20000 + rng() * 10000)), shed: 0, nextShedT: 0, maxShed: 0 };
+      f.leaves = [{ ang: 2.3, len: 1.25 }, { ang: -2.3, len: 1.15 }];
       flowers.push(f); if (flowers.length > MAX_FLOWERS) flowers.shift();
       if (opts.onSpawn) { try { opts.onSpawn(f); } catch (_) {} }
       kick();
@@ -379,6 +416,9 @@
         return out.toDataURL('image/png');
       },
       snapshotCount: function () { return flowers.length; },
+      /* テスト用: 少なくとも1枚花びらを落とした花の数(加齢/風どちらの契機でもshed>0になったもの)。
+         風発火の舞う枚数上限を検証するための直接的な観測手段（面積の間接推定より確実）。 */
+      shedFlowerCount: function () { return flowers.filter(function (f) { return f.shed > 0; }).length; },
       invite: function () {
         var rect = canvas.getBoundingClientRect();
         spawn(rect.width / 2, rect.height * 0.5, 0);
@@ -460,8 +500,8 @@
     }
     /* なぞり音（oto）: デフォルトオフ・トグルonのユーザージェスチャでのみ AudioContext を生成する。
        エンジン(createGarden)は音を知らず、spawn毎に呼ばれる opts.onSpawn 経由で接続するのみ。 */
-    var oto = { enabled: false, ctx: null, lastT: -1, played: 0 };  /* lastT負値: トグルON直後の最初の一音も鳴らす */
-    function otoPublish() { if (typeof window !== 'undefined') window.__hanaOto = { played: oto.played, ctxCreated: !!oto.ctx }; }
+    var oto = { enabled: false, ctx: null, lastT: -1, played: 0, wind: 0 };  /* lastT負値: トグルON直後の最初の一音も鳴らす */
+    function otoPublish() { if (typeof window !== 'undefined') window.__hanaOto = { played: oto.played, ctxCreated: !!oto.ctx, wind: oto.wind || 0 }; }
     function otoPlay(f) {
       if (!oto.enabled || !oto.ctx) return;
       var t = oto.ctx.currentTime;
@@ -479,12 +519,30 @@
       var g2 = oto.ctx.createGain(); g2.gain.value = 0.25; o2.connect(g2); g2.connect(g);
       o1.connect(g);
       o1.start(t); o2.start(t); o1.stop(t + 0.55); o2.stop(t + 0.55);
+      o1.onended = function () { try { o1.disconnect(); o2.disconnect(); g2.disconnect(); g.disconnect(); } catch (_) {} };
       oto.played++; otoPublish();
+    }
+    function otoPlayWind() {
+      if (!oto.enabled || !oto.ctx) return;
+      var ctx = oto.ctx, t = ctx.currentTime, dur = 1.8;
+      var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+      var d = buf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;   /* ホワイトノイズ */
+      var src = ctx.createBufferSource(); src.buffer = buf;
+      var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(520, t);
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(0.03, t + 0.5);          /* そよ風の立ち上がり */
+      g.gain.linearRampToValueAtTime(0.0001, t + dur);        /* 収まり */
+      src.connect(lp); lp.connect(g); g.connect(ctx.destination);
+      src.start(t); src.stop(t + dur);
+      src.onended = function () { try { src.disconnect(); lp.disconnect(); g.disconnect(); } catch (_) {} };
+      oto.wind = (oto.wind || 0) + 1; otoPublish();
     }
     otoPublish();   /* デフォルトオフの初期状態を即時公開（テスト観測 __hanaOto を待たせない） */
 
     var canvas = container.querySelector('.hana-canvas');
-    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, onSpawn: otoPlay });
+    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, onSpawn: otoPlay, onWind: otoPlayWind });
     applyStageBg(container, seed ? seed.seasonName : (opts.season || 'spring'));
     /* 入場の招待花（reduce時は空庭で開始）。
        index.html 経由の open では core の openDialog が onOpen を el.hidden=false の *前* に呼ぶため、
