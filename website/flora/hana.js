@@ -32,6 +32,8 @@
   }
   function rgba(c, a) { return 'rgba(' + Math.round(c.r) + ',' + Math.round(c.g) + ',' + Math.round(c.b) + ',' + a + ')'; }
   function mixRgb(a, b, t) { return { r: a.r+(b.r-a.r)*t, g: a.g+(b.g-a.g)*t, b: a.b+(b.b-a.b)*t }; }
+  /* {r,g,b} → "#rrggbb"。deriveSeededPalette と press() の退色パレット生成で共用する。 */
+  function toHex(c) { return '#' + [c.r, c.g, c.b].map(function (v) { return ('0' + Math.max(0, Math.min(255, Math.round(v))).toString(16)).slice(-2); }).join(''); }
   /* シード花用パレット: accentHex(その花の代表色)を主色にした派生3色パレット。
      ground/core は季節基準(seasonName)のまま流用し、和紙地・花芯の統一感を保つ。 */
   function deriveSeededPalette(accentHex, seasonName) {
@@ -39,7 +41,6 @@
     var a = hexToRgb(accentHex);
     var lighten = mixRgb(a, { r: 255, g: 255, b: 255 }, 0.28);
     var tint = mixRgb(a, hexToRgb(base.ground), 0.45);
-    function toHex(c) { return '#' + [c.r, c.g, c.b].map(function (v) { return ('0' + Math.round(v).toString(16)).slice(-2); }).join(''); }
     return { petals: [accentHex, toHex(lighten), toHex(tint)], core: base.core, ground: base.ground };
   }
   function shouldSpawn(distAccum, step) { return distAccum >= step; }
@@ -155,6 +156,162 @@
     ctx.restore();
   }
 
+  /* kind別の描画ディスパッチ。o.kind が undefined/'flower' なら花(drawFlower)、
+     それ以外は草花の緑（sprig/fern/umbel/floret）へ分岐する。
+     呼び出し規約は drawFlower と同一シグネチャ(ctx, o)で、5関数すべてが同一の
+     自己完結型: 各drawerが内部でctx.save()+translate(o.x,o.y)+rotate(o.rot||0)+描画+
+     ctx.restore()を行う。呼び出し側(drawEntity・redraw)はtranslate/rotateしない。
+     flower経路は drawFlower をそのまま呼ぶだけなので挙動は完全に不変。 */
+  function drawEntity(ctx, o) {
+    var k = o.kind;
+    if (!k || k === 'flower') { drawFlower(ctx, o); return; }
+    if (k === 'sprig')  { drawSprig(ctx, o);  return; }
+    if (k === 'fern')   { drawFern(ctx, o);   return; }
+    if (k === 'umbel')  { drawUmbel(ctx, o);  return; }
+    if (k === 'floret') { drawFloret(ctx, o); return; }
+    drawFlower(ctx, o);   /* 未知kindは花にフォールバック */
+  }
+
+  var GREEN = { r: 0x6E, g: 0x7A, b: 0x55 };   /* セージグリーン（葉と共通） */
+  /* 草花の緑グラデーション（付け根=濃→先端=淡・地色寄り）。leaves(drawFlower内)と同じ配色則。
+     ground は呼び出し側が palette から hexToRgb 済みで渡す（drawFlower の leaves 描画と同じ取得方法）。 */
+  function greenGrad(ctx, len, ground) {
+    var g = ctx.createLinearGradient(0, 0, 0, -len);
+    g.addColorStop(0, rgba(GREEN, 0.82));
+    g.addColorStop(1, rgba(mixRgb(GREEN, ground, 0.5), 0.42));
+    return g;
+  }
+  /* 草・つる(sprig)。o = {x, y, r, rot, bloom, palette, rng}。drawFlowerと同一の
+     自己完結型: 内部でctx.save()+translate(o.x,o.y)+rotate(o.rot||0)+描画+ctx.restore()
+     を行う。呼び出し側はtranslate/rotateしない（drawFern/drawUmbel/drawFloretも同一規約）。 */
+  function drawSprig(ctx, o) {
+    var rng = o.rng, open = easeOutCubic(Math.min(1, o.bloom || 0)), r = o.r;
+    if (open < 0.02) return;
+    var ground = hexToRgb(o.palette.ground);
+    ctx.save();
+    ctx.translate(o.x, o.y);
+    ctx.rotate(o.rot || 0);
+    var segs = 5 + Math.floor(rng() * 3);
+    var segLen = (r * 1.7 / segs) * open;
+    var curve = (rng() - 0.5) * 0.45;
+    var ang = -Math.PI / 2 + (rng() - 0.5) * 0.4, px = 0, py = 0;
+    var pts = [{ x: 0, y: 0 }];
+    for (var s = 0; s < segs; s++) { ang += curve; px += Math.cos(ang) * segLen; py += Math.sin(ang) * segLen; pts.push({ x: px, y: py }); }
+    ctx.strokeStyle = rgba(mixRgb(GREEN, ground, 0.15), 0.7);
+    ctx.lineWidth = Math.max(0.6, r * 0.045);
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.stroke();
+    for (var j = 1; j < pts.length; j++) {
+      var side = (j % 2 === 0) ? 1 : -1;
+      var lang = Math.atan2(pts[j].y - pts[j - 1].y, pts[j].x - pts[j - 1].x) + side * 1.05;
+      var ll = r * 0.30 * open * (0.7 + rng() * 0.5);
+      ctx.save();
+      ctx.translate(pts[j].x, pts[j].y); ctx.rotate(lang - Math.PI / 2);  /* petalは-y向き→枝に沿わせる */
+      ctx.fillStyle = greenGrad(ctx, ll, ground);
+      petal(ctx, ll, ll * 0.42); ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  /* シダ(fern)。羽状フロンド。o = {x, y, r, rot, bloom, palette, rng}。drawSprigと
+     同一の自己完結型規約（save/translate(o.x,o.y)/rotate(o.rot||0)/描画/restore）。
+     2026-07-08 磨き: 旧実装は各対の左右2小葉を `sd*1.15 - Math.PI/2` で回転させていたが、
+     この -Math.PI/2 オフセットにより両小葉が同じ側(左)へ偏り、上下に交互反転する
+     「ねじれ縄」状に見えるバグがあった(sd=+1で左上・sd=-1で左下を向く＝左右非対称)。
+     petal()は既定で中軸方向(-y="上")を向くため、回転角はオフセットなしの sd*pinnaAng
+     のみで良い(sd=+1→右上, sd=-1→左上に鏡映)。pinnaAngは中軸に対して50〜70°
+     (基部=70°寄りで開き気味・先端=50°寄りで中軸に沿う)で先細りの自然な羽状フロンドにする。 */
+  function drawFern(ctx, o) {
+    var rng = o.rng, open = easeOutCubic(Math.min(1, o.bloom || 0)), r = o.r;
+    if (open < 0.02) return;
+    var ground = hexToRgb(o.palette.ground);
+    ctx.save();
+    ctx.translate(o.x, o.y);
+    ctx.rotate(o.rot || 0);
+    var len = r * 1.8 * open;
+    ctx.strokeStyle = rgba(mixRgb(GREEN, ground, 0.1), 0.7);
+    ctx.lineWidth = Math.max(0.6, r * 0.04);
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -len); ctx.stroke();   /* 中軸rachis */
+    var pairs = 8 + Math.floor(rng() * 3);   /* 8〜10対: 細かい間隔で先端を滑らかに尖らせる */
+    var spacing = len / (pairs + 1);
+    for (var p = 1; p <= pairs; p++) {
+      var t = p / (pairs + 1);
+      var y = -len * t;
+      /* 先端ほど小さい小葉。隣の対と団子にならないよう間隔(spacing)基準の上限も掛ける。 */
+      var plBase = Math.min(r * 0.5 * (1 - t * 0.72), spacing * 1.5) * open;
+      /* 中軸から50〜70°(基部70°寄り→先端50°寄りへ線形に狭める)+個体差の揺らぎ少量。 */
+      var pinnaAng = (1.222 - 0.349 * t) + (rng() - 0.5) * 0.10;
+      for (var sd = -1; sd <= 1; sd += 2) {
+        /* 左右・対ごとに長さをわずかに揺らす(±14%)。全対が完全に相似だと造花的に見えるため、
+           野生のシダらしい不揃いさを加える(過剰にならない範囲・spacing上限は既にpl側で確保済み)。 */
+        var pl = plBase * (0.86 + rng() * 0.28);
+        ctx.save();
+        ctx.translate(0, y);
+        ctx.rotate(sd * pinnaAng);   /* 中軸に対して左右対称に上外向き(オフセット無し) */
+        ctx.fillStyle = greenGrad(ctx, pl, ground);
+        petal(ctx, pl, pl * 0.26); ctx.fill();
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  }
+
+  /* レースフラワー(umbel)。散形花序を半球状に広げる。o = {x, y, r, rot, bloom, palette, rng}。
+     drawSprigと同一の自己完結型規約。 */
+  function drawUmbel(ctx, o) {
+    var rng = o.rng, open = easeOutCubic(Math.min(1, o.bloom || 0)), r = o.r;
+    if (open < 0.02) return;
+    var ground = hexToRgb(o.palette.ground);
+    ctx.save();
+    ctx.translate(o.x, o.y);
+    ctx.rotate(o.rot || 0);
+    var rays = 9 + Math.floor(rng() * 6);
+    var rad = r * 1.1 * open;
+    var stem = rgba(mixRgb(GREEN, ground, 0.2), 0.5);
+    var tipCol = rgba(mixRgb(GREEN, { r: 0xF0, g: 0xEA, b: 0xD8 }, 0.55), 0.8);  /* 生成り寄りの小花 */
+    ctx.strokeStyle = stem; ctx.lineWidth = Math.max(0.4, r * 0.02);
+    for (var i = 0; i < rays; i++) {
+      var a = -Math.PI / 2 + (i / rays) * Math.PI * 2 * 0.5 - Math.PI * 0.25;  /* 半球状に広げる */
+      a += (rng() - 0.5) * 0.25;
+      var rr = rad * (0.7 + rng() * 0.4);
+      var ex = Math.cos(a) * rr, ey = Math.sin(a) * rr;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(ex, ey); ctx.stroke();
+      ctx.fillStyle = tipCol;
+      ctx.beginPath(); ctx.arc(ex, ey, Math.max(0.6, r * 0.05), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /* 小花の群れ(floret)。花色は palette.accent を優先し、無ければ palette.petals[0]
+     にフォールバックする（SEASONS/deriveSeededPaletteのパレットは.accentを持たないため）。
+     o = {x, y, r, rot, bloom, palette, rng}。drawSprigと同一の自己完結型規約。 */
+  function drawFloret(ctx, o) {
+    var rng = o.rng, open = easeOutCubic(Math.min(1, o.bloom || 0)), r = o.r;
+    if (open < 0.02) return;
+    ctx.save();
+    ctx.translate(o.x, o.y);
+    ctx.rotate(o.rot || 0);
+    var acc = hexToRgb(o.palette.accent || o.palette.petals[0]);
+    var n = 3 + Math.floor(rng() * 4);
+    for (var f = 0; f < n; f++) {
+      var fx = (rng() - 0.5) * r * 1.4, fy = (rng() - 0.5) * r * 1.4;
+      var fr = r * 0.22 * open * (0.7 + rng() * 0.5);
+      ctx.save(); ctx.translate(fx, fy);
+      var petals = 5;
+      ctx.fillStyle = rgba(mixRgb(acc, { r: 0xF0, g: 0xEA, b: 0xD8 }, 0.25), 0.85);
+      for (var pp = 0; pp < petals; pp++) {
+        ctx.save(); ctx.rotate((pp / petals) * Math.PI * 2);
+        petal(ctx, fr, fr * 0.5); ctx.fill(); ctx.restore();
+      }
+      ctx.fillStyle = rgba(mixRgb(acc, { r: 0xC4, g: 0x94, b: 0x2A }, 0.4), 0.9);  /* 芯 */
+      ctx.beginPath(); ctx.arc(0, 0, fr * 0.28, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+
   var MAX_FLOWERS = 400, STEP = 26;   /* 距離サンプリング間隔(px) */
   function createGarden(canvas, opts) {
     opts = opts || {};
@@ -169,6 +326,7 @@
     var flowers = [];        /* {x,y,r,baseRot,form,seed,bornT,dur,depth,vigor,swayPhase,swayW,holdMs,shed,nextShedT,maxShed} */
     var rafId = null, running = false;
     var seedCounter = 1;
+    var lastPressLabel = '';   /* 直近press()のラベル文字列(テスト用snapshotLabel()の裏付け) */
     var farewelling = false, farewellT = 0, lastFrameT = 0, farewellTimer = null;
     var petals = [];              /* 落下花びらパーティクル(無常) */
     var fastAge = !!opts.__fastAge;  /* テスト短縮用: 本番未使用 */
@@ -179,6 +337,64 @@
     var wind = { until: 0, start: 0, dir: 1, strength: 0 };
     var nextWindT = 0; var fastWind = !!opts.__fastWind;  /* テスト短縮用: 本番未使用 */
     function scheduleWind(t) { nextWindT = t + (fastWind ? 1200 : (16000 + Math.random() * 18000)); }
+
+    /* 庭の自生: 放置してもゆっくり芽吹く。「充実度」(flowers.length)がRESTING_COUNTに
+       達したら止まる（引き算・無限増殖しない）。芽吹きは緑/floret優先で無音(onSpawn不呼び)。
+       rAFが止まっていても起こす必要があるため、待機はrAFでなくsetTimeoutで行う
+       (sproutTimer)。redraw内にも同じ判定の保険発火を置き、rAFが既に回っている間は
+       そちら経由でも発火し得るが、nextSproutTの前進をmaybeSprout冒頭で必ず行うため
+       二重発火はしない。 */
+    var RESTING_COUNT = 28;
+    var nextSproutT = 0, sproutTimer = null;
+    var fastGrow = !!opts.__fastGrow;  /* テスト短縮用: 本番未使用 */
+    function scheduleSprout(t) { nextSproutT = t + (fastGrow ? 500 : (18000 + Math.random() * 18000)); }
+    function ambientSprout() {
+      var rect = canvas.getBoundingClientRect();
+      var x = rect.width * (0.1 + Math.random() * 0.8), y = rect.height * (0.15 + Math.random() * 0.75);
+      var rng2 = makeRng(seedCounter);
+      var kindList = ['sprig', 'fern', 'floret', 'umbel'];
+      var f = {
+        x: x, y: y,
+        r: 26 + rng2() * 20,
+        baseRot: rng2() * Math.PI * 2,
+        form: pickForm(rng2),
+        kind: kindList[Math.floor(rng2() * kindList.length)],
+        seed: seedCounter++,
+        bornT: now(),
+        dur: 2600,
+        depth: 0.2 + rng2() * 0.4,
+        vigor: 0.8,
+        swayPhase: rng2() * Math.PI * 2,
+        swayW: 0.0005 + rng2() * 0.0004,
+        holdMs: 999999,      /* 自生要素は加齢させない(shedはkind!=='flower'なら既にスキップされる) */
+        shed: 0, nextShedT: 0, maxShed: 0,
+        leaves: []
+      };
+      flowers.push(f); if (flowers.length > MAX_FLOWERS) flowers.shift();
+      /* 自生は音を鳴らさない(onSpawnを呼ばない)＝静かに芽吹く */
+    }
+    /* t>=nextSproutTに達したら判定する共通関数。setTimeout駆動(armSproutTimer)と
+       redrawの保険発火の両方から呼ばれる。呼ばれた時点でnextSproutTを必ず前進させる
+       (充実/reduce/farewelling中でも)ことで、条件不成立時にゼロ待機でタイマーが
+       暴走(busy-loop)することを防ぐ。 */
+    function maybeSprout(t) {
+      if (t < nextSproutT) return false;
+      scheduleSprout(t);   /* 到達したら reduce/farewelling/充実中でも必ず前進(nextSproutTが過去のまま→50ms再armのbusy-loopを防ぐ) */
+      if (reduce || farewelling) return false;
+      if (flowers.length >= RESTING_COUNT || flowers.length >= MAX_FLOWERS) return false;  /* 充実で停止 */
+      ambientSprout();
+      kick();   /* rAFが止まっていても再開させる */
+      return true;
+    }
+    function armSproutTimer() {
+      if (reduce) return;   /* reduceでは自生しないので張らない */
+      var delay = Math.max(50, nextSproutT - now());
+      sproutTimer = setTimeout(function () {
+        sproutTimer = null;
+        maybeSprout(now());
+        armSproutTimer();
+      }, delay);
+    }
 
     function resize() {
       var rect = canvas.getBoundingClientRect();
@@ -208,8 +424,28 @@
             wf.shed++; blown++;
           }
         }
+        /* umbel(種穂)から種を放つ。開花(bloom>0.6)済みのumbelのみ・1回の風で最大3個(seeds<3)。
+           種は緑/生成りの小粒パーティクル(kind:'seed')として petals 配列を共用する
+           (落下花びらとは描画時にkindで分岐して区別する。下の落下花びら描画ループ参照)。 */
+        var seeds = 0;
+        for (var si = 0; si < flowers.length && seeds < 3; si++) {
+          var sf = flowers[si];
+          if (sf.kind !== 'umbel') continue;
+          var sBloom = Math.min(1, easeOutCubic((t - sf.bornT) / sf.dur));
+          if (sBloom > 0.6 && petals.length < PART_MAX && Math.random() < 0.5) {
+            petals.push({
+              x: sf.x, y: sf.y - sf.r * 0.5, vx: wind.dir * (0.3 + Math.random() * 0.4), vy: -0.1 + Math.random() * 0.2,
+              rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.01, r: 1.4 + Math.random() * 1.2,
+              color: mixRgb(GREEN, { r: 0xF0, g: 0xEA, b: 0xD8 }, 0.5), kind: 'seed', bornT: t, life: 2600
+            });
+            seeds++;
+          }
+        }
         if (opts.onWind) { try { opts.onWind(); } catch (_) {} }
       }
+      /* 庭の自生の保険発火: rAFが既に回っている間はここでも判定する
+         (主経路はrAF停止時にも起こせるsetTimeout駆動のarmSproutTimer)。 */
+      maybeSprout(t);
       var windAmt = 0;
       if (t < wind.until) {
         var wp = (t - wind.start) / 2500;                     /* 0..1 */
@@ -226,9 +462,15 @@
         } else {
           bloom = reduce ? 1 : Math.min(1, easeOutCubic((t - f.bornT) / f.dur));
         }
-        var sway = reduce ? 0 : (0.035 * Math.sin(t * f.swayW + f.swayPhase) + windAmt * 0.2 * wind.dir * (1 - f.depth * 0.6)); /* A-5 微風 + 風の一吹き */
-        /* 加齢＝花びらを1枚ずつ落とす（無常）。reduce時は行わない */
-        if (!reduce && !farewelling) {
+        /* kind係数: umbel(種穂)は軽く大きく・sprig/fernは中程度・その他(花)は従来通り揺れる。
+           既存の風項(windAmt*0.2*wind.dir*(1-depth*0.6))にのみ乗ずる(微風の常時sin項は不変)。 */
+        var swayK = (f.kind === 'umbel') ? 1.6 : (f.kind === 'sprig' || f.kind === 'fern') ? 1.2 : 1.0;
+        var sway = reduce ? 0 : (0.035 * Math.sin(t * f.swayW + f.swayPhase) + windAmt * 0.2 * wind.dir * (1 - f.depth * 0.6) * swayK); /* A-5 微風 + 風の一吹き */
+        if (fastWind) f.lastSway = sway;   /* テスト用(fastWind時のみ): 直近フレームのsway値を保持(本番の描画ホットパスは触らない・kind別揺れ差の検証用) */
+        /* 加齢＝花びらを1枚ずつ落とす（無常）。reduce時は行わない。
+           緑(kind!=='flower')は花びらを持たないため加齢/散り(shed)対象から除外する
+           （maxShedが0のまま固定され、風の一吹きの舞い散り判定(wf.maxShed>0)も自然にスキップされる）。 */
+        if (!reduce && !farewelling && (!f.kind || f.kind === 'flower')) {
           if (f.maxShed === 0) f.maxShed = Math.max(1, Math.floor(petalCount(f.form) * 0.4));
           var age0 = f.bornT + f.dur + f.holdMs;    /* 加齢開始時刻 */
           if (t >= age0 && f.shed < f.maxShed && t >= f.nextShedT) {
@@ -244,10 +486,10 @@
             f.nextShedT = t + (fastAge ? 250 : (2500 + Math.random() * 3000));
           }
         }
-        drawFlower(ctx, {
+        drawEntity(ctx, {
           x: f.x, y: f.y, r: f.r, rot: f.baseRot + sway, bloom: bloom,
           form: f.form, palette: currentPalette(), rng: makeRng(f.seed),
-          vigor: f.vigor, depth: f.depth, shed: f.shed, leaves: f.leaves
+          vigor: f.vigor, depth: f.depth, shed: f.shed, leaves: f.leaves, kind: f.kind
         });
       }
       /* 落下花びらパーティクル */
@@ -259,12 +501,25 @@
         q.vy += 0.00002 * dt; q.x += q.vx * dt; q.y += q.vy * dt; q.rot += q.vr * dt;
         var qa = (1 - qage / q.life) * 0.85;
         ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.rot);
-        var qc = hexToRgb(q.color);
-        var qg = ctx.createLinearGradient(0, 0, 0, -q.r);
-        qg.addColorStop(0, rgba(qc, qa)); qg.addColorStop(1, rgba(qc, qa * 0.3));
-        ctx.fillStyle = qg; petal(ctx, q.r, q.r * 0.34); ctx.fill(); ctx.restore();
+        if (q.kind === 'seed') {
+          /* 種: 小さな円点で描く。q.color は既に{r,g,b}オブジェクト(rgba()文字列ではない)。
+             既存花びら(下のelse分岐)はcolorがhex文字列(palette由来)のため、分岐せず共用すると
+             hexToRgbが破綻する — kindで完全に分離することで既存花びらの見た目を1px変えない。 */
+          ctx.fillStyle = rgba(q.color, qa);
+          ctx.beginPath(); ctx.arc(0, 0, q.r, 0, Math.PI * 2); ctx.fill();
+        } else {
+          var qc = hexToRgb(q.color);
+          var qg = ctx.createLinearGradient(0, 0, 0, -q.r);
+          qg.addColorStop(0, rgba(qc, qa)); qg.addColorStop(1, rgba(qc, qa * 0.3));
+          ctx.fillStyle = qg; petal(ctx, q.r, q.r * 0.34); ctx.fill();
+        }
+        ctx.restore();
       }
     }
+    /* 非reduceで庭に要素があれば常時30fpsループ(A-5微風=呼吸するそよぎ)。これはPhase2aからの
+       意図的な仕様で、Phase2eの自生はユーザー操作なしでも庭を要素ありにしうるため、開いている間は
+       ループが継続する。電池コストは「Ichiビューを開いている間」に限定され、detachで停止・reduceでは
+       needLoop=falseで即停止する(下記)。 */
     function needLoop() {
       if (farewelling) return true;                 /* 退場アニメ中は回す */
       if (reduce) return false;                     /* reduce: 即満開・微風なし → 1描画で停止(省電力) */
@@ -302,6 +557,21 @@
       for (var lk = 0; lk < leafN; lk++) {
         f.leaves.push({ ang: (lk === 0 ? 2.35 : -2.35) + (rng() - 0.5) * 0.5, len: 1.05 + rng() * 0.5 });
       }
+      /* なぞりミックス: 花が主役・約35%を緑に混ぜる。速いなぞり(speed大)は軽い緑(sprig/umbel)、
+         遅いなぞりは緑4種(sprig/fern/floret/umbel)均等。speed===0(タップ・invite招待の最初の
+         一点)は常に花のまま固定する — 「なぞり」時にのみ混ぜるという意図に合わせるとともに、
+         タップ単発spawnの決定的なrng消費列（既存の風/加齢/長押しテスト群が前提にしている）を
+         変えないため。 */
+      var kind = 'flower';
+      if (speed > 0) {
+        var gr = rng();
+        if (gr < 0.35) {
+          var fast = speed > 0.6;
+          if (fast) kind = (rng() < 0.5) ? 'sprig' : 'umbel';
+          else      kind = ['sprig', 'fern', 'floret', 'umbel'][Math.floor(rng() * 4)];
+        }
+      }
+      f.kind = kind;
       /* FIFO保持（描画順は redraw 側で depth ソート）。容量超過時は最古(先頭)を削除。
          depth順に挿入して shift すると新規花自身が消え得るバグを避けるため push+shift にする。 */
       flowers.push(f);
@@ -376,49 +646,192 @@
     var onWinResize = function () { resize(); };
     window.addEventListener('resize', onWinResize);
     /* 風の初回スケジュールは初回描画(resize内のredraw)より前に行う。
-       後だと nextWindT=0 のまま最初の redraw が走り、開いた瞬間に風が発火してしまう */
+       後だと nextWindT=0 のまま最初の redraw が走り、開いた瞬間に風が発火してしまう。
+       自生(nextSproutT)も同じ理由で先に予約してから、setTimeout駆動のタイマーを張る。 */
     scheduleWind(now());
+    scheduleSprout(now());
+    armSproutTimer();
     resize();
 
     return {
       setSeason: function (name) { if (seed) return; if (SEASONS[name]) { seasonName = name; redraw(); } },
       clear: function () { flowers = []; petals = []; redraw(); },
+      /* 押し花にする＝庭の要素から標本ボードを自動構成する。
+         (1)生成りbeige地+紙ノイズ (2)代表選抜(花5・緑fern/umbel5・floret4・つるsprig3・上限17)を
+         余白マージン付き6x4グリッドへ決定的乱数で再配置(重なり回避) (3)palette退色
+         (4)隅にラベル("<花名/季節> の 標本 · <漢数字日付>")。戻り値・呼び出し側は不変。
+         乱数seedは庭状態由来(各花のseed/kind/r)で決定的: 同じ庭→同じ標本、庭が変われば構成も変わる。 */
       press: function () {
         var rect = canvas.getBoundingClientRect();
         var w = Math.round(rect.width), h = Math.round(rect.height);
-        var pal = currentPalette();
         var out = document.createElement('canvas'); out.width = w; out.height = h;
         var octx = out.getContext('2d');
-        /* 和紙地 */
-        octx.fillStyle = pal.ground; octx.fillRect(0, 0, w, h);
-        /* 花を平面化・退色して合成: 縦を少し潰し、彩度を落とすため半透明の地色を上掛け */
-        octx.save();
-        octx.translate(0, h * 0.06); octx.scale(1, 0.88);   /* 押された平面化 */
-        octx.globalAlpha = 0.92;
-        octx.drawImage(canvas, 0, 0, w, h);
-        octx.restore();
-        octx.save(); octx.globalAlpha = 0.10; octx.fillStyle = '#6b5f4a'; octx.fillRect(0, 0, w, h); octx.restore(); /* 退色の沈み */
+
+        /* (1) 生成りbeige地のグラデーション + ごく薄い紙ノイズ */
+        var bgGrad = octx.createLinearGradient(0, 0, 0, h);
+        bgGrad.addColorStop(0, '#E4D9C4'); bgGrad.addColorStop(1, '#DCC8AC');
+        octx.fillStyle = bgGrad; octx.fillRect(0, 0, w, h);
+        var noiseRng = makeRng(hashSeed('paper-noise-' + w + 'x' + h) || 1);
+        var noiseN = Math.round((w * h) / 900);
+        for (var ni = 0; ni < noiseN; ni++) {
+          var na = 0.02 + noiseRng() * 0.05;
+          octx.fillStyle = 'rgba(120,104,78,' + na.toFixed(3) + ')';
+          octx.beginPath();
+          octx.arc(noiseRng() * w, noiseRng() * h, 0.5 + noiseRng() * 0.9, 0, Math.PI * 2);
+          octx.fill();
+        }
+
+        /* (2) 代表選抜: 花(大きい順5・うち2輪は主役サイズ)・緑(fern/umbel5)・floret(小花4)・
+           sprig(つる。標本の縁や要素間に流れをつくる・3本)。合計上限17
+           (CEO提示の押し花標本参考画像"BLOOM MAISON"系に寄せ、旧上限14→要素を増やし、
+           旧maxR比0.40均一→主役の花は0.55〜0.7まで許容し強弱を付ける・2026-07-08磨き)。 */
+        /* 庭状態由来の決定的seed(時刻non-determinismを排除): 同じ庭を押せば同じ標本・庭が変われば構成も変わる(一回性)。 */
+        var gardenSig = flowers.map(function (f) { return f.seed + ':' + (f.kind || 'flower') + ':' + Math.round(f.r); }).join('|');
+        var boardSeed = hashSeed('press-board-' + (seed ? seed.name : seasonName) + '-' + gardenSig);
+        var brng = makeRng(boardSeed || 1);
+        function sampleN(list, n) {
+          var arr = list.slice(), m = Math.min(n, arr.length);
+          for (var i = 0; i < m; i++) {
+            var j = i + Math.floor(brng() * (arr.length - i));
+            var tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+          }
+          return arr.slice(0, m);
+        }
+        var flowerList = flowers.filter(function (f) { return !f.kind || f.kind === 'flower'; }).slice().sort(function (a, b) { return b.r - a.r; });
+        var greenList = flowers.filter(function (f) { return f.kind === 'fern' || f.kind === 'umbel'; });
+        var floretList = flowers.filter(function (f) { return f.kind === 'floret'; });
+        var sprigList = flowers.filter(function (f) { return f.kind === 'sprig'; });
+        var pickedFlowers = flowerList.slice(0, 5);
+        var pickedGreen = sampleN(greenList, 5);
+        var pickedFloret = sampleN(floretList, 4);
+        var pickedSprig = sampleN(sprigList, 3);
+        var primary = pickedFlowers.concat(pickedGreen, pickedFloret);   /* 描画前に手前(花)/奥(緑)の順へ並べ替える */
+
+        /* 退色パレット: 花色・花芯を灰みの暖色へ18%寄せる。ground も新しい生成り地へ
+           差し替える(内部の"先端=淡・地色寄り"グラデーションが新しい地に馴染むよう)。 */
+        var FADE_TARGET = { r: 0xB0, g: 0xA8, b: 0x98 }, FADE_T = 0.18;
+        var basePal = currentPalette();
+        var boardGround = toHex(mixRgb(hexToRgb('#E4D9C4'), hexToRgb('#DCC8AC'), 0.5));
+        var pressedPal = {
+          petals: basePal.petals.map(function (hex) { return toHex(mixRgb(hexToRgb(hex), FADE_TARGET, FADE_T)); }),
+          core: toHex(mixRgb(hexToRgb(basePal.core), FADE_TARGET, FADE_T)),
+          ground: boardGround
+        };
+
+        /* (2) 配置: 余白マージン付き6x4グリッド(24セル・上限17要素→約7割充填。旧4x4=16セルより
+           密度を上げつつ、セル数>要素数の余りで「構成された標本」らしい余白を保つ)。セルを
+           決定的乱数でシャッフルし、primary→sprigの順に別セルを割り当てる。要素を大きくした分、
+           隣接セルへジッタが越境して重なるリスクを、ペア間最小距離を保証する分離パス(幾何補正
+           のみ・新規乱数なし=決定性維持)で吸収する。 */
+        var cols = 6, rows = 4;
+        var sideMargin = w * 0.09, topMargin = h * 0.09, bottomMargin = h * 0.16;
+        var aw = Math.max(1, w - sideMargin * 2), ah = Math.max(1, h - topMargin - bottomMargin);
+        var cellW = aw / cols, cellH = ah / rows;
+        var cellMin = Math.min(cellW, cellH);
+        function cellCenter(idx) {
+          var col = idx % cols, row = Math.floor(idx / cols);
+          return { x: sideMargin + cellW * (col + 0.5), y: topMargin + cellH * (row + 0.5) };
+        }
+        var cellIdx = []; for (var ci = 0; ci < cols * rows; ci++) cellIdx.push(ci);
+        for (var si = cellIdx.length - 1; si > 0; si--) {
+          var sj = Math.floor(brng() * (si + 1)); var stmp = cellIdx[si]; cellIdx[si] = cellIdx[sj]; cellIdx[sj] = stmp;
+        }
+        var maxR = cellMin * 0.70;         /* 主役の花はここまで許容(旧0.40均一→強弱を付ける) */
+        var heroCount = Math.min(2, pickedFlowers.length);   /* 先頭2輪(=庭で最大)を主役サイズに */
+        var boardEls = [];
+        for (var pi = 0; pi < primary.length; pi++) {
+          var pf = primary[pi], pc = cellCenter(cellIdx[pi]);
+          var sizeRatio;
+          if (pi < heroCount) sizeRatio = 0.58 + brng() * 0.12;                        /* 主役の花: 0.58〜0.70 */
+          else if (pf.kind === 'fern' || pf.kind === 'umbel') sizeRatio = 0.30 + brng() * 0.14;  /* 緑: 中〜小 */
+          else if (pf.kind === 'floret') sizeRatio = 0.22 + brng() * 0.10;             /* floret(小花塊): 小 */
+          else sizeRatio = 0.40 + brng() * 0.12;                                        /* 花(非主役): 中 */
+          boardEls.push({
+            x: pc.x + (brng() - 0.5) * cellW * 0.32, y: pc.y + (brng() - 0.5) * cellH * 0.32,
+            r: Math.min(cellMin * sizeRatio, maxR), rot: brng() * Math.PI * 2,
+            kind: pf.kind, form: pf.form, palette: pressedPal, rng: makeRng(pf.seed),
+            bloom: 1, vigor: 1, depth: 0, shed: 0, leaves: pf.leaves || [],
+            layer: (pf.kind === 'fern' || pf.kind === 'umbel') ? 0 : (pf.kind === 'floret' ? 1 : 2)
+          });
+        }
+        /* 重なり回避(最小距離維持): ブロブ要素(花/緑/floret)同士のみ対象(つるは細い線で
+           要素間を跨いで流れるのが意図のため対象外)。決定的な幾何補正を数回反復するのみ。 */
+        for (var ov = 0; ov < 3; ov++) {
+          for (var ai = 0; ai < boardEls.length; ai++) {
+            for (var bi = ai + 1; bi < boardEls.length; bi++) {
+              var elA = boardEls[ai], elB = boardEls[bi];
+              var ddx = elB.x - elA.x, ddy = elB.y - elA.y;
+              var dist = Math.sqrt(ddx * ddx + ddy * ddy) || 0.01;
+              var minDist = (elA.r + elB.r) * 0.72;   /* 押し花らしい軽い重なりは残す(0.72) */
+              if (dist < minDist) {
+                var push = (minDist - dist) / 2, ux = ddx / dist, uy = ddy / dist;
+                elA.x -= ux * push; elA.y -= uy * push;
+                elB.x += ux * push; elB.y += uy * push;
+              }
+            }
+          }
+        }
+        for (var ci2 = 0; ci2 < boardEls.length; ci2++) {
+          var be = boardEls[ci2];   /* 分離パスで枠外へ押し出されないようマージン内へ再クランプ */
+          be.x = Math.max(sideMargin + be.r, Math.min(w - sideMargin - be.r, be.x));
+          be.y = Math.max(topMargin + be.r, Math.min(topMargin + ah - be.r, be.y));
+        }
+        var boardCx = w / 2, boardCy = topMargin + ah * 0.5;
+        var maxRSprig = cellMin * 1.15;   /* つるは細線なので隣接セルへ流れるよう長めに許容 */
+        for (var vi = 0; vi < pickedSprig.length; vi++) {
+          var sIdx = primary.length + vi;
+          if (sIdx >= cellIdx.length) break;
+          var vf = pickedSprig[vi], vc = cellCenter(cellIdx[sIdx]);
+          var dx = boardCx - vc.x, dy = boardCy - vc.y;
+          /* drawSprigの初期成長方向(局所-Y)をboard中心へ向ける回転角(軽くジッタ)。 */
+          var vrot = Math.atan2(dx, -dy) + (brng() - 0.5) * 0.4;
+          boardEls.push({
+            x: vc.x, y: vc.y, r: Math.min(Math.max(vf.r, cellMin * 0.85), maxRSprig) * (0.9 + brng() * 0.3), rot: vrot,
+            kind: 'sprig', form: vf.form, palette: pressedPal, rng: makeRng(vf.seed),
+            bloom: 1, vigor: 1, depth: 0, shed: 0, leaves: [], layer: -1
+          });
+        }
+        boardEls.sort(function (a, b) { return a.layer - b.layer; });   /* つる/緑→floret→花の順に描く */
+        for (var ei = 0; ei < boardEls.length; ei++) drawEntity(octx, boardEls[ei]);
+
+        /* 退色の沈み: 全体にごく薄い暖灰を上掛け(彩度・明度をわずかに下げる) */
+        octx.save(); octx.globalAlpha = 0.05; octx.fillStyle = '#6b5f4a'; octx.fillRect(0, 0, w, h); octx.restore();
         /* 細い枠 */
-        octx.strokeStyle = 'rgba(60,54,42,0.35)'; octx.lineWidth = Math.max(1, w * 0.004);
-        octx.strokeRect(w * 0.03, h * 0.03, w * 0.94, h * 0.94);
-        /* ラベル（季節または花の名前）＋漢数字の日付＋署名。
-           seed時は花の名で「薔薇 の 押し花 · 七月七日」、非seedは季節で「春 の 押し花 · 七月七日」。 */
+        octx.strokeStyle = 'rgba(60,54,42,0.22)'; octx.lineWidth = Math.max(1, w * 0.003);
+        octx.strokeRect(w * 0.025, h * 0.025, w * 0.95, h * 0.95);
+
+        /* (4) ラベル（季節または花の名前）＋漢数字の日付＋署名。
+           seed時は花の名で「薔薇 の 標本 · 七月七日」、非seedは季節で「春 の 標本 · 七月七日」。 */
         var labels = { spring: '春', summer: '夏', autumn: '秋', winter: '冬' };
         var today = new Date();
         var dateLabel = kanjiDate(today.getMonth() + 1, today.getDate());
         var head = (seed && seed.nameJa) ? seed.nameJa : (labels[seasonName] || '');
-        octx.fillStyle = 'rgba(40,36,30,0.72)';
-        octx.font = '600 ' + Math.round(w * 0.028) + 'px "Shippori Mincho","EB Garamond",serif';
+        lastPressLabel = head + ' の 標本 · ' + dateLabel;
+        octx.fillStyle = 'rgba(40,36,30,0.68)';
+        octx.font = '600 ' + Math.round(w * 0.026) + 'px "Shippori Mincho","EB Garamond",serif';
         octx.textAlign = 'left'; octx.textBaseline = 'bottom';
-        octx.fillText(head + ' の 押し花 · ' + dateLabel, w * 0.05, h * 0.955);
+        octx.fillText(lastPressLabel, w * 0.06, h * 0.955);
         octx.textAlign = 'right';
-        octx.fillText('Ichi', w * 0.95, h * 0.955);
+        octx.fillText('Ichi', w * 0.94, h * 0.955);
         return out.toDataURL('image/png');
       },
+      /* テスト用: 直近press()のラベル文字列(実挙動には影響しない) */
+      snapshotLabel: function () { return lastPressLabel; },
       snapshotCount: function () { return flowers.length; },
+      /* テスト用: 庭の充実度(花+緑の総数)。自生(自然芽吹き)がRESTING_COUNTで頭打ちすることの観測用。 */
+      entityCount: function () { return flowers.length; },
       /* テスト用: 少なくとも1枚花びらを落とした花の数(加齢/風どちらの契機でもshed>0になったもの)。
          風発火の舞う枚数上限を検証するための直接的な観測手段（面積の間接推定より確実）。 */
       shedFlowerCount: function () { return flowers.filter(function (f) { return f.shed > 0; }).length; },
+      /* テスト用: 現在のパーティクル総数(落下花びら+種)。 */
+      particleCount: function () { return petals.length; },
+      /* テスト用: 種パーティクル(kind==='seed'。umbelが風で放つ)の数。 */
+      seedParticleCount: function () { return petals.filter(function (p) { return p.kind === 'seed'; }).length; },
+      /* テスト用: 直近の種パーティクル1件の色(r,g,b)。緑系であることの検証用。 */
+      seedColorSample: function () {
+        var s = petals.filter(function (p) { return p.kind === 'seed'; })[0];
+        return s ? { r: s.color.r, g: s.color.g, b: s.color.b } : null;
+      },
       invite: function () {
         var rect = canvas.getBoundingClientRect();
         spawn(rect.width / 2, rect.height * 0.5, 0);
@@ -442,6 +855,8 @@
         /* farewell待ち中に別経路(ESC等)でdetachされた場合、遅延callbackが後から
            走って古いdoneが発火しないようタイマーを解除する */
         if (farewellTimer) { clearTimeout(farewellTimer); farewellTimer = null; }
+        /* 自生のsetTimeoutチェーン(sproutTimer)も確実に解除する(幽霊タイマー防止) */
+        if (sproutTimer) { clearTimeout(sproutTimer); sproutTimer = null; }
         canvas.removeEventListener('pointerdown', begin);
         canvas.removeEventListener('pointermove', move);
         canvas.removeEventListener('pointerup', end);
@@ -542,7 +957,7 @@
     otoPublish();   /* デフォルトオフの初期状態を即時公開（テスト観測 __hanaOto を待たせない） */
 
     var canvas = container.querySelector('.hana-canvas');
-    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, onSpawn: otoPlay, onWind: otoPlayWind });
+    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, __fastGrow: opts.__fastGrow, onSpawn: otoPlay, onWind: otoPlayWind });
     applyStageBg(container, seed ? seed.seasonName : (opts.season || 'spring'));
     /* 入場の招待花（reduce時は空庭で開始）。
        index.html 経由の open では core の openDialog が onOpen を el.hidden=false の *前* に呼ぶため、
@@ -626,7 +1041,7 @@
   }
 
   /* テスト用に純粋関数を露出 */
-  window.NoctaHana = { _: { SEASONS: SEASONS, makeRng: makeRng, hashSeed: hashSeed, easeOutCubic: easeOutCubic, shouldSpawn: shouldSpawn, pickForm: pickForm, drawFlower: drawFlower, hexToRgb: hexToRgb, rgba: rgba, mixRgb: mixRgb, deriveSeededPalette: deriveSeededPalette, kanjiDate: kanjiDate } };
+  window.NoctaHana = { _: { SEASONS: SEASONS, makeRng: makeRng, hashSeed: hashSeed, easeOutCubic: easeOutCubic, shouldSpawn: shouldSpawn, pickForm: pickForm, drawFlower: drawFlower, drawEntity: drawEntity, drawSprig: drawSprig, drawFern: drawFern, drawUmbel: drawUmbel, drawFloret: drawFloret, hexToRgb: hexToRgb, rgba: rgba, mixRgb: mixRgb, deriveSeededPalette: deriveSeededPalette, kanjiDate: kanjiDate } };
   window.NoctaHana.mount = mount;
   window.NoctaHana.createGarden = createGarden;
 })();
