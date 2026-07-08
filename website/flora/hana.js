@@ -332,6 +332,8 @@
     var fastAge = !!opts.__fastAge;  /* テスト短縮用: 本番未使用 */
     var lastAgeT = 0;
     var PART_MAX = 120;
+    var GUST_MAX = 180;   /* clear()の突風バーストは通常の落下花びら上限(PART_MAX)より多く許容する */
+    var gustUntil = 0;    /* 突風バースト中は自生(ambientSprout)を止める猶予(下のmaybeSprout参照) */
     /* 風の一吹き: 16〜34秒(テスト短縮時は約1.2秒)に一度、庭全体がそよぎ、
        加齢期の花から花びらが数枚舞う。reduce/farewell時は発火しない(redraw側で判定)。 */
     var wind = { until: 0, start: 0, dir: 1, strength: 0 };
@@ -347,10 +349,31 @@
     var RESTING_COUNT = 28;
     var nextSproutT = 0, sproutTimer = null;
     var fastGrow = !!opts.__fastGrow;  /* テスト短縮用: 本番未使用 */
-    function scheduleSprout(t) { nextSproutT = t + (fastGrow ? 500 : (18000 + Math.random() * 18000)); }
+    var noSprout = !!opts.__noSprout;  /* テスト専用: 自生を完全に無効化(粒子減衰など自生と無関係な検証の隔離用)。本番未使用 */
+    /* Phase2f: 自生をアイドル駆動に。最後の操作(タップ/なぞり)からIDLE_MSが経つまでは芽吹かず、
+       経過後はSPROUT_MIN〜SPROUT_MIN+SPROUT_SPANの間隔で1つずつ増える。ポインタハンドラ
+       (begin/move)が毎回lastInteractTを更新し、scheduleSprout+armSproutTimerで次回芽吹きを
+       後ろ倒しする(＝操作でリセット)。lastPointerは自生の場所バイアス(ambientSprout)に使う。 */
+    var IDLE_MS = fastGrow ? 400 : 3000;
+    var SPROUT_MIN = fastGrow ? 400 : 3000, SPROUT_SPAN = fastGrow ? 400 : 3000;   /* 通常間隔3〜6秒 */
+    var lastInteractT = now(), lastPointer = null;
+    function scheduleSprout(t) { nextSproutT = t + (SPROUT_MIN + Math.random() * SPROUT_SPAN); }
     function ambientSprout() {
       var rect = canvas.getBoundingClientRect();
-      var x = rect.width * (0.1 + Math.random() * 0.8), y = rect.height * (0.15 + Math.random() * 0.75);
+      /* 場所バイアス: 候補5点のうち、既存flowersとlastPointerからの最短距離が最大の点を採用する
+         (＝タップ済み/密集した場所を避け、空いている場所を選んで自生する)。 */
+      var best = null, bestD = -1;
+      for (var ci = 0; ci < 5; ci++) {
+        var cx = rect.width * (0.1 + Math.random() * 0.8), cy = rect.height * (0.15 + Math.random() * 0.75);
+        var cd = 1e9;
+        for (var fi = 0; fi < flowers.length; fi++) {
+          var fdx = flowers[fi].x - cx, fdy = flowers[fi].y - cy;
+          cd = Math.min(cd, fdx * fdx + fdy * fdy);
+        }
+        if (lastPointer) { var pdx = lastPointer.x - cx, pdy = lastPointer.y - cy; cd = Math.min(cd, pdx * pdx + pdy * pdy); }
+        if (cd > bestD) { bestD = cd; best = { x: cx, y: cy }; }
+      }
+      var x = best.x, y = best.y;
       var rng2 = makeRng(seedCounter);
       var kindList = ['sprig', 'fern', 'floret', 'umbel'];
       var f = {
@@ -376,18 +399,25 @@
     /* t>=nextSproutTに達したら判定する共通関数。setTimeout駆動(armSproutTimer)と
        redrawの保険発火の両方から呼ばれる。呼ばれた時点でnextSproutTを必ず前進させる
        (充実/reduce/farewelling中でも)ことで、条件不成立時にゼロ待機でタイマーが
-       暴走(busy-loop)することを防ぐ。 */
+       暴走(busy-loop)することを防ぐ。Phase2f: 到達していても最後の操作からIDLE_MS未満なら
+       まだ芽吹かず、nextSproutTを「最後の操作+IDLE_MS」まで巻き戻して待つ(操作によるリセットを
+       反映する。この巻き戻しは決定的でbusy-loopを起こさない)。 */
     function maybeSprout(t) {
+      if (noSprout) return false;
       if (t < nextSproutT) return false;
+      if (t - lastInteractT < IDLE_MS) { nextSproutT = lastInteractT + IDLE_MS; return false; }
       scheduleSprout(t);   /* 到達したら reduce/farewelling/充実中でも必ず前進(nextSproutTが過去のまま→50ms再armのbusy-loopを防ぐ) */
-      if (reduce || farewelling) return false;
+      if (reduce || farewelling || t < gustUntil) return false;   /* 突風バーストの直後は自生で埋まらないよう猶予を置く */
       if (flowers.length >= RESTING_COUNT || flowers.length >= MAX_FLOWERS) return false;  /* 充実で停止 */
       ambientSprout();
       kick();   /* rAFが止まっていても再開させる */
       return true;
     }
     function armSproutTimer() {
-      if (reduce) return;   /* reduceでは自生しないので張らない */
+      if (reduce || noSprout) return;   /* reduce/自生無効では張らない */
+      /* Phase2f: ポインタ操作からも呼ばれるようになったため、既存のチェーンを必ず先に解除して
+         から張り直す(解除しないと操作の度に別チェーンが並走し、二重発火/タイマーリークになる)。 */
+      if (sproutTimer) { clearTimeout(sproutTimer); sproutTimer = null; }
       var delay = Math.max(50, nextSproutT - now());
       sproutTimer = setTimeout(function () {
         sproutTimer = null;
@@ -613,7 +643,12 @@
     function local(e) { var r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top, t: (e.timeStamp || now()) }; }
     function begin(e) {
       clearHold();   /* マルチタッチ/連続入力で前の長押しタイマーが残らないよう先に解除 */
-      drawing = true; var p = local(e); last = p; accum = 0; spawn(p.x, p.y, 0);
+      drawing = true; var p = local(e); last = p; accum = 0;
+      /* Phase2f: タップ/なぞり開始も「操作」として自生のアイドルタイマーを後ろ倒しする。
+         lastPointerは自生の場所バイアス(ambientSprout)がタップ位置を避けるために使う。 */
+      lastInteractT = now(); lastPointer = { x: p.x, y: p.y };
+      scheduleSprout(lastInteractT); armSproutTimer();
+      spawn(p.x, p.y, 0);
       if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (_) {} }
       holdPos = { x: p.x, y: p.y };
       holdTimer = setTimeout(function () { if (holdPos) spawnGrand(holdPos.x, holdPos.y); clearHold(); }, 600);
@@ -621,6 +656,10 @@
     function move(e) {
       if (!drawing) return;
       var p = local(e), dx = p.x - last.x, dy = p.y - last.y, d = Math.sqrt(dx * dx + dy * dy);
+      /* Phase2f: なぞり中は(実際にspawnへ届く距離未満の細かい動きでも)操作中とみなし、
+         アイドルタイマーをリセットし続ける。 */
+      lastInteractT = now(); lastPointer = { x: p.x, y: p.y };
+      scheduleSprout(lastInteractT); armSproutTimer();
       if (holdPos) { var hdx = p.x - holdPos.x, hdy = p.y - holdPos.y; if (hdx * hdx + hdy * hdy > 64) clearHold(); }
       if (d < 0.0001) { last = p; return; }
       var dt = Math.max(1, p.t - last.t), speed = d / dt;
@@ -655,7 +694,44 @@
 
     return {
       setSeason: function (name) { if (seed) return; if (SEASONS[name]) { seasonName = name; redraw(); } },
-      clear: function () { flowers = []; petals = []; redraw(); },
+      /* 真っさらにする＝強い突風。reduce時は即時に空へ(演出なし・音のみ任意)。
+         非reduce時は全要素を風向きへ弾き飛ばす: 花は花びらのバースト粒子(既存の落下花びらと
+         同じ色型=hex文字列。下のredrawの粒子描画のelse分岐でhexToRgb()される)、
+         緑(sprig/fern/floret/umbel)は種と同じ{r,g,b}緑の円粒子(kind:'seed'。if分岐でrgba()に
+         直接渡る)になって流れる。flowersは即空にする(=庭はこの瞬間から見た目上も空)。
+         粒子はredrawの既存ループ(寿命life経過で自然消滅)に乗るだけで、新しい消去処理は増やさない。 */
+      clear: function () {
+        var t = now();
+        /* 「真っさらにする」も操作: アイドル基準を更新し、クリア後はIDLE_MS待ってから自生が戻る(クリア直後の静けさ)。 */
+        lastInteractT = t; scheduleSprout(t); armSproutTimer();
+        if (reduce) {
+          flowers = []; petals = []; redraw();
+          if (opts.onGust) { try { opts.onGust(); } catch (_) {} }
+          return;
+        }
+        var dir = (Math.random() < 0.5) ? 1 : -1;
+        wind.dir = dir; wind.strength = 1; wind.start = t; wind.until = t + 1800;
+        gustUntil = t + 2200;   /* バースト粒子(最大life約2100ms)が消え切るまで自生を止める */
+        for (var gi = 0; gi < flowers.length && petals.length < GUST_MAX; gi++) {
+          var gf = flowers[gi];
+          var isGreen = !!(gf.kind && gf.kind !== 'flower');
+          var burst = isGreen ? 2 : 3;
+          for (var gb = 0; gb < burst && petals.length < GUST_MAX; gb++) {
+            petals.push({
+              x: gf.x + (Math.random() - 0.5) * gf.r, y: gf.y - gf.r * 0.4,
+              vx: dir * (0.6 + Math.random() * 0.7), vy: -0.15 + Math.random() * 0.35,
+              rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.02,
+              r: gf.r * (isGreen ? 0.3 : 0.42),
+              color: isGreen ? GREEN : currentPalette().petals[0],
+              kind: isGreen ? 'seed' : undefined,
+              bornT: t, life: 1600 + Math.random() * 500
+            });
+          }
+        }
+        flowers = [];                                     /* 花は吹き飛んだ→即座に空。粒子だけが流れて消える */
+        if (opts.onGust) { try { opts.onGust(); } catch (_) {} }
+        kick();                                            /* rAFを起こして粒子アニメを進める */
+      },
       /* 押し花にする＝庭の要素から標本ボードを自動構成する。
          (1)生成りbeige地+紙ノイズ (2)代表選抜(花5・緑fern/umbel5・floret4・つるsprig3・上限17)を
          余白マージン付き6x4グリッドへ決定的乱数で再配置(重なり回避) (3)palette退色
@@ -820,6 +896,10 @@
       snapshotCount: function () { return flowers.length; },
       /* テスト用: 庭の充実度(花+緑の総数)。自生(自然芽吹き)がRESTING_COUNTで頭打ちすることの観測用。 */
       entityCount: function () { return flowers.length; },
+      /* テスト用: 各要素の座標とkind(flower/緑)のスナップショット。自生の場所バイアス
+         (既存要素・直近の操作位置から離れた場所を選ぶこと)を座標レベルで検証するための
+         直接的な観測手段。 */
+      snapshotPositions: function () { return flowers.map(function (f) { return { x: f.x, y: f.y, kind: f.kind || 'flower' }; }); },
       /* テスト用: 少なくとも1枚花びらを落とした花の数(加齢/風どちらの契機でもshed>0になったもの)。
          風発火の舞う枚数上限を検証するための直接的な観測手段（面積の間接推定より確実）。 */
       shedFlowerCount: function () { return flowers.filter(function (f) { return f.shed > 0; }).length; },
@@ -915,8 +995,8 @@
     }
     /* なぞり音（oto）: デフォルトオフ・トグルonのユーザージェスチャでのみ AudioContext を生成する。
        エンジン(createGarden)は音を知らず、spawn毎に呼ばれる opts.onSpawn 経由で接続するのみ。 */
-    var oto = { enabled: false, ctx: null, lastT: -1, played: 0, wind: 0 };  /* lastT負値: トグルON直後の最初の一音も鳴らす */
-    function otoPublish() { if (typeof window !== 'undefined') window.__hanaOto = { played: oto.played, ctxCreated: !!oto.ctx, wind: oto.wind || 0 }; }
+    var oto = { enabled: false, ctx: null, lastT: -1, played: 0, wind: 0, gust: 0 };  /* lastT負値: トグルON直後の最初の一音も鳴らす */
+    function otoPublish() { if (typeof window !== 'undefined') window.__hanaOto = { played: oto.played, ctxCreated: !!oto.ctx, wind: oto.wind || 0, gust: oto.gust || 0 }; }
     function otoPlay(f) {
       if (!oto.enabled || !oto.ctx) return;
       var t = oto.ctx.currentTime;
@@ -954,10 +1034,28 @@
       src.onended = function () { try { src.disconnect(); lp.disconnect(); g.disconnect(); } catch (_) {} };
       oto.wind = (oto.wind || 0) + 1; otoPublish();
     }
+    /* 真っさらにする(突風)の強い風音。otoPlayWindの強化版(音量2倍・長さ約1.2倍・低域寄り)。 */
+    function otoPlayGust() {
+      if (!oto.enabled || !oto.ctx) return;
+      var ctx = oto.ctx, t = ctx.currentTime, dur = 2.2;
+      var buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate);
+      var d = buf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;   /* ホワイトノイズ */
+      var src = ctx.createBufferSource(); src.buffer = buf;
+      var lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(700, t);
+      var g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(0.06, t + 0.25);         /* 一陣の立ち上がり(速い) */
+      g.gain.linearRampToValueAtTime(0.0001, t + dur);
+      src.connect(lp); lp.connect(g); g.connect(ctx.destination);
+      src.start(t); src.stop(t + dur);
+      src.onended = function () { try { src.disconnect(); lp.disconnect(); g.disconnect(); } catch (_) {} };
+      oto.gust = (oto.gust || 0) + 1; otoPublish();
+    }
     otoPublish();   /* デフォルトオフの初期状態を即時公開（テスト観測 __hanaOto を待たせない） */
 
     var canvas = container.querySelector('.hana-canvas');
-    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, __fastGrow: opts.__fastGrow, onSpawn: otoPlay, onWind: otoPlayWind });
+    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, __fastGrow: opts.__fastGrow, __noSprout: opts.__noSprout, onSpawn: otoPlay, onWind: otoPlayWind, onGust: otoPlayGust });
     applyStageBg(container, seed ? seed.seasonName : (opts.season || 'spring'));
     /* 入場の招待花（reduce時は空庭で開始）。
        index.html 経由の open では core の openDialog が onOpen を el.hidden=false の *前* に呼ぶため、
