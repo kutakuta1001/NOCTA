@@ -340,13 +340,20 @@
     var nextWindT = 0; var fastWind = !!opts.__fastWind;  /* テスト短縮用: 本番未使用 */
     function scheduleWind(t) { nextWindT = t + (fastWind ? 1200 : (16000 + Math.random() * 18000)); }
 
-    /* 庭の自生: 放置してもゆっくり芽吹く。「充実度」(flowers.length)がRESTING_COUNTに
-       達したら止まる（引き算・無限増殖しない）。芽吹きは緑/floret優先で無音(onSpawn不呼び)。
+    /* 庭の自生: 放置してもゆっくり芽吹く。「充実度」(flowers.length)がFILL_TARGETに
+       達したら止まる（引き算・無限増殖しない）。芽吹きは大輪級/中サイズの花・緑/floretの
+       大小混合で無音(onSpawn不呼び)。Phase2g: 画面いっぱいの構成にするためFILL_TARGET=44
+       (旧RESTING_COUNT=28)に拡張し、芽吹く要素に大輪級(r70-100)を混ぜてサイズの強弱を出す。
        rAFが止まっていても起こす必要があるため、待機はrAFでなくsetTimeoutで行う
        (sproutTimer)。redraw内にも同じ判定の保険発火を置き、rAFが既に回っている間は
        そちら経由でも発火し得るが、nextSproutTの前進をmaybeSprout冒頭で必ず行うため
        二重発火はしない。 */
-    var RESTING_COUNT = 28;
+    var FILL_TARGET = 44;
+    /* Phase2g Task2: 庭の充実度=fillRatio。reduceでは常に0固定(背景は移ろわず暗いまま)。
+       redraw毎に再計算し、直近にopts.onFillへ通知した値(lastFillRatio)と変わった時だけ
+       再通知する(要素の増減=spawn/ambientSprout/clearの後、次のkick駆動フレームで自然に発火)。 */
+    var lastFillRatio = 0;
+    function currentFillRatio() { return reduce ? 0 : Math.min(1, flowers.length / FILL_TARGET); }
     var nextSproutT = 0, sproutTimer = null;
     var fastGrow = !!opts.__fastGrow;  /* テスト短縮用: 本番未使用 */
     var noSprout = !!opts.__noSprout;  /* テスト専用: 自生を完全に無効化(粒子減衰など自生と無関係な検証の隔離用)。本番未使用 */
@@ -360,28 +367,82 @@
     function scheduleSprout(t) { nextSproutT = t + (SPROUT_MIN + Math.random() * SPROUT_SPAN); }
     function ambientSprout() {
       var rect = canvas.getBoundingClientRect();
-      /* 場所バイアス: 候補5点のうち、既存flowersとlastPointerからの最短距離が最大の点を採用する
-         (＝タップ済み/密集した場所を避け、空いている場所を選んで自生する)。 */
-      var best = null, bestD = -1;
-      for (var ci = 0; ci < 5; ci++) {
-        var cx = rect.width * (0.1 + Math.random() * 0.8), cy = rect.height * (0.15 + Math.random() * 0.75);
-        var cd = 1e9;
+      if (rect.width < 1 || rect.height < 1) return;   /* 非表示/0サイズ時は座標NaNを避け、次回タイマーに委ねる */
+      /* Phase2g: 大小のリズム。大輪級を時々・中サイズの花を主に・小花/緑で隙間を埋める
+         (花が主役、緑は約40%)。sizeは後段の場所バイアス(候補数/クリアランス判定)にも使う
+         ため、位置決定より先に確定する。ロール判定はMath.random()を使う(候補点選びと同じ
+         乱数源)。makeRng(seedCounter)は連番の小さな整数シードだと最初の1回の出力が
+         シードにほぼ線形(LCGが1回転前で未混合)になり、分岐のしきい値判定に使うと
+         偏りが出る(実測: 44回自生させても常に同じ帯に入り大輪級/緑が一切出なかった)。
+         baseRot/form等の分岐なしの連続値は従来通りmakeRng(seedCounter)を使ってよい。 */
+      var roll = Math.random();
+      var kind, size;
+      if (roll < 0.15) { kind = 'flower'; size = 70 + Math.random() * 30; }              /* 主役の大輪級 r70-100 */
+      else if (roll < 0.60) { kind = 'flower'; size = 40 + Math.random() * 25; }          /* 中サイズの花 r40-65 */
+      else { kind = ['sprig', 'fern', 'umbel', 'floret'][Math.floor(Math.random() * 4)]; size = 26 + Math.random() * 20; } /* 緑/小花 r26-46 */
+
+      /* 全面均等配置(仕上がりの磨き込み): 旧実装は「既存flowers/lastPointerから最も遠い点」を
+         採用する最遠点バイアスだったため、新要素が常に外周へ押しやられ、中央が空いたまま
+         残る「暗いドーナツ」を作っていた(参考画像は中央含む画面全体に密に敷き詰まる構成)。
+         ここでは画面を緩いグリッド(GRID_COLS x GRID_ROWS)に分け、既存flowersの中心が
+         属するセルの個体数が最も少ないセル(複数あれば乱択)を選び、そこへ生やす場所を
+         決める(＝空いている領域を優先して埋める。中央のセルも他と同じ土俵で競う)。
+         使用領域(MX0-MX1×MY0-MY1)は端の見切れを避けるための余白。 */
+      var MX0 = 0.05, MX1 = 0.95, MY0 = 0.06, MY1 = 0.94;
+      var areaX = rect.width * (MX1 - MX0), areaY = rect.height * (MY1 - MY0);
+      var GRID_COLS = 7, GRID_ROWS = 6;
+      var cellW = areaX / GRID_COLS, cellH = areaY / GRID_ROWS;
+      var cellCounts = new Array(GRID_COLS * GRID_ROWS);
+      for (var cci = 0; cci < cellCounts.length; cci++) cellCounts[cci] = 0;
+      for (var fi0 = 0; fi0 < flowers.length; fi0++) {
+        var of0 = flowers[fi0];
+        var relX = (of0.x - rect.width * MX0) / areaX, relY = (of0.y - rect.height * MY0) / areaY;
+        var col0 = Math.min(GRID_COLS - 1, Math.max(0, Math.floor(relX * GRID_COLS)));
+        var row0 = Math.min(GRID_ROWS - 1, Math.max(0, Math.floor(relY * GRID_ROWS)));
+        cellCounts[row0 * GRID_COLS + col0]++;
+      }
+      var minCellCount = Math.min.apply(null, cellCounts);
+      var leastCells = [];
+      for (var cci2 = 0; cci2 < cellCounts.length; cci2++) { if (cellCounts[cci2] === minCellCount) leastCells.push(cci2); }
+
+      /* セル内での場所バイアス: 最小個体数のセルが複数あるとき、そのうち1つに固定して候補を
+         引くと「たまたま選ばれたセルの近くに大輪が既にある」という不運で強い重なりを
+         受け入れてしまう。候補ごとに毎回leastCellsから乱択することで、タイの全セルへ
+         候補が分散し、既存flowers/lastPointerからのクリアランス(縁-縁の距離=中心間距離-
+         両者の半径)が最大の候補を採用できる(＝「全面へ均等に広がる」(最小セル限定)と
+         「団子状に重ならない・余白を保つ」(縁-縁クリアランス最大化)を両立)。大きい要素は
+         団子になりやすいため候補数を増やす(小:5→6・大:12→14)。 */
+      var isBig = size >= 70;
+      var candidateN = isBig ? 14 : 6;
+      var best = null, bestClear = -Infinity;
+      for (var ci = 0; ci < candidateN; ci++) {
+        var cell = leastCells[Math.floor(Math.random() * leastCells.length)];
+        var cellCx = rect.width * MX0 + (cell % GRID_COLS + 0.5) * cellW;
+        var cellCy = rect.height * MY0 + (Math.floor(cell / GRID_COLS) + 0.5) * cellH;
+        var cx = cellCx + (Math.random() - 0.5) * cellW * 1.3;
+        var cy = cellCy + (Math.random() - 0.5) * cellH * 1.3;
+        cx = Math.max(rect.width * (MX0 - 0.03), Math.min(rect.width * (MX1 + 0.03), cx));
+        cy = Math.max(rect.height * (MY0 - 0.03), Math.min(rect.height * (MY1 + 0.03), cy));
+        var clear = Infinity;
         for (var fi = 0; fi < flowers.length; fi++) {
-          var fdx = flowers[fi].x - cx, fdy = flowers[fi].y - cy;
-          cd = Math.min(cd, fdx * fdx + fdy * fdy);
+          var of = flowers[fi];
+          var d = Math.sqrt((of.x - cx) * (of.x - cx) + (of.y - cy) * (of.y - cy));
+          clear = Math.min(clear, d - of.r - size);
         }
-        if (lastPointer) { var pdx = lastPointer.x - cx, pdy = lastPointer.y - cy; cd = Math.min(cd, pdx * pdx + pdy * pdy); }
-        if (cd > bestD) { bestD = cd; best = { x: cx, y: cy }; }
+        if (lastPointer) {
+          var pd = Math.sqrt((lastPointer.x - cx) * (lastPointer.x - cx) + (lastPointer.y - cy) * (lastPointer.y - cy));
+          clear = Math.min(clear, pd - size);
+        }
+        if (clear > bestClear) { bestClear = clear; best = { x: cx, y: cy }; }
       }
       var x = best.x, y = best.y;
       var rng2 = makeRng(seedCounter);
-      var kindList = ['sprig', 'fern', 'floret', 'umbel'];
       var f = {
         x: x, y: y,
-        r: 26 + rng2() * 20,
+        r: size,
         baseRot: rng2() * Math.PI * 2,
         form: pickForm(rng2),
-        kind: kindList[Math.floor(rng2() * kindList.length)],
+        kind: kind,
         seed: seedCounter++,
         bornT: now(),
         dur: 2600,
@@ -408,13 +469,14 @@
       if (t - lastInteractT < IDLE_MS) { nextSproutT = lastInteractT + IDLE_MS; return false; }
       scheduleSprout(t);   /* 到達したら reduce/farewelling/充実中でも必ず前進(nextSproutTが過去のまま→50ms再armのbusy-loopを防ぐ) */
       if (reduce || farewelling || t < gustUntil) return false;   /* 突風バーストの直後は自生で埋まらないよう猶予を置く */
-      if (flowers.length >= RESTING_COUNT || flowers.length >= MAX_FLOWERS) return false;  /* 充実で停止 */
+      if (flowers.length >= FILL_TARGET || flowers.length >= MAX_FLOWERS) return false;  /* 充実で停止 */
       ambientSprout();
       kick();   /* rAFが止まっていても再開させる */
       return true;
     }
     function armSproutTimer() {
       if (reduce || noSprout) return;   /* reduce/自生無効では張らない */
+      if (flowers.length >= FILL_TARGET) { if (sproutTimer) { clearTimeout(sproutTimer); sproutTimer = null; } return; }   /* 完成して落ち着いた庭ではタイマーを止める(静けさ・省電力。tap/clear/redraw保険で再開) */
       /* Phase2f: ポインタ操作からも呼ばれるようになったため、既存のチェーンを必ず先に解除して
          から張り直す(解除しないと操作の度に別チェーンが並走し、二重発火/タイマーリークになる)。 */
       if (sproutTimer) { clearTimeout(sproutTimer); sproutTimer = null; }
@@ -439,6 +501,9 @@
       var rect = canvas.getBoundingClientRect();
       ctx.clearRect(0, 0, rect.width, rect.height);
       var t = now();
+      /* Phase2g Task2: fillRatioが変わった時だけmount側(.hana-stage背景)へ通知する。 */
+      var fr = currentFillRatio();
+      if (fr !== lastFillRatio) { lastFillRatio = fr; if (opts.onFill) { try { opts.onFill(fr); } catch (_) {} } }
       if (!reduce && !farewelling && flowers.length > 0 && t >= nextWindT) {
         wind.start = t; wind.until = t + 2500; wind.dir = Math.random() < 0.5 ? -1 : 1;
         wind.strength = 0.6 + Math.random() * 0.4;
@@ -484,14 +549,48 @@
       /* 描画は奥(depth大)から。保持はFIFO配列のまま、描画時だけdepth降順のコピーを使う
          （保持順を崩さないことで容量超過時の間引きが「最古を削除」で正しく働く） */
       var order = flowers.slice().sort(function (a, b) { return b.depth - a.depth; });
+      function computeBloom(f) {
+        if (farewelling) return Math.max(0, 1 - (t - farewellT) / 800);   /* 退場: 1→0 */
+        return reduce ? 1 : Math.min(1, easeOutCubic((t - f.bornT) / f.dur));
+      }
+      /* 明地補正(Phase2g Task2): fillRatio(地の明るさ)が高いほど、花が明るい生成りの地に
+         沈んで見えなくなるのを防ぐ。drawFlower本体は不変のまま、花を描く前にredraw側で
+         ごく薄い暖色の接地影を敷く(押し花標本の台紙に落ちる影に近い質感)。
+         地色lerp(applyStageBg)がまだ暗い側(fr<=0.5・outer地色の輝度が中間グレーに届く前)は
+         そもそも沈む問題が起きないため、compは0のまま=描かない(既存の暗い庭を1ピクセルも
+         変えない。少数の花だけを咲かせる既存の画素面積テスト群もこの安全マージンで無傷)。
+         花が密集するとcanvas描画は「重なるほど濃くなる」ため、影を花ごとに個別のfill()で
+         重ねると密集部だけ不自然に黒ずむ(実測で確認)。1本のPathにまとめ1回のfill()で
+         合成することで、重なりがあっても濃さが積み重ならないようにする(nonzero winding
+         によるunion)。緑(sprig/fern/umbel/floret)は線的な描画のため影を敷くと不自然な塊に
+         見えるので花(kind未設定/'flower')のみに適用する。 */
+      /* Phase2polish: applyStageBg側の地色lerpをeaseOutCubic駆動に変えた(下記参照)ため、
+         "地が実際に明るくなるタイミング"もeaseOutCubic(fr)基準に合わせる(旧来の生fr基準の
+         ままだと、地はもう明るいのに沈み補正がまだ無効という時間差が生じる)。 */
+      var stageComp = Math.max(0, (easeOutCubic(fr) - 0.5) * 2);   /* eased(fr)<=0.5:0 → eased(fr)=1:1 */
+      if (stageComp > 0.001) {
+        var shadowAny = false;
+        ctx.beginPath();
+        for (var shi = 0; shi < order.length; shi++) {
+          var shf = order[shi];
+          if (shf.kind && shf.kind !== 'flower') continue;
+          if (computeBloom(shf) <= 0.05) continue;
+          var scx = shf.x + shf.r * 0.5, scy = shf.y + shf.r * 0.20;
+          ctx.moveTo(scx, scy);   /* 直前の楕円からの連結線を防ぐ(ellipse()開始点に明示moveTo) */
+          ctx.ellipse(shf.x, scy, shf.r * 0.5, shf.r * 0.24, 0, 0, Math.PI * 2);
+          shadowAny = true;
+        }
+        if (shadowAny) {
+          ctx.save();
+          ctx.globalAlpha = Math.min(0.18, stageComp * 0.20);
+          ctx.fillStyle = 'rgb(58,46,30)';
+          ctx.fill();
+          ctx.restore();
+        }
+      }
       for (var i = 0; i < order.length; i++) {
         var f = order[i];
-        var bloom;
-        if (farewelling) {
-          bloom = Math.max(0, 1 - (t - farewellT) / 800);        /* 退場: 1→0 */
-        } else {
-          bloom = reduce ? 1 : Math.min(1, easeOutCubic((t - f.bornT) / f.dur));
-        }
+        var bloom = computeBloom(f);
         /* kind係数: umbel(種穂)は軽く大きく・sprig/fernは中程度・その他(花)は従来通り揺れる。
            既存の風項(windAmt*0.2*wind.dir*(1-depth*0.6))にのみ乗ずる(微風の常時sin項は不変)。 */
         var swayK = (f.kind === 'umbel') ? 1.6 : (f.kind === 'sprig' || f.kind === 'fern') ? 1.2 : 1.0;
@@ -516,10 +615,15 @@
             f.nextShedT = t + (fastAge ? 250 : (2500 + Math.random() * 3000));
           }
         }
+        /* 明地での発色補正(脱濁り): 地色が明るいほど(stageComp>0)、半透明の花弁が重なる部分が
+           灰色く滲みやすい(薄い色を何重にも重ねるほど彩度が落ちる)。drawFlower本体(不変)への
+           入力であるvigorをこの時だけ僅かに引き上げ(最大+0.3)、1枚あたりの不透明度
+           (baseA)をわずかに濃くして重なりでも花の発色が沈まないようにする。stageComp=0
+           (地がまだ暗い間)ではf.vigorのまま=完全不変。 */
         drawEntity(ctx, {
           x: f.x, y: f.y, r: f.r, rot: f.baseRot + sway, bloom: bloom,
           form: f.form, palette: currentPalette(), rng: makeRng(f.seed),
-          vigor: f.vigor, depth: f.depth, shed: f.shed, leaves: f.leaves, kind: f.kind
+          vigor: Math.min(1, f.vigor + stageComp * 0.3), depth: f.depth, shed: f.shed, leaves: f.leaves, kind: f.kind
         });
       }
       /* 落下花びらパーティクル */
@@ -702,8 +806,9 @@
          粒子はredrawの既存ループ(寿命life経過で自然消滅)に乗るだけで、新しい消去処理は増やさない。 */
       clear: function () {
         var t = now();
-        /* 「真っさらにする」も操作: アイドル基準を更新し、クリア後はIDLE_MS待ってから自生が戻る(クリア直後の静けさ)。 */
-        lastInteractT = t; scheduleSprout(t); armSproutTimer();
+        /* 「真っさらにする」も操作: アイドル基準を更新し、クリア後はIDLE_MS待ってから自生が戻る(クリア直後の静けさ)。
+           armSproutTimer は flowers を空にした後に呼ぶ(満杯ガードに阻まれず再arm＝満杯からのクリアでも自生が戻る)。 */
+        lastInteractT = t; scheduleSprout(t);
         if (reduce) {
           flowers = []; petals = []; redraw();
           if (opts.onGust) { try { opts.onGust(); } catch (_) {} }
@@ -729,6 +834,7 @@
           }
         }
         flowers = [];                                     /* 花は吹き飛んだ→即座に空。粒子だけが流れて消える */
+        armSproutTimer();                                  /* 空にしてから再arm(満杯ガードを抜ける)→クリア後IDLE_MS待って自生が再開 */
         if (opts.onGust) { try { opts.onGust(); } catch (_) {} }
         kick();                                            /* rAFを起こして粒子アニメを進める */
       },
@@ -894,12 +1000,19 @@
       /* テスト用: 直近press()のラベル文字列(実挙動には影響しない) */
       snapshotLabel: function () { return lastPressLabel; },
       snapshotCount: function () { return flowers.length; },
-      /* テスト用: 庭の充実度(花+緑の総数)。自生(自然芽吹き)がRESTING_COUNTで頭打ちすることの観測用。 */
+      /* テスト用: 庭の充実度(花+緑の総数)。自生(自然芽吹き)がFILL_TARGETで頭打ちすることの観測用。 */
       entityCount: function () { return flowers.length; },
+      /* Phase2g Task2: 庭の充実度(0..1)。mount側が.hana-stage背景の暗→生成りlerpに使う他、
+         テスト観測用にも公開する。redrawのlastFillRatio(スロットル済みの通知値)ではなく
+         常に最新値を返す(呼び出し直後の状態を即座に取得できるようにする)。 */
+      fillRatio: function () { return currentFillRatio(); },
       /* テスト用: 各要素の座標とkind(flower/緑)のスナップショット。自生の場所バイアス
          (既存要素・直近の操作位置から離れた場所を選ぶこと)を座標レベルで検証するための
          直接的な観測手段。 */
       snapshotPositions: function () { return flowers.map(function (f) { return { x: f.x, y: f.y, kind: f.kind || 'flower' }; }); },
+      /* テスト用: 各要素のr(サイズ)のスナップショット。Phase2g: 自生に大輪級/中/小の強弱が
+         出ていることを検証するための直接的な観測手段(実挙動には影響しない)。 */
+      snapshotSizes: function () { return flowers.map(function (f) { return f.r; }); },
       /* テスト用: 少なくとも1枚花びらを落とした花の数(加齢/風どちらの契機でもshed>0になったもの)。
          風発火の舞う枚数上限を検証するための直接的な観測手段（面積の間接推定より確実）。 */
       shedFlowerCount: function () { return flowers.filter(function (f) { return f.shed > 0; }).length; },
@@ -964,16 +1077,46 @@
       '</div>';
   }
 
-  /* 季節→光だまり色マップ。.hana-stage の背景を季節に連動させる。 */
+  /* 季節→光だまり色マップ。.hana-stage の背景を季節に連動させる。
+     Phase2g Task2: 地色(暗い光の庭→明るい生成り)をfillRatioでlerpできるよう、
+     完成済みrgba文字列ではなく{r,g,b,a}で保持する(下のapplyStageBgでrgba()合成)。 */
   var SEASON_GLOW = {
-    spring: 'rgba(120,70,90,0.40)', summer: 'rgba(50,70,120,0.40)',
-    autumn: 'rgba(120,70,40,0.42)', winter: 'rgba(90,96,110,0.36)'
+    spring: { r: 120, g: 70, b: 90, a: 0.40 }, summer: { r: 50, g: 70, b: 120, a: 0.40 },
+    autumn: { r: 120, g: 70, b: 40, a: 0.42 }, winter: { r: 90, g: 96, b: 110, a: 0.36 }
   };
-  function applyStageBg(container, season) {
+  /* 地色の暗(warm-black・旧来の唯一の地色)↔明(生成りbeige)の両端。
+     mid(55%地点)はouter(100%地点)よりわずかに明るい(旧実装のrgba(14,12,9)とouter#0A0906の
+     明度差=+4,+3,+3をbeige側にも保つ)。 */
+  var STAGE_DARK_MID = { r: 14, g: 12, b: 9 }, STAGE_DARK_OUTER = { r: 0x0A, g: 0x09, b: 0x06 };
+  var STAGE_BEIGE_MID = { r: 0xE4, g: 0xD9, b: 0xC4 }, STAGE_BEIGE_OUTER = { r: 0xDE, g: 0xD3, b: 0xBC };
+  /* 庭の充実度(fillRatio 0..1)に応じ、地色を暗い光の庭→明るい生成りへlerpする。
+     fillRatio省略/0では旧実装と数値上完全に同一(既存の暗い庭を1ピクセルも変えない)。
+
+     Phase2polish（この磨き込みタスクでの変更）:
+     (1) 中間の濁り解消: dark↔beigeの直線lerpは中間(fr≈0.4-0.6)で低彩度の茶灰色を長く
+         通過して見える(=「茶色く濁る」)。ここでは補間パラメータにeaseOutCubic(既存関数を
+         流用)をかけ、立ち上がりを早める。fr=0/1の両端はeaseOutCubic(0)=0・(1)=1により
+         旧実装の値と数値上完全に一致するため、fr=0時点の不変条件は保たれる。
+     (2) 中央の暗いドーナツ解消: 旧実装は地が明るくなるほど光だまり(グロー)のalphaを
+         "下げて"いたため、.hana-stageの親要素の暗い地色(本番では#0A0906)が中央に
+         透けて見え続けていた(fr=0では親の地色≒STAGE_DARK_OUTERなので気付かれなかった
+         だけ)。ここではalphaを"回復"方向にする(fr上昇=不透明化。fr=1でグロー/mid両stopが
+         完全不透明になり、親要素の暗さが一切透けない)。色が浮きすぎないようにする役割は
+         alphaでなく「グローの色相を地色へ徐々に馴染ませる」側に持たせた。 */
+  function applyStageBg(container, season, fillRatio) {
     var stage = container.querySelector('.hana-stage');
-    if (stage) stage.style.background =
-      'radial-gradient(ellipse 70% 60% at 50% 62%, ' + (SEASON_GLOW[season] || SEASON_GLOW.spring) +
-      ' 0%, rgba(14,12,9,0.85) 55%, #0A0906 100%)';
+    if (!stage) return;
+    var fr = Math.max(0, Math.min(1, fillRatio || 0));
+    var glow = SEASON_GLOW[season] || SEASON_GLOW.spring;
+    var te = easeOutCubic(fr);   /* te(0)=0, te(1)=1: 両端は旧実装と数値上完全に同一 */
+    var mid = mixRgb(STAGE_DARK_MID, STAGE_BEIGE_MID, te);
+    var outer = mixRgb(STAGE_DARK_OUTER, STAGE_BEIGE_OUTER, te);
+    var glowColor = mixRgb(glow, mid, te);                /* fr=0: mixRgb(glow,mid,0)=glow(不変) / fr=1: mid完全一致(色染みを残さない) */
+    var glowAlpha = glow.a + (1 - glow.a) * te;           /* fr=0: glow.a(不変) / fr=1: 1(完全不透明) */
+    var midAlpha = 0.85 + 0.15 * te;                      /* fr=0: 0.85(不変) / fr=1: 1(完全不透明) */
+    stage.style.background =
+      'radial-gradient(ellipse 70% 60% at 50% 62%, ' + rgba(glowColor, glowAlpha) +
+      ' 0%, ' + rgba(mid, midAlpha) + ' 55%, ' + rgba(outer, 1) + ' 100%)';
   }
 
   /* container 内に咲かせるビューを構築し { detach } を返す */
@@ -1054,9 +1197,14 @@
     }
     otoPublish();   /* デフォルトオフの初期状態を即時公開（テスト観測 __hanaOto を待たせない） */
 
+    /* Phase2g Task2: createGarden はDOMを知らないまま(疎結合)、庭の充実度(fillRatio)が
+       変わるたびに opts.onFill 経由でここへ通知される。stageSeasonName は季節チップ切替で
+       更新し、onFill発火時にも直近の季節を使えるようにする。 */
+    var stageSeasonName = seed ? (seed.seasonName || 'spring') : (opts.season || 'spring');
+    function onGardenFill(fr) { applyStageBg(container, stageSeasonName, fr); }
     var canvas = container.querySelector('.hana-canvas');
-    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, __fastGrow: opts.__fastGrow, __noSprout: opts.__noSprout, onSpawn: otoPlay, onWind: otoPlayWind, onGust: otoPlayGust });
-    applyStageBg(container, seed ? seed.seasonName : (opts.season || 'spring'));
+    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, __fastGrow: opts.__fastGrow, __noSprout: opts.__noSprout, onSpawn: otoPlay, onWind: otoPlayWind, onGust: otoPlayGust, onFill: onGardenFill });
+    applyStageBg(container, stageSeasonName, 0);
     /* 入場の招待花（reduce時は空庭で開始）。
        index.html 経由の open では core の openDialog が onOpen を el.hidden=false の *前* に呼ぶため、
        この時点で #hana-view はまだ display:none。canvas は 0×0 で、いま invite() すると
@@ -1074,7 +1222,7 @@
       if (typeof requestAnimationFrame === 'function') inviteWhenSized(10);
       else garden.invite();
     }
-    function publishCount() { if (typeof window !== 'undefined') window.__hanaCount = garden.snapshotCount(); }
+    function publishCount() { if (typeof window !== 'undefined') { window.__hanaCount = garden.snapshotCount(); window.__hanaFill = garden.fillRatio(); } }
     var countTimer = setInterval(publishCount, 200);
 
     var onClick = function (e) {
@@ -1082,8 +1230,9 @@
       if (s) {
         container.querySelectorAll('.hana-season').forEach(function (b) { b.classList.remove('is-on'); });
         s.classList.add('is-on');
-        garden.setSeason(s.getAttribute('data-season'));
-        applyStageBg(container, s.getAttribute('data-season'));
+        stageSeasonName = s.getAttribute('data-season');
+        garden.setSeason(stageSeasonName);
+        applyStageBg(container, stageSeasonName, garden.fillRatio());
         return;
       }
       if (e.target.closest('.hana-clear')) {
@@ -1139,7 +1288,7 @@
   }
 
   /* テスト用に純粋関数を露出 */
-  window.NoctaHana = { _: { SEASONS: SEASONS, makeRng: makeRng, hashSeed: hashSeed, easeOutCubic: easeOutCubic, shouldSpawn: shouldSpawn, pickForm: pickForm, drawFlower: drawFlower, drawEntity: drawEntity, drawSprig: drawSprig, drawFern: drawFern, drawUmbel: drawUmbel, drawFloret: drawFloret, hexToRgb: hexToRgb, rgba: rgba, mixRgb: mixRgb, deriveSeededPalette: deriveSeededPalette, kanjiDate: kanjiDate } };
+  window.NoctaHana = { _: { SEASONS: SEASONS, makeRng: makeRng, hashSeed: hashSeed, easeOutCubic: easeOutCubic, shouldSpawn: shouldSpawn, pickForm: pickForm, drawFlower: drawFlower, drawEntity: drawEntity, drawSprig: drawSprig, drawFern: drawFern, drawUmbel: drawUmbel, drawFloret: drawFloret, hexToRgb: hexToRgb, rgba: rgba, mixRgb: mixRgb, deriveSeededPalette: deriveSeededPalette, kanjiDate: kanjiDate, applyStageBg: applyStageBg } };
   window.NoctaHana.mount = mount;
   window.NoctaHana.createGarden = createGarden;
 })();
