@@ -12,7 +12,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./flora-data.js?v=2"></script>
 <script src="../zukan/zukan-core.js?v=1"></script>
-<script src="./hana.js?v=9"></script>
+<script src="./hana.js?v=10"></script>
 <style>
   :root { --gem: #B8B4AE; }
   *{ box-sizing:border-box; }
@@ -852,8 +852,19 @@
           var f = NOCTA_FLORA[flowerIdx];
           seed = { form: f.hanaForm || 'sakura', accentColor: f.accentColor, seasonName: seasonFromFlower(f), name: f.titleEn, nameJa: f.title };
         }
+        /* Phase2h Task3: 図鑑24種の実物(色・形)を自動自生の花に連動させるため、NOCTA_FLORAから
+           [{color,form,season}, ...]を渡す。hana.js側(ambientSprout)がこれを見て1種を
+           ランダム選択し、実物の色(deriveSeededPalette)と形で自生の花を咲かせる。
+           seed(各花)モードでもambientはこの図鑑連動で多彩になる(seed自体の花色は不変)。
+           NOCTA_FLORA未読込時はnullでhana.js側の従来フォールバックに委ねる。
+           W2修正(Codex 2h): f.season は"3月〜4月"等の表示文字列で、hana.js側のSEASONSキー
+           (spring/summer/autumn/winter)ではない。旧実装はそのまま渡していたため
+           hana.js側のkind.season判定(SEASONS[fk.season])が常にfalseとなり季節情報が死んで
+           いた。既存のseasonFromFlower(f)(誕生月→spring/summer/autumn/winter)で正規化して
+           渡すことで、桜=春・彼岸花=秋 等その花固有の季節でderiveSeededPaletteされる。 */
+        var flowerKinds = (typeof NOCTA_FLORA !== 'undefined') ? NOCTA_FLORA.map(function (f) { return { color: f.accentColor, form: f.hanaForm, season: seasonFromFlower(f) }; }) : null;
         hanaInstance = window.NoctaHana.mount(document.getElementById('hana-mount'),
-          seed ? { seed: seed } : { season: currentSeason() });
+          seed ? { seed: seed, flowerKinds: flowerKinds } : { season: currentSeason(), flowerKinds: flowerKinds });
         /* onOpenはcoreがel.hidden=false する前に呼ばれるため、rAF×2後（hidden解除済み）に
            入場フェード(B-3)のopacity:1とcanvas実寸用のresizeを行う。汎用CTA・各花入口(.hana-sow)の
            両経路で必ず通るのでここに集約する（以前は#hana-openのクリックにのみ紐づき、

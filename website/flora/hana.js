@@ -43,6 +43,20 @@
     var tint = mixRgb(a, hexToRgb(base.ground), 0.45);
     return { petals: [accentHex, toHex(lighten), toHex(tint)], core: base.core, ground: base.ground };
   }
+  /* W3修正(Codex 2h): press()標本の退色パレット生成。旧実装はcurrentPalette()(庭全体の
+     単一季節パレット)固定で全boardEls要素を退色させていたため、図鑑連動(opts.flowerKinds)
+     で多色に咲いた自生がpress()だけ単一季節色に潰れていた。要素ごとにその元palette
+     (f.palette||currentPalette())を渡して呼ぶことで、押し花にしても図鑑の色味を保つ。
+     退色ロジック自体(灰みの暖色へ18%寄せる・groundは新しい生成り地へ差し替え)は不変。 */
+  function makePressedPalette(basePal) {
+    var FADE_TARGET = { r: 0xB0, g: 0xA8, b: 0x98 }, FADE_T = 0.18;
+    var boardGround = toHex(mixRgb(hexToRgb('#E4D9C4'), hexToRgb('#DCC8AC'), 0.5));
+    return {
+      petals: basePal.petals.map(function (hex) { return toHex(mixRgb(hexToRgb(hex), FADE_TARGET, FADE_T)); }),
+      core: toHex(mixRgb(hexToRgb(basePal.core), FADE_TARGET, FADE_T)),
+      ground: boardGround
+    };
+  }
   function shouldSpawn(distAccum, step) { return distAccum >= step; }
   /* 漢数字の日付（押し花に「七月七日」と添える・今日だけの景色を留める） */
   var KANJI_NUM = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十'];
@@ -323,7 +337,21 @@
     /* seed時のパレットは1回だけ導出しクロージャに保持（redraw毎の再生成を避ける） */
     var seededPalette = seed ? deriveSeededPalette(seed.accentColor, seasonName) : null;
     function currentPalette() { return seed ? seededPalette : SEASONS[seasonName]; }
-    var flowers = [];        /* {x,y,r,baseRot,form,seed,bornT,dur,depth,vigor,swayPhase,swayW,holdMs,shed,nextShedT,maxShed} */
+    /* Phase2h Task3: 図鑑24種の実物連動用。index.htmlがNOCTA_FLORAから
+       [{color,form,season}, ...] を渡す。ambientSproutが花kindを生やすとき、
+       これがあれば1種をランダム選択しderiveSeededPalette(kind.color, seasonName)+
+       kind.formで咲かせる。未指定/空配列ならnullのままにし、従来(currentPalette()+
+       pickForm)へフォールバックする(seed時のシード花・タップ/なぞりの花・緑・pressは
+       このオプションを一切参照しないため無関係・不変)。
+       Nit1修正(Codex 2h): opts.flowerKindsが配列でない、または要素にcolorが無いものは
+       deriveSeededPaletteに渡すと落ちる/意味不明な結果になるため、Array.isArrayかつ
+       各要素がfk && fk.colorを満たすものだけを残す。1件も残らなければnull(従来フォールバック)。 */
+    var flowerKinds = (function () {
+      if (!Array.isArray(opts.flowerKinds)) return null;
+      var valid = opts.flowerKinds.filter(function (fk) { return !!(fk && fk.color); });
+      return valid.length ? valid : null;
+    })();
+    var flowers = [];        /* {x,y,r,baseRot,form,seed,bornT,dur,depth,vigor,swayPhase,swayW,holdMs,shed,nextShedT,maxShed,palette} */
     var rafId = null, running = false;
     var seedCounter = 1;
     var lastPressLabel = '';   /* 直近press()のラベル文字列(テスト用snapshotLabel()の裏付け) */
@@ -344,16 +372,25 @@
        達したら止まる（引き算・無限増殖しない）。芽吹きは大輪級/中サイズの花・緑/floretの
        大小混合で無音(onSpawn不呼び)。Phase2g: 画面いっぱいの構成にするためFILL_TARGET=44
        (旧RESTING_COUNT=28)に拡張し、芽吹く要素に大輪級(r70-100)を混ぜてサイズの強弱を出す。
+       Phase2h: 明るい生成りに仕上がった庭が視覚的にやや密すぎたため、完成密度を44→30に
+       引き下げ、余白を保った軽い仕上がりにする(大小のリズム・ロール確率は従来通り)。
        rAFが止まっていても起こす必要があるため、待機はrAFでなくsetTimeoutで行う
        (sproutTimer)。redraw内にも同じ判定の保険発火を置き、rAFが既に回っている間は
        そちら経由でも発火し得るが、nextSproutTの前進をmaybeSprout冒頭で必ず行うため
        二重発火はしない。 */
-    var FILL_TARGET = 44;
-    /* Phase2g Task2: 庭の充実度=fillRatio。reduceでは常に0固定(背景は移ろわず暗いまま)。
-       redraw毎に再計算し、直近にopts.onFillへ通知した値(lastFillRatio)と変わった時だけ
-       再通知する(要素の増減=spawn/ambientSprout/clearの後、次のkick駆動フレームで自然に発火)。 */
+    var FILL_TARGET = 30;
+    /* Phase2h Task2: 庭の充実度=fillRatioは「自動自生(ambientSprout)で咲いた分」だけに連動させる。
+       タップ/なぞり(spawn)・長押し大輪(spawnGrand)では増やさない。理由: fillRatioが
+       flowers.length(総数)連動だと、タップで庭を埋めても自動自生と同じ見た目の変化(背景が
+       明るくなる)が起きてしまい、「タップ後に自動自生が止まったように見える」体感の一因になる
+       (自生自体は停止していない。IDLE_MS後に再開する構造はPhase2fのまま不変)。ambientCountを
+       ambientSproutでのみ加算する専用カウンタとして分離し、fillRatioの出所を自動自生限定にする
+       ことで、自生が進むたび背景が明るくなる=自動が働いている可視サインとして機能させる。
+       自生の頭打ち判定(flowers.length>=FILL_TARGET、下のmaybeSprout/armSproutTimer参照)は
+       総数のまま変えない(画面が埋まったら止める、という「充実」の意味は従来通り)。 */
+    var ambientCount = 0;
     var lastFillRatio = 0;
-    function currentFillRatio() { return reduce ? 0 : Math.min(1, flowers.length / FILL_TARGET); }
+    function currentFillRatio() { return reduce ? 0 : Math.min(1, ambientCount / FILL_TARGET); }
     var nextSproutT = 0, sproutTimer = null;
     var fastGrow = !!opts.__fastGrow;  /* テスト短縮用: 本番未使用 */
     var noSprout = !!opts.__noSprout;  /* テスト専用: 自生を完全に無効化(粒子減衰など自生と無関係な検証の隔離用)。本番未使用 */
@@ -412,37 +449,81 @@
          両者の半径)が最大の候補を採用できる(＝「全面へ均等に広がる」(最小セル限定)と
          「団子状に重ならない・余白を保つ」(縁-縁クリアランス最大化)を両立)。大きい要素は
          団子になりやすいため候補数を増やす(小:5→6・大:12→14)。 */
-      var isBig = size >= 70;
-      var candidateN = isBig ? 14 : 6;
-      var best = null, bestClear = -Infinity;
-      for (var ci = 0; ci < candidateN; ci++) {
-        var cell = leastCells[Math.floor(Math.random() * leastCells.length)];
-        var cellCx = rect.width * MX0 + (cell % GRID_COLS + 0.5) * cellW;
-        var cellCy = rect.height * MY0 + (Math.floor(cell / GRID_COLS) + 0.5) * cellH;
-        var cx = cellCx + (Math.random() - 0.5) * cellW * 1.3;
-        var cy = cellCy + (Math.random() - 0.5) * cellH * 1.3;
-        cx = Math.max(rect.width * (MX0 - 0.03), Math.min(rect.width * (MX1 + 0.03), cx));
-        cy = Math.max(rect.height * (MY0 - 0.03), Math.min(rect.height * (MY1 + 0.03), cy));
-        var clear = Infinity;
-        for (var fi = 0; fi < flowers.length; fi++) {
-          var of = flowers[fi];
-          var d = Math.sqrt((of.x - cx) * (of.x - cx) + (of.y - cy) * (of.y - cy));
-          clear = Math.min(clear, d - of.r - size);
+      /* needBigClear: 大輪(size>=70)専用の追加フィルタ。既存の大輪(of.r>=70)との縁-縁
+         クリアランスがsz*BIG_MIN_CLEAR_RATIO未満の候補は除外する(中小/緑への近さは
+         対象外＝「全面均等配置」の従来挙動を変えない。大輪同士の団子だけを狙って崩す)。
+         候補は既存の「全flowers中で最大クリアランスの点を採る」選び方をそのまま使うが、
+         needBigClear=trueのときはこのフィルタを通った候補の中でのみ最大クリアランスを採る。
+         1つも通らなければbは見つからず(b===null)、呼び出し側で格下げ判定できる。 */
+      function pickPlacement(sz, n, needBigClear) {
+        var b = null, bc = -Infinity;
+        for (var ci = 0; ci < n; ci++) {
+          var cell = leastCells[Math.floor(Math.random() * leastCells.length)];
+          var cellCx = rect.width * MX0 + (cell % GRID_COLS + 0.5) * cellW;
+          var cellCy = rect.height * MY0 + (Math.floor(cell / GRID_COLS) + 0.5) * cellH;
+          var cx = cellCx + (Math.random() - 0.5) * cellW * 1.3;
+          var cy = cellCy + (Math.random() - 0.5) * cellH * 1.3;
+          cx = Math.max(rect.width * (MX0 - 0.03), Math.min(rect.width * (MX1 + 0.03), cx));
+          cy = Math.max(rect.height * (MY0 - 0.03), Math.min(rect.height * (MY1 + 0.03), cy));
+          var clear = Infinity, clearBig = Infinity;
+          for (var fi = 0; fi < flowers.length; fi++) {
+            var of = flowers[fi];
+            var d = Math.sqrt((of.x - cx) * (of.x - cx) + (of.y - cy) * (of.y - cy));
+            var c = d - of.r - sz;
+            clear = Math.min(clear, c);
+            if (of.r >= 70) clearBig = Math.min(clearBig, c);
+          }
+          if (lastPointer) {
+            var pd = Math.sqrt((lastPointer.x - cx) * (lastPointer.x - cx) + (lastPointer.y - cy) * (lastPointer.y - cy));
+            clear = Math.min(clear, pd - sz);
+          }
+          if (needBigClear && clearBig < sz * BIG_MIN_CLEAR_RATIO) continue;   /* 既存の大輪と団子になる候補は不採用 */
+          if (clear > bc) { bc = clear; b = { x: cx, y: cy }; }
         }
-        if (lastPointer) {
-          var pd = Math.sqrt((lastPointer.x - cx) * (lastPointer.x - cx) + (lastPointer.y - cy) * (lastPointer.y - cy));
-          clear = Math.min(clear, pd - size);
-        }
-        if (clear > bestClear) { bestClear = clear; best = { x: cx, y: cy }; }
+        return { pos: b, clear: bc };
       }
-      var x = best.x, y = best.y;
+      var isBig = size >= 70;
+      /* Phase2h: 大輪(size>=70)は既存の大輪とのクリアランスがsize*0.5以上の候補のみを
+         採用する(旧実装は14候補中の最良点を無条件採用していたため、運が悪いと大輪が
+         団子状に重なっていた)。14候補のいずれも満たさない場合は、この周期を大輪から
+         中サイズへ格下げして再抽選する(中小/緑の配置ロジックは従来通り、大輪フィルタなし)。 */
+      var BIG_MIN_CLEAR_RATIO = 0.5;
+      var candidateN = isBig ? 14 : 6;
+      var picked = pickPlacement(size, candidateN, isBig);
+      if (isBig && !picked.pos) {
+        kind = 'flower'; size = 40 + Math.random() * 25; isBig = false;
+        picked = pickPlacement(size, 6, false);
+      }
+      var x = picked.pos.x, y = picked.pos.y;
       var rng2 = makeRng(seedCounter);
+      /* Phase2h Task3: kind==='flower'でflowerKinds指定時は図鑑24種から1種をランダム選択し、
+         その実物の色(deriveSeededPalette)と形(kind.form)で咲かせる。緑(sprig/fern/umbel/floret)
+         は図鑑対象外のため常に従来のpickForm(緑側drawerはo.formを読まないため実質無関係)。
+         選択はMath.random()を使う(候補点選び/roll判定と同じ乱数源。makeRng(seedCounter)は
+         連番シードで分岐判定に使うと偏りが出るため=上のroll判定コメントと同じ理由)。
+         flowerKinds未指定/kind!=='flower'ならflowerPalette=nullのまま→fに保持され、
+         描画側(drawEntity呼び出し)がf.palette||currentPalette()で従来の季節パレットに
+         フォールバックする(1px変えない)。
+         W2修正(Codex 2h): fk.season(index.htmlがseasonFromFlower()でspring/summer/autumn/
+         winterに正規化して渡す・下のkind.form同様1種ごとの実物属性)がSEASONSの有効キーなら
+         その花自身の季節でderiveSeededPaletteする(桜=春・彼岸花=秋 等、その花の季節の
+         ground/core質感で咲く)。season未指定/不正な値なら庭の現在季節(seasonName)へ
+         フォールバックする(従来通り)。 */
+      var chosenForm = pickForm(rng2);
+      var flowerPalette = null;
+      if (kind === 'flower' && flowerKinds) {
+        var fk = flowerKinds[Math.floor(Math.random() * flowerKinds.length)];
+        var fkSeason = (fk.season && SEASONS[fk.season]) ? fk.season : seasonName;
+        flowerPalette = deriveSeededPalette(fk.color, fkSeason);
+        chosenForm = fk.form || chosenForm;
+      }
       var f = {
         x: x, y: y,
         r: size,
         baseRot: rng2() * Math.PI * 2,
-        form: pickForm(rng2),
+        form: chosenForm,
         kind: kind,
+        palette: flowerPalette,   /* 図鑑連動時のみ個別パレット。nullなら描画側がcurrentPalette()にフォールバック */
         seed: seedCounter++,
         bornT: now(),
         dur: 2600,
@@ -455,6 +536,7 @@
         leaves: []
       };
       flowers.push(f); if (flowers.length > MAX_FLOWERS) flowers.shift();
+      ambientCount++;   /* Phase2h Task2: fillRatioの出所はこのカウンタのみ(spawn/spawnGrandでは増やさない) */
       /* 自生は音を鳴らさない(onSpawnを呼ばない)＝静かに芽吹く */
     }
     /* t>=nextSproutTに達したら判定する共通関数。setTimeout駆動(armSproutTimer)と
@@ -515,7 +597,7 @@
           if (wf.maxShed > 0 && wf.shed < wf.maxShed && petals.length < PART_MAX) {
             petals.push({ x: wf.x, y: wf.y - wf.r * 0.4, vx: wind.dir * (0.05 + Math.random() * 0.04), vy: 0.015 + Math.random() * 0.015,
               rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.006, r: wf.r * 0.42,
-              color: currentPalette().petals[0], bornT: t, life: 2800 });
+              color: (wf.palette || currentPalette()).petals[0], bornT: t, life: 2800 });
             wf.shed++; blown++;
           }
         }
@@ -604,7 +686,7 @@
           var age0 = f.bornT + f.dur + f.holdMs;    /* 加齢開始時刻 */
           if (t >= age0 && f.shed < f.maxShed && t >= f.nextShedT) {
             if (petals.length < PART_MAX) {
-              var pcol = currentPalette().petals[0];
+              var pcol = (f.palette || currentPalette()).petals[0];
               petals.push({
                 x: f.x, y: f.y - f.r * 0.5, vx: (Math.random() - 0.5) * 0.02,
                 vy: 0.02 + Math.random() * 0.02, rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.004,
@@ -622,7 +704,9 @@
            (地がまだ暗い間)ではf.vigorのまま=完全不変。 */
         drawEntity(ctx, {
           x: f.x, y: f.y, r: f.r, rot: f.baseRot + sway, bloom: bloom,
-          form: f.form, palette: currentPalette(), rng: makeRng(f.seed),
+          /* Phase2h Task3: f.palette(図鑑連動の個別パレット)があれば優先、なければ従来のcurrentPalette()
+             (季節/シード)。f.paletteは常にundefined/nullなタップ・緑・シード花には影響しない。 */
+          form: f.form, palette: f.palette || currentPalette(), rng: makeRng(f.seed),
           vigor: Math.min(1, f.vigor + stageComp * 0.3), depth: f.depth, shed: f.shed, leaves: f.leaves, kind: f.kind
         });
       }
@@ -810,7 +894,7 @@
            armSproutTimer は flowers を空にした後に呼ぶ(満杯ガードに阻まれず再arm＝満杯からのクリアでも自生が戻る)。 */
         lastInteractT = t; scheduleSprout(t);
         if (reduce) {
-          flowers = []; petals = []; redraw();
+          flowers = []; petals = []; ambientCount = 0; redraw();
           if (opts.onGust) { try { opts.onGust(); } catch (_) {} }
           return;
         }
@@ -827,13 +911,14 @@
               vx: dir * (0.6 + Math.random() * 0.7), vy: -0.15 + Math.random() * 0.35,
               rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.02,
               r: gf.r * (isGreen ? 0.3 : 0.42),
-              color: isGreen ? GREEN : currentPalette().petals[0],
+              color: isGreen ? GREEN : (gf.palette || currentPalette()).petals[0],
               kind: isGreen ? 'seed' : undefined,
               bornT: t, life: 1600 + Math.random() * 500
             });
           }
         }
         flowers = [];                                     /* 花は吹き飛んだ→即座に空。粒子だけが流れて消える */
+        ambientCount = 0;                                  /* Phase2h Task2: 庭を空にした=充実度0。fillRatioも即座に暗側へ戻す */
         armSproutTimer();                                  /* 空にしてから再arm(満杯ガードを抜ける)→クリア後IDLE_MS待って自生が再開 */
         if (opts.onGust) { try { opts.onGust(); } catch (_) {} }
         kick();                                            /* rAFを起こして粒子アニメを進める */
@@ -890,15 +975,13 @@
         var primary = pickedFlowers.concat(pickedGreen, pickedFloret);   /* 描画前に手前(花)/奥(緑)の順へ並べ替える */
 
         /* 退色パレット: 花色・花芯を灰みの暖色へ18%寄せる。ground も新しい生成り地へ
-           差し替える(内部の"先端=淡・地色寄り"グラデーションが新しい地に馴染むよう)。 */
-        var FADE_TARGET = { r: 0xB0, g: 0xA8, b: 0x98 }, FADE_T = 0.18;
-        var basePal = currentPalette();
-        var boardGround = toHex(mixRgb(hexToRgb('#E4D9C4'), hexToRgb('#DCC8AC'), 0.5));
-        var pressedPal = {
-          petals: basePal.petals.map(function (hex) { return toHex(mixRgb(hexToRgb(hex), FADE_TARGET, FADE_T)); }),
-          core: toHex(mixRgb(hexToRgb(basePal.core), FADE_TARGET, FADE_T)),
-          ground: boardGround
-        };
+           差し替える(内部の"先端=淡・地色寄り"グラデーションが新しい地に馴染むよう)。
+           W3修正(Codex 2h): 旧実装はここで庭全体のcurrentPalette()を1回だけ退色させた
+           単一pressedPalを全boardElsで共用していたため、図鑑連動(opts.flowerKinds)で
+           多色に咲いた自生がpress()標本だけ単一季節色に潰れていた。個別palette生成は
+           下のboardEls.push()時にmakePressedPalette(要素のf.palette||currentPalette())
+           として要素ごとに行う(seed時/タップ花などf.palette未定義の要素は従来通り
+           currentPalette()由来のまま不変)。 */
 
         /* (2) 配置: 余白マージン付き6x4グリッド(24セル・上限17要素→約7割充填。旧4x4=16セルより
            密度を上げつつ、セル数>要素数の余りで「構成された標本」らしい余白を保つ)。セルを
@@ -931,7 +1014,7 @@
           boardEls.push({
             x: pc.x + (brng() - 0.5) * cellW * 0.32, y: pc.y + (brng() - 0.5) * cellH * 0.32,
             r: Math.min(cellMin * sizeRatio, maxR), rot: brng() * Math.PI * 2,
-            kind: pf.kind, form: pf.form, palette: pressedPal, rng: makeRng(pf.seed),
+            kind: pf.kind, form: pf.form, palette: makePressedPalette(pf.palette || currentPalette()), rng: makeRng(pf.seed),
             bloom: 1, vigor: 1, depth: 0, shed: 0, leaves: pf.leaves || [],
             layer: (pf.kind === 'fern' || pf.kind === 'umbel') ? 0 : (pf.kind === 'floret' ? 1 : 2)
           });
@@ -969,7 +1052,7 @@
           var vrot = Math.atan2(dx, -dy) + (brng() - 0.5) * 0.4;
           boardEls.push({
             x: vc.x, y: vc.y, r: Math.min(Math.max(vf.r, cellMin * 0.85), maxRSprig) * (0.9 + brng() * 0.3), rot: vrot,
-            kind: 'sprig', form: vf.form, palette: pressedPal, rng: makeRng(vf.seed),
+            kind: 'sprig', form: vf.form, palette: makePressedPalette(vf.palette || currentPalette()), rng: makeRng(vf.seed),
             bloom: 1, vigor: 1, depth: 0, shed: 0, leaves: [], layer: -1
           });
         }
@@ -1006,6 +1089,10 @@
          テスト観測用にも公開する。redrawのlastFillRatio(スロットル済みの通知値)ではなく
          常に最新値を返す(呼び出し直後の状態を即座に取得できるようにする)。 */
       fillRatio: function () { return currentFillRatio(); },
+      /* テスト用: 自動自生(ambientSprout)由来の要素数のみを数える専用カウンタ。tap/なぞり(spawn)・
+         長押し大輪(spawnGrand)では増えず、clear()で0に戻る。fillRatioの出所がこれだけに
+         連動していることを直接検証するための観測手段(実挙動には影響しない)。 */
+      ambientCount: function () { return ambientCount; },
       /* テスト用: 各要素の座標とkind(flower/緑)のスナップショット。自生の場所バイアス
          (既存要素・直近の操作位置から離れた場所を選ぶこと)を座標レベルで検証するための
          直接的な観測手段。 */
@@ -1013,6 +1100,22 @@
       /* テスト用: 各要素のr(サイズ)のスナップショット。Phase2g: 自生に大輪級/中/小の強弱が
          出ていることを検証するための直接的な観測手段(実挙動には影響しない)。 */
       snapshotSizes: function () { return flowers.map(function (f) { return f.r; }); },
+      /* テスト用: 各花要素(kind未指定/'flower')の個別パレット代表色(f.palette.petals[0])。
+         図鑑連動(opts.flowerKinds)時のみ非null。flowerKinds未指定時は全要素nullを返し、
+         従来のcurrentPalette()フォールバックで動作していることの直接的な観測手段
+         (実挙動には影響しない・緑kindは常にnull)。 */
+      snapshotFlowerColors: function () {
+        return flowers.map(function (f) { return ((!f.kind || f.kind === 'flower') && f.palette) ? f.palette.petals[0] : null; });
+      },
+      /* テスト用: 各花要素(kind未指定/'flower')の個別パレットのground値(f.palette.ground)。
+         W2修正(Codex 2h)の検証用: petals[0](代表色=accentHex)は季節に関わらず不変なため
+         snapshotFlowerColorsだけでは「各花がfk.season(その花固有の季節)でderiveSeededPalette
+         されているか(=庭の現在季節seasonNameに潰れていないか)」を見分けられない。groundは
+         季節ごとに異なる値(SEASONS[season].ground)を持つため、この値の違いで季節連動を
+         直接検証できる(実挙動には影響しない・flowerKinds未指定/緑kindは常にnull)。 */
+      snapshotFlowerGrounds: function () {
+        return flowers.map(function (f) { return ((!f.kind || f.kind === 'flower') && f.palette) ? f.palette.ground : null; });
+      },
       /* テスト用: 少なくとも1枚花びらを落とした花の数(加齢/風どちらの契機でもshed>0になったもの)。
          風発火の舞う枚数上限を検証するための直接的な観測手段（面積の間接推定より確実）。 */
       shedFlowerCount: function () { return flowers.filter(function (f) { return f.shed > 0; }).length; },
@@ -1038,7 +1141,7 @@
           /* 退場完了: 花を消し、状態を戻す。閉じずに再利用されても清浄な空庭に戻る
              （farewellingが立ちっぱなしだと新規花が二度と描かれない不具合を防ぐ） */
           farewellTimer = null;
-          flowers = []; petals = []; farewelling = false;
+          flowers = []; petals = []; ambientCount = 0; farewelling = false;   /* W1修正(Codex 2h): clear()同様、退場完了時も充実度を0へ戻す(空庭なのにfillRatioが過去値で明るいまま、を防ぐ) */
           if (done) done();
         }, 820);
       },
@@ -1138,23 +1241,40 @@
     }
     /* なぞり音（oto）: デフォルトオフ・トグルonのユーザージェスチャでのみ AudioContext を生成する。
        エンジン(createGarden)は音を知らず、spawn毎に呼ばれる opts.onSpawn 経由で接続するのみ。 */
-    var oto = { enabled: false, ctx: null, lastT: -1, played: 0, wind: 0, gust: 0 };  /* lastT負値: トグルON直後の最初の一音も鳴らす */
-    function otoPublish() { if (typeof window !== 'undefined') window.__hanaOto = { played: oto.played, ctxCreated: !!oto.ctx, wind: oto.wind || 0, gust: oto.gust || 0 }; }
+    var oto = { enabled: false, ctx: null, lastT: -1, played: 0, wind: 0, gust: 0, lastFreq: 0 };  /* lastT負値: トグルON直後の最初の一音も鳴らす */
+    function otoPublish() { if (typeof window !== 'undefined') window.__hanaOto = { played: oto.played, ctxCreated: !!oto.ctx, wind: oto.wind || 0, gust: oto.gust || 0, lastFreq: oto.lastFreq || 0 }; }
+    /* Phase2h Task4: 和の五音階(陽旋法・近似)にクォンタイズする。以前は花サイズで周波数が
+       460〜830Hzの間を連続的に決まっていたため「ランダムに聞こえる」と感じられていた。
+       基音BASEに音度比YOのいずれかだけを掛けることで、花のサイズ・咲く順がどう散らばっても
+       発音は必ず音階内の5音のいずれかになり、連続して咲くと自然にやさしい旋律に聞こえる
+       (音階外の音が混ざらないので濁らない)。 */
+    var YO = [1, 1.125, 1.333, 1.5, 1.667];        /* 陽旋法の近似音度比(五音音階) */
+    var BASE = 311;                                  /* 落ち着いた低めの基音Hz(D#4付近) */
     function otoPlay(f) {
       if (!oto.enabled || !oto.ctx) return;
       var t = oto.ctx.currentTime;
       if ((t - oto.lastT) < 0.09) return;              /* 最小発音間隔90ms */
       oto.lastT = t;
-      /* 鈴/水滴の間の短い減衰音。花が大きいほど低く（460〜830Hz帯） */
+      /* 音度は花の大きさ(大きいほど低い音度)を軸に、咲いた順(oto.played)で-1/0/+1の
+         ゆらぎを与えて音階内で滑らかに動かす(=連続して咲くと旋律のように動く)。
+         まれにオクターブ上げを混ぜて響きに広がりを持たせる(常に音階内なので濁らない)。 */
       var size01 = Math.max(0, Math.min(1, (f.r - 10) / 40));
-      var freq = 830 - size01 * 370;
+      var sizeDeg = Math.round((1 - size01) * (YO.length - 1));
+      var wobble = (oto.played % 3) - 1;                 /* -1, 0, 1 を繰り返すやさしいゆらぎ */
+      var deg = Math.max(0, Math.min(YO.length - 1, sizeDeg + wobble));
+      var rareOctaveUp = (oto.played % 7 === 0) && (Math.random() < 0.5);
+      var freq = BASE * YO[deg] * (rareOctaveUp ? 2 : 1);
+      oto.lastFreq = freq;
+      /* 鈴/水滴の間の短い減衰音。角を取ったやさしい立ち上がり(0.0001→0.045を12ms)＋
+         なめらかな減衰(既存の0.5s/0.55s尺は維持)。 */
       var g = oto.ctx.createGain();
-      g.gain.setValueAtTime(0.05, t);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(0.045, t + 0.012);
       g.gain.exponentialRampToValueAtTime(0.0004, t + 0.5);
       g.connect(oto.ctx.destination);
       var o1 = oto.ctx.createOscillator(); o1.type = 'sine'; o1.frequency.setValueAtTime(freq, t);
       var o2 = oto.ctx.createOscillator(); o2.type = 'triangle'; o2.frequency.setValueAtTime(freq * 2.01, t);
-      var g2 = oto.ctx.createGain(); g2.gain.value = 0.25; o2.connect(g2); g2.connect(g);
+      var g2 = oto.ctx.createGain(); g2.gain.value = 0.22; o2.connect(g2); g2.connect(g);
       o1.connect(g);
       o1.start(t); o2.start(t); o1.stop(t + 0.55); o2.stop(t + 0.55);
       o1.onended = function () { try { o1.disconnect(); o2.disconnect(); g2.disconnect(); g.disconnect(); } catch (_) {} };
@@ -1203,7 +1323,7 @@
     var stageSeasonName = seed ? (seed.seasonName || 'spring') : (opts.season || 'spring');
     function onGardenFill(fr) { applyStageBg(container, stageSeasonName, fr); }
     var canvas = container.querySelector('.hana-canvas');
-    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, __fastGrow: opts.__fastGrow, __noSprout: opts.__noSprout, onSpawn: otoPlay, onWind: otoPlayWind, onGust: otoPlayGust, onFill: onGardenFill });
+    var garden = createGarden(canvas, { reduce: reduce, season: opts.season || 'spring', seed: seed, flowerKinds: opts.flowerKinds, __fastAge: opts.__fastAge, __fastWind: opts.__fastWind, __fastGrow: opts.__fastGrow, __noSprout: opts.__noSprout, onSpawn: otoPlay, onWind: otoPlayWind, onGust: otoPlayGust, onFill: onGardenFill });
     applyStageBg(container, stageSeasonName, 0);
     /* 入場の招待花（reduce時は空庭で開始）。
        index.html 経由の open では core の openDialog が onOpen を el.hidden=false の *前* に呼ぶため、
