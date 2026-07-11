@@ -13,7 +13,11 @@
 <script src="./hina-birth-data.js?v=1"></script>
 <script src="./birth-hina.js?v=1"></script>
 <style>
-  :root{ --hina-silver:#B8B4AE; }
+  :root{
+    --hina-silver:#B8B4AE;
+    /* 標本便箋の紙質に使う微細ノイズ（.grain と誕生カードの紙面で共用） */
+    --hina-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
   *{ box-sizing:border-box; }
   html{ scroll-behavior:smooth; }
   body{
@@ -30,7 +34,7 @@
   /* 粒子ノイズ質感（NOCTA本体・図鑑三部作と同一の余白哲学の一部） */
   .grain{
     position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.05; mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image:var(--hina-noise);
   }
 
   /* 銀メタリックグラデ — HiNaワードマーク専用の唯一の見せ場 */
@@ -107,61 +111,160 @@
   .hina-birth-m.is-on{ color:#E8E0D0; border-color:#E8E0D0; }
 
   .hina-birth-stage{ display:flex; justify-content:center; padding:0 8px; }
+
+  /* 誕生カード — 標本便箋(botanical/mineral specimen × letterpress letter)。
+     isolation:isolateでカード自身が新しいスタッキングコンテキストを作る。これが無いと
+     position:relativeだけでは子要素の負z-indexが「カードの外側」の祖先コンテキストで
+     解決されてしまい、紙質(.hbc-grain)や二重内枠(.hbc-frame-outer/inner)がページ背景の
+     下に沈んでDOM上で見えなくなる不具合があった(Codex C1: DOM≠PNG)。isolateした上で、
+     装飾(紙のノイズ・二重ヘアライン内枠・四隅tick)はz-index:0の実要素(aria-hidden)、
+     本文(花名・標本・祝福文など)は.hbc-contentにまとめてz-index:1にすることで、
+     isolateされたスタッキングコンテキスト内では装飾(z:0)が本文(z:1)より必ず背面になる
+     (DOM順に依存しない・z-index操作の細工なしで「常に背面」を保証する設計)。 */
   .hina-birth-card{
+    position:relative; isolation:isolate; overflow:hidden;
     width:100%; max-width:380px;
-    background:#F0EAD8; color:#2A2118; border-radius:14px;
+    color:#2A2118; border-radius:14px;
+    background-image:
+      radial-gradient(ellipse 76% 64% at 50% 38%, rgba(0,0,0,0) 58%, rgba(42,33,24,0.07) 100%),
+      linear-gradient(178deg, #F4EEDF 0%, #EBE2CE 100%);
     padding:clamp(32px,7vw,52px) clamp(24px,6vw,40px) clamp(36px,7vw,48px);
-    box-shadow:0 40px 80px -30px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.4) inset, 0 0 0 1px rgba(60,50,30,0.12);
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,0.55),
+      0 1px 0 rgba(255,253,247,0.45) inset,
+      0 -1px 0 rgba(42,33,24,0.07) inset,
+      0 0 0 1px rgba(42,33,24,0.14);
     text-align:center;
   }
-  .hbc-eyebrow{
-    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.24em; text-transform:uppercase;
-    color:#6B5B47; margin:0;
+  .hbc-grain, .hbc-frame-outer, .hbc-frame-inner, .hbc-ticks{ position:absolute; z-index:0; pointer-events:none; }
+  .hbc-content{ position:relative; z-index:1; }
+  .hbc-grain{
+    inset:0; opacity:0.045; mix-blend-mode:overlay;
+    background-image:var(--hina-noise); background-size:130px 130px;
   }
+  .hbc-frame-outer{ inset:4%; border:1px solid rgba(42,33,24,0.18); border-radius:3px; }
+  .hbc-frame-inner{ inset:5.6%; border:1px solid rgba(42,33,24,0.10); border-radius:2px; }
+  /* 四隅tick(標本便箋の角ディテール・Codex W3) — .hbc-frame-outerと同じ4%インセットの
+     矩形の四隅に、同色2色linear-gradient(=ソリッド矩形塗り)を水平1本+垂直1本ずつ背中合わせに
+     置いてL字を作る。Canvas側drawHairlineFrameの角tick(12px*S)と対応(こちらは12px基準)。 */
+  .hbc-ticks{
+    inset:4%;
+    background-repeat:no-repeat;
+    background-image:
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30));
+    background-position:
+      top left, top left,
+      top right, top right,
+      bottom right, bottom right,
+      bottom left, bottom left;
+    background-size:
+      12px 1.4px, 1.4px 12px,
+      12px 1.4px, 1.4px 12px,
+      12px 1.4px, 1.4px 12px,
+      12px 1.4px, 1.4px 12px;
+  }
+
+  .hbc-eyebrow{
+    display:flex; align-items:center; justify-content:center; gap:11px;
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.28em; text-transform:uppercase;
+    color:#7A6F5E; margin:0;
+  }
+  .hbc-eyebrow-rule{ width:20px; height:1px; background:rgba(42,33,24,0.24); flex:0 0 auto; }
   .hbc-flower{
-    font-family:'Shippori Mincho','EB Garamond',serif; font-weight:600;
-    font-size:clamp(38px,8.6vw,54px); color:#2A2118; margin:16px 0 0; line-height:1.15;
+    font-family:'Shippori Mincho','EB Garamond',serif; font-weight:600; letter-spacing:0.06em;
+    font-size:clamp(38px,8.6vw,54px); color:#2A2118; margin:20px 0 0; line-height:1.15;
     /* 長い花名(「チューリップ」等)でも必ず1行に収める。CSSのclamp()はビューポート幅基準で
        カード幅そのものは考慮しないため、実測して収まらない場合はJS(fitFlowerName)が
        font-sizeを直接縮小する。overflow/text-overflowはJSが効かない場合の保険。 */
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
 
-  /* 標本3点(誕生花・誕生石・HiNa誕生色) — 同じ大きさの丸フレームに揃え、花・石は実写、
-     誕生色はhinaColor.hexのソリッド色見本(背景色)を収める。3点を同格に見せる。 */
+  /* 標本3点(誕生花・誕生石・HiNa誕生色) — 同じ大きさの丸フレームに「留めた」質感で揃え、
+     花・石は実写、誕生色はhinaColor.hexのソリッド色見本(背景色)を収める。3点を同格に見せる。 */
   .hbc-specimens{
     display:flex; justify-content:center; align-items:flex-start; gap:16px;
-    margin:28px 0 0; padding:0;
+    margin:32px 0 0; padding:0;
   }
-  .hbc-specimen{ margin:0; text-align:center; flex:0 1 78px; max-width:78px; min-width:0; }
+  /* 86px: 全12ヶ月中最長の実データ(6文字・「チューリップ」「アクアマリン」「ダイヤモンド」
+     「ラピスラズリ」)が.hbc-specimen-name(13.5px)で1行に収まる実測下限(probe-label-widthで確認)。
+     せまいと「アクアマリ/ン」のような不揃いな2行折れが起きるため、名前は必ず1行を維持する。 */
+  .hbc-specimen{ margin:0; text-align:center; flex:0 1 86px; max-width:86px; min-width:0; }
   .hbc-specimen-frame{
     display:block; width:100%; aspect-ratio:1/1; border-radius:50%; overflow:hidden;
-    margin:0 auto; background:rgba(107,91,71,0.08);
-    /* 淡色(桜色#FEF4F4等)は生成り地#F0EAD8と馴染んで境界が弱くなるため、外枠を強めに引く。
-       写真標本にも同じ強度を適用し、3点の枠を揃える(Canvas描画側と同じ強度)。 */
-    box-shadow:0 0 0 1.75px rgba(42,33,24,0.38), 0 8px 18px -8px rgba(60,50,30,0.35);
+    margin:0 auto; background:rgba(122,111,94,0.08); position:relative;
+    /* 淡色(桜色#FEF4F4等)は生成り地と馴染んで境界が弱くなるため、外枠(1点目)は視認性を保つ
+       強度のまま、内側の押し込み影(2点目)＋縁のハイライト(3点目)で「標本を留めた」質感を足す。
+       写真標本にも同じ枠を適用し、3点の枠を揃える(Canvas描画側と同じ強度)。 */
+    box-shadow:
+      0 0 0 1.5px rgba(42,33,24,0.36),
+      inset 0 2px 5px rgba(42,33,24,0.16),
+      inset 0 -1px 1px rgba(255,253,247,0.4),
+      0 10px 20px -10px rgba(42,33,24,0.32);
   }
   .hbc-specimen-img{ display:block; width:100%; height:100%; object-fit:cover; }
   /* 実写の読込に失敗した月は、写真だけを静かに省いてフレーム(淡い円)のみ残す */
   .hbc-specimen.is-missing .hbc-specimen-img{ display:none; }
-  .hbc-specimen-label{
-    font-family:'Noto Sans JP',sans-serif; font-size:11px; letter-spacing:0.03em;
-    color:#6B5B47; margin:10px 0 0;
+  .hbc-specimen-label{ margin:12px 0 0; }
+  /* ラベルは「誕生花」等のtiny caps(タグ)＋名前(Shippori)の2段に分ける。タグと名前の間には
+     常に半角スペース1つを挟む(JS側のcardSectionHtmlで固定・タグはJSで書き換えない静的文字列)。
+     どちらもdisplay:blockで縦に積むため、そのスペースは折り返し計算にのみ関わり見た目には
+     現れない(2段の版面はそのまま、labelText(「誕生色 藤色」等)の完全一致比較にも影響しない)。 */
+  .hbc-specimen-tag{
+    display:block; font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:0.14em; text-transform:uppercase; color:#7A6F5E; margin:0 0 3px;
+  }
+  .hbc-specimen-name{
+    display:block; font-family:'Shippori Mincho','Noto Sans JP',serif; font-weight:600;
+    font-size:13.5px; letter-spacing:0.02em; color:#2A2118; white-space:nowrap;
+    /* Codex W1の安全網: 86pxの列幅は全12ヶ月の最長名(6文字)がぎりぎり1行に収まる実測値
+       (probe-label-width調べ)だが、カード自体が380px未満に縮む狭幅(320-390px級)では
+       flex:0 1 86pxの列がさらに縮み、nowrapのままだと名前が列の外へ溢れて隣の標本と
+       干渉しうる。overflow:hidden+text-overflow:ellipsisで「溢れる代わりに静かに省略」に
+       倒し、崩れ(隣列との重なり)を確実に防ぐ(下の@mediaと二重の安全策)。 */
+    overflow:hidden; text-overflow:ellipsis;
+  }
+  /* Codex W1: モバイル狭幅(≤400px)では標本3点自体と名前フォントを少し縮め、
+     上のellipsis安全網が発動する頻度自体を減らす(なるべく省略なしで読めるようにする)。 */
+  @media (max-width:400px){
+    .hbc-specimens{ gap:10px; }
+    .hbc-specimen{ flex:0 1 74px; max-width:74px; }
+    .hbc-specimen-tag{ font-size:9px; }
+    .hbc-specimen-name{ font-size:12px; }
   }
 
+  .hbc-blessing-mark{
+    display:block; width:5px; height:5px; border-radius:50%;
+    background:rgba(42,33,24,0.26); margin:42px auto 0;
+  }
   .hbc-blessing{
     font-family:'EB Garamond','Shippori Mincho',serif; font-style:italic; font-weight:500;
-    font-size:clamp(16px,3.6vw,19px); line-height:1.9; color:#2A2118;
-    margin:40px 0 0;
+    font-size:clamp(16px,3.6vw,19px); letter-spacing:0.01em; line-height:1.9; color:#2A2118;
+    margin:22px 0 0;
+    /* measureはカード自身のpaddingに委ねる(明示max-widthは短い祝福文で1〜2文字の
+       孤立行(widow)を生むため付けない。カード幅(最大380px)+paddingで十分に読みやすい行幅になる)。 */
   }
+
+  /* 落款 — 蝋封/印の趣で控えめに右下へ。二重リング(外枠+内側リング)＋月数字(Bebas)。 */
   .hbc-stamp{
-    display:flex; align-items:center; justify-content:center;
-    margin:40px 0 0; font-family:'Shippori Mincho',serif; color:#6B5B47;
+    display:flex; align-items:center; justify-content:flex-end;
+    margin:38px 0 0;
   }
   .hbc-stamp-num{
+    position:relative;
     display:inline-flex; align-items:center; justify-content:center;
-    width:34px; height:34px; border-radius:50%; border:1px solid rgba(107,91,71,0.4);
-    font-size:13px;
+    width:58px; height:58px; border-radius:50%; border:1px solid rgba(42,33,24,0.34);
+    font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:0.02em; color:#2A2118;
+  }
+  .hbc-stamp-num::before{
+    content:''; position:absolute; inset:6px; border-radius:50%;
+    border:1px solid rgba(42,33,24,0.16); pointer-events:none;
   }
 
   .hina-birth-actions{ text-align:center; margin-top:36px; }
