@@ -2,33 +2,38 @@
  * NOCTA HiNa — 誕生HiNa: 12ヶ月の贈り物棚
  *
  * 生まれた月を選ぶと、誕生花・誕生石・HiNa誕生色・銀猫の祝福1文を
- * 「標本便箋」の趣の一枚(押し花/鉱物標本を和紙に留めた贈り物カード)にして見せる。
+ * 「標本便箋」の趣の一枚(和紙に留めた贈り物カード)にして見せる。
  * 地は生成りの縦グラデ(#F4EEDF→#EBE2CE)+微細な紙グレイン+内側ヴィネット、
  * 縁は外周ヘアライン+二重の内枠(標本シートの縁)。
- * 誕生花・誕生石・HiNa誕生色は同格の丸フレーム標本3点として並べる
- * （花・石は実写写真、誕生色は hinaColor.hex のソリッド色見本。サイズ・外枠(ヘアライン)・
- * 内側の押し込み影・ラベル(tiny capsのタグ+Shippori名前の2段)を揃え、
- * 淡色（桜色等）でも生成り地に対して視認できるよう全丸に強めの外枠を効かせる）。
+ *
+ * カードのヒーローは「花紋(かもん)エンブレム」— 誕生花・誕生石・HiNa誕生色の3点を
+ * 1つの意匠に融合した手続き生成の紋章(drawEmblem)。外部画像は使わない(Canvas 2D手続き
+ * 生成・CORS読込不要)。花(flower.formに応じた花弁の形)を誕生色(hinaColor.hex)で描き、
+ * その中心に宝石のファセット(多面体の芯・墨の稜線+白いきらめき)を据え、細い二重
+ * ヘアラインの紋枠で囲む。旧・誕生花/誕生石/誕生色を並べた「三点の丸」(実写標本3点)は
+ * この1つのエンブレムに統合され撤去した。エンブレムの下には簡潔なラベル1行
+ * 「誕生花 ○○ ・ 誕生石 ○○ ・ 誕生色 ○○」を添え、名前情報はここが担う
+ * (エンブレム自体はaria-hidden。装飾扱い)。
+ * drawEmblem(ctx,cx,cy,r,entry) は DOMの<canvas class="hbc-emblem">とPNG書き出し用
+ * オフスクリーンcanvasの両方から同じ関数を呼ぶ(完全一致を関数共有で保証する)。
+ *
  * 誕生花名は必ず1行に収める（DOM: white-space:nowrap+実測での自動縮小、
- * Canvas: 自動縮小フォントの下限を低めに取る）。標本名(タグ+名前の2段目)も
- * 全12ヶ月の最長データ(6文字)がDOM側で1行に収まる列幅/フォントサイズを実測して選んでいる
- * (probe-label-width調べ)。
+ * Canvas: 自動縮小フォントの下限を低めに取る）。
  * 落款(スタンプ)は月番号の二重リング円のみ（キャラクター表記は持たない）。控えめに右下。
  *
  * 依存: window.HINA_BIRTH（hina-birth-data.js を先に読み込むこと。各エントリの
- *       flower.img / stone.img に実写URL(Wikimedia Commons原寸)が必要）
+ *       flower.form が花紋エンブレムの花形カテゴリを指定する）
  * 提供: window.NoctaBirthHina.mount(container) → { detach }
  *
  * ?m=1〜12 で該当月を直接開く。不正・欠落時は今日の月、それも無効なら1月。
  * カードのCSS(.hina-birth-*)は website/hina/index.html 側の<style>で定義する
  * （flora/index.html + hana.js と同じ役割分担: データ描画はJS、見た目はホストページのCSS）。
  *
- * 実写画像の取り扱い:
- *  - 表示(<img>): thumbUrl(url,500) + crossorigin="anonymous"。読込失敗時はそのフレームだけ
- *    静かに非表示にする(is-missing。カード全体やラベル文字は壊さない)。
- *  - PNG書き出し: new Image()+crossOrigin='anonymous'でthumbUrl(url,960)を読み込み、
- *    フォント読込(document.fonts.ready)と合わせて両方readyになってからcanvasに描く。
- *    画像読込に失敗した月はその写真だけ省いて(フレーム輪郭のみ)描画を続け、PNG自体は必ず生成する。
+ * PNG書き出しは花紋エンブレムが手続き生成(外部画像不使用)になったため、誕生花・誕生石の実写
+ * 画像読込待ち(CORS依存・失敗フォールバック)は不要になった(旧・実写標本の読込待ちは撤去)。
+ * 代わりに紙グレイン(loadGrainImage・ローカルdata URI・タイムアウト1.5秒)とフォント読込
+ * (document.fonts.ready・タイムアウト3秒)を待つ(いずれも外部ネットワーク読込ではないため
+ * CORS/失敗の心配はなく、待ちはタイムアウトによる固着防止のみが目的。Codex W3)。
  */
 (function () {
   "use strict";
@@ -70,41 +75,6 @@
     return n < 10 ? "0" + n : String(n);
   }
 
-  /* Wikimedia Commonsの原寸URLからサムネイルURLを導出する(zukan-core.jsのthumbUrlと同一ロジック。
-     依存を増やさないためここに複製する)。固定幅バケット(500/960/1280等)以外は非200になるため、
-     マッチしない形式のURLはそのまま返す(原寸表示にフォールバック)。 */
-  function thumbUrl(url, w) {
-    var m = String(url).match(/^(https:\/\/upload\.wikimedia\.org\/wikipedia\/commons)\/([0-9a-f])\/([0-9a-f]{2})\/([^\/]+)$/);
-    return m ? (m[1] + "/thumb/" + m[2] + "/" + m[3] + "/" + m[4] + "/" + w + "px-" + m[4]) : url;
-  }
-
-  var IMAGE_LOAD_TIMEOUT_MS = 7000;
-
-  /* PNG書き出し用: 実写画像をcrossOrigin='anonymous'で読み込む。失敗時は例外を投げず
-     nullに解決する(呼び出し側でその写真だけ省いてカードを描くフォールバックに使う)。
-     ネット停滞でonload/onerrorが永久に返らないケースに備え、タイムアウト(既定7秒)でも
-     nullに解決する(settleガードで一度だけ解決・保存ボタンの固着を防ぐ)。 */
-  function loadImage(url) {
-    return new Promise(function (resolve) {
-      if (!url) { resolve(null); return; }
-      var settled = false;
-      var img = new Image();
-      var timer = setTimeout(function () { settle(null); }, IMAGE_LOAD_TIMEOUT_MS);
-      function settle(result) {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timer);
-        img.onload = null;
-        img.onerror = null;
-        resolve(result);
-      }
-      img.crossOrigin = "anonymous";
-      img.onload = function () { settle(img); };
-      img.onerror = function () { settle(null); };
-      img.src = thumbUrl(url, 960);
-    });
-  }
-
   /* ---- DOM構築（見た目は index.html の<style>が担当） ---- */
   function shelfHtml() {
     var out = "";
@@ -118,17 +88,44 @@
     return '<nav class="hina-birth-nav" aria-label="誕生月をえらぶ">' + out + "</nav>";
   }
 
-  /* 標本ラベルの1点分(タグ+名前)。タグ(「誕生花」等)は月に関わらず不変の静的文字列として
+  /* 花紋エンブレムの「実効半径 ÷ カード幅(380px基準)」の比率。DOMの<canvas class="hbc-emblem">と
+     PNG書き出し用オフスクリーンcanvasの両方が、この1つの比率から実効半径を算出する(Codex C1)。
+     修正前はDOM側がEMBLEM_CANVAS_R=180(バッキングストア400pxの45%=切れ防止の独自マージンを
+     含んだ値)・PNG側がEMBLEM_R=round(69*S)(カード幅380pxの18.16%)という別々の値になっており、
+     見た目の実効半径がDOM/PNGで約10%ずれていた。69/380は下記DOM_EMBLEM_BOX_MAXの由来と同じ、
+     index.html .hbc-emblem のCSS表示直径上限138px(=69*2)をカード最大幅380pxで割った値。 */
+  var EMBLEM_RADIUS_RATIO = 69 / 380;
+
+  /* DOM側<canvas class="hbc-emblem">の実ピクセル(バッキングストア)サイズ。表示サイズは
+     index.htmlの.hbc-emblem(width/height:clamp(...)、上限DOM_EMBLEM_BOX_MAX=138px)がCSSで
+     縮小表示するため、バッキングストアを表示上限より大きく取ることで簡易的な高解像度描画になる
+     (paintEmblemで devicePixelRatio 分をさらに掛けて引き上げる)。EMBLEM_CANVAS_Rは、
+     EMBLEM_RADIUS_RATIO(カード幅380px基準の実効半径69px相当)を「バッキングストアPX ÷
+     CSS表示上限138px」の比でバッキングストア座標系に変換した値にする。138がちょうど69の2倍
+     (=CSSの箱の幅そのものが花紋の直径と等しい設計)のため、この式は常にPXのちょうど半分になり、
+     PNG側の比率と厳密に一致する。紋枠の線幅がrをごくわずか(1%未満)超えて描かれるが、
+     devicePixelRatio分のバッキングストア拡張とcanvas自体のアンチエイリアスにより視認できない
+     (旧180は「切れ防止」のための独自マージンだったが、この差分そのものがC1の原因だったため撤去した)。 */
+  var EMBLEM_CANVAS_PX = 400;
+  var DOM_EMBLEM_BOX_MAX = 138; // index.html .hbc-emblem width/height clamp(...)の上限値と一致させる
+  var EMBLEM_CANVAS_R = Math.round(EMBLEM_RADIUS_RATIO * 380 * (EMBLEM_CANVAS_PX / DOM_EMBLEM_BOX_MAX)); // = 200 = EMBLEM_CANVAS_PX/2
+
+  /* 花紋ラベルの1点分(タグ+名前)。タグ(「誕生花」等)は月に関わらず不変の静的文字列として
      ここに固定し、JS側では名前(data-f)だけを書き換える。タグと名前の間の半角スペース1つは
-     アクセシビリティ用(figcaption.textContentが「誕生花 チューリップ」のように空白を挟んだ
-     1文としてスクリーンリーダーに読まれる)。タグ/名前はどちらもCSSでdisplay:blockのため、
-     このスペース自体が見た目の版面(2段組)に隙間を作ることはない。 */
-  function specimenLabelHtml(tag, nameField) {
+     見た目上「誕生花 チューリップ」のように読める1単位を作る(.hel-itemでwhite-space:nowrapにし、
+     この単位が行の途中で不自然に割れないようにする)。.hel-item自体はaria-hidden化した視覚専用の
+     装飾テキストであり、読み上げは親.hbc-emblem-label内の.hel-sr(sr-only・視覚的に隠すが
+     読み上げはされる。render()内で月ごとにtextContentを設定)に一本化する(狭幅でflex-wrapが
+     2行に折り返しても読み上げ内容が視覚と分岐しないようにするため)。<p>要素自体への
+     aria-label付与(旧実装)は一部のスクリーンリーダーで安定して読み上げられずラベルが空扱いに
+     なるリスクがあったため撤去し、確実に読み上げられるsr-onlyテキストに一本化した
+     (Codex 2周目 W1)。 */
+  function emblemLabelItemHtml(tag, nameField) {
     return (
-      '<figcaption class="hbc-specimen-label">' +
-        '<span class="hbc-specimen-tag">' + tag + "</span> " +
-        '<span class="hbc-specimen-name" data-f="' + nameField + '"></span>' +
-      "</figcaption>"
+      '<span class="hel-item" aria-hidden="true">' +
+        '<span class="hel-tag">' + tag + "</span> " +
+        '<span class="hel-name" data-f="' + nameField + '"></span>' +
+      "</span>"
     );
   }
 
@@ -147,24 +144,15 @@
               '<span class="hbc-eyebrow-rule" aria-hidden="true"></span>' +
             "</p>" +
             '<h3 class="hbc-flower" data-f="flower"></h3>' +
-            '<div class="hbc-specimens">' +
-              '<figure class="hbc-specimen" data-specimen="flower">' +
-                '<span class="hbc-specimen-frame">' +
-                  '<img class="hbc-specimen-img" data-f="flowerImg" alt="" loading="lazy" crossorigin="anonymous">' +
-                "</span>" +
-                specimenLabelHtml("誕生花", "flowerName") +
-              "</figure>" +
-              '<figure class="hbc-specimen" data-specimen="stone">' +
-                '<span class="hbc-specimen-frame">' +
-                  '<img class="hbc-specimen-img" data-f="stoneImg" alt="" loading="lazy" crossorigin="anonymous">' +
-                "</span>" +
-                specimenLabelHtml("誕生石", "stoneName") +
-              "</figure>" +
-              '<figure class="hbc-specimen" data-specimen="color">' +
-                '<span class="hbc-specimen-frame" data-f="colorSwatch" aria-hidden="true"></span>' +
-                specimenLabelHtml("誕生色", "colorName") +
-              "</figure>" +
-            "</div>" +
+            '<canvas class="hbc-emblem" data-f="emblem" width="' + EMBLEM_CANVAS_PX + '" height="' + EMBLEM_CANVAS_PX + '" aria-hidden="true"></canvas>' +
+            '<p class="hbc-emblem-label" data-f="emblemLabel">' +
+              emblemLabelItemHtml("誕生花", "flowerName") +
+              '<span class="hel-sep" aria-hidden="true">・</span>' +
+              emblemLabelItemHtml("誕生石", "stoneName") +
+              '<span class="hel-sep" aria-hidden="true">・</span>' +
+              emblemLabelItemHtml("誕生色", "colorName") +
+              '<span class="hel-sr sr-only" data-f="emblemLabelSr"></span>' +
+            "</p>" +
             '<span class="hbc-blessing-mark" aria-hidden="true"></span>' +
             '<p class="hbc-blessing" data-f="blessing"></p>' +
             '<p class="hbc-stamp">' +
@@ -208,13 +196,10 @@
   }
 
   /* ---- Canvas描画ユーティリティ ---- */
-  /* Canvasの基準スケール(Codex C2): DOMのカード基準幅380px : Canvas全体幅(1080px)の比率。
-     標本丸(specimenR)・落款(stampR)・各フォントサイズ・四隅tickは、すべてDOM側のCSS実測px値
-     (.hbc-specimen-frame=86px・.hbc-stamp-num=58px等)にこのSを掛けて求める。従来はCanvas側だけ
-     独自に手調整した小さめの値(specimenR=80・stampR=46)を使っていたため、DOM(86px/58px≒22.6%/15.3%)
-     に対しCanvas(160px/92px≒14.8%/8.5%)が明らかに小さく、書き出したPNGの主役(標本・落款)の
-     存在感がDOMより弱かった。Sを1つの数値に揃えることで今後DOM側のサイズを変えてもCanvas側が
-     追随しやすくなる。 */
+  /* Canvasの基準スケール(Codex C2由来の慣習を継続): DOMのカード基準幅380px : Canvas全体幅
+     (1080px)の比率。花紋エンブレム(emblemR)・落款(stampR)・各フォントサイズ・四隅tickは、
+     すべてDOM側のCSS実測px値(clampの上限値等)にこのSを掛けて求める。DOM側のサイズを変えれば
+     Canvas側も追随する。 */
   var CANVAS_W = 1080, CANVAS_H = 1440;
   var S = CANVAS_W / 380;
 
@@ -226,13 +211,17 @@
      関数にする(下のeyebrowToFlowerGap参照)。花名は1〜6文字いずれもflowerSizeがほぼ上限
      (FLOWER_FONT_MAX)近くに留まるため、固定116pxでは大きな漢字のascent(約0.9em)を
      吸収できずeyebrow行と花名の上端が重なる不具合があった(スクリーンショットで実際に
-     「紫陽花」「桔梗」「金木犀」等で確認・修正済み)。 */
+     「紫陽花」「桔梗」「金木犀」等で確認・修正済み)。
+     GAP_EYEBROW_TOPはblockHeightの見積りにのみ使う予算枠(実際の描画シーケンスではeyebrowは
+     topMarginの位置にそのまま描かれ、この値だけ余分に加算する)。結果としてblockHeightが
+     ブロックの実高さよりGAP_EYEBROW_TOP分大きく出るため、topMarginが下限110pxに達した場合でも
+     その分だけ下端(落款)の溢れに対する余裕として働く(既存設計からの継続)。 */
   var GAP_EYEBROW_TOP = 36;
-  var GAP_FLOWER_TO_SPECIMENS = 60;
-  var GAP_SPECIMENS_TO_LABEL = 28;
-  var GAP_LABEL_TO_BLESSING = 90;
-  var DOT_OFFSET = 34;
-  var GAP_BLESSING_TO_STAMP = 40;
+  var GAP_FLOWER_TO_EMBLEM = Math.round(26 * S);   // DOM: .hbc-emblem margin-top 26px
+  var GAP_EMBLEM_TO_LABEL = Math.round(14 * S);    // DOM: .hbc-emblem-label margin-top 14px
+  var GAP_LABEL_TO_BLESSING = 78;
+  var DOT_OFFSET = 30;
+  var GAP_BLESSING_TO_STAMP = 36;
 
   /* フォントサイズ(DOM pxをSで換算・Codex C2)。 */
   var EYEBROW_FONT_SIZE = Math.round(10 * S);          // DOM: .hbc-eyebrow font-size 10px
@@ -244,6 +233,7 @@
   var BLESSING_FONT = Math.round(19 * S);               // DOM: .hbc-blessing clamp(...,19px)上限
   var BLESSING_LH = Math.round(BLESSING_FONT * 1.9);    // DOM: line-height 1.9
   var STAMP_FONT = Math.round(19 * S);                  // DOM: .hbc-stamp-num font-size 19px
+  var EMBLEM_R = Math.round(EMBLEM_RADIUS_RATIO * CANVAS_W); // = round(69*S)と同値。EMBLEM_RADIUS_RATIO(Codex C1)に一本化
 
   function wrapByChar(ctx, text, maxWidth) {
     var lines = [];
@@ -261,81 +251,306 @@
     return lines;
   }
 
-  /* 誕生花・誕生石・誕生色の3標本すべてに使う強化枠(淡色の色見本(桜色等)でも生成り地に対して
-     視認できる強度。DOM側 .hbc-specimen-frame の box-shadow と同じ強度。3点の「枠」を揃えるため
-     写真標本にも同じ強度を適用する)。 */
-  var SPECIMEN_RING_STYLE = "rgba(42,33,24,0.36)";
-  var SPECIMEN_RING_WIDTH = 1.5 * S;      // DOM: box-shadow 1層目「0 0 0 1.5px」
-  var SPECIMEN_RIM_STYLE = "rgba(42,33,24,0.20)";
-  var SPECIMEN_SHADOW_STYLE = "rgba(42,33,24,0.30)";
-  var SPECIMEN_FALLBACK_FILL = "rgba(122,111,94,0.08)";
-  var SPECIMEN_SHADOW_BLUR = 20 * S;      // DOM: box-shadow 4層目「0 10px 20px -10px」のblur
-  var SPECIMEN_SHADOW_OFFSET_Y = 10 * S;  // 同box-shadowのoffset-y
+  /* ==== 花紋エンブレム(drawEmblem) ====
+     誕生花(hanaForm)・誕生石(ファセットの芯)・誕生色(hinaColor.hex)を1つの紋章に融合する。
+     DOMの<canvas class="hbc-emblem">とPNG書き出し用オフスクリーンcanvasの両方から
+     drawEmblem(ctx,cx,cy,r,entry)を呼ぶ(同一関数=完全一致を保証)。 */
 
-  /* 標本1点を丸フレームに描く(clipで丸抜き・object-fit:coverと同じ正方形クロップ)。
-     image指定時は実写(花・石)、hex指定時はソリッド色見本(誕生色)、どちらも無ければ
-     未読込/失敗のフォールバック(フレーム輪郭のみ)。どの場合も同じ外枠・内側の
-     押し込み影(rim)・外側の柔らかい落ち影を重ね、「標本を留めた」質感で3点を揃える
-     (DOM側 .hbc-specimen-frame の box-shadow構成と対応)。 */
-  function drawSpecimen(ctx, cx, cy, r, image, hex) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
-    if (image) {
-      var iw = image.naturalWidth || image.width || 1;
-      var ih = image.naturalHeight || image.height || 1;
-      var side = Math.min(iw, ih);
-      var sx = (iw - side) / 2, sy = (ih - side) / 2;
-      ctx.drawImage(image, sx, sy, side, side, cx - r, cy - r, r * 2, r * 2);
-    } else if (hex) {
-      ctx.fillStyle = hex;
-      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-    } else {
-      ctx.fillStyle = SPECIMEN_FALLBACK_FILL;
-      ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+  /* RGB(0-255)→HSL([0,1],[0,1],[0,1])。shadeHexが明度(L)だけを動かして色相/彩度を保つために使う。 */
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h = 0, s = 0, l = (max + min) / 2;
+    if (max !== min) {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h /= 6;
     }
-    /* 内側の押し込み影(box-shadow insetに相当)。縁に向けてわずかに沈める。 */
-    var rim = ctx.createRadialGradient(cx, cy, r * 0.7, cx, cy, r);
-    rim.addColorStop(0, "rgba(42,33,24,0)");
-    rim.addColorStop(1, SPECIMEN_RIM_STYLE);
-    ctx.fillStyle = rim;
-    ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-    ctx.restore();
+    return [h, s, l];
+  }
 
-    /* 外枠(ヘアライン)＋柔らかい外側落ち影(clip解除後・丸の外側に描く) */
-    ctx.save();
-    ctx.shadowColor = SPECIMEN_SHADOW_STYLE;
-    ctx.shadowBlur = SPECIMEN_SHADOW_BLUR;
-    ctx.shadowOffsetY = SPECIMEN_SHADOW_OFFSET_Y;
+  function hue2rgb(p, q, t) {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  }
+
+  function hslToRgb(h, s, l) {
+    if (s === 0) {
+      var v = Math.round(l * 255);
+      return [v, v, v];
+    }
+    var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    var p = 2 * l - q;
+    return [
+      Math.round(hue2rgb(p, q, h + 1 / 3) * 255),
+      Math.round(hue2rgb(p, q, h) * 255),
+      Math.round(hue2rgb(p, q, h - 1 / 3) * 255)
+    ];
+  }
+
+  /* hex(#RRGGBB)の明度(L)だけをamt分動かした(amt>0で白へ・amt<0で黒へ)'rgb(...)'文字列を返す。
+     色相・彩度はHSLで固定して保つ(RGB各チャンネルを直接ブレンドする素朴な実装では、桜色
+     #FEF4F4のような「白に近いが彩度は高い」淡色を暗くすると彩度が失われグレーに褪せてしまう
+     不具合があったため、HSL経由に変更した)。花弁の濃淡(中心/縁の立体感)・宝石の淡い
+     クリスタル色を作るのに使う。 */
+  function shadeHex(hex, amt) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex));
+    var n = m ? parseInt(m[1], 16) : 0x7a6f5e;
+    var hsl = rgbToHsl((n >> 16) & 255, (n >> 8) & 255, n & 255);
+    var l = amt >= 0 ? hsl[2] + (1 - hsl[2]) * amt : hsl[2] * (1 + amt);
+    l = Math.max(0, Math.min(1, l));
+    var rgb = hslToRgb(hsl[0], hsl[1], l);
+    return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+  }
+
+  /* 相対輝度(0=黒〜1=白)。花弁の濃淡方向・輪郭線の色(墨か白かの選択)を輝度で切り替える。 */
+  function hexLuminance(hex) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(String(hex));
+    var n = m ? parseInt(m[1], 16) : 0x7a6f5e;
+    return (0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255;
+  }
+
+  /* 花弁1枚の輪郭パスをローカル座標(基部=原点(0,0)・先端=(0,-len))に作る。tipで先端の形を
+     切り替える: "point"=尖り(水仙・チューリップ・藤・シクラメン・ひまわり・菊等)/
+     "round"=丸み(蓮の八重)/"notch"=浅い切れ込み(桜・梅・紫陽花・金木犀の小花)。 */
+  function petalPath(ctx, len, halfW, midT, tip) {
+    var w = halfW, my = -len * midT;
     ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.strokeStyle = SPECIMEN_RING_STYLE;
-    ctx.lineWidth = SPECIMEN_RING_WIDTH;
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(w * 1.08, my * 0.45, w, my);
+    if (tip === "notch") {
+      var n = w * 0.16;
+      ctx.quadraticCurveTo(w * 0.6, -len * 0.92, n, -len);
+      ctx.lineTo(-n, -len);
+      ctx.quadraticCurveTo(-w * 0.6, -len * 0.92, -w, my);
+    } else if (tip === "round") {
+      ctx.quadraticCurveTo(w * 0.92, -len * 1.02, 0, -len * 1.03);
+      ctx.quadraticCurveTo(-w * 0.92, -len * 1.02, -w, my);
+    } else {
+      ctx.quadraticCurveTo(w * 0.32, -len * 0.985, 0, -len);
+      ctx.quadraticCurveTo(-w * 0.32, -len * 0.985, -w, my);
+    }
+    ctx.quadraticCurveTo(-w * 1.08, my * 0.45, 0, 0);
+    ctx.closePath();
+  }
+
+  /* 花弁1枚を(cx,cy)を基部にrotRad回転させて描く(先端方向=ローカルの-y=rot0で真上)。
+     塗りは基部(colorNear)→先端(colorFar)の線形グラデ(中心/縁の濃淡で立体感)。 */
+  function drawPetal(ctx, cx, cy, rotRad, len, halfW, midT, tip, colorNear, colorFar, strokeStyle, lineWidth) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotRad);
+    petalPath(ctx, len, halfW, midT, tip);
+    var grad = ctx.createLinearGradient(0, 0, 0, -len);
+    grad.addColorStop(0, colorNear);
+    grad.addColorStop(1, colorFar);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = lineWidth;
     ctx.stroke();
     ctx.restore();
   }
 
-  /* 標本ラベル1点(タグ「誕生花」等+名前)を2段で描く。DOM側 .hbc-specimen-tag/.hbc-specimen-name の
-     タイポ階層(tiny caps+Shippori名前)と対応させ、3点のラベル書式を揃える。 */
-  var SPECIMEN_TAG_SIZE = Math.round(10 * S);     // DOM: .hbc-specimen-tag font-size 10px
-  var SPECIMEN_NAME_SIZE = Math.round(13.5 * S);  // DOM: .hbc-specimen-name font-size 13.5px
-  var SPECIMEN_TAG_FONT = '700 ' + SPECIMEN_TAG_SIZE + 'px "Syne", sans-serif';
-  var SPECIMEN_NAME_FONT = '600 ' + SPECIMEN_NAME_SIZE + 'px "Shippori Mincho", "Noto Sans JP", serif';
-  var SPECIMEN_TAG_LH = Math.round(SPECIMEN_TAG_SIZE * 1.6);
-  var SPECIMEN_NAME_LH = Math.round(SPECIMEN_NAME_SIZE * 1.26);
-  var SPECIMEN_LABEL_BLOCK_H = SPECIMEN_TAG_LH + SPECIMEN_NAME_LH;
+  /* count枚の花弁を(cx,cy)を中心に等間隔リング状に描く(rot0=先頭の花弁の向き)。 */
+  function drawPetalRing(ctx, cx, cy, count, rot0, len, halfWFactor, midT, tip, colorNear, colorFar, strokeStyle, lineWidth) {
+    var halfW = len * halfWFactor;
+    for (var i = 0; i < count; i++) {
+      drawPetal(ctx, cx, cy, rot0 + (i * Math.PI * 2) / count, len, halfW, midT, tip, colorNear, colorFar, strokeStyle, lineWidth);
+    }
+  }
 
-  function drawSpecimenLabel(ctx, INK, INK_SUB, cx, topY, tag, name) {
-    ctx.font = SPECIMEN_TAG_FONT;
-    ctx.fillStyle = INK_SUB;
-    try { ctx.letterSpacing = "1.8px"; } catch (_) {}
-    ctx.fillText(tag, cx, topY + SPECIMEN_TAG_LH * 0.72);
-    try { ctx.letterSpacing = "0px"; } catch (_) {}
-    ctx.font = SPECIMEN_NAME_FONT;
-    ctx.fillStyle = INK;
-    ctx.fillText(name, cx, topY + SPECIMEN_TAG_LH + SPECIMEN_NAME_LH * 0.74);
+  /* 花形カテゴリ(flower.form)ごとの花弁レイアウト。layers=1つの花に重ねる花弁の層
+     (2層は八重・チューリップのカップ状を表す。lightenで内層をわずかに明るくし奥行きを出す)。
+     cluster=中心の周りに小花が環になったクラスター(梅・紫陽花・金木犀=「clustered small
+     blossoms」。1つの大花ではなく複数の小さな花で構成する形)。 */
+  var HANA_FORMS = {
+    star: { layers: [{ count: 6, len: 0.80, w: 0.15, midT: 0.42, tip: "point" }] },
+    tulip: { layers: [
+      { count: 3, rot: 0, len: 0.78, w: 0.24, midT: 0.80, tip: "point" },
+      { count: 3, rot: Math.PI / 3, len: 0.64, w: 0.22, midT: 0.80, tip: "point", lighten: 0.10 }
+    ] },
+    sakura: { layers: [{ count: 5, len: 0.80, w: 0.44, midT: 0.55, tip: "notch" }] },
+    bell: { layers: [{ count: 5, len: 0.88, w: 0.15, midT: 0.62, tip: "point" }] },
+    layered: { layers: [
+      { count: 8, rot: 0, len: 0.80, w: 0.30, midT: 0.50, tip: "round" },
+      { count: 8, rot: Math.PI / 8, len: 0.56, w: 0.27, midT: 0.50, tip: "round", lighten: 0.10 }
+    ] },
+    kiku: { layers: [{ count: 16, len: 0.84, w: 0.045, midT: 0.30, tip: "point" }] },
+    komori: { cluster: true, count: 6, ringR: 0.54, floretLen: 0.30, petals: 4, w: 0.55, midT: 0.55, tip: "notch" }
+  };
+
+  /* 花紋の花(flower.form)を(cx,cy)中心・半径r相当のスケールで描く。誕生色(hex)そのものを
+     花弁の色に使い(石の色ではなく)、輝度に応じて濃淡方向(中心濃→縁淡・暗い誕生色は逆)と
+     輪郭線色(明るい花は墨・暗い花は縁を淡く起こす)を切り替える。 */
+  function renderHanaForm(ctx, cx, cy, r, formKey, hex) {
+    var spec = HANA_FORMS[formKey] || HANA_FORMS.sakura;
+    var lum = hexLuminance(hex);
+    var nearAmt = lum < 0.35 ? 0.22 : -0.24;
+    var farAmt = lum < 0.35 ? 0 : 0.10;
+    var strokeStyle = lum > 0.55 ? "rgba(42,33,24,0.30)" : "rgba(255,253,247,0.24)";
+    var lineWidth = Math.max(1, r * 0.014);
+
+    if (spec.cluster) {
+      for (var i = 0; i < spec.count; i++) {
+        var ang = (i * Math.PI * 2) / spec.count;
+        drawPetalRing(
+          ctx, cx + Math.cos(ang) * r * spec.ringR, cy + Math.sin(ang) * r * spec.ringR,
+          spec.petals, ang + Math.PI / 2, r * spec.floretLen, spec.w, spec.midT, spec.tip,
+          shadeHex(hex, nearAmt), shadeHex(hex, farAmt), strokeStyle, lineWidth * 0.75
+        );
+      }
+      return;
+    }
+    spec.layers.forEach(function (layer) {
+      var add = layer.lighten || 0;
+      drawPetalRing(
+        ctx, cx, cy, layer.count, layer.rot || 0, r * layer.len, layer.w, layer.midT, layer.tip,
+        shadeHex(hex, nearAmt + add), shadeHex(hex, farAmt + add), strokeStyle, lineWidth
+      );
+    });
+  }
+
+  /* 花紋の芯=宝石のファセット。誕生石ごとの厳密な形は問わず、六角のテーブル面+クラウン
+     ファセット(三角×6・交互に濃淡)+一点のハイライトで「宝石らしさ」を統一して表す。
+     誕生色に染めず淡いクリスタル色に留める(誕生色+墨線+芯の静かな配色を保つ)。 */
+  function drawGemCore(ctx, cx, cy, rGem) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    var sides = 6, tableR = rGem * 0.46, crownR = rGem;
+    var tablePts = [], crownPts = [], i, a0, a1;
+    for (i = 0; i < sides; i++) {
+      a0 = -Math.PI / 2 + (i * Math.PI * 2) / sides;
+      tablePts.push([Math.cos(a0) * tableR, Math.sin(a0) * tableR]);
+      a1 = a0 + Math.PI / sides;
+      crownPts.push([Math.cos(a1) * crownR, Math.sin(a1) * crownR]);
+    }
+    ctx.beginPath();
+    ctx.arc(0, 0, rGem * 1.3, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(42,33,24,0.30)";
+    ctx.lineWidth = Math.max(1, rGem * 0.05);
+    ctx.stroke();
+    for (i = 0; i < sides; i++) {
+      var t0 = tablePts[i], t1 = tablePts[(i + 1) % sides], c0 = crownPts[i];
+      ctx.beginPath();
+      ctx.moveTo(t0[0], t0[1]);
+      ctx.lineTo(c0[0], c0[1]);
+      ctx.lineTo(t1[0], t1[1]);
+      ctx.closePath();
+      ctx.fillStyle = i % 2 === 0 ? "rgba(255,255,255,0.58)" : "rgba(226,225,230,0.36)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(42,33,24,0.26)";
+      ctx.lineWidth = Math.max(0.6, rGem * 0.022);
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    tablePts.forEach(function (p, idx) { idx === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); });
+    ctx.closePath();
+    var g = ctx.createLinearGradient(-tableR, -tableR, tableR, tableR);
+    g.addColorStop(0, "rgba(255,255,255,0.92)");
+    g.addColorStop(1, "rgba(220,220,227,0.42)");
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(42,33,24,0.36)";
+    ctx.lineWidth = Math.max(0.7, rGem * 0.026);
+    ctx.stroke();
+    ctx.save();
+    ctx.translate(-tableR * 0.32, -tableR * 0.4);
+    ctx.rotate(-0.5);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, tableR * 0.24, tableR * 0.11, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.95)";
+    ctx.fill();
+    ctx.restore();
+    ctx.restore();
+  }
+
+  /* 紋枠 — 細い二重ヘアラインの円(カードの二重内枠と同じ精緻さ)。
+     外周リングは渡された半径rそのものではなく、r内側に収まる半径(outerR)に描く
+     (Codex 2周目 W2)。DOM側の呼び出し(paintEmblem)ではr=EMBLEM_CANVAS_R*dprが
+     canvasバッキングストアの半分の幅=キャンバス境界そのものと一致するため、r上に
+     ストロークを描くとその外側半分が必ずcanvas境界でクリップされていた(PNG側は
+     十分大きいcanvas内に描くためクリップされず、DOM/PNGで外枠線の見え幅に微差が
+     生じていた)。outerRを「outerRの外側半分+outerR自体が確実にr以内に収まる」
+     半径(= r - ceil(lineWidth/2) - 1px)にすることで、rが実際のcanvas境界と一致する
+     DOMでもクリップされなくなる。PNG側も同じ関数を通るため同一比率で縮み、
+     DOM/PNGの一致(Codex C1)は保ったまま解消する。r自体(EMBLEM_RADIUS_RATIO由来の
+     実効半径)は変えない — 花弁(renderHanaForm)・宝石芯(drawGemCore)はrをそのまま使う。 */
+  function drawMonFrame(ctx, cx, cy, r) {
+    ctx.save();
+    var outerLineWidth = Math.max(1, r * 0.012);
+    var outerR = r - Math.ceil(outerLineWidth / 2) - 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(42,33,24,0.28)";
+    ctx.lineWidth = outerLineWidth;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR * 0.955, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(42,33,24,0.20)";
+    ctx.lineWidth = Math.max(1, r * 0.008);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /* 花紋エンブレム本体 — 紋枠(円)→花(誕生色)→芯(宝石ファセット)の順に(cx,cy)半径rへ描く。
+     DOMの<canvas class="hbc-emblem">とPNG書き出しcanvasの両方がこの1関数を呼ぶ。 */
+  var EMBLEM_GEM_RATIO = 0.30; // 芯(宝石)の半径 = r * この比率
+  function drawEmblem(ctx, cx, cy, r, entry) {
+    var form = (entry && entry.flower && entry.flower.form) || "sakura";
+    var hex = (entry && entry.hinaColor && entry.hinaColor.hex) || "#7A6F5E";
+    ctx.save();
+    drawMonFrame(ctx, cx, cy, r);
+    renderHanaForm(ctx, cx, cy, r * 0.88, form, hex);
+    drawGemCore(ctx, cx, cy, r * EMBLEM_GEM_RATIO);
+    ctx.restore();
+  }
+
+  /* エンブレム下のラベル1行(「誕生花 ○○ ・ 誕生石 ○○ ・ 誕生色 ○○」)をCanvasに描く。
+     DOM側 .hbc-emblem-label(.hel-tag/.hel-name/.hel-sep)と書式(タグ=Syne細字・名前=Shippori・
+     セパレータ=中黒)を揃える。Canvas(1080px幅)は十分広いため折り返しはせず1行で描く。 */
+  var EMBLEM_LABEL_TAG_SIZE = Math.round(8 * S);    // DOM: .hel-tag font-size 8px
+  var EMBLEM_LABEL_NAME_SIZE = Math.round(11 * S);  // DOM: .hel-name font-size 11px
+  var EMBLEM_LABEL_TAG_FONT = '700 ' + EMBLEM_LABEL_TAG_SIZE + 'px "Syne", sans-serif';
+  var EMBLEM_LABEL_NAME_FONT = '600 ' + EMBLEM_LABEL_NAME_SIZE + 'px "Shippori Mincho", "Noto Sans JP", serif';
+  var EMBLEM_LABEL_SEP_FONT = '400 ' + EMBLEM_LABEL_NAME_SIZE + 'px "Noto Sans JP", sans-serif';
+  var EMBLEM_LABEL_LH = Math.round(EMBLEM_LABEL_NAME_SIZE * 1.5);
+  var EMBLEM_LABEL_TAG_GAP = Math.round(4 * S);  // タグ→名前の間隔(DOM: 半角スペース1つ相当)
+  var EMBLEM_LABEL_SEP_GAP = Math.round(5 * S);  // ・の左右の間隔(DOM: .hbc-emblem-label gap 5px)
+
+  function drawEmblemLabel(ctx, INK, INK_SUB, cx, baselineY, entry) {
+    var segs = [
+      { text: "誕生花", font: EMBLEM_LABEL_TAG_FONT, color: INK_SUB, gapAfter: EMBLEM_LABEL_TAG_GAP },
+      { text: entry.flower.name, font: EMBLEM_LABEL_NAME_FONT, color: INK, gapAfter: EMBLEM_LABEL_SEP_GAP },
+      { text: "・", font: EMBLEM_LABEL_SEP_FONT, color: INK_SUB, gapAfter: EMBLEM_LABEL_SEP_GAP },
+      { text: "誕生石", font: EMBLEM_LABEL_TAG_FONT, color: INK_SUB, gapAfter: EMBLEM_LABEL_TAG_GAP },
+      { text: entry.stone.name, font: EMBLEM_LABEL_NAME_FONT, color: INK, gapAfter: EMBLEM_LABEL_SEP_GAP },
+      { text: "・", font: EMBLEM_LABEL_SEP_FONT, color: INK_SUB, gapAfter: EMBLEM_LABEL_SEP_GAP },
+      { text: "誕生色", font: EMBLEM_LABEL_TAG_FONT, color: INK_SUB, gapAfter: EMBLEM_LABEL_TAG_GAP },
+      { text: entry.hinaColor.name, font: EMBLEM_LABEL_NAME_FONT, color: INK, gapAfter: 0 }
+    ];
+    var widths = segs.map(function (s) {
+      ctx.font = s.font;
+      return ctx.measureText(s.text).width;
+    });
+    var total = widths.reduce(function (sum, w, idx) { return sum + w + segs[idx].gapAfter; }, 0);
+    var x = cx - total / 2;
+    var prevAlign = ctx.textAlign;
+    ctx.textAlign = "left";
+    segs.forEach(function (s, idx) {
+      ctx.font = s.font;
+      ctx.fillStyle = s.color;
+      ctx.fillText(s.text, x, baselineY);
+      x += widths[idx] + s.gapAfter;
+    });
+    ctx.textAlign = prevAlign;
   }
 
   /* 紙質のグレイン(Codex W2): DOM側 .hbc-grain と全く同じSVGノイズ画像(feTurbulence・
@@ -445,11 +660,9 @@
 
   /* 実寸1080x1440(3:4・縦長)のカードをオフスクリーンcanvasに描く。
      見た目はDOMのカード(.hina-birth-card)と同じ構成(標本便箋の紙質・二重内枠→
-     kicker付きeyebrow→花名→標本3点(花・石・誕生色)→点+祝福→落款)。
-     images省略時(または未読込)は写真なしで描く(呼び出し側はbuildCardCanvasAsyncを使うこと)。 */
+     kicker付きeyebrow→花名→花紋エンブレム→ラベル1行→点+祝福→落款)。
+     images省略時(または紙グレイン画像未読込)でも描画を続ける(呼び出し側はbuildCardCanvasAsyncを使うこと)。 */
   function buildCardCanvas(entry, images) {
-    var flowerImg = images && images.flowerImg;
-    var stoneImg = images && images.stoneImg;
     var grainImg = images && images.grainImg;
     var W = CANVAS_W, H = CANVAS_H, cx = W / 2;
     var INK = "#2A2118";
@@ -510,18 +723,14 @@
     /* ブロック全体の高さを積み上げて求め、余白を残しつつキャンバス縦中央に配置する。
        固定天頂+固定下端(スタンプ)で余白が偏る/余りすぎるのを避け、贈り物として
        バランスの良い一枚に見せる(祝福文の行数が変わっても自動で釣り合う)。
-       標本3点(花・石・誕生色)は1つの行として積み上げる(誕生色専用の帯行は持たない)。
-       specimenR/specimenGapXはDOM側(.hbc-specimen-frame=86px・.hbc-specimens gap=16px)を
-       Sで換算した値(Codex C2)。全12ヶ月のうち最も長い花名+石名の組(3月「チューリップ」+
-       「アクアマリン」)でもラベル同士が重ならないこと・縦にも溢れないことをスクリーンショットで
-       確認して調整済み。 */
-    var specimenR = 43 * S;             // DOM: 直径86px(43*2)相当
-    var specimenGapX = Math.round(16 * S); // DOM: .hbc-specimens gap 16px
+       花紋エンブレム(EMBLEM_R)は1つの丸として積み上げ、その下にラベル1行(EMBLEM_LABEL_LH)を
+       続ける。全12ヶ月・最長の花名+石名の組(3月「チューリップ」+「アクアマリン」)+3行祝福文の
+       組み合わせでも下端(落款)が溢れないことをスクリーンショットで確認して調整済み。 */
     var stampR = 29 * S;                // DOM: 直径58px(29*2)相当
     var blockHeight =
       GAP_EYEBROW_TOP + eyebrowToFlowerGap +
-      flowerSize * 0.86 /* flower本体 */ + GAP_FLOWER_TO_SPECIMENS +
-      specimenR * 2 + GAP_SPECIMENS_TO_LABEL + SPECIMEN_LABEL_BLOCK_H /* 標本3点(丸フレーム+2段ラベル) */ + GAP_LABEL_TO_BLESSING +
+      flowerSize * 0.86 /* flower本体 */ + GAP_FLOWER_TO_EMBLEM +
+      EMBLEM_R * 2 + GAP_EMBLEM_TO_LABEL + EMBLEM_LABEL_LH /* 花紋エンブレム+ラベル1行 */ + GAP_LABEL_TO_BLESSING +
       blessingLines.length * blessingLH + GAP_BLESSING_TO_STAMP +
       stampR * 2 /* stamp */;
     var topMargin = Math.max(110, (H - blockHeight) / 2);
@@ -553,25 +762,17 @@
     ctx.fillStyle = INK;
     ctx.fillText(entry.flower.name, cx, y);
     try { ctx.letterSpacing = "0px"; } catch (_) {}
-    y += flowerSize * 0.86 + GAP_FLOWER_TO_SPECIMENS;
+    y += flowerSize * 0.86 + GAP_FLOWER_TO_EMBLEM;
 
-    /* 標本3点(誕生花・誕生石・誕生色)を同じ大きさの丸フレームで並べる。
-       花・石は実写写真(写実は写真に委ねる。読めない月はdrawSpecimenがフレーム輪郭だけを描いて
-       静かに続ける)、誕生色はhinaColor.hexのソリッド色見本。3点とも同じ強化枠・
-       同じ書式の2段ラベルで同格に揃える。 */
-    var specCxL = cx - (specimenR * 2 + specimenGapX);
-    var specCxM = cx;
-    var specCxR = cx + (specimenR * 2 + specimenGapX);
-    var specCy = y + specimenR;
-    drawSpecimen(ctx, specCxL, specCy, specimenR, flowerImg, null);
-    drawSpecimen(ctx, specCxM, specCy, specimenR, stoneImg, null);
-    drawSpecimen(ctx, specCxR, specCy, specimenR, null, entry.hinaColor.hex);
-    y += specimenR * 2 + GAP_SPECIMENS_TO_LABEL;
+    /* 花紋エンブレム(誕生花×誕生石×誕生色の融合紋章)。DOMの<canvas class="hbc-emblem">と
+       同じdrawEmblem(ctx,cx,cy,r,entry)を呼ぶ(完全一致)。 */
+    var emblemCy = y + EMBLEM_R;
+    drawEmblem(ctx, cx, emblemCy, EMBLEM_R, entry);
+    y += EMBLEM_R * 2 + GAP_EMBLEM_TO_LABEL;
 
-    drawSpecimenLabel(ctx, INK, INK_SUB, specCxL, y, "誕生花", entry.flower.name);
-    drawSpecimenLabel(ctx, INK, INK_SUB, specCxM, y, "誕生石", entry.stone.name);
-    drawSpecimenLabel(ctx, INK, INK_SUB, specCxR, y, "誕生色", entry.hinaColor.name);
-    y += SPECIMEN_LABEL_BLOCK_H;
+    /* エンブレム下のラベル1行(「誕生花 ○○ ・ 誕生石 ○○ ・ 誕生色 ○○」) */
+    drawEmblemLabel(ctx, INK, INK_SUB, cx, y + EMBLEM_LABEL_LH * 0.78, entry);
+    y += EMBLEM_LABEL_LH;
 
     /* 便箋の書き出しを示す小さな一点(過剰にしない・祝福文の直前) */
     var dotY = y + DOT_OFFSET;
@@ -615,17 +816,15 @@
     return out;
   }
 
-  /* 誕生花・誕生石の実写、および紙グレイン用のノイズ画像を読み込んでからbuildCardCanvasを呼ぶ。
-     画像読込(loadImage/loadGrainImage)は失敗時にnullへ解決するため例外にはならないが、
-     drawImage自体が例外を投げる稀なケース(タイント等)に備えてtry/catchし、その場合は
-     写真なしで再描画する(PNGは必ず生成される・「読込失敗時はその写真を省いて描く」を徹底する)。 */
+  /* 紙グレイン用のノイズ画像(ローカルdata URI・CORS不要)を読み込んでからbuildCardCanvasを呼ぶ。
+     花紋エンブレムは手続き生成(外部画像不使用)になったため、誕生花・誕生石の実写読込待ちは
+     不要になった(PNG書き出しはこのグレイン読込+フォント読込のみで完結する)。
+     loadGrainImageは失敗時にnullへ解決するため例外にはならないが、drawImage自体が例外を
+     投げる稀なケースに備えてtry/catchし、その場合はグレインなしで再描画する
+     (PNGは必ず生成される)。 */
   function buildCardCanvasAsync(entry) {
-    return Promise.all([
-      loadImage(entry.flower && entry.flower.img),
-      loadImage(entry.stone && entry.stone.img),
-      loadGrainImage()
-    ]).then(function (imgs) {
-      var images = { flowerImg: imgs[0], stoneImg: imgs[1], grainImg: imgs[2] };
+    return loadGrainImage().then(function (grainImg) {
+      var images = { grainImg: grainImg };
       try {
         return buildCardCanvas(entry, images);
       } catch (_) {
@@ -682,11 +881,12 @@
     return true;
   }
 
-  /* フォント読み込み・標本写真読み込み完了→canvas描画→toBlob→objectURLでダウンロードの順に行う。
+  /* フォント読み込み完了→canvas描画→toBlob→objectURLでダウンロードの順に行う。
      toDataURL(同期・メインスレッドをブロック)ではなくtoBlob+URL.createObjectURLを使う。
-     drawImage自体は成功してもCORS/taint系の問題はtoBlob呼び出し時に表面化することがあるため、
-     toBlobが失敗(null/例外)した場合は写真なしで再描画(buildCardCanvas(entry,null))して再度toBlobを
-     試す。それでも失敗した場合のみresolve(false)にとどめ、例外を外に漏らさない
+     花紋エンブレムは手続き生成(外部画像不使用)のためCORS/taint系の失敗要因は基本的に
+     無くなったが、toBlob自体が何らかの理由で失敗(null/例外)した場合に備え、1度だけ
+     再描画(buildCardCanvas(entry,null))して再度toBlobを試す簡易リトライを残す。
+     それでも失敗した場合のみresolve(false)にとどめ、例外を外に漏らさない
      (「PNGは必ず生成される」を保証する最後のフォールバック・連打抑止解除の安定のため)。 */
   function triggerDownload(entry) {
     return waitForFonts().then(function () {
@@ -714,48 +914,34 @@
     var buttons = Array.prototype.slice.call(container.querySelectorAll(".hina-birth-m"));
     var fEyebrow = container.querySelector('[data-f="eyebrow"]');
     var fFlower = container.querySelector('[data-f="flower"]');
-    var fFlowerImg = container.querySelector('[data-f="flowerImg"]');
+    var fEmblemCanvas = container.querySelector('[data-f="emblem"]');
+    var fEmblemLabelSr = container.querySelector('[data-f="emblemLabelSr"]');
     var fFlowerName = container.querySelector('[data-f="flowerName"]');
-    var fStoneImg = container.querySelector('[data-f="stoneImg"]');
     var fStoneName = container.querySelector('[data-f="stoneName"]');
-    var fFlowerFigure = fFlowerImg ? fFlowerImg.closest(".hbc-specimen") : null;
-    var fStoneFigure = fStoneImg ? fStoneImg.closest(".hbc-specimen") : null;
-    var fColorSwatch = container.querySelector('[data-f="colorSwatch"]');
     var fColorName = container.querySelector('[data-f="colorName"]');
     var fBlessing = container.querySelector('[data-f="blessing"]');
     var fStampNum = container.querySelector('[data-f="stampNum"]');
 
     var current = null;
-    var specimenRequestSeq = 0;
 
-    /* 標本写真1点をDOMに反映する。写真は装飾扱い(alt=""・情報はfigcaptionの
-       ラベル文字「誕生花 ○○」が担う。スクリーンリーダーでの重複読み上げを避ける)。
-       月を素早く切り替えると同じ<img>要素を使い回すため、前月分の遅延onload/onerrorが
-       現在月の表示に誤って反映される競合が起きうる。呼び出しごとにrequestIdを発行し、
-       dataset経由で「今どのリクエストが有効か」を持たせ、コールバック発火時に不一致なら
-       無視する(is-missingの付与・解除どちらも現在のリクエストのみ反映する)。 */
-    function setSpecimenImage(imgEl, figureEl, url) {
-      if (!imgEl) return;
-      var requestId = String(++specimenRequestSeq);
-      imgEl.dataset.hinaReq = requestId;
-      imgEl.onload = null;
-      imgEl.onerror = null;
-      imgEl.alt = "";
-      if (figureEl) figureEl.classList.remove("is-missing");
-      if (!url) {
-        imgEl.removeAttribute("src");
-        if (figureEl) figureEl.classList.add("is-missing");
-        return;
+    /* 花紋エンブレムをDOMの<canvas class="hbc-emblem">に描く。PNG書き出し(buildCardCanvas)と
+       同じdrawEmblem(ctx,cx,cy,r,entry)を呼び、rとバッキングストアPXの比(EMBLEM_CANVAS_R/
+       EMBLEM_CANVAS_PX=0.5)をPNG側の比率(EMBLEM_RADIUS_RATIO)と揃えることでDOM≡PNGの
+       実効半径の一致を保証する(Codex C1)。devicePixelRatio(上限2倍・過剰なバッキングストア
+       肥大を避ける)分だけバッキングストアを追加拡張して高DPI環境での鮮明さを上げるが、
+       rとPXに同じdprを掛けるためこの比は変わらず一致は崩れない。 */
+    function paintEmblem(entry) {
+      if (!fEmblemCanvas) return;
+      var ctx = fEmblemCanvas.getContext && fEmblemCanvas.getContext("2d");
+      if (!ctx) return;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var px = Math.round(EMBLEM_CANVAS_PX * dpr);
+      if (fEmblemCanvas.width !== px || fEmblemCanvas.height !== px) {
+        fEmblemCanvas.width = px;
+        fEmblemCanvas.height = px;
       }
-      imgEl.onload = function () {
-        if (imgEl.dataset.hinaReq !== requestId) return;
-        if (figureEl) figureEl.classList.remove("is-missing");
-      };
-      imgEl.onerror = function () {
-        if (imgEl.dataset.hinaReq !== requestId) return;
-        if (figureEl) figureEl.classList.add("is-missing");
-      };
-      imgEl.src = thumbUrl(url, 500);
+      ctx.clearRect(0, 0, px, px);
+      drawEmblem(ctx, px / 2, px / 2, EMBLEM_CANVAS_R * dpr, entry);
     }
 
     function render(month) {
@@ -773,14 +959,22 @@
       fFlower.textContent = entry.flower.name;
       fitFlowerName(fFlower); /* 長い花名(「チューリップ」等)でも必ず1行に収める */
       /* ラベルの「誕生花」等のタグ文字はcardSectionHtml側に静的に固定済みのため、
-         ここでは名前(2段目)だけを書き換える(タグ+半角スペース+名前でfigcaption.textContentが
+         ここでは名前だけを書き換える(タグ+半角スペース+名前でhbc-emblem-label.textContentが
          「誕生花 チューリップ」のように揃う)。 */
       fFlowerName.textContent = entry.flower.name;
       fStoneName.textContent = entry.stone.name;
-      setSpecimenImage(fFlowerImg, fFlowerFigure, entry.flower.img);
-      setSpecimenImage(fStoneImg, fStoneFigure, entry.stone.img);
-      fColorSwatch.style.background = entry.hinaColor.hex;
       fColorName.textContent = entry.hinaColor.name;
+      /* 視覚上の子要素(.hel-item)はaria-hidden化しているため、読み上げ用の完全な文言
+         (「誕生花 ○○・誕生石 ○○・誕生色 ○○」)は.hel-sr(sr-only・視覚的に隠すが読み上げは
+         される)のtextContentとして設定する。<p>自身へのaria-label付与(旧実装)は一部の
+         スクリーンリーダーで安定して読み上げられずラベルが空扱いになるリスクがあったため
+         撤去した。狭幅でflex-wrapが2行に折り返しても、読み上げは常にこの1本のsr-onlyテキストで
+         一貫する(Codex 2周目 W1)。 */
+      if (fEmblemLabelSr) {
+        fEmblemLabelSr.textContent =
+          "誕生花 " + entry.flower.name + "・誕生石 " + entry.stone.name + "・誕生色 " + entry.hinaColor.name;
+      }
+      paintEmblem(entry);
       fBlessing.textContent = entry.blessing;
       fStampNum.textContent = pad2(month);
     }
@@ -826,12 +1020,27 @@
     selectMonth(initial, { updateUrl: false });
 
     /* テスト用: 現在月・保存処理・生成canvasの取得手段を控えめに公開(実挙動には影響しない)。
-       renderCanvas()は標本写真の読込を待つ必要があるためPromiseを返す(呼び出し側でawaitする)。 */
+       renderCanvas()は紙グレイン画像の読込を待つ必要があるためPromiseを返す(呼び出し側でawaitする)。
+       emblemRatio()はDOM側(EMBLEM_CANVAS_R/EMBLEM_CANVAS_PX)とPNG側(EMBLEM_R/CANVAS_W)の
+       実効半径比率を読み取り専用で返す(Codex C1の回帰検証用。両者が厳密に一致することを
+       テストで確認できるようにする)。 */
     window.__hinaBirth = {
       current: function () { return current; },
       selectMonth: function (m) { selectMonth(m); },
       save: function () { return current ? triggerDownload(current) : Promise.resolve(false); },
-      renderCanvas: function () { return current ? buildCardCanvasAsync(current) : Promise.resolve(null); }
+      renderCanvas: function () { return current ? buildCardCanvasAsync(current) : Promise.resolve(null); },
+      emblemRatio: function () {
+        /* domEffectiveRatio/pngEffectiveRatioは、いずれも「表示上の実効半径 ÷ カード幅380px」に
+           正規化した値(=EMBLEM_RADIUS_RATIOに一致するはずの値)。単位が異なるEMBLEM_CANVAS_R
+           (バッキングストア座標)とEMBLEM_R(PNGキャンバス座標)を直接比較すると単位不一致になるため、
+           それぞれ自身の基準幅(DOM_EMBLEM_BOX_MAX=138px / CANVAS_W=カード380px相当)で
+           正規化してから比較する。 */
+        return {
+          targetRatio: EMBLEM_RADIUS_RATIO,
+          domEffectiveRatio: (EMBLEM_CANVAS_R / EMBLEM_CANVAS_PX) * (DOM_EMBLEM_BOX_MAX / 380),
+          pngEffectiveRatio: EMBLEM_R / CANVAS_W
+        };
+      }
     };
 
     return {
