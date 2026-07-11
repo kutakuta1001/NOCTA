@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiNa | NOCTA Tools</title>
+<meta name="description" content="HiNa — 銀猫が見つけた、宝石と花と色の静かな図鑑。Gyu(宝石)・Ichi(花)・Hare(色)、三部作をひとつに束ねるNOCTAのコンセプトページ。">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="./hina-birth-data.js?v=1"></script>
+<script src="./birth-hina.js?v=1"></script>
+<style>
+  :root{ --hina-silver:#B8B4AE; }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:#0A0906; color:#E8E0D0; overflow-x:hidden;
+    font-family:'Noto Sans JP',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .font-display{ font-family:'EB Garamond','Shippori Mincho',serif; }
+  .font-mincho{ font-family:'Shippori Mincho','EB Garamond',serif; }
+  .font-heading{ font-family:'Syne',sans-serif; }
+  .font-jp{ font-family:'Noto Sans JP',sans-serif; }
+  .text-sub{ color:#9A8A7A; }
+
+  /* 粒子ノイズ質感（NOCTA本体・図鑑三部作と同一の余白哲学の一部） */
+  .grain{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* 銀メタリックグラデ — HiNaワードマーク専用の唯一の見せ場 */
+  .hina-gradient{
+    background:linear-gradient(160deg,#F2EEE4 0%,#C7C3BC 26%,#8E8A83 56%,#45413B 82%,#1C1A16 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  }
+
+  /* 順次フェード（ページ読み込み・スクロールで初出時） */
+  .reveal{ opacity:0; transform:translateY(20px); transition:opacity 0.9s cubic-bezier(0.4,0,0.2,1), transform 0.9s cubic-bezier(0.4,0,0.2,1); }
+  .reveal.active{ opacity:1; transform:translateY(0); }
+  .reveal-d1{ transition-delay:0.12s; }
+  .reveal-d2{ transition-delay:0.24s; }
+  .reveal-d3{ transition-delay:0.36s; }
+  .reveal-d4{ transition-delay:0.48s; }
+
+  .section-tag{
+    display:inline-flex; align-items:center; gap:12px;
+    font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:0.24em; text-transform:uppercase; color:var(--hina-silver);
+  }
+  .section-tag::before{ content:''; width:22px; height:1px; background:var(--hina-silver); flex-shrink:0; }
+
+  /* 三部作 — 目次のような静かな列 */
+  .act-row{ border-top:1px solid rgba(184,180,174,0.1); }
+  .act-num{
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(40px,5vw,56px); line-height:1;
+    color:rgba(184,180,174,0.35);
+  }
+  .act-label{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.22em; text-transform:uppercase; color:var(--hina-silver);
+  }
+  .act-name{ font-family:'Shippori Mincho','EB Garamond',serif; font-weight:600; color:#E8E0D0; }
+  .act-kana{ font-family:'Noto Sans JP',sans-serif; font-weight:400; color:#9A8A7A; font-size:0.5em; letter-spacing:0.1em; margin-left:0.5em; }
+  .act-line{ font-family:'EB Garamond','Shippori Mincho',serif; font-style:italic; color:#B8B4AE; }
+  .act-mode-label{ font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:#9A8A7A; }
+  .act-open{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:#9A8A7A; border-bottom:1px solid transparent; padding-bottom:3px;
+    transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .act-open:hover{ color:#E8E0D0; border-color:rgba(232,224,208,0.4); }
+  .act-open-arrow{ transition:transform 0.3s ease; display:inline-block; }
+  .act-open:hover .act-open-arrow{ transform:translateX(3px); }
+
+  /* キーボード操作の現在位置を示す(主要な操作要素のみ) */
+  .act-open:focus-visible,
+  .hina-birth-m:focus-visible,
+  .hina-birth-save:focus-visible,
+  .hbo-link:focus-visible{
+    outline:1px solid #E8E0D0;
+    outline-offset:4px;
+  }
+
+  /* 誕生HiNa — 12ヶ月の贈り物棚 */
+  #birth-shelf{ min-height:120px; }
+
+  .hina-birth-nav{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:14px 22px;
+    margin-bottom:56px; padding:0 4px;
+  }
+  .hina-birth-m{
+    background:none; border:none; padding:6px 2px; cursor:pointer;
+    display:flex; align-items:baseline; gap:3px;
+    font-family:'Bebas Neue',sans-serif; color:#9A8A7A;
+    border-bottom:2px solid transparent;
+    transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .hina-birth-m .hbm-num{ font-size:18px; letter-spacing:0.02em; }
+  .hina-birth-m .hbm-suffix{ font-family:'Noto Sans JP',sans-serif; font-size:11px; letter-spacing:0.04em; color:inherit; }
+  .hina-birth-m:hover{ color:#B8B4AE; }
+  /* 選択状態は色に加えて下線(不透明・太め)でも示す(色覚・小サイズ対応)。aria-pressedはJS側で付与 */
+  .hina-birth-m.is-on{ color:#E8E0D0; border-color:#E8E0D0; }
+
+  .hina-birth-stage{ display:flex; justify-content:center; padding:0 8px; }
+  .hina-birth-card{
+    width:100%; max-width:380px;
+    background:#F0EAD8; color:#2A2118; border-radius:14px;
+    padding:clamp(32px,7vw,52px) clamp(24px,6vw,40px) clamp(36px,7vw,48px);
+    box-shadow:0 40px 80px -30px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.4) inset, 0 0 0 1px rgba(60,50,30,0.12);
+    text-align:center;
+  }
+  .hbc-eyebrow{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.24em; text-transform:uppercase;
+    color:#6B5B47; margin:0;
+  }
+  .hbc-flower{
+    font-family:'Shippori Mincho','EB Garamond',serif; font-weight:600;
+    font-size:clamp(38px,8.6vw,54px); color:#2A2118; margin:16px 0 0; line-height:1.15;
+  }
+  .hbc-ribbon{
+    display:flex; height:9px; border-radius:5px; overflow:hidden;
+    margin:26px auto 0; max-width:220px;
+    box-shadow:0 1px 2px rgba(0,0,0,0.15) inset;
+  }
+  .hbc-seg{ flex:1 1 0; }
+  .hbc-seg + .hbc-seg{ box-shadow:inset 1px 0 0 rgba(42,33,24,0.14); }
+  .hbc-caption{
+    font-family:'Noto Sans JP',sans-serif; font-size:12px; letter-spacing:0.03em;
+    color:#6B5B47; margin:16px 0 0; line-height:1.8;
+  }
+  .hbc-blessing{
+    font-family:'EB Garamond','Shippori Mincho',serif; font-style:italic; font-weight:500;
+    font-size:clamp(16px,3.6vw,19px); line-height:1.9; color:#2A2118;
+    margin:44px 0 0;
+  }
+  .hbc-stamp{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin:40px 0 0; font-family:'Shippori Mincho',serif; color:#6B5B47;
+  }
+  .hbc-stamp-num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:50%; border:1px solid rgba(107,91,71,0.4);
+    font-size:13px;
+  }
+  .hbc-stamp-cat{ font-family:'Noto Sans JP',sans-serif; font-size:11px; letter-spacing:0.08em; color:#6B5B47; }
+
+  .hina-birth-actions{ text-align:center; margin-top:36px; }
+  .hina-birth-save{
+    background:none; border:none; cursor:pointer; padding:0 0 4px;
+    font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:#9A8A7A; border-bottom:1px solid transparent; transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .hina-birth-save:hover{ color:#E8E0D0; border-color:rgba(232,224,208,0.4); }
+  .hina-birth-save:disabled{ opacity:0.45; cursor:default; }
+
+  .hina-birth-open{
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:10px 18px;
+    margin-top:20px;
+  }
+  .hbo-tag{ font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; color:#71685d; }
+  .hbo-link{
+    font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.08em; color:#9A8A7A;
+    display:inline-flex; align-items:baseline; gap:4px; border-bottom:1px solid transparent;
+    transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .hbo-link:hover{ color:#E8E0D0; border-color:rgba(232,224,208,0.4); }
+  .hbo-jp{ font-family:'Noto Sans JP',sans-serif; font-size:11px; color:#83766a; }
+
+  footer a:hover{ color:#E8E0D0; }
+
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .act-open-arrow{ transition:none; transform:none; }
+    .act-open:hover .act-open-arrow{ transform:none; }
+    .act-open,
+    .hina-birth-m,
+    .hina-birth-save,
+    .hbo-link,
+    nav a,
+    footer a{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<!-- ミニマルナビ -->
+<nav class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-10 py-5" style="background:linear-gradient(to bottom, rgba(10,9,6,0.85), transparent);">
+  <a href="../index.html" class="font-heading text-[11px] tracking-[2px] uppercase text-sub hover:text-[#E8E0D0] transition-colors">← NOCTA</a>
+</nav>
+
+<!-- ヒーロー -->
+<section id="hero" class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+  <p class="reveal section-tag mb-8">HiNa Collection</p>
+  <h1 class="reveal reveal-d1 hina-gradient font-display font-semibold" style="font-size:clamp(88px,20vw,240px); line-height:0.92; letter-spacing:0.01em;">HiNa</h1>
+  <p class="reveal reveal-d2 font-display" style="font-style:italic; font-size:clamp(20px,3.4vw,32px); color:#B8B4AE; margin-top:20px; letter-spacing:0.02em;">
+    眺めることも、あそび。
+  </p>
+  <p class="reveal reveal-d3 font-jp text-sub" style="font-size:14px; letter-spacing:0.08em; line-height:1.9; margin-top:18px; max-width:32em;">
+    銀猫が見つけた、宝石と花と色の静かな図鑑。
+  </p>
+</section>
+
+<!-- 序（銀猫） -->
+<section class="relative py-24 md:py-32 px-6 border-t border-white/5">
+  <div class="max-w-[640px] mx-auto text-center">
+    <p class="reveal font-display" style="font-size:clamp(20px,2.6vw,26px); line-height:2; color:#E8E0D0;">
+      銀猫は、美しいものを集めて、静かに眺める。<br>
+      <span class="reveal reveal-d1" style="display:inline-block; margin-top:2px;">ときどき手を伸ばすと、それはあそびになる。</span>
+    </p>
+  </div>
+</section>
+
+<!-- 三部作 -->
+<section id="trilogy" class="relative py-20 md:py-28 px-6 border-t border-white/5">
+  <div class="max-w-[820px] mx-auto">
+    <p class="reveal section-tag mb-14 justify-center w-full" style="justify-content:center;">Trilogy</p>
+
+    <!-- 第一部 — HiNa Gyu(宝石) -->
+    <div class="act-row reveal py-12 md:py-16">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2">
+          <span class="act-num">01</span>
+          <span class="act-label">第一部</span>
+        </div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);">HiNa Gyu<span class="act-kana">「宝石」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">世界の宝石を、手のひらで光にかざす。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">石言葉・誕生石の図鑑</span></p>
+            <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">かざす（光にきらめく）</span></p>
+          </div>
+          <a href="../gems/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第二部 — HiNa Ichi(花) -->
+    <div class="act-row reveal py-12 md:py-16">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2">
+          <span class="act-num">02</span>
+          <span class="act-label">第二部</span>
+        </div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);">HiNa Ichi<span class="act-kana">「花」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">季節の花を、なぞって咲かせる。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">花言葉・誕生花の図鑑</span></p>
+            <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">咲かせる（庭が育つ）</span></p>
+          </div>
+          <a href="../flora/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第三部 — HiNa Hare(色) -->
+    <div class="act-row reveal py-12 md:py-16" style="border-bottom:1px solid rgba(184,180,174,0.1);">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2">
+          <span class="act-num">03</span>
+          <span class="act-label">第三部</span>
+        </div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);">HiNa Hare<span class="act-kana">「色」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">日本の伝統色に、筆で遊ぶ。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">色の物語・かさねの図鑑</span></p>
+            <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">筆あそび（選んだ色のインク）</span></p>
+          </div>
+          <a href="../iro/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 共通の背骨 -->
+<section class="relative py-24 md:py-28 px-6">
+  <div class="max-w-[560px] mx-auto text-center">
+    <p class="reveal font-jp text-sub" style="font-size:14px; line-height:2.1; letter-spacing:0.04em;">
+      どの図鑑にも、今日の一つと、あなたの誕生の一つがある。<br>
+      気に入ったものは、一枚の絵として持ち帰れる。
+    </p>
+  </div>
+</section>
+
+<!-- 誕生HiNa（Task2で#birth-shelfを実装） -->
+<section id="birth" class="relative py-24 md:py-32 px-6 border-t border-white/5">
+  <div class="max-w-[720px] mx-auto text-center">
+    <p class="reveal section-tag mb-6" style="justify-content:center;">誕生HiNa</p>
+    <h2 class="reveal reveal-d1 font-display font-semibold" style="font-size:clamp(28px,4.2vw,44px); color:#E8E0D0;">12ヶ月の、贈り物棚。</h2>
+    <p class="reveal reveal-d2 font-jp text-sub mt-5" style="font-size:14px; line-height:2; letter-spacing:0.03em;">
+      生まれた月をえらぶと、花と石と色が、一枚のカードになる。
+    </p>
+  </div>
+  <div id="birth-shelf" class="reveal reveal-d3 max-w-[960px] mx-auto mt-16" aria-live="polite"></div>
+</section>
+
+<!-- フッター -->
+<footer class="relative border-t border-white/5 py-16 px-6 text-center">
+  <div class="reveal max-w-sm mx-auto">
+    <img src="../img/cat/silver-sit.png" alt="" style="width:clamp(72px,9vw,104px); opacity:0.85; margin:0 auto 20px;">
+    <p class="font-jp text-sub" style="font-size:13px; line-height:1.9;">すべての図鑑は、叩き台です。眺め方は自由に。</p>
+    <a href="../index.html" class="inline-block mt-6 font-heading text-[11px] tracking-[2px] uppercase text-sub hover:text-[#E8E0D0] transition-colors">NOCTA ホームへ戻る</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+
+  if (reduceMotion) {
+    els.forEach(function (el) { el.classList.add('active'); });
+    return;
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('active'); });
+    return;
+  }
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  els.forEach(function (el) { observer.observe(el); });
+})();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.NoctaBirthHina) {
+    window.NoctaBirthHina.mount(document.getElementById('birth-shelf'));
+  }
+});
+</script>
+</body>
+</html>
