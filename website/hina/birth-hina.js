@@ -3,8 +3,11 @@
  *
  * 生まれた月を選ぶと、誕生花・誕生石・HiNa誕生色・銀猫の祝福1文を
  * 一枚の暖色の贈り物カード（和紙寄りの生成り#F0EAD8）にして見せる。
- * 誕生花・誕生石は実写の標本写真（丸フレーム2点）を添え、HiNa誕生色は
- * 帯ではなく一つの色点+名前で静かに示す（植物/鉱物標本カードの静けさを保つ）。
+ * 誕生花・誕生石・HiNa誕生色は同格の丸フレーム標本3点として並べる
+ * （花・石は実写写真、誕生色は hinaColor.hex のソリッド色見本。サイズ・枠・ラベルを揃え、
+ * 淡色（桜色等）でも生成り地に対して視認できるよう全丸に強めの外枠を効かせる）。
+ * 誕生花名は必ず1行に収める（DOM: white-space:nowrap+実測での自動縮小、
+ * Canvas: 自動縮小フォントの下限を低めに取る）。
  * 落款(スタンプ)は月番号の円のみ（キャラクター表記は持たない）。
  *
  * 依存: window.HINA_BIRTH（hina-birth-data.js を先に読み込むこと。各エントリの
@@ -129,11 +132,11 @@
               "</span>" +
               '<figcaption class="hbc-specimen-label" data-f="stoneLabel"></figcaption>' +
             "</figure>" +
+            '<figure class="hbc-specimen" data-specimen="color">' +
+              '<span class="hbc-specimen-frame" data-f="colorSwatch" aria-hidden="true"></span>' +
+              '<figcaption class="hbc-specimen-label" data-f="colorLabel"></figcaption>' +
+            "</figure>" +
           "</div>" +
-          '<p class="hbc-caption">' +
-            '<span class="hbc-caption-dot" data-f="colorDot" aria-hidden="true"></span>' +
-            '<span data-f="colorLabel"></span>' +
-          "</p>" +
           '<p class="hbc-blessing" data-f="blessing"></p>' +
           '<p class="hbc-stamp">' +
             '<span class="hbc-stamp-num" data-f="stampNum"></span>' +
@@ -150,6 +153,28 @@
         '<a href="../iro/" class="hbo-link">Hare<span class="hbo-jp">色</span></a>' +
       "</div>"
     );
+  }
+
+  /* ---- DOM描画ユーティリティ ---- */
+  /* 誕生花名(.hbc-flower)を必ず1行に収める。CSS側でwhite-space:nowrapを強制しているため、
+     文字数が多い花名(「チューリップ」等)はビューポート幅基準のclamp()フォントサイズのままだと
+     カード幅をはみ出しうる(特にデスクトップ幅でフォントサイズが大きく振れる場合)。
+     実測(scrollWidth>clientWidth)しながら1pxずつ縮小し、1行に収まるまで続ける
+     (下限を設け、極端な縮小は避ける。要素が非表示/未接続でclientWidthが取れない場合は
+     CSSのclamp()にそのまま委ねて静かに諦める)。 */
+  function fitFlowerName(el) {
+    if (!el) return;
+    el.style.fontSize = "";
+    var maxWidth = el.clientWidth;
+    if (!maxWidth) return;
+    var minPx = 28;
+    var guard = 0;
+    while (el.scrollWidth > maxWidth && guard < 60) {
+      var size = parseFloat(getComputedStyle(el).fontSize);
+      if (!size || size <= minPx) break;
+      el.style.fontSize = (size - 1) + "px";
+      guard++;
+    }
   }
 
   /* ---- Canvas描画ユーティリティ ---- */
@@ -169,6 +194,12 @@
     return lines;
   }
 
+  /* 誕生花・誕生石・誕生色の3標本すべてに使う強化枠(淡色の色見本(桜色等)でも生成り地#F0EAD8に対して
+     視認できる強度。DOM側 .hbc-specimen-frame の box-shadow と同じ値。3点の「枠」を揃えるため
+     写真標本にも同じ強度を適用する)。 */
+  var SPECIMEN_RING_STYLE = "rgba(42,33,24,0.38)";
+  var SPECIMEN_RING_WIDTH = 1.75;
+
   /* 標本写真1点を丸フレームに描く(clipで丸抜き・object-fit:coverと同じ正方形クロップ)。
      image が null(未読込・失敗)の場合はフレームの輪郭だけを描き、写真は省く
      (グレースフルフォールバック。カード自体はこの1枚を欠いても静かに成立する)。 */
@@ -187,21 +218,38 @@
       ctx.restore();
       ctx.beginPath();
       ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.strokeStyle = "rgba(42,33,24,0.22)";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = SPECIMEN_RING_STYLE;
+      ctx.lineWidth = SPECIMEN_RING_WIDTH;
       ctx.stroke();
     } else {
       ctx.fillStyle = "rgba(107,91,71,0.08)";
       ctx.fill();
-      ctx.strokeStyle = "rgba(42,33,24,0.18)";
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = SPECIMEN_RING_STYLE;
+      ctx.lineWidth = SPECIMEN_RING_WIDTH;
       ctx.stroke();
       ctx.restore();
     }
   }
 
+  /* 誕生色の標本(3点目)を丸フレームに描く。花・石が実写写真であるのに対し、誕生色は
+     hinaColor.hex のソリッド塗り(色見本)。淡色(桜色#FEF4F4等)でも生成り地#F0EAD8に対して
+     色見本として視認できるよう、写真標本と同じ強化枠(SPECIMEN_RING_STYLE)を適用し、
+     サイズ・枠・ラベルを花・石と揃えて3点を同格に見せる。 */
+  function drawColorSwatch(ctx, cx, cy, r, hex) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.fillStyle = hex;
+    ctx.fill();
+    ctx.strokeStyle = SPECIMEN_RING_STYLE;
+    ctx.lineWidth = SPECIMEN_RING_WIDTH;
+    ctx.stroke();
+    ctx.restore();
+  }
+
   /* 実寸1080x1440(3:4・縦長)のカードをオフスクリーンcanvasに描く。
-     見た目はDOMのカード(.hina-birth-card)と同じ構成(eyebrow→花名→標本写真2点→誕生色→祝福→スタンプ)。
+     見た目はDOMのカード(.hina-birth-card)と同じ構成(eyebrow→花名→標本3点(花・石・誕生色)→祝福→スタンプ)。
      images省略時(または未読込)は写真なしで描く(呼び出し側はbuildCardCanvasAsyncを使うこと)。 */
   function buildCardCanvas(entry, images) {
     var flowerImg = images && images.flowerImg;
@@ -232,18 +280,22 @@
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
 
-    /* 誕生花名の自動縮小フォント(長い名前でも1行に収まる大きさを先に確定) */
+    /* 誕生花名の自動縮小フォント(長い名前でも1行に収まる大きさを先に確定)。
+       下限を56→40に下げ、「チューリップ」等の長い花名でも確実に1行(W*0.8以内)に収める
+       (DOM側のwhite-space:nowrap+実測縮小と同じ意図をCanvas側でも保証する)。 */
     var flowerSize = 128;
     ctx.font = '600 ' + flowerSize + 'px "Shippori Mincho", "EB Garamond", serif';
-    while (ctx.measureText(entry.flower.name).width > W * 0.8 && flowerSize > 56) {
+    while (ctx.measureText(entry.flower.name).width > W * 0.8 && flowerSize > 40) {
       flowerSize -= 4;
       ctx.font = '600 ' + flowerSize + 'px "Shippori Mincho", "EB Garamond", serif';
     }
 
-    /* 標本ラベル/祝福の折り返し行数を先に計算 */
+    /* 標本ラベル/祝福の折り返し行数を先に計算。誕生花・誕生石・誕生色の3ラベルを
+       同じ書式(「誕生○ ○○」)・同じフォントで揃える(3点を同格に見せる)。 */
     ctx.font = '500 22px "Noto Sans JP", sans-serif';
     var flowerLabelText = "誕生花 " + entry.flower.name;
     var stoneLabelText = "誕生石 " + entry.stone.name;
+    var colorLabelText = "誕生色 " + entry.hinaColor.name;
     var specimenLabelLH = 30;
 
     ctx.font = 'italic 500 44px "EB Garamond", "Shippori Mincho", serif';
@@ -252,15 +304,17 @@
 
     /* ブロック全体の高さを積み上げて求め、余白を残しつつキャンバス縦中央に配置する。
        固定天頂+固定下端(スタンプ)で余白が偏る/余りすぎるのを避け、贈り物として
-       バランスの良い一枚に見せる(祝福文の行数が変わっても自動で釣り合う)。 */
-    var specimenR = 96;
-    var colorLineH = 30;
+       バランスの良い一枚に見せる(祝福文の行数が変わっても自動で釣り合う)。
+       標本3点(花・石・誕生色)は1つの行として積み上げる(誕生色専用の帯行は持たない)。
+       specimenGapXは全12ヶ月のうち最も長い花名+石名の組(3月「チューリップ」+「アクアマリン」・
+       各約203px@22px)でもラベル同士が重ならない実測値(円の中心間隔2R+gapX≒224px)。 */
+    var specimenR = 80;
+    var specimenGapX = 64;
     var stampR = 52, stampGap = 44;
     var blockHeight =
       36 /* eyebrow */ + 118 /* → flower */ +
-      flowerSize * 0.86 /* flower本体 */ + 66 /* → 標本写真 */ +
-      specimenR * 2 + 20 + specimenLabelLH /* 標本写真(丸フレーム+ラベル) */ + 54 /* → 誕生色 */ +
-      colorLineH + 86 /* → 祝福 */ +
+      flowerSize * 0.86 /* flower本体 */ + 66 /* → 標本3点 */ +
+      specimenR * 2 + 20 + specimenLabelLH /* 標本3点(丸フレーム+ラベル) */ + 130 /* → 祝福 */ +
       blessingLines.length * blessingLH + stampGap +
       stampR * 2 /* stamp */;
     var topMargin = Math.max(110, (H - blockHeight) / 2);
@@ -280,44 +334,25 @@
     ctx.fillText(entry.flower.name, cx, y);
     y += flowerSize * 0.86 + 66;
 
-    /* 標本写真2点(誕生花・誕生石)を丸フレームで並べ、写実は写真に委ねる。
-       写真が読めない月はdrawSpecimenがフレーム輪郭だけを描いて静かに続ける。 */
-    var specimenGapX = 60;
-    var specCxL = cx - specimenR - specimenGapX / 2;
-    var specCxR = cx + specimenR + specimenGapX / 2;
+    /* 標本3点(誕生花・誕生石・誕生色)を同じ大きさの丸フレームで並べる。
+       花・石は実写写真(写実は写真に委ねる。読めない月はdrawSpecimenがフレーム輪郭だけを描いて
+       静かに続ける)、誕生色はhinaColor.hexのソリッド色見本(drawColorSwatch)。
+       3点とも同じ強化枠(SPECIMEN_RING_STYLE)・同じ書式のラベルで同格に揃える。 */
+    var specCxL = cx - (specimenR * 2 + specimenGapX);
+    var specCxM = cx;
+    var specCxR = cx + (specimenR * 2 + specimenGapX);
     var specCy = y + specimenR;
     drawSpecimen(ctx, specCxL, specCy, specimenR, flowerImg);
-    drawSpecimen(ctx, specCxR, specCy, specimenR, stoneImg);
+    drawSpecimen(ctx, specCxM, specCy, specimenR, stoneImg);
+    drawColorSwatch(ctx, specCxR, specCy, specimenR, entry.hinaColor.hex);
     y += specimenR * 2 + 20;
 
     ctx.fillStyle = INK_SUB;
     ctx.font = '500 22px "Noto Sans JP", sans-serif';
     ctx.fillText(flowerLabelText, specCxL, y);
-    ctx.fillText(stoneLabelText, specCxR, y);
-    y += specimenLabelLH + 54;
-
-    /* 誕生色は帯ではなく色点1つ+名前の1行で静かに示す */
-    ctx.font = '500 24px "Noto Sans JP", sans-serif';
-    var colorText = "誕生色  " + entry.hinaColor.name;
-    var dotR = 7, dotGap = 12;
-    var colorTextWidth = ctx.measureText(colorText).width;
-    var colorLineLeft = cx - (colorTextWidth + dotR * 2 + dotGap) / 2;
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(colorLineLeft + dotR, y - 8, dotR, 0, Math.PI * 2);
-    ctx.fillStyle = entry.hinaColor.hex;
-    ctx.fill();
-    /* 淡色(桜色等)でも生成り地に対して色見本として視認できるよう、外枠を強めに引く
-       (DOM側 .hbc-caption-dot の box-shadow と同じ強度: rgba(42,33,24,0.38)・約1.75px相当) */
-    ctx.strokeStyle = "rgba(42,33,24,0.38)";
-    ctx.lineWidth = 1.75;
-    ctx.stroke();
-    ctx.restore();
-    ctx.fillStyle = INK_SUB;
-    ctx.textAlign = "left";
-    ctx.fillText(colorText, colorLineLeft + dotR * 2 + dotGap, y);
-    ctx.textAlign = "center";
-    y += colorLineH + 86;
+    ctx.fillText(stoneLabelText, specCxM, y);
+    ctx.fillText(colorLabelText, specCxR, y);
+    y += specimenLabelLH + 130;
 
     /* 祝福文(このカードの主役) */
     var blessingTop = y;
@@ -451,7 +486,7 @@
     var fStoneLabel = container.querySelector('[data-f="stoneLabel"]');
     var fFlowerFigure = fFlowerImg ? fFlowerImg.closest(".hbc-specimen") : null;
     var fStoneFigure = fStoneImg ? fStoneImg.closest(".hbc-specimen") : null;
-    var fColorDot = container.querySelector('[data-f="colorDot"]');
+    var fColorSwatch = container.querySelector('[data-f="colorSwatch"]');
     var fColorLabel = container.querySelector('[data-f="colorLabel"]');
     var fBlessing = container.querySelector('[data-f="blessing"]');
     var fStampNum = container.querySelector('[data-f="stampNum"]');
@@ -505,11 +540,12 @@
 
       fEyebrow.textContent = "誕生 ・ " + MONTH_LABEL[month];
       fFlower.textContent = entry.flower.name;
+      fitFlowerName(fFlower); /* 長い花名(「チューリップ」等)でも必ず1行に収める */
       fFlowerLabel.textContent = flowerLabelText;
       fStoneLabel.textContent = stoneLabelText;
       setSpecimenImage(fFlowerImg, fFlowerFigure, entry.flower.img);
       setSpecimenImage(fStoneImg, fStoneFigure, entry.stone.img);
-      fColorDot.style.background = entry.hinaColor.hex;
+      fColorSwatch.style.background = entry.hinaColor.hex;
       fColorLabel.textContent = "誕生色 " + entry.hinaColor.name;
       fBlessing.textContent = entry.blessing;
       fStampNum.textContent = pad2(month);
@@ -543,6 +579,13 @@
     }
     container.addEventListener("click", onClick);
 
+    /* 花名1行保証の再計測: fitFlowerNameはrender時に1回走るが、Webフォント(Shippori Mincho)適用前に
+       計測されると差し替え後に幅が変わる。またウィンドウ縮小/画面回転でも器の幅が変わる。
+       → フォントready後とresizeで現在月の花名を再fitする(detachで解除)。 */
+    function refitName() { if (current) fitFlowerName(fFlower); }
+    window.addEventListener("resize", refitName);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(refitName, function () {}); }
+
     /* 初期表示: ?m= を最優先。不正・欠落は今日の月(それも無効なら1月)にフォールバック */
     var initial = readMonthFromQuery();
     if (initial === null) initial = todayMonthFallback();
@@ -560,6 +603,7 @@
     return {
       detach: function () {
         container.removeEventListener("click", onClick);
+        window.removeEventListener("resize", refitName);
         container.innerHTML = "";
       }
     };

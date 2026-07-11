@@ -121,18 +121,25 @@
   .hbc-flower{
     font-family:'Shippori Mincho','EB Garamond',serif; font-weight:600;
     font-size:clamp(38px,8.6vw,54px); color:#2A2118; margin:16px 0 0; line-height:1.15;
+    /* 長い花名(「チューリップ」等)でも必ず1行に収める。CSSのclamp()はビューポート幅基準で
+       カード幅そのものは考慮しないため、実測して収まらない場合はJS(fitFlowerName)が
+       font-sizeを直接縮小する。overflow/text-overflowはJSが効かない場合の保険。 */
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
 
-  /* 標本写真2点(誕生花・誕生石) — 丸フレームに実写を収め、標本カードの静けさを保つ */
+  /* 標本3点(誕生花・誕生石・HiNa誕生色) — 同じ大きさの丸フレームに揃え、花・石は実写、
+     誕生色はhinaColor.hexのソリッド色見本(背景色)を収める。3点を同格に見せる。 */
   .hbc-specimens{
-    display:flex; justify-content:center; align-items:flex-start; gap:26px;
+    display:flex; justify-content:center; align-items:flex-start; gap:16px;
     margin:28px 0 0; padding:0;
   }
-  .hbc-specimen{ margin:0; text-align:center; }
+  .hbc-specimen{ margin:0; text-align:center; flex:0 1 78px; max-width:78px; min-width:0; }
   .hbc-specimen-frame{
-    display:block; width:84px; height:84px; border-radius:50%; overflow:hidden;
+    display:block; width:100%; aspect-ratio:1/1; border-radius:50%; overflow:hidden;
     margin:0 auto; background:rgba(107,91,71,0.08);
-    box-shadow:0 0 0 1px rgba(60,50,30,0.16), 0 8px 18px -8px rgba(60,50,30,0.35);
+    /* 淡色(桜色#FEF4F4等)は生成り地#F0EAD8と馴染んで境界が弱くなるため、外枠を強めに引く。
+       写真標本にも同じ強度を適用し、3点の枠を揃える(Canvas描画側と同じ強度)。 */
+    box-shadow:0 0 0 1.75px rgba(42,33,24,0.38), 0 8px 18px -8px rgba(60,50,30,0.35);
   }
   .hbc-specimen-img{ display:block; width:100%; height:100%; object-fit:cover; }
   /* 実写の読込に失敗した月は、写真だけを静かに省いてフレーム(淡い円)のみ残す */
@@ -142,17 +149,6 @@
     color:#6B5B47; margin:10px 0 0;
   }
 
-  .hbc-caption{
-    font-family:'Noto Sans JP',sans-serif; font-size:12px; letter-spacing:0.03em;
-    color:#6B5B47; margin:22px 0 0; line-height:1.8;
-  }
-  /* HiNa誕生色は帯ではなく色点1つ+名前の1行で静かに示す。
-     淡色(桜色#FEF4F4等)は生成り地#F0EAD8と馴染んで境界が弱くなるため、
-     外枠を強めに引いて淡色でも色見本として視認できるようにする(Canvas描画側と同じ強度)。 */
-  .hbc-caption-dot{
-    display:inline-block; width:9px; height:9px; border-radius:50%;
-    margin-right:6px; vertical-align:middle; box-shadow:0 0 0 1.75px rgba(42,33,24,0.38) inset;
-  }
   .hbc-blessing{
     font-family:'EB Garamond','Shippori Mincho',serif; font-style:italic; font-weight:500;
     font-size:clamp(16px,3.6vw,19px); line-height:1.9; color:#2A2118;
