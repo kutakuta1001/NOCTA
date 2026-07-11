@@ -122,24 +122,44 @@
     font-family:'Shippori Mincho','EB Garamond',serif; font-weight:600;
     font-size:clamp(38px,8.6vw,54px); color:#2A2118; margin:16px 0 0; line-height:1.15;
   }
-  .hbc-ribbon{
-    display:flex; height:9px; border-radius:5px; overflow:hidden;
-    margin:26px auto 0; max-width:220px;
-    box-shadow:0 1px 2px rgba(0,0,0,0.15) inset;
+
+  /* 標本写真2点(誕生花・誕生石) — 丸フレームに実写を収め、標本カードの静けさを保つ */
+  .hbc-specimens{
+    display:flex; justify-content:center; align-items:flex-start; gap:26px;
+    margin:28px 0 0; padding:0;
   }
-  .hbc-seg{ flex:1 1 0; }
-  .hbc-seg + .hbc-seg{ box-shadow:inset 1px 0 0 rgba(42,33,24,0.14); }
+  .hbc-specimen{ margin:0; text-align:center; }
+  .hbc-specimen-frame{
+    display:block; width:84px; height:84px; border-radius:50%; overflow:hidden;
+    margin:0 auto; background:rgba(107,91,71,0.08);
+    box-shadow:0 0 0 1px rgba(60,50,30,0.16), 0 8px 18px -8px rgba(60,50,30,0.35);
+  }
+  .hbc-specimen-img{ display:block; width:100%; height:100%; object-fit:cover; }
+  /* 実写の読込に失敗した月は、写真だけを静かに省いてフレーム(淡い円)のみ残す */
+  .hbc-specimen.is-missing .hbc-specimen-img{ display:none; }
+  .hbc-specimen-label{
+    font-family:'Noto Sans JP',sans-serif; font-size:11px; letter-spacing:0.03em;
+    color:#6B5B47; margin:10px 0 0;
+  }
+
   .hbc-caption{
     font-family:'Noto Sans JP',sans-serif; font-size:12px; letter-spacing:0.03em;
-    color:#6B5B47; margin:16px 0 0; line-height:1.8;
+    color:#6B5B47; margin:22px 0 0; line-height:1.8;
+  }
+  /* HiNa誕生色は帯ではなく色点1つ+名前の1行で静かに示す。
+     淡色(桜色#FEF4F4等)は生成り地#F0EAD8と馴染んで境界が弱くなるため、
+     外枠を強めに引いて淡色でも色見本として視認できるようにする(Canvas描画側と同じ強度)。 */
+  .hbc-caption-dot{
+    display:inline-block; width:9px; height:9px; border-radius:50%;
+    margin-right:6px; vertical-align:middle; box-shadow:0 0 0 1.75px rgba(42,33,24,0.38) inset;
   }
   .hbc-blessing{
     font-family:'EB Garamond','Shippori Mincho',serif; font-style:italic; font-weight:500;
     font-size:clamp(16px,3.6vw,19px); line-height:1.9; color:#2A2118;
-    margin:44px 0 0;
+    margin:40px 0 0;
   }
   .hbc-stamp{
-    display:flex; align-items:center; justify-content:center; gap:8px;
+    display:flex; align-items:center; justify-content:center;
     margin:40px 0 0; font-family:'Shippori Mincho',serif; color:#6B5B47;
   }
   .hbc-stamp-num{
@@ -147,7 +167,6 @@
     width:34px; height:34px; border-radius:50%; border:1px solid rgba(107,91,71,0.4);
     font-size:13px;
   }
-  .hbc-stamp-cat{ font-family:'Noto Sans JP',sans-serif; font-size:11px; letter-spacing:0.08em; color:#6B5B47; }
 
   .hina-birth-actions{ text-align:center; margin-top:36px; }
   .hina-birth-save{
