@@ -309,12 +309,15 @@
     transition:color 0.3s, background 0.3s;
   }
   .gyu-mode-btn.active{ color:#0A0906; background:#B8B4AE; }
-  /* 演出トグル（しっとり/きらめき）— gyu-mode-toggleと同系だが一段控えめ。gemモード時のみ表示 */
+  /* 演出トグル（光の向き=中央/左/右・虹の強さ=なし/弱/中/強）— gyu-mode-toggleと同系だが一段控えめ。gemモード時のみ表示 */
   .gyu-env-toggle{
     display:flex; gap:0; margin-top:10px;
     border:1px solid rgba(184,180,174,0.18); border-radius:999px; overflow:hidden;
   }
   .gyu-env-toggle[hidden]{ display:none; }
+  /* 虹の強さ(4ボタン)は光の向き(3ボタン)の直下に来るため、上の余白を少し詰めて2段が
+     窮屈に見えないバランスにする */
+  .gyu-aura-toggle{ margin-top:8px; }
   .gyu-env-btn{
     font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.12em; font-weight:700; text-transform:uppercase;
     color:#8A7C6C; background:transparent; border:none; padding:6px 14px; cursor:pointer;
@@ -449,10 +452,18 @@
     <button type="button" class="gyu-mode-btn active" data-mode="gem" aria-pressed="true">3Dジェム</button>
     <button type="button" class="gyu-mode-btn" data-mode="photo" aria-pressed="false">写真</button>
   </div>
-  <!-- 演出トグル（3Dジェム表示中のみ）: しっとり(still)/きらめき(aurora=背後光源+虹) -->
-  <div class="gyu-env-toggle" id="gyu-env-toggle" role="group" aria-label="演出" hidden>
-    <button type="button" class="gyu-env-btn active" data-env="still" aria-pressed="true" data-i18n="lightbox.envStill">しっとり</button>
-    <button type="button" class="gyu-env-btn" data-env="aurora" aria-pressed="false" data-i18n="lightbox.envAurora">きらめき(虹)</button>
+  <!-- 光の向き（3Dジェム表示中のみ）: 中央/左/右。still・aurora・PT静止画すべてに反映 -->
+  <div class="gyu-env-toggle" id="gyu-dir-toggle" role="group" aria-label="光の向き" hidden>
+    <button type="button" class="gyu-env-btn active" data-dir="center" aria-pressed="true" data-i18n="lightbox.dirCenter">中央</button>
+    <button type="button" class="gyu-env-btn" data-dir="left" aria-pressed="false" data-i18n="lightbox.dirLeft">左</button>
+    <button type="button" class="gyu-env-btn" data-dir="right" aria-pressed="false" data-i18n="lightbox.dirRight">右</button>
+  </div>
+  <!-- 虹の強さ（3Dジェム表示中のみ）: なし(=しっとり・現状)/弱/中/強 -->
+  <div class="gyu-env-toggle gyu-aura-toggle" id="gyu-aura-toggle" role="group" aria-label="虹の強さ" hidden>
+    <button type="button" class="gyu-env-btn active" data-aura="0" aria-pressed="true" data-i18n="lightbox.auraNone">なし</button>
+    <button type="button" class="gyu-env-btn" data-aura="1" aria-pressed="false" data-i18n="lightbox.auraWeak">弱</button>
+    <button type="button" class="gyu-env-btn" data-aura="2" aria-pressed="false" data-i18n="lightbox.auraMid">中</button>
+    <button type="button" class="gyu-env-btn" data-aura="3" aria-pressed="false" data-i18n="lightbox.auraStrong">強</button>
   </div>
   <div class="lb-caption">
     <p class="font-heading text-[11px] tracking-[2px] uppercase" id="lightbox-en" style="color:var(--gem);"></p>
@@ -493,8 +504,13 @@
     "meta.source":     { ja: "出典",                                                              en: "Source" },
     "meta.kotoba":     { ja: "石言葉",                                                            en: "Stone Meaning" },
     "lightbox.hint":   { ja: "指で傾けて、光にかざす",                                              en: "Drag to tilt & catch the light" },
-    "lightbox.envStill":  { ja: "しっとり",                                                        en: "Calm" },
-    "lightbox.envAurora": { ja: "きらめき(虹)",                                                    en: "Aurora Sparkle" },
+    "lightbox.dirCenter":  { ja: "中央",                                                           en: "Center" },
+    "lightbox.dirLeft":    { ja: "左",                                                             en: "Left" },
+    "lightbox.dirRight":   { ja: "右",                                                             en: "Right" },
+    "lightbox.auraNone":   { ja: "なし",                                                           en: "Off" },
+    "lightbox.auraWeak":   { ja: "弱",                                                             en: "Faint" },
+    "lightbox.auraMid":    { ja: "中",                                                             en: "Mid" },
+    "lightbox.auraStrong": { ja: "強",                                                             en: "Vivid" },
     "today.eyebrow":   { ja: "今日の一石",                                                        en: "Stone of the Day" },
     "today.cta":       { ja: "この石を眺める ↓",                                                  en: "Gaze at this stone ↓" },
     "index.open":      { ja: "目次",                                                              en: "Index" },
@@ -801,7 +817,8 @@
   var gem3dInstance = null;
   var gem3dModulePromise = null;   /* gem3d.js の遅延import（成功時のみ保持・失敗でnull） */
   var currentMode = 'gem';         /* 'gem' | 'photo' — 3Dデータを持つ石の初期はgem */
-  var currentEnvPreset = 'still';  /* 'still' | 'aurora' — 演出トグルの状態。新規mount時は常にstillへ戻る */
+  var currentAuraIntensity = 0;    /* 0=なし(しっとり=現状)|1=弱|2=中|3=強。新規mount時は常に0へ戻る */
+  var currentAuraDirection = 'center'; /* 'center'|'left'|'right'。新規mount時は常にcenterへ戻る */
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* ?nopt=1 で静止時パストレース現像を明示的に無効化（PBRのみ・デバッグ/非対応確認用） */
   var noPt = false;
@@ -863,7 +880,7 @@
       onReady = function () { cleanup(); resolve(window.NoctaGem3d); };
       timer = setTimeout(function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d load timeout')); }, 8000);
       window.addEventListener('noctagem3d-ready', onReady);
-      s.textContent = "import './gem3d.js?v=6'; window.dispatchEvent(new Event('noctagem3d-ready'));";
+      s.textContent = "import './gem3d.js?v=7'; window.dispatchEvent(new Event('noctagem3d-ready'));";
       s.onerror = function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d script error')); };
       document.head.appendChild(s);
     });
@@ -876,23 +893,35 @@
     if (host) host.innerHTML = '';
   }
 
-  /* 演出トグル（しっとり/きらめき）のボタン見た目をpresetに合わせる */
-  function updateEnvToggleUI(preset) {
-    var envToggle = document.getElementById('gyu-env-toggle');
-    if (!envToggle) return;
-    envToggle.querySelectorAll('.gyu-env-btn').forEach(function (b) {
-      var on = b.getAttribute('data-env') === preset;
+  /* 虹の強さ/光の向きトグルのボタン見た目を現在値に合わせる */
+  function updateAuraToggleUI(intensity) {
+    var toggle = document.getElementById('gyu-aura-toggle');
+    if (!toggle) return;
+    toggle.querySelectorAll('.gyu-env-btn').forEach(function (b) {
+      var on = parseInt(b.getAttribute('data-aura'), 10) === intensity;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  function updateDirToggleUI(direction) {
+    var toggle = document.getElementById('gyu-dir-toggle');
+    if (!toggle) return;
+    toggle.querySelectorAll('.gyu-env-btn').forEach(function (b) {
+      var on = b.getAttribute('data-dir') === direction;
       b.classList.toggle('active', on);
       b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
 
-  /* 演出プリセットを切替（gem3dInstanceが無い間はUI状態だけ更新。3Dモードのみ意味を持つ） */
-  function setEnvPreset(preset) {
-    preset = (preset === 'aurora') ? 'aurora' : 'still';
-    currentEnvPreset = preset;
-    updateEnvToggleUI(preset);
-    if (gem3dInstance) gem3dInstance.setEnv(preset);
+  /* 虹の強さ・光の向きを切替（gem3dInstanceが無い間はUI状態だけ更新。3Dモードのみ意味を持つ）。
+     opts省略時は現在値を維持するため、片方のトグルだけ押しても他方は変わらない。 */
+  function setAuraUI(opts) {
+    opts = opts || {};
+    if (typeof opts.intensity === 'number') currentAuraIntensity = opts.intensity;
+    if (typeof opts.direction === 'string') currentAuraDirection = opts.direction;
+    updateAuraToggleUI(currentAuraIntensity);
+    updateDirToggleUI(currentAuraDirection);
+    if (gem3dInstance) gem3dInstance.setAura({ intensity: currentAuraIntensity, direction: currentAuraDirection });
   }
 
   /* 3Dモードをマウント（three読込失敗時は写真モードへフォールバック）
@@ -915,10 +944,12 @@
       if (stale()) { if (inst) inst.detach(); return; }   /* mount中にstale化したら即破棄 */
       if (!inst) { setMode('photo'); return; }             /* WebGL不可等 → 写真へ */
       gem3dInstance = inst;
-      /* 新規mountは常にstillで始まる（gem3d側のopts.env未指定=既定）ため、
-         トグルUIもここで確実にstillへ揃える（写真↔3D往復での不整合を防ぐ） */
-      currentEnvPreset = 'still';
-      updateEnvToggleUI('still');
+      /* 新規mountは常に「なし(intensity=0)・中央(center)」で始まる（gem3d側のopts未指定=既定）
+         ため、トグルUIもここで確実にその既定へ揃える（写真↔3D往復での不整合を防ぐ） */
+      currentAuraIntensity = 0;
+      currentAuraDirection = 'center';
+      updateAuraToggleUI(0);
+      updateDirToggleUI('center');
     }).catch(function () {
       if (stale()) return;   /* 古い失敗が現在の別石の表示を変えないよう guard */
       setMode('photo');      /* three読込失敗 → 写真へ */
@@ -930,7 +961,8 @@
     currentMode = mode;
     var wrap = document.getElementById('gyu-wrap');
     var toggle = document.getElementById('gyu-mode-toggle');
-    var envToggle = document.getElementById('gyu-env-toggle');
+    var auraToggle = document.getElementById('gyu-aura-toggle');
+    var dirToggle = document.getElementById('gyu-dir-toggle');
     if (wrap) wrap.classList.toggle('mode-gem', mode === 'gem');
     if (toggle) {
       toggle.querySelectorAll('.gyu-mode-btn').forEach(function (b) {
@@ -939,8 +971,9 @@
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
     }
-    /* 演出トグルは3Dジェム表示中のみ意味を持つ（写真モード・3Dなし石では出さない） */
-    if (envToggle) envToggle.hidden = (mode !== 'gem');
+    /* 演出トグル（光の向き・虹の強さ）は3Dジェム表示中のみ意味を持つ（写真モード・3Dなし石では出さない） */
+    if (auraToggle) auraToggle.hidden = (mode !== 'gem');
+    if (dirToggle) dirToggle.hidden = (mode !== 'gem');
     if (mode === 'gem') {
       var g = NOCTA_GEMS[lightboxIdx];
       if (has3d(g) && !gem3dInstance) mountGem3d(g, kazasuGen);
@@ -1063,13 +1096,23 @@
       });
     }
 
-    /* 演出トグル（しっとり/きらめき）のクリック */
-    var envToggleEl = document.getElementById('gyu-env-toggle');
-    if (envToggleEl) {
-      envToggleEl.addEventListener('click', function (e) {
+    /* 虹の強さトグルのクリック */
+    var auraToggleEl = document.getElementById('gyu-aura-toggle');
+    if (auraToggleEl) {
+      auraToggleEl.addEventListener('click', function (e) {
         var btn = e.target.closest('.gyu-env-btn');
         if (!btn) return;
-        setEnvPreset(btn.getAttribute('data-env'));
+        setAuraUI({ intensity: parseInt(btn.getAttribute('data-aura'), 10) });
+      });
+    }
+
+    /* 光の向きトグルのクリック */
+    var dirToggleEl = document.getElementById('gyu-dir-toggle');
+    if (dirToggleEl) {
+      dirToggleEl.addEventListener('click', function (e) {
+        var btn = e.target.closest('.gyu-env-btn');
+        if (!btn) return;
+        setAuraUI({ direction: btn.getAttribute('data-dir') });
       });
     }
 
