@@ -28,6 +28,12 @@
 
 ## 処理済み
 
+- [docs.anthropic.com] Claude Codeリリースノート — v2.1.202で`/checkup`が`/doctor`のエイリアスとしてフルセットアップ点検に拡張（CLAUDE.md短縮提案含む）（2026-07-12）
+- [docs.anthropic.com] Claude Codeリリースノート — v2.1.206で`/doctor`がチェックイン済みCLAUDE.mdファイルの短縮を提案する機能を追加（2026-07-12）
+- [docs.anthropic.com] Claude Codeリリースノート — v2.1.207でhooks/MCPの`${user_config.*}`シェル形式コマンドを拒否（シェルインジェクション対策強化）（2026-07-12）
+- [docs.anthropic.com] モデル一覧 — Fable 5は2026-07-12時点で主要プラットフォーム全てでGA継続中、輸出管理による断続提供・利用不可の記載は見当たらない（2026-07-12）
+- [docs.anthropic.com] ドキュメント構成 — docs.anthropic.comがplatform.claude.com/code.claude.comへ移転（release-notesはGitHub CHANGELOG.mdへリダイレクト）（2026-07-12）
+
 - [changelog v2.1.200] デフォルト権限モードが全インターフェースで "Manual" に変更（`--permission-mode manual` 対応）。NOCTAは bypassPermissions 運用のため起動時のモード確認が必要（2026-07-04）
 - [changelog v2.1.198] サブエージェントがデフォルトでバックグラウンド実行に。サブエージェント動作中もメインモデルが作業を継続できる（Agent Teams・並列フェーズに影響）（2026-07-04）
 - [changelog v2.1.199] スキルのスタック呼び出し `/skill-a /skill-b do XYZ` で先頭スキルを最大5つまでロード可能に（2026-07-04）
