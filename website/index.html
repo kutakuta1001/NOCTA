@@ -252,21 +252,7 @@
             background: #B8B4AE; flex-shrink: 0;
         }
 
-        /* Filter pill */
-        .filter-pill {
-            padding: 9px 22px; border-radius: 9999px;
-            font-family: 'Syne', sans-serif;
-            font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
-            cursor: pointer; transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #9A8A7A; background: transparent;
-        }
-        .filter-pill:hover, .filter-pill.active {
-            background: #B8B4AE; color: #0A0906;
-            border-color: #B8B4AE;
-            box-shadow: 0 0 28px rgba(184,180,174,0.55);
-        }
-        /* Visual フィルターピル（Works の .filter-pill と独立） */
+        /* Visual フィルターピル */
         .vfilter-pill {
             padding: 0.35rem 1.1rem;
             border-radius: 9999px;
@@ -285,7 +271,6 @@
             background: rgba(184,180,174,0.12);
             color: #B8B4AE;
         }
-        /* .vfilter-pill は .vfilter-pill に統合済み */
 
         /* Work card hover */
         .work-card { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease; }
@@ -474,7 +459,6 @@
             <!-- Desktop links -->
             <div class="hidden md:flex items-center gap-10 font-heading text-[12px] tracking-[2px] uppercase">
                 <a href="#about"    class="text-brand-sub hover:text-white transition-colors duration-300">About</a>
-                <a href="#works"    class="text-brand-sub hover:text-white transition-colors duration-300">Works</a>
                 <a href="#visual"   class="text-brand-sub hover:text-white transition-colors duration-300">Visual</a>
                 <a href="#apps"     class="text-brand-sub hover:text-white transition-colors duration-300">Tools</a>
                 <a href="#blog" class="text-brand-sub hover:text-white transition-colors duration-300">Blog</a>
@@ -503,7 +487,6 @@
     <div id="mobile-menu" class="hidden md:hidden glass border-t border-white/8">
         <div class="max-w-[1200px] mx-auto px-6 py-6 flex flex-col gap-5 font-heading text-[13px] tracking-widest uppercase">
             <a href="#about"    class="text-brand-sub hover:text-white transition-colors">About</a>
-            <a href="#works"    class="text-brand-sub hover:text-white transition-colors">Works</a>
             <a href="#visual"   class="text-brand-sub hover:text-white transition-colors">Visual</a>
             <a href="#apps"     class="text-brand-sub hover:text-white transition-colors">Tools</a>
             <a href="#blog" class="text-brand-sub hover:text-white transition-colors">Blog</a>
@@ -577,7 +560,7 @@
                 消費するだけでも、生産するだけでもなく。
             </p>
             <div class="flex gap-4 flex-shrink-0">
-                <a href="#works"   class="btn-primary-cta" data-i18n="hero.cta.works">Works を見る</a>
+                <a href="#portfolio" class="btn-primary-cta" data-i18n="hero.cta.works">作品を見る</a>
                 <a href="#contact" class="btn-glass-cta"   data-i18n="hero.cta.contact">お問い合わせ</a>
             </div>
         </div>
@@ -591,20 +574,16 @@
      ============================================= -->
 <div class="border-y border-white/5 bg-white/[0.015] backdrop-blur-sm">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-10">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="grid grid-cols-3 gap-8 text-center">
             <div class="reveal">
-                <div class="stat-num" id="stat-works">—</div>
-                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.works">楽曲数</div>
-            </div>
-            <div class="reveal reveal-delay-1">
                 <div class="stat-num" id="stat-visual">—</div>
                 <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.visual">ビジュアル数</div>
             </div>
-            <div class="reveal reveal-delay-2">
+            <div class="reveal reveal-delay-1">
                 <div class="stat-num" id="stat-blog">—</div>
                 <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.blog">ブログ数</div>
             </div>
-            <div class="reveal reveal-delay-3">
+            <div class="reveal reveal-delay-2">
                 <div class="stat-num" id="stat-apps">—</div>
                 <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.apps">アプリ数</div>
             </div>
@@ -756,12 +735,11 @@
 
 
 <!-- =============================================
-     03. WORKS / PORTFOLIO
+     03. PORTFOLIO（章扉 — Tools / Visual / Music の入口。楽曲リリース時に作品グリッドを復活予定）
      ============================================= -->
-<section id="works" class="py-32 relative z-10 bg-black/30 border-y border-white/5">
+<section id="portfolio" class="py-24 relative z-10 bg-black/30 border-y border-white/5 scroll-mt-20">
     <div class="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-8">
-
-        <div class="relative text-center mb-16 reveal">
+        <div class="relative text-center reveal">
             <!-- watercolor cat-paw trail: colorful prints in the empty space around the PORTFOLIO title (slow walk) -->
             <div class="paw-trail absolute inset-x-0 z-0 overflow-visible" style="--paw-dur:1.8s; top:-20px; bottom:-8px;" aria-hidden="true">
                 <span class="paw" style="left:2%;  top:6%;  width:44px; transform:rotate(-14deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#CC5B4A; animation-delay:0s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
@@ -772,20 +750,24 @@
                 <span class="paw" style="right:5%; top:88%; width:34px; transform:rotate(8deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#CC5B4A; animation-delay:2.5s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
             </div>
             <h2 class="relative z-10 font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">PORTFOLIO</h2>
-            <p class="relative z-10 font-jp text-brand-sub text-[15px] tracking-wider" data-i18n="works.subtitle">AIと感性が生んだ、作品たち</p>
+            <p class="relative z-10 font-jp text-brand-sub text-[15px] tracking-wider" data-i18n="portfolio.subtitle">AIと感性が生んだ、作品たち</p>
 
-            <!-- Filter pills -->
-            <div class="relative z-10 mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
-                <button class="filter-pill active" data-filter="all">All</button>
-                <button class="filter-pill" data-filter="music">Music</button>
-                <button class="filter-pill" data-filter="pv">PV / MV</button>
-                <button class="filter-pill" data-filter="content">Content</button>
+            <!-- Category pills: 章扉の目次（Tools / Visual は該当セクションへ・Music は準備中） -->
+            <div class="relative z-10 mt-10 flex flex-wrap items-center justify-center gap-3">
+                <a href="#apps"
+                   class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-heading text-[11px] tracking-[3px] uppercase text-brand-sub hover:text-white">
+                    Tools
+                    <svg class="w-3 h-3 opacity-50" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v8M2.5 6.5L6 10l3.5-3.5"/></svg>
+                </a>
+                <a href="#visual"
+                   class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-heading text-[11px] tracking-[3px] uppercase text-brand-sub hover:text-white">
+                    Visual
+                    <svg class="w-3 h-3 opacity-50" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v8M2.5 6.5L6 10l3.5-3.5"/></svg>
+                </a>
+                <span class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/8 bg-white/[0.02] font-heading text-[11px] tracking-[3px] uppercase text-brand-sub/40 cursor-default">
+                    Music — Coming Soon
+                </span>
             </div>
-        </div>
-
-        <!-- Grid — works-data.js から JS でレンダリング -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="works-grid">
-
         </div>
     </div>
 </section>
@@ -892,7 +874,7 @@
             <h2 class="relative z-10 font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">BLOG</h2>
             <p class="relative z-10 font-jp text-brand-sub text-[15px] tracking-wider">Music & Essays</p>
 
-            <!-- Filter pills — .vfilter-pill は .filter-pill / .vfilter-pill と独立 -->
+            <!-- Filter pills（.vfilter-pill） -->
             <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
                 <button class="vfilter-pill active" data-bfilter="all">All</button>
                 <button class="vfilter-pill" data-bfilter="music">Music</button>
@@ -1020,6 +1002,31 @@
 
 
 <!-- =============================================
+     09. BEHIND NOCTA（支えるチーム）
+     ============================================= -->
+<section class="relative z-10 border-t border-white/5 bg-white/[0.02] py-20">
+    <div class="max-w-[760px] mx-auto px-6 lg:px-8 text-center">
+        <p class="section-tag reveal" data-i18n="behind.tag">Behind NOCTA</p>
+        <p class="font-jp text-brand-sub text-[14px] leading-relaxed mb-12 reveal" data-i18n="behind.lead">
+            このプロジェクトは、CEO と、ローカル環境で働く AI エージェントチームが支えています。
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-10 text-left max-w-[640px] mx-auto">
+            <div class="reveal">
+                <div class="font-heading font-bold text-[12px] tracking-[3px] uppercase text-white mb-2" data-i18n="behind.design.name">デザイナーチーム — 3 agents</div>
+                <p class="font-jp text-[13px] text-brand-sub leading-relaxed mb-3" data-i18n="behind.design.desc">設計・実装の競作</p>
+                <p class="text-[10px] tracking-wide text-white/25" style="font-family:'SF Mono',Menlo,monospace;">manual: ~/designer/CLAUDE.md</p>
+            </div>
+            <div class="reveal reveal-delay-1">
+                <div class="font-heading font-bold text-[12px] tracking-[3px] uppercase text-white mb-2" data-i18n="behind.consult.name">コンサルチーム — 3 agents</div>
+                <p class="font-jp text-[13px] text-brand-sub leading-relaxed mb-3" data-i18n="behind.consult.desc">分析・批評・意思決定支援</p>
+                <p class="text-[10px] tracking-wide text-white/25" style="font-family:'SF Mono',Menlo,monospace;">manual: ~/.claude/commands/references/consulting-common.md</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
      FOOTER
      ============================================= -->
 <!-- STORY: 色付き足跡の区切り線（コンテンツとフッターの境界） -->
@@ -1047,7 +1054,7 @@
             <div>
                 <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Creative</div>
                 <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
-                    <a href="#works"  class="hover:text-white transition-colors duration-200" data-i18n="footer.s1">音楽</a>
+                    <span class="text-brand-sub/60" data-i18n="footer.s1">音楽（Coming Soon）</span>
                     <a href="#visual" class="hover:text-white transition-colors duration-200" data-i18n="footer.s2">映像・ビジュアル</a>
                     <a href="#blog"   class="hover:text-white transition-colors duration-200" data-i18n="footer.s3">言葉・ブログ</a>
                     <a href="#apps"   class="hover:text-white transition-colors duration-200" data-i18n="footer.s4">アプリ・ツール</a>
@@ -1173,7 +1180,6 @@
 <!-- =============================================
      JAVASCRIPT
      ============================================= -->
-<script src="works-data.js"></script>
 <script src="visual-data.js"></script>
 <script src="apps-data.js"></script>
 <script src="blog-data.js"></script>
@@ -1186,7 +1192,6 @@
             var el = document.getElementById(id);
             if (el && typeof n === 'number') { el.setAttribute('data-count', n); el.textContent = '0'; }
         }
-        setCount('stat-works', typeof NOCTA_WORKS !== 'undefined' ? NOCTA_WORKS.length : null);
         setCount('stat-blog',  typeof NOCTA_BLOG  !== 'undefined' ? NOCTA_BLOG.length  : null);
         setCount('stat-apps',  typeof NOCTA_APPS  !== 'undefined' ? NOCTA_APPS.length  : null);
 
@@ -1269,7 +1274,6 @@
 })();
 
 
-/* Works Filter は works-data.js のレンダリング IIFE 内で処理 */
 
 
 /* ---- Smooth scroll ---- */
@@ -1279,84 +1283,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
     });
 });
-
-
-/* ---- Works: データ配列からカードをレンダリング ---- */
-(function () {
-    const grid = document.getElementById('works-grid');
-    if (!grid || typeof NOCTA_WORKS === 'undefined') return;
-
-    grid.innerHTML = NOCTA_WORKS.map(function (w, i) {
-        const col   = i % 3;
-        const delay = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
-        const dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
-        const hasVideo = !!w.youtubeId;
-        const cursor   = hasVideo ? 'cursor-pointer' : 'cursor-default';
-        const onclick  = hasVideo
-            ? ' onclick="openYouTube(\'' + w.youtubeId + '\',\'' + w.title.replace(/'/g, "\\'") + '\')"'
-            : '';
-        const feat = i === 0 ? ' lg:col-span-2' : '';
-
-        return [
-            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 ' + cursor + feat + ' reveal' + delay + '"',
-            '     data-cat="' + w.cat + '"' + dstyle + onclick + '>',
-            '  <div class="relative aspect-video overflow-hidden">',
-            '    <div class="' + w.thumbClass + ' w-full h-full flex items-center justify-center">',
-            '      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">',
-            '        <circle cx="24" cy="24" r="22" stroke="rgba(184,180,174,0.35)" stroke-width="1"/>',
-            '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(184,180,174,0.55)"/>',
-            '      </svg>',
-            '    </div>',
-            hasVideo
-                ? '    <div class="thumb-overlay"><div class="play-circle"><div class="play-triangle"></div></div></div>'
-                : '',
-            '  </div>',
-            '  <div class="p-6">',
-            '    <div class="flex justify-between items-start mb-2">',
-            '      <h3 class="font-heading font-bold text-[17px] text-white">' + w.title + '</h3>',
-            '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + w.badgeColorClass + ' tracking-wider">' + w.badge + '</span>',
-            '    </div>',
-            '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed" data-desc-ja="' + w.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (w.descEn||w.descJa).replace(/"/g,'&quot;') + '">' + w.descJa + '</p>',
-            '  </div>',
-            '</div>'
-        ].join('\n');
-    }).join('\n');
-
-    // 新しく挿入された要素に Scroll Reveal を適用
-    const obs = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-            if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); }
-        });
-    }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
-    grid.querySelectorAll('.reveal').forEach(function (el) { obs.observe(el); });
-
-    // Works Filter を再バインド（新しいカードに対して）
-    const pills = document.querySelectorAll('.filter-pill');
-    const cards = grid.querySelectorAll('[data-cat]');
-    pills.forEach(function (pill) {
-        pill.addEventListener('click', function () {
-            pills.forEach(function (p) { p.classList.remove('active'); });
-            this.classList.add('active');
-            const f = this.getAttribute('data-filter');
-            cards.forEach(function (card) {
-                const show = f === 'all' || card.getAttribute('data-cat') === f;
-                if (show) {
-                    card.style.display = '';
-                    requestAnimationFrame(function () {
-                        card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-                        card.style.opacity = '1';
-                        card.style.transform = '';
-                    });
-                } else {
-                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(12px)';
-                    setTimeout(function () { card.style.display = 'none'; }, 320);
-                }
-            });
-        });
-    });
-})();
 
 
 /* ---- Visual: データ配列からカードをレンダリング ---- */
@@ -1732,9 +1658,9 @@ if (noctaForm) {
 const I18N = {
   ja: {
     'hero.tagline': '消費するだけでも、生産するだけでもなく。',
-    'hero.cta.works': 'Works を見る',
+    'hero.cta.works': '作品を見る',
     'hero.cta.contact': 'お問い合わせ',
-    'stats.works': '楽曲数',
+    'portfolio.subtitle': 'AIと感性が生んだ、作品たち',
     'stats.visual': 'ビジュアル数',
     'stats.blog': 'ブログ数',
     'stats.apps': 'アプリ数',
@@ -1748,7 +1674,6 @@ const I18N = {
     'about.v3.desc': '音楽・映像・画像・言葉——領域を越えて、ひとつの世界観を形にする。',
     'about.v4.title': '解放（Freedom）',
     'about.v4.desc': '規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。',
-    'works.subtitle': 'AIと感性が生んだ、作品たち',
     'tools.hina': 'HiNa コレクション →',
     'tools.nuword': 'NuWord コレクション →',
     'contact.h2': '<span class="inline-block">AIが多くを担う時代に、</span><br><span class="inline-block">人間に必要なのは</span><span class="inline-block">「<span class="text-gradient">遊び</span>」だ。</span>',
@@ -1768,15 +1693,21 @@ const I18N = {
     'contact.ph.message': 'プロジェクトの内容・ご要望をお気軽にご記入ください',
     'contact.submit': '送信する',
     'footer.tagline': 'AIと人間が、遊ぶように創る。<br>音楽・映像・言葉・コードを越境して、<br>遊びが、人生を彩るまで。',
-    'footer.s1': '音楽', 'footer.s2': '映像・ビジュアル', 'footer.s3': '言葉・ブログ', 'footer.s4': 'アプリ・ツール',
+    'footer.s1': '音楽（Coming Soon）', 'footer.s2': '映像・ビジュアル', 'footer.s3': '言葉・ブログ', 'footer.s4': 'アプリ・ツール',
     'footer.tff.link': '✦ いい人生とは',
     'footer.tff.desc': '人生観・詩・思い・感動を<br>つづるパーソナルサイト',
+    'behind.tag': 'Behind NOCTA',
+    'behind.lead': 'このプロジェクトは、CEO と、ローカル環境で働く AI エージェントチームが支えています。',
+    'behind.design.name': 'デザイナーチーム — 3 agents',
+    'behind.design.desc': '設計・実装の競作',
+    'behind.consult.name': 'コンサルチーム — 3 agents',
+    'behind.consult.desc': '分析・批評・意思決定支援',
   },
   en: {
     'hero.tagline': '消費するだけでも、生産するだけでもなく。',
     'hero.cta.works': 'View Works',
     'hero.cta.contact': 'Contact Us',
-    'stats.works': 'Tracks',
+    'portfolio.subtitle': 'Works born from AI and human creativity.',
     'stats.visual': 'Visuals',
     'stats.blog': 'Posts',
     'stats.apps': 'Apps',
@@ -1790,7 +1721,6 @@ const I18N = {
     'about.v3.desc': 'Music, video, images, words — crossing boundaries to shape one unified world.',
     'about.v4.title': 'Freedom',
     'about.v4.desc': 'Breaking free from scale constraints to create space for pure expression and vision.',
-    'works.subtitle': 'Works born from AI and human creativity.',
     'tools.hina': 'HiNa Collection →',
     'tools.nuword': 'NuWord Collection →',
     'contact.h2': "In an age where AI does so much,<br>what humans need is <span class=\"text-gradient\">play</span>.",
@@ -1810,9 +1740,15 @@ const I18N = {
     'contact.ph.message': "Tell us about your project and what you're looking for.",
     'contact.submit': 'Send',
     'footer.tagline': 'AI and humans, creating as if at play.<br>Across music, visuals, words and code —<br>until play colors life itself.',
-    'footer.s1': 'Music', 'footer.s2': 'Visual', 'footer.s3': 'Words', 'footer.s4': 'Code',
+    'footer.s1': 'Music (Coming Soon)', 'footer.s2': 'Visual', 'footer.s3': 'Words', 'footer.s4': 'Code',
     'footer.tff.link': '✦ What is a good life?',
     'footer.tff.desc': 'A personal site for life philosophy,<br>poetry, and moments that move us.',
+    'behind.tag': 'Behind NOCTA',
+    'behind.lead': 'This project is supported by the CEO and a team of AI agents running locally on a single Mac.',
+    'behind.design.name': 'Designer Team — 3 agents',
+    'behind.design.desc': 'Competitive design and implementation',
+    'behind.consult.name': 'Consultant Team — 3 agents',
+    'behind.consult.desc': 'Analysis, critique and decision support',
   }
 };
 
