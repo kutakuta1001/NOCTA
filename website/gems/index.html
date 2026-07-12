@@ -251,6 +251,30 @@
   .gyu-gem-wrap.mode-gem .gyu-gem-inner,
   .gyu-gem-wrap.mode-gem .gyu-highlight,
   .gyu-gem-wrap.mode-gem .gyu-prism{ opacity:0; }
+  /* ドラッグ誘導ヒント — 3D宝石が指で傾けられることを示す静かなピル。
+     宝石鑑賞の邪魔にならないよう下部中央に控えめに置き、pointer-events:noneで
+     宝石本体への操作を一切妨げない。gemモード＋is-visible(未操作)のときのみ見える。 */
+  .gyu-hint{
+    position:absolute; left:50%; bottom:5%; z-index:5;
+    transform:translateX(-50%);
+    display:flex; align-items:center; gap:8px;
+    padding:8px 16px; border-radius:999px;
+    border:1px solid rgba(184,180,174,0.25);
+    background:rgba(10,9,6,0.5); backdrop-filter:blur(6px);
+    color:#E8E0D0; font-size:11px; letter-spacing:0.02em; white-space:nowrap;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.7s ease;
+  }
+  .gyu-gem-wrap.mode-gem .gyu-hint.is-visible{ opacity:1; animation:gyuHintFloat 3.2s ease-in-out infinite; }
+  .gyu-hint-icon{
+    width:15px; height:15px; flex:none; display:block;
+    fill:none; stroke:#9A8A7A; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round;
+  }
+  .gyu-hint-icon circle{ fill:#9A8A7A; stroke:none; }
+  @keyframes gyuHintFloat{
+    0%,100%{ transform:translateX(-50%) translateY(0); }
+    50%{ transform:translateX(-50%) translateY(-4px); }
+  }
   /* Photo/Gem トグル */
   .gyu-mode-toggle{
     display:flex; gap:0; margin-top:18px;
@@ -267,6 +291,8 @@
   @media (prefers-reduced-motion:reduce){
     .gyu-gem-img{ transition:none; will-change:auto; }
     .gyu-highlight{ transition:none; }
+    .gyu-hint{ transition:none; }
+    .gyu-gem-wrap.mode-gem .gyu-hint.is-visible{ animation:none; }
   }
 
   /* 銀猫: 肉球トレイル（Statement帯と同一パターンの再利用） */
@@ -370,6 +396,15 @@
     <div class="gyu-shadow" aria-hidden="true"></div>
     <!-- 3D宝石の描画先（three.js canvasがここに入る）。写真とは重ねず切り替え表示 -->
     <div class="gyu-3d" id="gyu-3d" aria-hidden="true"></div>
+    <!-- ドラッグ誘導ヒント（3Dジェムのみ・初回操作/一定時間で静かに消える） -->
+    <div class="gyu-hint" id="gyu-hint" aria-hidden="true">
+      <svg class="gyu-hint-icon" viewBox="0 0 40 40" aria-hidden="true">
+        <circle cx="20" cy="20" r="4.5"/>
+        <path d="M10 13C6 16.5 6 23.5 10 27"/>
+        <path d="M30 13C34 16.5 34 23.5 30 27"/>
+      </svg>
+      <span data-i18n="lightbox.hint">指で傾けて、光にかざす</span>
+    </div>
   </div>
   <!-- Photo/Gem トグル（3Dデータを持つ石でのみ表示） -->
   <div class="gyu-mode-toggle" id="gyu-mode-toggle" role="group" aria-label="表示モード" hidden>
@@ -413,6 +448,7 @@
     "meta.hardness":   { ja: "モース硬度",                                                        en: "Mohs Hardness" },
     "meta.source":     { ja: "出典",                                                              en: "Source" },
     "meta.kotoba":     { ja: "石言葉",                                                            en: "Stone Meaning" },
+    "lightbox.hint":   { ja: "指で傾けて、光にかざす",                                              en: "Drag to tilt & catch the light" },
     "today.eyebrow":   { ja: "今日の一石",                                                        en: "Stone of the Day" },
     "today.cta":       { ja: "この石を眺める ↓",                                                  en: "Gaze at this stone ↓" },
     "index.open":      { ja: "目次",                                                              en: "Index" },
@@ -724,6 +760,44 @@
   var noPt = false;
   try { noPt = new URLSearchParams(window.location.search).get('nopt') === '1'; } catch (e) {}
 
+  /* ---- ドラッグ誘導ヒント（3D宝石は指で傾けられることの気づき）
+     ・gemモード中のみ表示。写真モードや3Dデータを持たない石では出さない
+     ・一度でも#gyu-wrapに触れたら(pointerdown/pointermove)静かにフェードして消える
+     ・触れなくても一定時間で自動フェード（触れた場合はそちらが優先しタイマーは即クリア）
+     ・ライトボックスを開き直す(次の石を見る)たびに「未操作」の状態へリセットする */
+  var hintTouched = false;      /* このライトボックス表示中に一度でも#gyu-wrapを操作したか */
+  var hintAutoTimer = null;
+  var HINT_AUTO_HIDE_MS = 5000;
+
+  function showHint() {
+    if (hintTouched) return;
+    var hint = document.getElementById('gyu-hint');
+    if (!hint) return;
+    hint.classList.add('is-visible');
+    clearTimeout(hintAutoTimer);
+    hintAutoTimer = setTimeout(hideHint, HINT_AUTO_HIDE_MS);
+  }
+
+  function hideHint() {
+    clearTimeout(hintAutoTimer);
+    hintAutoTimer = null;
+    var hint = document.getElementById('gyu-hint');
+    if (hint) hint.classList.remove('is-visible');
+  }
+
+  /* 「未操作」に戻す。ライトボックスを開くたび(=次の石を見るたび)に呼ぶ */
+  function resetHint() {
+    hintTouched = false;
+    hideHint();
+  }
+
+  /* #gyu-wrap への実操作を記録し、以後このライトボックス表示中は再表示しない */
+  function markHintTouched() {
+    if (hintTouched) return;
+    hintTouched = true;
+    hideHint();
+  }
+
   function has3d(g) { return g && g.cut && g.gem3d && typeof g.ior === 'number'; }
 
   function loadGem3dModule() {
@@ -797,8 +871,10 @@
     if (mode === 'gem') {
       var g = NOCTA_GEMS[lightboxIdx];
       if (has3d(g) && !gem3dInstance) mountGem3d(g, kazasuGen);
+      showHint();
     } else {
       teardownGem3d();
+      hideHint();
     }
   }
 
@@ -839,6 +915,8 @@
     var myGen = ++kazasuGen;
     /* 前回の3Dインスタンスを破棄 */
     teardownGem3d();
+    /* ドラッグ誘導ヒントを「未操作」状態にリセット（次の石として再表示できるようにする） */
+    resetHint();
     if (window.NoctaKazasu) {
       var wrap = document.getElementById('gyu-wrap');
       if (wrap) {
@@ -887,6 +965,7 @@
         kazasuGen++;
         if (kazasuInstance) { kazasuInstance.detach(); kazasuInstance = null; }
         teardownGem3d();
+        resetHint();
         var img = document.getElementById('lightbox-img');
         img.removeAttribute('srcset');
         img.removeAttribute('sizes');
@@ -905,6 +984,20 @@
         if (!btn) return;
         setMode(btn.getAttribute('data-mode'));
       });
+    }
+
+    /* #gyu-wrap への実操作(pointerdown/pointermove)を検知し、ドラッグ誘導ヒントを消す。
+       既存のtilt挙動(kazasu.attachのpointermoveリスナー)とは独立に追加するリスナーなので、
+       tiltの挙動そのものには影響しない。gemモード時のみ「触れた」と判定する（写真モードの
+       ホバーで誤って「触れた」扱いにしない）。要素自体は#lightbox内に静的に存在するため
+       開閉ごとの付け外しは不要（閉時はhiddenで描画されずイベントも発生しない）。 */
+    var gyuWrap = document.getElementById('gyu-wrap');
+    if (gyuWrap) {
+      var onGyuWrapTouch = function () {
+        if (currentMode === 'gem' && lightbox && lightbox.isOpen()) markHintTouched();
+      };
+      gyuWrap.addEventListener('pointerdown', onGyuWrapTouch);
+      gyuWrap.addEventListener('pointermove', onGyuWrapTouch);
     }
 
     buildIndex();
