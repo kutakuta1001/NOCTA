@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./gems-data.js"></script>
-<script src="../zukan/zukan-core.js?v=1"></script>
+<script src="../zukan/zukan-core.js?v=2"></script>
 <script src="./kazasu.js?v=1"></script>
 <!-- PTハイブリッドの純粋関数（対応判定・静止判定）。gem3d.js は動的importなので通常scriptで先に読む -->
 <script src="./gem3d-pt-util.js?v=1"></script>
@@ -462,14 +462,17 @@
   var lightboxIdx = -1;
   var indexDialog = null, lightbox = null;
 
+  /* Gyu演出: カバーの遊びを光の粒(きらめき)に。宝石の5色をそのまま流用 */
+  var COVER_TRAIL_COLORS = ['#E2574C', '#E8B923', '#4F8FCE', '#9966CC', '#2FB8A6'];
+
   var app = Z.createApp({
     strings: STRINGS,
     idPrefix: 'gem',
     railId: 'gem-rail',
     sectionClass: 'gem-section',
     favKey: 'nocta-gems-favs',
-    /* Gyu演出: カバーの肉球トレイルを5色ランダムに（銀猫が絵の具を踏んだイメージ） */
-    pawColors: ['#E2574C', '#E8B923', '#4F8FCE', '#9966CC', '#2FB8A6'],
+    pawColors: COVER_TRAIL_COLORS,
+    coverTrail: { type: 'glint', colors: COVER_TRAIL_COLORS },
     inertIds: ['site-nav', 'cover', 'gems-root', 'gem-rail', 'index-btn', 'site-footer'],
     onLangApply: function (lang) {
       if (lightbox && lightbox.isOpen() && lightboxIdx >= 0 && typeof NOCTA_GEMS !== 'undefined') {

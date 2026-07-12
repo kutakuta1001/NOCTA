@@ -21,8 +21,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "銀猫が見つけた日本の伝統色48色に浸る図鑑。色の物語とかさね配色、そして選んだ色のインクで筆あそびできる小さな書斎をたずさえた、HiNaコレクション第三部。",
-    descEn: "HiNa Hare — the silver cat's quiet catalogue of 48 traditional Japanese colors, with their stories, pairings, and a little writing room where you can play with ink in the color you choose."
+    descJa: "銀猫が見つけた日本の伝統色48色の図鑑。色の物語とかさね配色に加え、選んだ色のインクで文字を書き遊べる小さな書斎をたずさえた、HiNaコレクション第三部。",
+    descEn: "HiNa Hare — the silver cat's catalogue of 48 traditional Japanese colors. Beyond their stories and layered pairings, a little writing room where you play with ink in the color you choose. Part III of the HiNa collection."
   },
   {
     title: "HiNa Ichi",
@@ -32,8 +32,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-6",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "銀猫が見つけた季節の花24種を静かに眺める図鑑。花言葉と誕生花、今日の一花をたずさえた、HiNaコレクション第二部。",
-    descEn: "HiNa Ichi — the silver cat's quiet catalogue of seasonal flowers, with flower meanings, birth flowers, and a flower of the day."
+    descJa: "銀猫が見つけた季節の花24種の図鑑。花言葉と誕生花に加え、指でなぞると花が咲いて散り、手を止めると庭が画面いっぱいの草花に自生して仕上がる。気に入った庭は押し花にして持ち帰れる、HiNaコレクション第二部。",
+    descEn: "HiNa Ichi — the silver cat's catalogue of 24 seasonal flowers. Beyond flower meanings and birth flowers, trace to make flowers bloom and scatter; rest, and the garden grows itself into a field of blossoms you can press and keep. Part II of the HiNa collection."
   },
   {
     title: "HiNa Gyu",
@@ -43,8 +43,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-5",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "銀猫が見つけた宝石36種を静かに眺める図鑑。石言葉と誕生石、そして手のひらで光にかざしてきらめきを見る臨場感をたずさえた、HiNaコレクション第一部。",
-    descEn: "HiNa Gyu — the silver cat's quiet catalogue of 36 gemstones, with stone meanings, birthstones, and the intimate feeling of holding each stone up to the light."
+    descJa: "銀猫が見つけた宝石36種の図鑑。石言葉と誕生石に加え、手のひらで光にかざすと面がきらめき、手を止めると内部の反射までゆっくり現れる、HiNaコレクション第一部。",
+    descEn: "HiNa Gyu — the silver cat's catalogue of 36 gemstones. Beyond stone meanings and birthstones, hold each to the light and its facets catch fire; pause, and the inner reflections slowly emerge. Part I of the HiNa collection."
   },
   {
     title: "NuWord still",

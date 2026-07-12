@@ -131,6 +131,27 @@
     else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
   }
 
+  /* ---- カバートレイル（テーマ別・肉球とは別の「儚く消える」演出）----
+     config.coverTrail = { type: 'glint'|'petal'|'droplet', colors: [...] } を渡したアプリでのみ有効。
+     未指定のアプリ（本編HP等）は initCoverPaws() が従来の肉球のまま動く（後方互換）。 */
+  var TRAIL_FADE_MS = { glint: 900, petal: 1600, droplet: 1400 };
+
+  function ensureTrailStyle() {
+    if (document.getElementById('nocta-cover-trail-style')) return;
+    var style = document.createElement('style');
+    style.id = 'nocta-cover-trail-style';
+    style.textContent =
+      '.trail-p{position:absolute;pointer-events:none;}' +
+      '.trail-p svg{width:100%;height:100%;display:block;}' +
+      '.trail-p--glint{animation:noctaTrailGlint ' + TRAIL_FADE_MS.glint + 'ms ease-out forwards;}' +
+      '.trail-p--petal{animation:noctaTrailPetal ' + TRAIL_FADE_MS.petal + 'ms ease-out forwards;}' +
+      '.trail-p--droplet{border-radius:50%;filter:blur(1px);animation:noctaTrailDroplet ' + TRAIL_FADE_MS.droplet + 'ms ease-out forwards;}' +
+      '@keyframes noctaTrailGlint{0%{opacity:0;transform:scale(.4) rotate(0deg);}35%{opacity:1;transform:scale(1.15) rotate(8deg);}100%{opacity:0;transform:scale(.7) rotate(14deg);}}' +
+      '@keyframes noctaTrailPetal{0%{opacity:0;transform:translate(0,0) rotate(0deg) scale(.85);}20%{opacity:.9;}100%{opacity:0;transform:translate(var(--dx,10px),var(--dy,26px)) rotate(var(--rot,120deg)) scale(.8);}}' +
+      '@keyframes noctaTrailDroplet{0%{opacity:0;transform:scale(.5);}30%{opacity:.65;}100%{opacity:0;transform:scale(1.4);}}';
+    document.head.appendChild(style);
+  }
+
   function createApp(config) {
     var lang = 'ja';
     var strings = config.strings || {};
@@ -436,7 +457,7 @@
       return Promise.resolve(ok);
     }
 
-    /* ---- 銀猫: カバーの肉球トレイル ---- */
+    /* ---- 銀猫: カバーの肉球トレイル / config.coverTrail 指定時はテーマ別トレイル ---- */
     function initCoverPaws() {
       var cover = document.getElementById('cover');
       var layer = document.getElementById('cover-paws');
@@ -444,13 +465,17 @@
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
       var MAX_PAWS = 40, MIN_DIST = 90, last = null;
+      var trail = config.coverTrail || null; /* 未指定なら従来の肉球（本編HP等・未対応アプリの見た目を維持） */
+      if (trail && ['glint', 'petal', 'droplet'].indexOf(trail.type) === -1) trail = null; /* 未知typeは肉球にフォールバック（アニメ未定義の粒子を出さない） */
       var palette = config.pawColors; /* 未指定なら既定のシルバー単色（既存アプリの見た目を維持） */
+      if (trail) ensureTrailStyle();
 
-      function pawColor() {
-        if (palette && palette.length) return palette[Math.floor(Math.random() * palette.length)];
+      function pickColor(list) {
+        if (list && list.length) return list[Math.floor(Math.random() * list.length)];
         return '#B8B4AE';
       }
 
+      /* 従来挙動: 肉球が残留するトレイル（除去はMAX上限のみ） */
       function addPaw(clientX, clientY) {
         var r = layer.getBoundingClientRect();
         var x = clientX - r.left, y = clientY - r.top;
@@ -459,9 +484,45 @@
         var paw = document.createElement('span');
         paw.className = 'paw';
         paw.style.cssText = 'left:' + (x - size / 2) + 'px; top:' + (y - size / 2) + 'px; width:' + size + 'px; transform:rotate(' + rot + 'deg);';
-        paw.innerHTML = '<svg class="paw-svg" viewBox="0 0 100 100" style="color:' + pawColor() + '"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
+        paw.innerHTML = '<svg class="paw-svg" viewBox="0 0 100 100" style="color:' + pickColor(palette) + '"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
         layer.appendChild(paw);
         while (layer.children.length > MAX_PAWS) layer.removeChild(layer.firstChild);
+      }
+
+      /* テーマ別トレイル: 現れて消える儚い粒子（フェード後にDOMから除去してリークを防ぐ） */
+      function addTrailParticle(clientX, clientY) {
+        var r = layer.getBoundingClientRect();
+        var x = clientX - r.left, y = clientY - r.top;
+        var type = trail.type;
+        var color = pickColor(trail.colors || palette);
+        var size = type === 'glint' ? (10 + Math.random() * 8)
+                 : type === 'petal' ? (14 + Math.random() * 8)
+                 : (16 + Math.random() * 12); /* droplet */
+        var el = document.createElement('span');
+        el.className = 'trail-p trail-p--' + type;
+        el.setAttribute('data-trail', type);
+        var css = 'left:' + (x - size / 2) + 'px; top:' + (y - size / 2) + 'px; width:' + size + 'px; height:' + size + 'px;';
+        if (type === 'petal') {
+          css += ' --rot:' + (Math.random() * 360) + 'deg; --dx:' + (Math.random() * 24 - 12) + 'px; --dy:' + (16 + Math.random() * 18) + 'px;';
+        }
+        el.style.cssText = css;
+        if (type === 'glint') {
+          /* 四光星（きらめき） */
+          el.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="' + color + '" d="M12 0L14 10L24 12L14 14L12 24L10 14L0 12L10 10Z"/></svg>';
+        } else if (type === 'petal') {
+          /* 花びら（しずく形） */
+          el.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="' + color + '" d="M12 2C16 7 19 11 19 15A7 7 0 0 1 5 15C5 11 8 7 12 2Z"/></svg>';
+        } else {
+          /* 色の雫（柔らかい放射グラデ＋ぼかし） */
+          el.style.background = 'radial-gradient(circle, ' + color + ' 0%, ' + color + ' 35%, transparent 78%)';
+        }
+        layer.appendChild(el);
+        while (layer.children.length > MAX_PAWS) layer.removeChild(layer.firstChild);
+        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, TRAIL_FADE_MS[type] || 1200);
+      }
+
+      function spawn(clientX, clientY) {
+        if (trail) addTrailParticle(clientX, clientY); else addPaw(clientX, clientY);
       }
 
       cover.addEventListener('pointermove', function (e) {
@@ -471,9 +532,9 @@
           if (dx * dx + dy * dy < MIN_DIST * MIN_DIST) return;
         }
         last = { x: e.clientX, y: e.clientY };
-        addPaw(e.clientX, e.clientY);
+        spawn(e.clientX, e.clientY);
       });
-      cover.addEventListener('pointerdown', function (e) { addPaw(e.clientX, e.clientY); });
+      cover.addEventListener('pointerdown', function (e) { spawn(e.clientX, e.clientY); });
     }
 
     return {

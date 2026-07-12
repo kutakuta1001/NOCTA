@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./iro-data.js"></script>
-<script src="../zukan/zukan-core.js?v=1"></script>
+<script src="../zukan/zukan-core.js?v=2"></script>
 <script src="./fude.js?v=1"></script>
 <style>
   :root { --iro: #B8B4AE; --ink: #F2EBDD; }
@@ -515,6 +515,9 @@
 
   var indexDialog = null, immerseDialog = null;
 
+  /* Hare演出: カバーの遊びを色の雫に。和紙コラージュの5色をそのまま流用（琥珀・抹茶・紺・紫・金） */
+  var COVER_TRAIL_COLORS = ['#C97B5C', '#8FA06B', '#2C4A63', '#8074A0', '#D4A93B'];
+
   var app = Z.createApp({
     strings: STRINGS,
     idPrefix: 'iro',
@@ -522,8 +525,8 @@
     sectionClass: 'iro-section',
     favKey: 'nocta-iro-favs',
     solidDots: true,
-    /* Hare演出: カバーの肉球トレイルを和紙コラージュの5色に（琥珀・抹茶・紺・紫・金） */
-    pawColors: ['#C97B5C', '#8FA06B', '#2C4A63', '#8074A0', '#D4A93B'],
+    pawColors: COVER_TRAIL_COLORS,
+    coverTrail: { type: 'droplet', colors: COVER_TRAIL_COLORS },
     slugs: SLUGS,
     inertIds: ['site-nav', 'cover', 'iro-root', 'iro-rail', 'index-btn', 'site-footer'],
     onFavChange: function () {

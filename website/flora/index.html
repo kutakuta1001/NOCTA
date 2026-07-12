@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="./flora-data.js?v=2"></script>
-<script src="../zukan/zukan-core.js?v=1"></script>
+<script src="../zukan/zukan-core.js?v=2"></script>
 <script src="./hana.js?v=10"></script>
 <style>
   :root { --gem: #B8B4AE; }
@@ -481,14 +481,17 @@
      今日カードの「この花を咲かせる」ボタンからも呼べるようにする。 */
   var openHana = null;
 
+  /* Ichi演出: カバーの遊びを舞う花びらに。ロゴのローズピンクを一色で継承 */
+  var COVER_TRAIL_COLORS = ['#D9788E'];
+
   var app = Z.createApp({
     strings: STRINGS,
     idPrefix: 'flower',
     railId: 'gem-rail',
     sectionClass: 'gem-section',
     favKey: 'nocta-flora-favs',
-    /* Ichi演出: カバーの肉球トレイルをロゴのローズピンクに（桜のロゴモチーフを一色で継承） */
-    pawColors: ['#D9788E'],
+    pawColors: COVER_TRAIL_COLORS,
+    coverTrail: { type: 'petal', colors: COVER_TRAIL_COLORS },
     inertIds: ['site-nav', 'cover', 'gems-root', 'gem-rail', 'index-btn', 'site-footer'],
     onLangApply: function (lang) {
       if (lightbox && lightbox.isOpen() && lightboxIdx >= 0 && typeof NOCTA_FLORA !== 'undefined') {
