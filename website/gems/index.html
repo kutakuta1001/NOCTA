@@ -179,8 +179,10 @@
   }
   #lightbox[hidden]{ display:none; }
   .gyu-gem-wrap{
-    position:relative; max-width:92vw; max-height:74vh; width:min(92vw, 720px);
+    position:relative; max-width:92vw; max-height:60vh; width:min(92vw, 720px);
     aspect-ratio:3/4; perspective:1400px;
+    /* #lightboxの縦flex内で、宝石側が縮んで制御トグル(flex:none)の高さを確保できるようにする */
+    min-height:0; flex-shrink:1;
     /* pointerイベントを子まで通す */
     touch-action:none;
     /* z-index積層を安定させる（負z-indexがlightbox背景まで潜らないよう明示的にstacking context生成） */
@@ -299,33 +301,62 @@
   @media (prefers-reduced-motion:reduce){ .gyu-cta, .gyu-cta:hover{ transform:none; } .gyu-cta::before{ display:none; } }
 
   .gyu-mode-toggle{
-    display:flex; gap:0; margin-top:18px;
+    display:flex; gap:0; margin-top:18px; flex:none;   /* #lightbox縦flexで潰されない(潰れると子ボタンがoverflow:hiddenで縦clipされ文字が見切れる) */
     border:1px solid rgba(184,180,174,0.25); border-radius:999px; overflow:hidden;
   }
   .gyu-mode-toggle[hidden]{ display:none; }
   .gyu-mode-btn{
     font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.14em; font-weight:700; text-transform:uppercase;
     color:#9A8A7A; background:transparent; border:none; padding:8px 18px; cursor:pointer;
+    line-height:1; min-height:34px; display:inline-flex; align-items:center; justify-content:center;
     transition:color 0.3s, background 0.3s;
   }
   .gyu-mode-btn.active{ color:#0A0906; background:#B8B4AE; }
-  /* 演出トグル（光の向き=中央/左/右・虹の強さ=なし/弱/中/強）— gyu-mode-toggleと同系だが一段控えめ。gemモード時のみ表示 */
+  /* 演出トグル（光の向き=中央/左/右・虹の強さ=なし/弱/強・背景=黒/白）— gyu-mode-toggleと同系だが一段控えめ。gemモード時のみ表示 */
   .gyu-env-toggle{
-    display:flex; gap:0; margin-top:10px;
+    display:flex; gap:0; margin-top:10px; flex:none;   /* 同上: 潰さない(縦clip=文字見切れ防止) */
     border:1px solid rgba(184,180,174,0.18); border-radius:999px; overflow:hidden;
   }
   .gyu-env-toggle[hidden]{ display:none; }
-  /* 虹の強さ(4ボタン)は光の向き(3ボタン)の直下に来るため、上の余白を少し詰めて2段が
+  /* 虹の強さ・背景トグルは光の向きの直下に来るため、上の余白を少し詰めて複数段が
      窮屈に見えないバランスにする */
   .gyu-aura-toggle{ margin-top:8px; }
   .gyu-env-btn{
-    font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.12em; font-weight:700; text-transform:uppercase;
-    color:#8A7C6C; background:transparent; border:none; padding:6px 14px; cursor:pointer;
-    transition:color 0.3s, background 0.3s;
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.08em; font-weight:700;
+    color:#8A7C6C; background:transparent; border:none;
+    padding:8px 15px; min-height:32px; line-height:1;
+    display:inline-flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:color 0.3s, background 0.3s;
   }
   .gyu-env-btn.active{ color:#0A0906; background:#B8B4AE; }
   .gyu-mode-btn:focus-visible, .gyu-env-btn:focus-visible{ outline:1px solid #E8E0D0; outline-offset:2px; }
   #lightbox .lb-caption{ text-align:center; margin-top:22px; max-width:640px; }
+  /* 白スタジオ背景（3Dジェムモードで背景=白を選択時） */
+  #lightbox.gyu-bg-light{
+    /* canvasの描画色（gem3d.jsの scene.background=0xECE6DA を ACESトーンマップ露出1.25 で描いた
+       実測値 rgb(228,226,223)）と完全一致するフラット色。canvas矩形は不透明合成のため、
+       CSS側をこの色のフラットにしないと矩形境界に段差(継ぎ目)が出る（グラデ不可）。 */
+    background:#E4E2DF;
+  }
+  /* 白地では後光ハロ(暗い外周分離用)は不要 → 消す */
+  #lightbox.gyu-bg-light .gyu-halo{ opacity:0 !important; }
+  /* 接地影を濃く広く（product-shot の grounding） */
+  #lightbox.gyu-bg-light .gyu-shadow{
+    background:radial-gradient(ellipse at center, rgba(42,33,24,0.30) 0%, rgba(42,33,24,0.13) 45%, transparent 72%);
+  }
+  /* 白地でキャプション・クレジット・トグル文字が読めるよう墨系へ */
+  #lightbox.gyu-bg-light #lightbox-title{ color:#2A2118 !important; }
+  #lightbox.gyu-bg-light .gem-kotoba{ color:#4A4034 !important; }
+  #lightbox.gyu-bg-light #lightbox-en{ color:#6A5D4C !important; }
+  #lightbox.gyu-bg-light #lightbox-credit{ color:rgba(42,33,24,0.6) !important; }
+  /* 明地でのトグル: 非activeは墨茶(明地で可読)。activeの銀pill(#B8B4AE)は明地#E4E2DFに埋もれて
+     選択状態が判別しにくいので、明地時のみactiveを濃タウペ地+淡文字にして明確に際立たせる。 */
+  #lightbox.gyu-bg-light .gyu-env-btn,
+  #lightbox.gyu-bg-light .gyu-mode-btn{ color:#6A5D4C; }
+  #lightbox.gyu-bg-light .gyu-env-btn.active,
+  #lightbox.gyu-bg-light .gyu-mode-btn.active{ background:#8A7C6C; color:#F2EEE7; }
+  /* 白地では加算ハイライトが悪目立ちしやすいので控えめに抑制 */
+  #lightbox.gyu-bg-light .gyu-highlight{ opacity:0.15; }
   @media (prefers-reduced-motion:reduce){
     .gyu-gem-img{ transition:none; will-change:auto; }
     .gyu-highlight{ transition:none; }
@@ -458,12 +489,16 @@
     <button type="button" class="gyu-env-btn" data-dir="left" aria-pressed="false" data-i18n="lightbox.dirLeft">左</button>
     <button type="button" class="gyu-env-btn" data-dir="right" aria-pressed="false" data-i18n="lightbox.dirRight">右</button>
   </div>
-  <!-- 虹の強さ（3Dジェム表示中のみ）: なし(=しっとり・現状)/弱/中/強 -->
+  <!-- 虹の強さ（3Dジェム表示中のみ）: なし(現状)/弱/強(=旧中の強さ) -->
   <div class="gyu-env-toggle gyu-aura-toggle" id="gyu-aura-toggle" role="group" aria-label="虹の強さ" hidden>
     <button type="button" class="gyu-env-btn active" data-aura="0" aria-pressed="true" data-i18n="lightbox.auraNone">なし</button>
     <button type="button" class="gyu-env-btn" data-aura="1" aria-pressed="false" data-i18n="lightbox.auraWeak">弱</button>
-    <button type="button" class="gyu-env-btn" data-aura="2" aria-pressed="false" data-i18n="lightbox.auraMid">中</button>
-    <button type="button" class="gyu-env-btn" data-aura="3" aria-pressed="false" data-i18n="lightbox.auraStrong">強</button>
+    <button type="button" class="gyu-env-btn" data-aura="2" aria-pressed="false" data-i18n="lightbox.auraStrong">強</button>
+  </div>
+  <!-- 背景（3Dジェム表示中のみ）: 黒=虹演出/白=明るいスタジオ -->
+  <div class="gyu-env-toggle gyu-aura-toggle" id="gyu-bg-toggle" role="group" aria-label="背景" hidden>
+    <button type="button" class="gyu-env-btn active" data-bg="dark" aria-pressed="true" data-i18n="lightbox.bgDark">黒</button>
+    <button type="button" class="gyu-env-btn" data-bg="light" aria-pressed="false" data-i18n="lightbox.bgLight">白</button>
   </div>
   <div class="lb-caption">
     <p class="font-heading text-[11px] tracking-[2px] uppercase" id="lightbox-en" style="color:var(--gem);"></p>
@@ -509,8 +544,9 @@
     "lightbox.dirRight":   { ja: "右",                                                             en: "Right" },
     "lightbox.auraNone":   { ja: "なし",                                                           en: "Off" },
     "lightbox.auraWeak":   { ja: "弱",                                                             en: "Faint" },
-    "lightbox.auraMid":    { ja: "中",                                                             en: "Mid" },
     "lightbox.auraStrong": { ja: "強",                                                             en: "Vivid" },
+    "lightbox.bgDark":     { ja: "黒",                                                             en: "Dark" },
+    "lightbox.bgLight":    { ja: "白",                                                             en: "Light" },
     "today.eyebrow":   { ja: "今日の一石",                                                        en: "Stone of the Day" },
     "today.cta":       { ja: "この石を眺める ↓",                                                  en: "Gaze at this stone ↓" },
     "index.open":      { ja: "目次",                                                              en: "Index" },
@@ -817,8 +853,9 @@
   var gem3dInstance = null;
   var gem3dModulePromise = null;   /* gem3d.js の遅延import（成功時のみ保持・失敗でnull） */
   var currentMode = 'gem';         /* 'gem' | 'photo' — 3Dデータを持つ石の初期はgem */
-  var currentAuraIntensity = 0;    /* 0=なし(しっとり=現状)|1=弱|2=中|3=強。新規mount時は常に0へ戻る */
+  var currentAuraIntensity = 0;    /* 0=なし(しっとり=現状)|1=弱|2=強。新規mount時は常に0へ戻る */
   var currentAuraDirection = 'center'; /* 'center'|'left'|'right'。新規mount時は常にcenterへ戻る */
+  var currentBg = 'dark';  /* 'dark'|'light'。新規mount・写真・閉時は必ず dark */
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* ?nopt=1 で静止時パストレース現像を明示的に無効化（PBRのみ・デバッグ/非対応確認用） */
   var noPt = false;
@@ -880,7 +917,7 @@
       onReady = function () { cleanup(); resolve(window.NoctaGem3d); };
       timer = setTimeout(function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d load timeout')); }, 8000);
       window.addEventListener('noctagem3d-ready', onReady);
-      s.textContent = "import './gem3d.js?v=7'; window.dispatchEvent(new Event('noctagem3d-ready'));";
+      s.textContent = "import './gem3d.js?v=8'; window.dispatchEvent(new Event('noctagem3d-ready'));";
       s.onerror = function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d script error')); };
       document.head.appendChild(s);
     });
@@ -924,6 +961,26 @@
     if (gem3dInstance) gem3dInstance.setAura({ intensity: currentAuraIntensity, direction: currentAuraDirection });
   }
 
+  /* 背景トグルのボタン見た目を現在値に合わせる */
+  function updateBgToggleUI(bg) {
+    var toggle = document.getElementById('gyu-bg-toggle');
+    if (!toggle) return;
+    toggle.querySelectorAll('.gyu-env-btn').forEach(function (b) {
+      var on = b.getAttribute('data-bg') === bg;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  /* 背景(黒/白)を切替。可視背景CSS(.gyu-bg-light)とgem3dInstance.setBackgroundの両方を更新する。 */
+  function setBgUI(bg) {
+    currentBg = (bg === 'light') ? 'light' : 'dark';
+    updateBgToggleUI(currentBg);
+    var lb = document.getElementById('lightbox');
+    if (lb) lb.classList.toggle('gyu-bg-light', currentBg === 'light');
+    if (gem3dInstance) gem3dInstance.setBackground(currentBg);
+  }
+
   /* 3Dモードをマウント（three読込失敗時は写真モードへフォールバック）
      gen: 呼び出し時の世代トークン。非同期解決後に状態が変わっていたら破棄する */
   function mountGem3d(g, gen) {
@@ -944,12 +1001,16 @@
       if (stale()) { if (inst) inst.detach(); return; }   /* mount中にstale化したら即破棄 */
       if (!inst) { setMode('photo'); return; }             /* WebGL不可等 → 写真へ */
       gem3dInstance = inst;
-      /* 新規mountは常に「なし(intensity=0)・中央(center)」で始まる（gem3d側のopts未指定=既定）
+      /* 新規mountは常に「なし(intensity=0)・中央(center)・黒(dark)」で始まる（gem3d側のopts未指定=既定）
          ため、トグルUIもここで確実にその既定へ揃える（写真↔3D往復での不整合を防ぐ） */
       currentAuraIntensity = 0;
       currentAuraDirection = 'center';
+      currentBg = 'dark';
       updateAuraToggleUI(0);
       updateDirToggleUI('center');
+      updateBgToggleUI('dark');
+      var lbNew = document.getElementById('lightbox');
+      if (lbNew) lbNew.classList.remove('gyu-bg-light');
     }).catch(function () {
       if (stale()) return;   /* 古い失敗が現在の別石の表示を変えないよう guard */
       setMode('photo');      /* three読込失敗 → 写真へ */
@@ -963,6 +1024,7 @@
     var toggle = document.getElementById('gyu-mode-toggle');
     var auraToggle = document.getElementById('gyu-aura-toggle');
     var dirToggle = document.getElementById('gyu-dir-toggle');
+    var bgToggle = document.getElementById('gyu-bg-toggle');
     if (wrap) wrap.classList.toggle('mode-gem', mode === 'gem');
     if (toggle) {
       toggle.querySelectorAll('.gyu-mode-btn').forEach(function (b) {
@@ -971,9 +1033,10 @@
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
     }
-    /* 演出トグル（光の向き・虹の強さ）は3Dジェム表示中のみ意味を持つ（写真モード・3Dなし石では出さない） */
+    /* 演出トグル（光の向き・虹の強さ・背景）は3Dジェム表示中のみ意味を持つ（写真モード・3Dなし石では出さない） */
     if (auraToggle) auraToggle.hidden = (mode !== 'gem');
     if (dirToggle) dirToggle.hidden = (mode !== 'gem');
+    if (bgToggle) bgToggle.hidden = (mode !== 'gem');
     if (mode === 'gem') {
       var g = NOCTA_GEMS[lightboxIdx];
       if (has3d(g) && !gem3dInstance) mountGem3d(g, kazasuGen);
@@ -981,6 +1044,11 @@
     } else {
       teardownGem3d();
       hideHint();
+      /* 写真へ切替時は白を強制解除（gem3dInstanceはteardown済みなので描画側呼び出しは不要） */
+      currentBg = 'dark';
+      updateBgToggleUI('dark');
+      var lbPhoto = document.getElementById('lightbox');
+      if (lbPhoto) lbPhoto.classList.remove('gyu-bg-light');
     }
   }
 
@@ -1072,6 +1140,11 @@
         if (kazasuInstance) { kazasuInstance.detach(); kazasuInstance = null; }
         teardownGem3d();
         resetHint();
+        /* 背景トグルも黒へ強制解除（次にどの石を開いても必ず黒から始まる） */
+        currentBg = 'dark';
+        var lbClose = document.getElementById('lightbox');
+        if (lbClose) lbClose.classList.remove('gyu-bg-light');
+        updateBgToggleUI('dark');
         var img = document.getElementById('lightbox-img');
         img.removeAttribute('srcset');
         img.removeAttribute('sizes');
@@ -1113,6 +1186,16 @@
         var btn = e.target.closest('.gyu-env-btn');
         if (!btn) return;
         setAuraUI({ direction: btn.getAttribute('data-dir') });
+      });
+    }
+
+    /* 背景トグルのクリック */
+    var bgToggleEl = document.getElementById('gyu-bg-toggle');
+    if (bgToggleEl) {
+      bgToggleEl.addEventListener('click', function (e) {
+        var btn = e.target.closest('.gyu-env-btn');
+        if (!btn) return;
+        setBgUI(btn.getAttribute('data-bg'));
       });
     }
 

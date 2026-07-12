@@ -393,9 +393,9 @@ function makeGeometry(cut, seed) {
  *   buildShowcaseScene/buildAuroraScene のキーライト位置、gem3d-pathtracer.js のPT小光源の
  *   スポット位置決定で共通に使う符号（world +x = screen右、既存のcardB配置と同じ規約）。
  *
- * AURA_LEVELS: 虹の強さ4段（0=なし/1=弱/2=中/3=強）。0は現状のstill（退行なし）。
- *   1〜3のみ buildAuroraScene を使い、scale で発光カード強度を段階的にスケールする。
- *   レベル2(中)は旧'aurora'固定値（dispersion+0.22・envIntensity1.45・bloom strength0.60等）と
+ * AURA_LEVELS: 虹の強さ3段（0=なし/1=弱/2=強）。0は現状のstill（退行なし）。
+ *   1〜2のみ buildAuroraScene を使い、scale で発光カード強度を段階的にスケールする。
+ *   レベル2(強)は旧'aurora'固定値（dispersion+0.22・envIntensity1.45・bloom strength0.60等）と
  *   一致させ、旧setEnv('aurora')の見た目をそのまま保つ（回帰防止）。
  *   bloomのthreshold（白飛び対策の収束点）は全レベル共通で固定し、strength/radiusのみ動かす。
  * ================================================================ */
@@ -404,8 +404,7 @@ var BLOOM_THRESHOLD = 0.85;
 var AURA_LEVELS = {
   0: { dispInc: 0,    scale: 0,    backlight: 0,    envIntensity: 1.6,  bloomStrength: 0.55, bloomRadius: 0.60 },
   1: { dispInc: 0.10, scale: 0.62, backlight: 0.08, envIntensity: 1.50, bloomStrength: 0.57, bloomRadius: 0.60 },
-  2: { dispInc: 0.22, scale: 1.00, backlight: 0.14, envIntensity: 1.45, bloomStrength: 0.60, bloomRadius: 0.60 },
-  3: { dispInc: 0.34, scale: 1.35, backlight: 0.20, envIntensity: 1.40, bloomStrength: 0.66, bloomRadius: 0.65 }
+  2: { dispInc: 0.22, scale: 1.00, backlight: 0.14, envIntensity: 1.45, bloomStrength: 0.60, bloomRadius: 0.60 }
 };
 
 /* ================================================================
@@ -413,10 +412,13 @@ var AURA_LEVELS = {
  * warm-blackの暗い空間に、明るいライトカードを複数配置。
  * ファセット1枚ごとに光源が映り込み、傾けると多点できらめく。
  * ================================================================ */
-function buildShowcaseScene(direction) {
+function buildShowcaseScene(direction, bgMode) {
   var dsign = DIR_SIGN[direction] || 0;
+  var lit = (bgMode === 'light');
   var scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0A0906);   /* NOCTA warm-black */
+  /* dark(現状): NOCTA warm-black / light: 明るいスタジオ紙色（3D環境マップの世界。
+     CSSの#lightbox可視背景とは別に、宝石のファセットが映り込む世界そのものを明るくする） */
+  scene.background = new THREE.Color(lit ? 0xECE6DA : 0x0A0906);
 
   /* MeshBasicMaterialは通常0-1だが、環境マップ用に高輝度(>1)にして
      ファセットに強く映り込ませる。色×係数で明るさを表現 */
@@ -426,8 +428,10 @@ function buildShowcaseScene(direction) {
     return c;
   }
   function cardB(w, h, hex, k, x, y, z, rx, ry) {
+    /* 白スタジオはソフトボックス感を出すため主要ライトカードをわずかに明るく(×1.12) */
+    var kk = lit ? k * 1.12 : k;
     var geo = new THREE.PlaneGeometry(w, h);
-    var mat = new THREE.MeshBasicMaterial({ color: bright(hex, k), side: THREE.DoubleSide, toneMapped: false });
+    var mat = new THREE.MeshBasicMaterial({ color: bright(hex, kk), side: THREE.DoubleSide, toneMapped: false });
     var m = new THREE.Mesh(geo, mat);
     m.position.set(x, y, z);
     if (rx) m.rotation.x = rx;
@@ -483,12 +487,15 @@ function buildShowcaseScene(direction) {
  * を加える。宝石を回すとファセットごとに異なる色帯を拾い、上品な範囲で虹色にきらめく。
  * カード数は buildShowcaseScene と同程度に抑え、負荷を増やしすぎない。
  * ================================================================ */
-function buildAuroraScene(direction, scale) {
+function buildAuroraScene(direction, scale, bgMode) {
   var dsign = DIR_SIGN[direction] || 0;
   scale = (typeof scale === 'number') ? scale : 1;
+  var lit = (bgMode === 'light');
   var scene = new THREE.Scene();
-  /* stillのwarm-blackより一段暗く（後光の明暗コントラストを出すため） */
-  scene.background = new THREE.Color(0x050402);
+  /* dark(現状): stillのwarm-blackより一段暗く（後光の明暗コントラストを出すため）
+     light: buildShowcaseSceneと同じ明るいスタジオ紙色。scale自体がapplyAura側で既に
+     控えめ（×0.6）に減らされているため、ここでは背景色を切り替えるだけでよい */
+  scene.background = new THREE.Color(lit ? 0xECE6DA : 0x050402);
 
   function bright(hex, k) {
     var c = new THREE.Color(hex);
@@ -692,7 +699,8 @@ function mount(container, gemData, opts) {
 
   var renderer, scene, camera, mesh, envRT, pmrem, envScene, composer, bloomPass, ptLightGroup;
   var backLight, glowMesh = null, currentPreset = 'still', baseDispersion = 0.5;
-  var currentIntensity = 0, currentDirection = 'center';   /* 虹の強さ(0-3)・光の向き(center/left/right) */
+  var currentIntensity = 0, currentDirection = 'center';   /* 虹の強さ(0-2)・光の向き(center/left/right) */
+  var currentBg = 'dark';   /* 背景('dark'|'light')。既定dark=現状。setBackgroundのみが変更する */
   /* Bloomは高負荷なので、reduce-motionと狭幅（モバイル相当）では無効化して素のレンダリングに。
      width<480でoff、コア数が取得でき2以下なら低性能機とみなしoff。
      さらにタッチ端末（coarse pointer）は内蔵GPUが弱くBloom+MSAAで発熱・カクつきしやすいのでoff */
@@ -750,6 +758,12 @@ function mount(container, gemData, opts) {
     if (typeof window !== 'undefined') window.__gem3dAura = { intensity: currentIntensity, direction: currentDirection };
   }
 
+  /* テスト・診断用に現在の背景をwindowへ反映（本番挙動は変えない）。
+     getBackground() が正規の観測APIで、これは補助のデバッグフック（__gem3dAura と同じ位置づけ）。 */
+  function publishBg() {
+    if (typeof window !== 'undefined') window.__gem3dBg = currentBg;
+  }
+
   /* 虹の強さ×光の向きを適用する本体。envScene(PMREM)・material.dispersion・bloom強度・
      背後光源(backLight)・にじみ(glowMesh) を intensity/direction に応じて再構成する。
      mesh の geometry/rotation（tilt・autoSpin状態）は一切触らない＝回転は保持される。
@@ -761,31 +775,45 @@ function mount(container, gemData, opts) {
     currentDirection = direction;
     currentPreset = (intensity > 0) ? 'aurora' : 'still';   /* 後方互換の観測用フラグ（旧setEnv系） */
     var lvl = AURA_LEVELS[intensity];
+    var lit = (currentBg === 'light');
+
+    /* 白スタジオでは虹・後光・bloomを自動で控えめにし、白飛びを避ける（Part Aの値自体は再チューニング
+       していない。dark時は全係数1倍・BLOOM_THRESHOLD・露出1.4のままなので現状と完全一致する）。 */
+    var dispInc      = lit ? lvl.dispInc * 0.5       : lvl.dispInc;
+    var backlightVal = lit ? lvl.backlight * 0.5     : lvl.backlight;
+    var auraScale    = lit ? lvl.scale * 0.6         : lvl.scale;
+    var bloomStr     = lit ? lvl.bloomStrength * 0.4 : lvl.bloomStrength;
+    var bloomThr     = lit ? 0.92 : BLOOM_THRESHOLD;
 
     if (envRT) { envRT.dispose(); envRT = null; }
     disposeEnvScene();
-    envScene = (intensity > 0) ? buildAuroraScene(direction, lvl.scale) : buildShowcaseScene(direction);
+    envScene = (intensity > 0) ? buildAuroraScene(direction, auraScale, currentBg) : buildShowcaseScene(direction, currentBg);
     envRT = pmrem.fromScene(envScene, 0.015);
     scene.environment = envRT.texture;
     scene.environmentIntensity = lvl.envIntensity;
+    /* 可視背景（canvasの描画色）。Bloom用EffectComposer/OutputPassが不透明出力するため
+       canvasは透明合成にできない。dark(現状)はnull=既定の黒でCSS暗背景と馴染む。lightは明るい
+       studio色を敷き、CSS(#lightbox.gyu-bg-light)側をこの色のACESトーンマップ後の実測値に合わせて
+       canvas矩形とCSSの段差(継ぎ目)を無くす（index.html の #lightbox.gyu-bg-light 参照）。 */
+    scene.background = lit ? new THREE.Color(0xECE6DA) : null;
 
     /* 分散（ファイア）: レベルが上がるほどファセットが光を強く虹に分けるよう底上げ。石別baseは維持し
        なし(0)で必ず元のbase値に戻る（'dispersion' in matで対応three版のみ） */
     if (mesh && mesh.material && ('dispersion' in mesh.material)) {
-      mesh.material.dispersion = Math.max(0, Math.min(1, baseDispersion + lvl.dispInc));
+      mesh.material.dispersion = Math.max(0, Math.min(1, baseDispersion + dispInc));
     }
 
     /* bloom: useBloom無効端末ではcomposer/bloomPassがnullなのでno-op（既存ゲートに従う）。
-       threshold（白飛び対策の収束点）は全レベル共通で固定し、strength/radiusのみレベルで動かす。 */
+       白スタジオはstrength/thresholdを控えめ・高めにして白飛びを避ける。radiusはレベルの値をそのまま使う。 */
     if (bloomPass) {
-      bloomPass.strength = lvl.bloomStrength;
+      bloomPass.strength = bloomStr;
       bloomPass.radius = lvl.bloomRadius;
-      bloomPass.threshold = BLOOM_THRESHOLD;
+      bloomPass.threshold = bloomThr;
     }
 
     /* 背後の実光源（透過光・リムライト）。位置もdirectionで水平に振る（中央=元の1.1で従来と一致）。 */
     if (backLight) {
-      backLight.intensity = lvl.backlight;
+      backLight.intensity = backlightVal;
       backLight.position.x = 1.1 + DIR_SIGN[direction] * 2.5;
     }
 
@@ -798,8 +826,12 @@ function mount(container, gemData, opts) {
       glowMesh.visible = false;
     }
 
+    /* 露出: 白スタジオは白飛びを避けるためやや低めに。darkは現状の1.4のまま（変更なし）。 */
+    renderer.toneMappingExposure = lit ? 1.25 : 1.4;
+
     publishPreset();
     publishAura();
+    publishBg();
   }
 
   /* mount途中で失敗した場合に、生成済みリソースを全解放してからnullを返す */
@@ -1055,7 +1087,7 @@ function mount(container, gemData, opts) {
       return;
     }
     if (devReq) return; devReq = true;
-    import('./gem3d-pathtracer.js?v=4').then(function (mod) {
+    import('./gem3d-pathtracer.js?v=5').then(function (mod) {
       /* import 解決＝in-flight 完了。ラッチを解除する（成功・早期return どちらの経路も一箇所で解除）。
          これがないと、傾け等で下の renderMode ガードにより早期returnしたとき devReq が true のまま固着し、
          以後 develop が永久に起動しなくなる。 */
@@ -1072,7 +1104,8 @@ function mount(container, gemData, opts) {
       developer = withPtEnv(function () {
         return mod.createDeveloper({
           THREE: THREE, renderer: renderer, scene: scene, camera: camera, maxSamples: 160,
-          direction: currentDirection, intensity: currentIntensity   /* PT小光源の初期向き・強さ */
+          direction: currentDirection, intensity: currentIntensity,   /* PT小光源の初期向き・強さ */
+          bgMode: currentBg   /* PT現像画像の初期背景（'dark'|'light'） */
         });
       });
       ptCanvas = developer.getCanvas();
@@ -1098,7 +1131,7 @@ function mount(container, gemData, opts) {
     setAura({ intensity: preset === 'aurora' ? 2 : 0 });
   }
 
-  /* 虹の強さ(0なし/1弱/2中/3強)×光の向き(center/left/right)の公開API。
+  /* 虹の強さ(0なし/1弱/2強)×光の向き(center/left/right)の公開API。
      opts省略時・不正値時は現在値を維持する（片方だけ変える呼び方が可能）。同一値の再指定はno-op。
      mesh の回転（tilt・autoSpin状態）は一切変更しない — envScene・dispersion・bloom・
      背後光源・にじみ・PT小光源の向きだけを applyAura / developer.setDirection が再構成する。 */
@@ -1122,6 +1155,20 @@ function mount(container, gemData, opts) {
        リセットし(ptCanvasを隠す・developer.reset()・devProgress=0・renderMode='pbr')、
        新環境がPBR描画で即見えるようにする。次の静止で新環境の下で再現像(resync)される。
        mesh.rotation(tilt・autoSpin)はswitchToPbrが一切変更しないため回転状態は保持される。 */
+    if (renderMode !== 'pbr') switchToPbr();
+  }
+
+  /* 背景(黒/白)の公開API。同一値の再指定はno-op。applyAuraを同じintensity/directionで
+     再実行することで、envScene・dispersion・bloom・backLight・露出を新背景の係数で再構成する。
+     mesh の回転は一切変更しない（setAuraと同様）。 */
+  function setBackground(mode) {
+    var next = (mode === 'light') ? 'light' : 'dark';
+    if (next === currentBg) return;
+    currentBg = next;
+    applyAura(currentIntensity, currentDirection);
+    if (developer && developer.setBackground) { try { developer.setBackground(currentBg); } catch (e) {} }
+    /* PT現像済み/現像中のptCanvasは新背景に切り替わらないため、switchToPbrでPT状態をリセットし
+       新背景をPBRで即反映する（次の静止で新背景の下で再現像される）。setAuraと同じ理由。 */
     if (renderMode !== 'pbr') switchToPbr();
   }
 
@@ -1196,16 +1243,18 @@ function mount(container, gemData, opts) {
     setTilt: setTilt,
     setEnv: setEnv,
     setAura: setAura,
+    setBackground: setBackground,
     resize: resize,
     isReady: function () { return true; },
     getRenderMode: function () { return renderMode; },   /* テスト・診断用 */
     getEnvPreset: function () { return currentPreset; },  /* テスト・診断用（後方互換） */
     getAura: function () { return { intensity: currentIntensity, direction: currentDirection }; },  /* テスト・診断用 */
+    getBackground: function () { return currentBg; },  /* テスト・診断用 */
     detach: function () {
       running = false;
       if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener('resize', onWinResize);
-      if (typeof window !== 'undefined') { window.__gem3dMode = null; window.__gem3dInspectPtLights = null; window.__gem3dEnvPreset = null; window.__gem3dAura = null; }
+      if (typeof window !== 'undefined') { window.__gem3dMode = null; window.__gem3dInspectPtLights = null; window.__gem3dEnvPreset = null; window.__gem3dAura = null; window.__gem3dBg = null; }
       try {
         /* PT現像リソースの解放（PT専用renderer/canvasを含む）。PT環境(GradientEquirect)は
            developer.dispose() 側で解放される。 */

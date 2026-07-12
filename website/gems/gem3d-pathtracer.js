@@ -9,13 +9,15 @@
  * 呼び出し側（gem3d.js）は THREE 名前空間を opts.THREE で渡す（重複import回避）。
  *
  * 公開: createDeveloper(opts) -> developer
- *   opts = { THREE, renderer, scene, camera, maxSamples, direction, intensity }
+ *   opts = { THREE, renderer, scene, camera, maxSamples, direction, intensity, bgMode }
  *     THREE: 呼び出し側が import した three 名前空間
  *     renderer: 既存の WebGLRenderer（PT用canvasのサイズ参照にのみ使う。描画には使わない）
  *     scene, camera: 既存のシーン・カメラ（PTと共有）
  *     maxSamples: 累積する最大サンプル数（省略時160）
  *     direction: 静止画の小光源の向き 'center'|'left'|'right'（省略時center）
- *     intensity: 虹の強さレベル(0-3)。小光源はレベル0でも常に出す。レベルが上がると微増するのみ
+ *     intensity: 虹の強さレベル(0-2)。小光源はレベル0でも常に出す。レベルが上がると微増するのみ
+ *     bgMode: 背景 'dark'|'light'（省略時dark）。light時はPT環境(GradientEquirect)を明るくし、
+ *       露出も抑えて白飛びを避ける
  *   developer.reset(): 累積をゼロに戻す（同一姿勢で現像を仕切り直すとき）
  *   developer.resync(): 現在の scene / mesh 姿勢で BVH を再ベイクし累積もゼロに戻す
  *     （reset は累積ゼロ化のみで姿勢は初回のまま。別の向きで静止したら resync で像を更新する）
@@ -26,6 +28,9 @@
  *     既存テクスチャを.update()するだけでは静止画に反映されない。必ず新しいテクスチャ
  *     インスタンスを作って差し替える（旧インスタンスはここで確実にdispose）。反映は次回の
  *     resync（呼び出し側=gem3d.jsが担当）から。
+ *   developer.setBackground(mode): 静止画の背景('dark'|'light')を更新する。setDirectionと同型
+ *     （新しいPT環境テクスチャを作って差し替え、旧をdispose。反映も同じく次回resyncから）。
+ *     露出(toneMappingExposure)もここで同時に更新する。
  *   developer.renderSample() -> number: 1サンプル進め、進捗0..1(=samples/maxSamples)を返す
  *   developer.getCanvas() -> HTMLCanvasElement: PT出力のcanvas（gem3d.jsがオーバレイに使う）
  *   developer.dispose(): PT関連GPUリソースを解放（PT専用rendererも含む）
@@ -45,6 +50,7 @@ export function createDeveloper(opts) {
   var scene = opts.scene;
   var camera = opts.camera;
   var maxSamples = opts.maxSamples || 160;
+  var ptBg = (opts.bgMode === 'light') ? 'light' : 'dark';
 
   var size = new THREE.Vector2();
   srcRenderer.getSize(size);
@@ -54,9 +60,10 @@ export function createDeveloper(opts) {
   ptRenderer.setSize(size.x, size.y);
   /* 現像像の明るさ: PBRと同じACESフィルミックトーンマッピングを使い、露出はPBR(1.4)より
      高めの1.7に。パストレースは屈折で光が減衰し暗く沈みやすいため、静止画を少し持ち上げる。
+     white(白スタジオ)はptEnv自体が明るいため、露出は1.3程度に下げて白飛びを避ける。
      WebGLPathTracer は最終出力に renderer のトーンマッピング/露出を反映する。 */
   ptRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-  ptRenderer.toneMappingExposure = 1.7;
+  ptRenderer.toneMappingExposure = (ptBg === 'light') ? 1.3 : 1.7;
 
   var pt = new WebGLPathTracer(ptRenderer);
   pt.tiles.set(2, 2); /* 1フレームを分割してGPU占有時間を抑える */
@@ -66,7 +73,7 @@ export function createDeveloper(opts) {
      を単位化して使い、PBR時のリムライトと現像グリントの向きを一致させる（world +x = screen右、
      -x = screen左。center=1.1 で従来と一致。左右は raw x を ±2.5 振ってから正規化するため、
      backLight と同じだけ動く＝正規化前は左右対称）。
-     intensity(虹の強さレベル0-3)はスポットをごくわずかに強めるだけに使う
+     intensity(虹の強さレベル0-2)はスポットをごくわずかに強めるだけに使う
      （小光源はintensity=0でも常時出す — CEO要望: 「静止画にも小さな光源」）。 */
   var SPOT_COLOR = new THREE.Color(0xfff4df);
   var SPOT_SHARPNESS = 120;    /* 大きいほど鋭く小さいスポットになる（過度に明るい面積にしない） */
@@ -87,15 +94,22 @@ export function createDeveloper(opts) {
      env の主管理はこの developer 側（gem3d.js の withPtEnv は PMREM の一時退避のみを担う）。
      direction/intensity が変わったら「新しいテクスチャ」を作って差し替える（同一インスタンスを
      .update()するだけでは three-gpu-pathtracer 側の参照比較でGPU再アップロードがスキップされ、
-     静止画に反映されないため。詳細はファイル先頭のsetDirectionコメント参照）。 */
-  function buildPtEnv(direction, intensity) {
+     静止画に反映されないため。詳細はファイル先頭のsetDirectionコメント参照）。
+     bgMode='light'（白スタジオ）時は上下色を明るいスタジオ寄りに引き上げる。dark(現状)は不変。 */
+  function buildPtEnv(direction, intensity, bgMode) {
+    var lit = (bgMode === 'light');
     var tex = new GradientEquirectTexture();
-    tex.topColor.set(0x7c7264);      /* 環境光を明るめに（上方の柔らかいフィル光） */
-    tex.bottomColor.set(0x3a3327);   /* 地平〜下側を持ち上げる。宝石の外周（グレージング角）は
-                                         環境を強く反射するため、ここを明るくすると輪郭が反射光を拾って
-                                         黒背景から分離する（縁が暗く溶ける問題への本質的対処）。 */
+    if (lit) {
+      tex.topColor.set(0xD8D2C6);    /* 明るいスタジオのフィル光（上方） */
+      tex.bottomColor.set(0xB8B1A3); /* 地平〜下側も明るく持ち上げる */
+    } else {
+      tex.topColor.set(0x7c7264);      /* 環境光を明るめに（上方の柔らかいフィル光） */
+      tex.bottomColor.set(0x3a3327);   /* 地平〜下側を持ち上げる。宝石の外周（グレージング角）は
+                                           環境を強く反射するため、ここを明るくすると輪郭が反射光を拾って
+                                           黒背景から分離する（縁が暗く溶ける問題への本質的対処）。 */
+    }
     var spot = spotVecFor(direction);
-    var boost = 1 + Math.max(0, Math.min(3, intensity || 0)) * 0.1;
+    var boost = 1 + Math.max(0, Math.min(2, intensity || 0)) * 0.1;
     tex.generationCallback = function (polar, uv, coord, color) {
       _tmpDir.setFromSpherical(polar);
       var t = _tmpDir.y * 0.5 + 0.5;
@@ -114,7 +128,7 @@ export function createDeveloper(opts) {
 
   var ptDirection = (opts.direction === 'left' || opts.direction === 'right') ? opts.direction : 'center';
   var ptIntensity = opts.intensity || 0;
-  var ptEnv = buildPtEnv(ptDirection, ptIntensity);
+  var ptEnv = buildPtEnv(ptDirection, ptIntensity, ptBg);
 
   /* setScene / resync を「PT環境を差した状態」で通すラッパー。
      setScene は内部の updateEnvironment で scene.environment を読むため、直前に ptEnv を差し、
@@ -151,7 +165,16 @@ export function createDeveloper(opts) {
       ptDirection = nextDir;
       ptIntensity = nextIntensity;
       var old = ptEnv;
-      ptEnv = buildPtEnv(ptDirection, ptIntensity);
+      ptEnv = buildPtEnv(ptDirection, ptIntensity, ptBg);
+      if (old && old.dispose) old.dispose();
+    },
+    setBackground: function (mode) {
+      var nextBg = (mode === 'light') ? 'light' : 'dark';
+      if (nextBg === ptBg) return;
+      ptBg = nextBg;
+      ptRenderer.toneMappingExposure = (ptBg === 'light') ? 1.3 : 1.7;
+      var old = ptEnv;
+      ptEnv = buildPtEnv(ptDirection, ptIntensity, ptBg);
       if (old && old.dispose) old.dispose();
     },
     renderSample: function () {
