@@ -276,6 +276,28 @@
     50%{ transform:translateX(-50%) translateY(-4px); }
   }
   /* Photo/Gem トグル */
+  /* 「光にかざして遊ぶ」CTA — Gyuの3D(かざす)への入口。Ichiの.hana-cta/Hareの.fude-ctaと対称。 */
+  .gyu-cta{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 22px; border-radius:999px;
+    background:#B8B4AE; color:#0A0906;
+    border:1px solid rgba(184,180,174,0.4); cursor:pointer;
+    font-family:'EB Garamond','Shippori Mincho',serif;
+    font-size:14px; letter-spacing:0.05em; font-weight:600;
+    box-shadow:0 8px 24px -12px rgba(10,9,6,0.4);
+    transition:transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    position:relative; overflow:hidden;
+  }
+  .gyu-cta::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(120deg, transparent 30%, rgba(255,252,244,0.3) 50%, transparent 70%);
+    transform:translateX(-100%); transition:transform 0.7s ease;
+  }
+  .gyu-cta:hover{ transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(10,9,6,0.5); filter:brightness(1.05); }
+  .gyu-cta:hover::before{ transform:translateX(100%); }
+  .gyu-cta:focus-visible{ outline:1px solid #E8E0D0; outline-offset:4px; }
+  @media (prefers-reduced-motion:reduce){ .gyu-cta, .gyu-cta:hover{ transform:none; } .gyu-cta::before{ display:none; } }
+
   .gyu-mode-toggle{
     display:flex; gap:0; margin-top:18px;
     border:1px solid rgba(184,180,174,0.25); border-radius:999px; overflow:hidden;
@@ -287,6 +309,19 @@
     transition:color 0.3s, background 0.3s;
   }
   .gyu-mode-btn.active{ color:#0A0906; background:#B8B4AE; }
+  /* 演出トグル（しっとり/きらめき）— gyu-mode-toggleと同系だが一段控えめ。gemモード時のみ表示 */
+  .gyu-env-toggle{
+    display:flex; gap:0; margin-top:10px;
+    border:1px solid rgba(184,180,174,0.18); border-radius:999px; overflow:hidden;
+  }
+  .gyu-env-toggle[hidden]{ display:none; }
+  .gyu-env-btn{
+    font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.12em; font-weight:700; text-transform:uppercase;
+    color:#8A7C6C; background:transparent; border:none; padding:6px 14px; cursor:pointer;
+    transition:color 0.3s, background 0.3s;
+  }
+  .gyu-env-btn.active{ color:#0A0906; background:#B8B4AE; }
+  .gyu-mode-btn:focus-visible, .gyu-env-btn:focus-visible{ outline:1px solid #E8E0D0; outline-offset:2px; }
   #lightbox .lb-caption{ text-align:center; margin-top:22px; max-width:640px; }
   @media (prefers-reduced-motion:reduce){
     .gyu-gem-img{ transition:none; will-change:auto; }
@@ -358,6 +393,9 @@
   <div class="relative z-10 text-center px-6 max-w-[640px]">
     <h1 class="font-display text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">Gyu</h1>
     <p class="font-jp text-[14px] leading-[2] text-sub mt-6" data-i18n="cover.tagline">遊ぶことで人生を彩ろう。世界の宝石を、ただ静かに眺めるための図鑑。</p>
+    <div class="mt-8 flex justify-center">
+      <button type="button" class="gyu-cta" id="gyu-play" aria-haspopup="dialog" aria-expanded="false" aria-controls="lightbox" data-i18n="cover.kazasu">光にかざして遊ぶ →</button>
+    </div>
     <div id="today-slot"></div>
     <div class="mt-12 flex justify-center">
       <span class="scroll-cue text-sub font-heading text-[13px]" aria-hidden="true">↓</span>
@@ -411,6 +449,11 @@
     <button type="button" class="gyu-mode-btn active" data-mode="gem" aria-pressed="true">3Dジェム</button>
     <button type="button" class="gyu-mode-btn" data-mode="photo" aria-pressed="false">写真</button>
   </div>
+  <!-- 演出トグル（3Dジェム表示中のみ）: しっとり(still)/きらめき(aurora=背後光源+虹) -->
+  <div class="gyu-env-toggle" id="gyu-env-toggle" role="group" aria-label="演出" hidden>
+    <button type="button" class="gyu-env-btn active" data-env="still" aria-pressed="true" data-i18n="lightbox.envStill">しっとり</button>
+    <button type="button" class="gyu-env-btn" data-env="aurora" aria-pressed="false" data-i18n="lightbox.envAurora">きらめき(虹)</button>
+  </div>
   <div class="lb-caption">
     <p class="font-heading text-[11px] tracking-[2px] uppercase" id="lightbox-en" style="color:var(--gem);"></p>
     <p class="font-display text-[24px] font-semibold" id="lightbox-title" style="color:#E8E0D0;"></p>
@@ -442,6 +485,7 @@
     "nav.back":        { ja: "← NOCTA",                                                          en: "← NOCTA" },
     "cover.title":     { ja: "Gyu",                                                              en: "Gyu" },
     "cover.tagline":   { ja: "遊ぶことで人生を彩ろう。世界の宝石を、ただ静かに眺めるための図鑑。",     en: "Color your life through play. A quiet catalogue for gazing at the world's gemstones." },
+    "cover.kazasu":    { ja: "光にかざして遊ぶ →",                                              en: "Hold it to the light →" },
     "footer.tagline":  { ja: "すべての石は、叩き台です。眺め方は自由に。",                          en: "Every stone here is a starting point. Look at it however you like." },
     "footer.back":     { ja: "NOCTA ホームへ戻る",                                                en: "Back to NOCTA Home" },
     "meta.origin":     { ja: "産地",                                                              en: "Origin" },
@@ -449,6 +493,8 @@
     "meta.source":     { ja: "出典",                                                              en: "Source" },
     "meta.kotoba":     { ja: "石言葉",                                                            en: "Stone Meaning" },
     "lightbox.hint":   { ja: "指で傾けて、光にかざす",                                              en: "Drag to tilt & catch the light" },
+    "lightbox.envStill":  { ja: "しっとり",                                                        en: "Calm" },
+    "lightbox.envAurora": { ja: "きらめき(虹)",                                                    en: "Aurora Sparkle" },
     "today.eyebrow":   { ja: "今日の一石",                                                        en: "Stone of the Day" },
     "today.cta":       { ja: "この石を眺める ↓",                                                  en: "Gaze at this stone ↓" },
     "index.open":      { ja: "目次",                                                              en: "Index" },
@@ -755,6 +801,7 @@
   var gem3dInstance = null;
   var gem3dModulePromise = null;   /* gem3d.js の遅延import（成功時のみ保持・失敗でnull） */
   var currentMode = 'gem';         /* 'gem' | 'photo' — 3Dデータを持つ石の初期はgem */
+  var currentEnvPreset = 'still';  /* 'still' | 'aurora' — 演出トグルの状態。新規mount時は常にstillへ戻る */
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* ?nopt=1 で静止時パストレース現像を明示的に無効化（PBRのみ・デバッグ/非対応確認用） */
   var noPt = false;
@@ -829,6 +876,25 @@
     if (host) host.innerHTML = '';
   }
 
+  /* 演出トグル（しっとり/きらめき）のボタン見た目をpresetに合わせる */
+  function updateEnvToggleUI(preset) {
+    var envToggle = document.getElementById('gyu-env-toggle');
+    if (!envToggle) return;
+    envToggle.querySelectorAll('.gyu-env-btn').forEach(function (b) {
+      var on = b.getAttribute('data-env') === preset;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  /* 演出プリセットを切替（gem3dInstanceが無い間はUI状態だけ更新。3Dモードのみ意味を持つ） */
+  function setEnvPreset(preset) {
+    preset = (preset === 'aurora') ? 'aurora' : 'still';
+    currentEnvPreset = preset;
+    updateEnvToggleUI(preset);
+    if (gem3dInstance) gem3dInstance.setEnv(preset);
+  }
+
   /* 3Dモードをマウント（three読込失敗時は写真モードへフォールバック）
      gen: 呼び出し時の世代トークン。非同期解決後に状態が変わっていたら破棄する */
   function mountGem3d(g, gen) {
@@ -849,6 +915,10 @@
       if (stale()) { if (inst) inst.detach(); return; }   /* mount中にstale化したら即破棄 */
       if (!inst) { setMode('photo'); return; }             /* WebGL不可等 → 写真へ */
       gem3dInstance = inst;
+      /* 新規mountは常にstillで始まる（gem3d側のopts.env未指定=既定）ため、
+         トグルUIもここで確実にstillへ揃える（写真↔3D往復での不整合を防ぐ） */
+      currentEnvPreset = 'still';
+      updateEnvToggleUI('still');
     }).catch(function () {
       if (stale()) return;   /* 古い失敗が現在の別石の表示を変えないよう guard */
       setMode('photo');      /* three読込失敗 → 写真へ */
@@ -860,6 +930,7 @@
     currentMode = mode;
     var wrap = document.getElementById('gyu-wrap');
     var toggle = document.getElementById('gyu-mode-toggle');
+    var envToggle = document.getElementById('gyu-env-toggle');
     if (wrap) wrap.classList.toggle('mode-gem', mode === 'gem');
     if (toggle) {
       toggle.querySelectorAll('.gyu-mode-btn').forEach(function (b) {
@@ -868,6 +939,8 @@
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
     }
+    /* 演出トグルは3Dジェム表示中のみ意味を持つ（写真モード・3Dなし石では出さない） */
+    if (envToggle) envToggle.hidden = (mode !== 'gem');
     if (mode === 'gem') {
       var g = NOCTA_GEMS[lightboxIdx];
       if (has3d(g) && !gem3dInstance) mountGem3d(g, kazasuGen);
@@ -973,6 +1046,10 @@
         img.style.transform = '';
         img.style.filter = '';
         lightboxIdx = -1;
+        /* #gyu-play はlightboxの複数トリガーの1つ(registerDialogのtriggerには渡していない)なので、
+           aria-expandedの復帰はここで自前で行う。Ichi/Hare CTAとのARIA対称性のため。 */
+        var gyuPlayBtn = document.getElementById('gyu-play');
+        if (gyuPlayBtn) gyuPlayBtn.setAttribute('aria-expanded', 'false');
       }
     });
 
@@ -983,6 +1060,16 @@
         var btn = e.target.closest('.gyu-mode-btn');
         if (!btn) return;
         setMode(btn.getAttribute('data-mode'));
+      });
+    }
+
+    /* 演出トグル（しっとり/きらめき）のクリック */
+    var envToggleEl = document.getElementById('gyu-env-toggle');
+    if (envToggleEl) {
+      envToggleEl.addEventListener('click', function (e) {
+        var btn = e.target.closest('.gyu-env-btn');
+        if (!btn) return;
+        setEnvPreset(btn.getAttribute('data-env'));
       });
     }
 
@@ -1026,6 +1113,20 @@
       if (fav) { app.favs.toggle(fav.getAttribute('data-fav')); return; }
       var btn = e.target.closest('[data-lightbox]');
       if (btn) lightbox.open(parseInt(btn.getAttribute('data-lightbox'), 10));
+    });
+
+    /* カバーCTA「光にかざして遊ぶ」— 3Dで触れる石のかざす画面を直接開く。
+       今日の一石が3D対応ならそれを、そうでなければ最初の3D対応石を開く（必ず3D体験に着地）。 */
+    var gyuPlay = document.getElementById('gyu-play');
+    if (gyuPlay) gyuPlay.addEventListener('click', function () {
+      /* NOCTA_GEMSが未定義・空の異常時にtodayIndex(0)等で不正な扱いをしないよう早期return */
+      if (!NOCTA_GEMS || !NOCTA_GEMS.length) return;
+      var idx = -1, today = Z.todayIndex(NOCTA_GEMS.length);
+      if (has3d(NOCTA_GEMS[today])) idx = today;
+      else { for (var i = 0; i < NOCTA_GEMS.length; i++) { if (has3d(NOCTA_GEMS[i])) { idx = i; break; } } }
+      if (idx < 0) idx = today;   /* 3D対応が無い異常時は今日の石(写真)で開く */
+      gyuPlay.setAttribute('aria-expanded', 'true');
+      lightbox.open(idx);
     });
 
     app.favs.initDom();
