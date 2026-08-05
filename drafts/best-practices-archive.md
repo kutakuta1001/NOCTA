@@ -1,5 +1,18 @@
 # ベストプラクティス 処理済みアーカイブ
 
+## 2026-08-05 アーカイブ分
+
+- [platform.claude.com] モデル一覧 — Fable 5 は GA 継続・輸出管理による提供終了の記載なし（2026-07-29 処理）
+- [changelog v2.1.219] Claude Opus 5 が Claude Code のデフォルト Opus モデルに。/fast 対象は Opus 5・4.8（2026-07-29 処理）
+- [changelog v2.1.217/219] サブエージェント同時実行上限20・ネスト生成デフォルト深さ3（2026-07-29 処理）
+- [changelog v2.1.218] /code-review・context:fork スキルがバックグラウンド実行に。/deep-research は手動起動のみに（2026-07-29 処理）
+- [code.claude.com] 概要 — Remote Control・Slack 連携・GitLab CI/CD が公式サポートに記載（2026-07-29 処理）
+- [docs.anthropic.com] Claude Codeリリースノート — v2.1.202で`/checkup`が`/doctor`のエイリアスとしてフルセットアップ点検に拡張（CLAUDE.md短縮提案含む）（2026-07-12）
+- [docs.anthropic.com] Claude Codeリリースノート — v2.1.206で`/doctor`がチェックイン済みCLAUDE.mdファイルの短縮を提案する機能を追加（2026-07-12）
+- [docs.anthropic.com] Claude Codeリリースノート — v2.1.207でhooks/MCPの`${user_config.*}`シェル形式コマンドを拒否（シェルインジェクション対策強化）（2026-07-12）
+- [docs.anthropic.com] モデル一覧 — Fable 5は2026-07-12時点で主要プラットフォーム全てでGA継続中、輸出管理による断続提供・利用不可の記載は見当たらない（2026-07-12）
+- [docs.anthropic.com] ドキュメント構成 — docs.anthropic.comがplatform.claude.com/code.claude.comへ移転（release-notesはGitHub CHANGELOG.mdへリダイレクト）（2026-07-12）
+
 ## 2026-07-29 アーカイブ分
 
 - [changelog v2.1.200] デフォルト権限モードが全インターフェースで "Manual" に変更（`--permission-mode manual` 対応）。NOCTAは bypassPermissions 運用のため起動時のモード確認が必要（2026-07-04）
