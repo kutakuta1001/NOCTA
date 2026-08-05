@@ -47,3 +47,15 @@ Claude Design（`claude.ai/design`）: マーケ素材・LP・スライドの AI
 Design System に CLAUDE.md を貼ると NOCTA ブランドが自動適用される。アカウントは DOCOMO R&D 企業アカウントを使う（2026-06-16 決定）。
 
 GitHub Code Review（GitHub App）: `website/` の PR 作成時に自動コードレビュー（要 GitHub App 有効化）。
+
+---
+
+## MCP 管理の目安
+
+MCP を入れすぎると 200k のコンテキストウィンドウが実質 70k まで縮小する。ツール総数は常に80以下を維持する（`/mcp` で確認）。
+
+| 区分 | 対象 |
+|---|---|
+| 常時有効（最大5個まで） | `web_search`（トレンド調査・著作権確認）/ `filesystem`（ファイル操作） |
+| 必要時のみ有効化 | SNS 連携 MCP（フェーズ4のリリース作業時のみ）/ Spotify API MCP（リリース後の分析時のみ） |
+| 無効化推奨 | 使っていない MCP は `disabledMcpServers` に追加する。確認は `/mcp` |

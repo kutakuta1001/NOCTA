@@ -1,13 +1,14 @@
 # CLAUDE.md — NOCTA クリエイティブスタジオ（正本）
 
 Music × Visual × Words × Code の複数領域クリエイティブスタジオ。CEO と AI エージェントチームで
-企画から公開までを完結させるスタッフゼロ型会社。各領域は独立した並行ストリームとして進み、楽曲制作はそのうちの1本。
+企画から公開までを完結させるスタッフゼロ型会社。各領域は独立した並行ストリームとして進み、楽曲制作はそのうちの1本（CEO ペースで進行）。
 CEO は Studio One Pro / Synthesizer V Studio PRO / UR22C / MPM-1000 を自ら操作する制作者兼ディレクターで、
 作曲・編曲・ボーカル制作・ミックスまで自分で行う。
 AI の役割は設計書・プロンプト・文章・コード・ファイルを作ること。音の判断・感情的なクオリティ判断・各領域の最終採否は CEO が行う。
 
 参照情報（必要になったときだけ読む）:
 
+- 全体方針・各領域のロードマップ: `drafts/roadmap.md`
 - 運用チートシート（コマンド一覧・セッション運用・ゼロベース見直しの記録）: `~/.claude/references/nocta-cheatsheet.md`
 - 制作ツール選択肢（Suno 代替・映像生成・調査 MCP・ローカル LLM）: `~/.claude/references/nocta-tools.md`
 - モデル仕様・切替通知ルール・Agent Teams のモデル割当: `~/.claude/references/model-lineup.md`
