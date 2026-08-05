@@ -65,7 +65,9 @@ NOCTA の現状は CLAUDE.md 4ファイル・973行・34,507文字（推奨値�
 | `~/.claude/references/nocta-cheatsheet.md` | 新設（CEO 向け） | セッション運用表・SLASH COMMANDS 一覧・コスト確認手段・Agent Teams デバッグ・「6ヶ月ごとゼロベース見直し」の運用メモ |
 | `~/.claude/references/nocta-tools.md` | 新設 | Suno 代替（ACE-Step / Khala / Mureka）・xmcp / vidIQ / last30days 等の調査オプション詳細・ローカル LLM（Qwen） |
 | `~/.claude/references/model-lineup.md` | 既存に吸収 | R-09 / G-01 のモデル仕様詳細・価格・切替通知ルールの詳細 |
-| `~/.claude/references/archive/claude-md-2026-08-05/` | 退避 | 旧4ファイルの完全コピー（ロールバック・差分参照用） |
+| `project_NOCTA/docs/superpowers/archive/claude-md-2026-08-05/` | 退避 | 旧4ファイルの完全コピー（ロールバック・差分参照用）。**git 管理下に置く**（当初案の `~/.claude/references/archive/` は版管理外のため変更）。`NOCTA/CLAUDE.md` と `~/.claude/CLAUDE.md` は git 履歴を持たないため、この退避が唯一の復元手段になる |
+
+新設の reference 2ファイルは `project_NOCTA/claude-config/references/` に版管理コピーを置き、`~/.claude/references/` へコピーして使う（既存の `claude-config/{agents,commands}` と同じ慣習）。
 
 ### 削除するもの（代表例。全量は監査表で確定）
 
@@ -85,13 +87,14 @@ NOCTA の現状は CLAUDE.md 4ファイル・973行・34,507文字（推奨値�
 `~/.claude/settings.json` の permissions.deny に追加:
 
 ```json
-"Write(//Users/fghmacbook013/NOCTA/**/outputs/approved/**)",
 "Edit(//Users/fghmacbook013/NOCTA/**/outputs/approved/**)"
 ```
 
+- **`Write(path)` ルールは使わない。** Claude Code はファイル権限を `Edit(path)` と `Read(path)` のルールでのみ判定する。`Write` / `NotebookEdit` / `MultiEdit` にパスルールを書くと受け付けられるが参照されず、起動時に警告が出るだけになる（v2.1.210 以降）。`Edit(path)` が全ファイル編集ツールをカバーする（2026-08-05 に公式ドキュメントで確認・当初案の誤りを修正）
 - `**` で複数曲プロジェクト（project_[曲名]）を将来分まで包括する
-- deny ルールはサブエージェントにも継承され acceptEdits より優先されるため、ワークフローの「常に acceptEdits」経路もこれで塞がる
-- パス構文（`//` 絶対パス形式）は実装時に動作検証する（検証タスクを実装計画に含める）
+- ユーザー設定（`~/.claude/settings.json`）の `/path` は `~/.claude/` を起点に解決されるため、`//` 絶対パス形式が必須
+- 評価順は deny → ask → allow で、ルールの具体性は順序を変えない。deny はプロンプトではなくブロックであり、bypassPermissions が省略するのはプロンプトのみ（実動作は検証タスクで確認する）
+- Edit/Read の deny ルールは Claude Code が認識する Bash のファイルコマンド（`cat` / `head` / `tail` / `sed` 等）にも適用されるが、**Python / Node スクリプトのような任意のサブプロセスには適用されない**。OS レベルで全プロセスを止めるにはサンドボックスが必要（本設計のスコープ外・残存リスクとして記録）
 - この変更により approved/ への配置は完全に CEO の手動操作となる（CODEMAP の「手動移動のみ」と一致。R-02 本文の「CEO が承認したと言われた場合のみ移動を実行」は本設計で廃止し、表記を統一する）
 
 ### 4-2. approved-guard.sh（PreToolUse hook・新規）
@@ -101,8 +104,9 @@ deny は Write/Edit ツールのみ対象のため、Bash 経由の書き込み�
 - 対象: `cp` / `mv` / `rsync` / `tee` / `>` `>>` リダイレクト / `mkdir` / `touch` / `sed -i` 等で approved/ が書き込み先として現れるコマンド
 - 判定は純粋な正規表現のみ（LLM 判定なし・決定論的）。読み取り（`cat`、approved/ からのコピー）は許可
 - 迷ったら過剰ブロック側に倒す（fail-closed）。CEO の手動移動はターミナル直接操作のため hook の影響を受けない
-- 既存 `stop-hook-lib.sh` の流儀（ログ記録・再帰ガード）に従う
-- 設定先: `~/.claude/settings.json` の hooks.PreToolUse（matcher: Bash）
+- **`stop-hook-lib.sh` は source しない。** 同ライブラリは Stop hook 専用で、`read_hook_input` が `transcript_path` を要求し無ければ exit 0（fail-open）するため、PreToolUse では常に素通しになる。ログ出力先（`~/.claude/logs/`）の慣習のみ踏襲した独立スクリプトとする
+- 設定先: `~/.claude/settings.json` の hooks.PreToolUse（matcher: `Bash`）。ユーザー設定の hooks は全プロジェクトに適用される
+- 出力契約: exit 0 + stdout に `{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"..."}}`。判定しない場合は無出力で exit 0
 
 ### 4-3. BG セッション push 禁止（正本の git ルールに1行追加）
 
@@ -156,6 +160,12 @@ v2.1.221 の自動 push 挙動は「CLAUDE.md の git 指示に従う」と公�
 5. deny 追加 + approved-guard.sh 実装（update-config スキル経由で settings.json を変更）
 6. 検証（セクション6の1〜4）
 7. CEO レビュー → 承認後にコミット
+
+## 7-2. 実装時の注意（調査で判明した既存状態）
+
+- **`~/.claude/settings.json` は API キーを平文で保持している**（GEMINI / REPLICATE / RUNWAYML / MCP_AUTH の4種）。このファイルをリポジトリにコピーしてはならない。版管理側の `claude-config/settings.json` は古い状態（model が `claude-sonnet-4-6`・permissions と hooks が未反映）だが、キーを含まないため現状の分離は維持する。permissions と hooks の変更を版管理側へ反映する場合は、該当キーのみを手で写し、`env` ブロックは絶対に含めない
+- `claude-config/` に `references/` と `hooks/` は存在しないため新規作成する
+- 既存 hooks は `~/.claude/hooks/{commit-guard,scope-guard,stop-hook-lib}.sh` の3本で、いずれも版管理外
 
 ## 8. スコープ外
 
