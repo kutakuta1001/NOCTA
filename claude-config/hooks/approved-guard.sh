@@ -42,8 +42,9 @@ B='(^|[[:space:];&|(){}$`=:,])'
 WRITE_INTENT="${B}(cp|mv|rsync|ditto|cpio|tee|touch|mkdir|rmdir|rm|install|ln|dd|chmod|chown|truncate|unzip|tar)([[:space:]]|$)"
 WRITE_INTENT="${WRITE_INTENT}|>[[:space:]]*[^[:space:]]*approved"
 WRITE_INTENT="${WRITE_INTENT}|${B}sed[[:space:]]+-i"
-WRITE_INTENT="${WRITE_INTENT}|shutil\.(copy|copy2|copyfile|move)|os\.(rename|replace|link|symlink)"
+WRITE_INTENT="${WRITE_INTENT}|shutil\.(copy|copy2|copyfile|move|copytree)|os\.(rename|replace|link|symlink|makedirs|mkdir)"
 WRITE_INTENT="${WRITE_INTENT}|open\([^)]*[,[:space:]][^)]*(w|a|x)"
+WRITE_INTENT="${WRITE_INTENT}|\.(write_text|write_bytes)\(|Path\([^)]*\)\.open\("
 WRITE_INTENT="${WRITE_INTENT}|(writeFile|writeFileSync|createWriteStream|copyFileSync|renameSync|appendFile)"
 
 mkdir -p "$LOG_DIR"

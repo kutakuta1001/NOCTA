@@ -68,7 +68,7 @@ website/
 詳細仕様は `website/DESIGN.md`（カラートークン・タイポグラフィ・アセット生成ガイド）。
 
 - Tailwind CSS（CDN）。フォントは `font-display`（見出し）/ `font-heading`（小見出し）/ `font-jp`（日本語本文）
-- ブランドカラー: `text-brand-gold`（#C4942A）。確定パレットはシルバー #B8B4AE × オフホワイト #E8E0D0
+- ブランドカラー: 新規制作の確定パレットはシルバー #B8B4AE × オフホワイト #E8E0D0。`text-brand-gold`（#C4942A）は旧パレットのレガシートークンで、既存コードと下記の Visual バッジクラスに残存している
 - 画像比率: `aspect-[3/4]`（Visual カード・縦長）/ `aspect-video`（他カード・横長）
 - Visual バッジ色: Works は `bg-amber-500/20 text-amber-400`、Art / Music は `bg-brand-gold/20 text-brand-gold`
 

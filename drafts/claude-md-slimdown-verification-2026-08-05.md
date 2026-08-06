@@ -79,23 +79,26 @@ after（現行4ファイルに同じコマンドを適用）: **出力なし**�
 
 **CEO 実施待ち（新規インタラクティブセッションが必要なためサブエージェントでは検証不可）。**
 
-以下を新しいターミナルで実行して確認する。
+`/Users/fghmacbook013/NOCTA` と `/Users/fghmacbook013/NOCTA/project_NOCTA` の**両方**から新しいターミナルで起動して確認する（開始ディレクトリの違いで結果が変わるため）。
 
 ```
 cd /Users/fghmacbook013/NOCTA && claude
 ```
+```
+cd /Users/fghmacbook013/NOCTA/project_NOCTA && claude
+```
 
-起動後に `/context` を実行し、次の3点を確認する。
+それぞれ起動後に `/context` を実行し、次の3点を確認する。
 
 1. `project_NOCTA/CLAUDE.md`（正本）がロードされている
-2. 正本が二重にロードされていない（`NOCTA/CLAUDE.md` の `@import` と、子ディレクトリ自動検出の両方で読まれる可能性がある）
+2. 正本が二重にロードされていない
 3. `website/CLAUDE.md` がロードされていない
 
-判定と対処（該当したら実施）:
+判定と対処（ディレクトリ自動検出は起動ディレクトリとその親ディレクトリのみが対象で、子ディレクトリの CLAUDE.md はそのサブツリー配下のファイルを操作したときにのみ遅延ロードされる。したがって二重ロードは `project_NOCTA` 内から起動した場合にのみ起こりうる）:
 
-- 正本が1回だけロードされている → そのまま完了
-- 正本が二重にロードされている → `NOCTA/CLAUDE.md` から `@project_NOCTA/CLAUDE.md` の行を削除する（自動検出で足りているため import は不要）。削除後に再度 `/context` で1回だけになったことを確認する
-- 正本がロードされていない → `@import` が機能していない。`NOCTA/CLAUDE.md` の import 行のパスを絶対パス（`@/Users/fghmacbook013/NOCTA/project_NOCTA/CLAUDE.md`）に変えて再確認する
+- 実際にセッションを開始するディレクトリから1回だけロードされている → そのまま完了
+- 二重にロードされている（`project_NOCTA` 内から起動した場合のみ発生しうる） → **import 行を削除しない。** `/Users/fghmacbook013/NOCTA` から起動する限り、`NOCTA/CLAUDE.md` の `@import` が正本への唯一の読み込み経路であり、削除すると読み込み自体が失われる。対処は起動ディレクトリを1つに標準化すること。`/NOCTA` から起動する運用のままなら import は残す。`project_NOCTA` 内から常に起動する運用に切り替えると決めた場合に限り、import 行の削除が正しい対処になる
+- 正本がロードされていない → 同じ相対形式の `@import` が変更前の `website/CLAUDE.md` で実際に機能していたため考えにくいが、発生した場合は `NOCTA/CLAUDE.md` の import 行を絶対パス（`@/Users/fghmacbook013/NOCTA/project_NOCTA/CLAUDE.md`）に変えて再確認する
 - `website/CLAUDE.md` がロードされている → どこかに `@` import が残っている。`grep -rn "website/CLAUDE.md" /Users/fghmacbook013/NOCTA/CLAUDE.md /Users/fghmacbook013/NOCTA/project_NOCTA/CLAUDE.md` で探して削除する
 
 参考: `NOCTA/CLAUDE.md`（6行）の現物には import 行が含まれている。これが実際に `/context` でどう解決されるかはランタイム挙動であり、ファイルの中身を読むだけでは判定できないため、この Step は原則どおり CEO 実施に委ねる。

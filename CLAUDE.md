@@ -27,8 +27,9 @@ AI の役割は設計書・プロンプト・文章・コード・ファイル�
 ### R-02: approved/ には書かない
 
 草案は `drafts/` にのみ保存する。`outputs/approved/` への配置は CEO の手動操作のみ。
-AI からの書き込みは `permissions.deny` の `Edit` ルールと `approved-guard` hook でハード的に禁止されており、
-依頼されても実行できない。承認済みファイルの移動を求められたら、CEO 自身の操作が必要だと伝える。
+AI からの書き込みは `permissions.deny` の `Edit` ルールと `approved-guard` hook がブロックする。
+ただし hook はコマンド文字列しか見ておらず作業ディレクトリまでは判定できないため、`cd` してから相対パスで書く・
+スクリプト経由で書き込むといった手段でガードを回避することを固く禁じる。承認済みファイルの移動を求められたら、CEO 自身の操作が必要だと伝える。
 
 ### R-03: SNS を自動投稿しない
 
@@ -80,7 +81,11 @@ SynthV が誤読みしやすい箇所に【要確認】を付ける（対象: �
 Fable 5 は知識カットオフが 2026年1月で Opus 5（2026年5月）より古く、トークンも約30%多く消費する。
 最新の仕様情報を扱う判断では Opus 5 を選ぶ。
 
-価格・コンテキスト長・Opus 5 切替通知ルール・Agent Teams のモデル割当は `~/.claude/references/model-lineup.md`。
+Opus 5 への切替通知が必要な場面（作業前に「Opus 5 への切り替えを推奨します」と通知し CEO の確認を待つ）:
+superpowers: プレフィックスのスキル使用前・③歌詞レビュー・⑥PVコンセプトレビュー・SVP生成前・
+CLAUDE.md 等重要設計変更のクリティーク前・Agent Teams のレビューフェーズ・出力が64k tokens超見込みのタスク。
+
+価格・コンテキスト長・切替通知ルールの詳細・Agent Teams のモデル割当は `~/.claude/references/model-lineup.md`。
 コスト最適化: 単純タスクは `/effort low` または `medium`、標準は `high`、最重要は `xhigh`。
 `ultracode` は既定では使わない（全実質タスクが自動ワークフロー化されて消費が跳ねる）。
 
