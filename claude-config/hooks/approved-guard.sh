@@ -38,7 +38,7 @@ NORM="$(printf '%s' "$COMMAND" | tr -d '\\' | tr -d '"' | tr -d "'" \
 printf '%s' "$NORM" | grep -qE '(^|[^[:alnum:]_-])approved(/|$|[^[:alnum:]_-])' || exit 0
 
 # 書き込みの意図を示すパターン（コマンド名の境界に引用符除去後の記号類も含める）
-B='(^|[[:space:];&|(){}$`=])'
+B='(^|[[:space:];&|(){}$`=:,])'
 WRITE_INTENT="${B}(cp|mv|rsync|ditto|cpio|tee|touch|mkdir|rmdir|rm|install|ln|dd|chmod|chown|truncate|unzip|tar)([[:space:]]|$)"
 WRITE_INTENT="${WRITE_INTENT}|>[[:space:]]*[^[:space:]]*approved"
 WRITE_INTENT="${WRITE_INTENT}|${B}sed[[:space:]]+-i"
