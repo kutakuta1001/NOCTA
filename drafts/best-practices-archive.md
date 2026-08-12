@@ -1,5 +1,18 @@
 # ベストプラクティス 処理済みアーカイブ
 
+## 2026-08-12 アーカイブ分
+
+- [changelog v2.1.222] `/usage` が MCP サーバーへの使用量を過大計上していた問題を修正。過去の MCP 別コスト内訳は水増しされていた （2026-08-05 処理）
+- [changelog v2.1.221] WebSearch が effort `xhigh`・`max` で thinking 無効時に 400 エラーになる問題を修正（trend-analyst・copyright-agent に影響） （2026-08-05 処理）
+- [changelog v2.1.215] `/verify` と `/code-review` スキルが自動実行されなくなり明示呼び出しが必要に。長時間ツールのハートビート進捗表示追加（2026-07-29 処理）
+- [changelog v2.1.214] Windows PowerShell の権限チェックバイパス脆弱性を修正（要アップデート）。EndConversation ツール追加（2026-07-29 処理）
+- [changelog v2.1.212] `/fork` がバックグラウンドセッションを作成する方式に変更。Web検索のセッション上限200回・サブエージェント生成上限200個のガード追加（2026-07-29 処理）
+- [platform.claude.com] モデル一覧 — Opus 4.1（claude-opus-4-1-20250805）非推奨・2026-08-05廃止。NOCTA未使用のため影響なし（2026-07-29 処理）
+- [platform.claude.com] モデル一覧 — Sonnet 5 の effort デフォルトが Claude API / Claude Code で high に（2026-07-29 処理）
+- [code.claude.com] 概要 — auto-memory が公式機能としてドキュメント化（2026-07-29 処理）
+- [code.claude.com] 概要 — Chrome 統合でライブWebアプリのデバッグが可能に（2026-07-29 処理）
+- [platform.claude.com] モデル一覧 — 【新モデル】Claude Opus 5（claude-opus-5）が現行モデルに追加。Opus 4.8 はレガシー表へ移動（2026-07-29 処理）
+
 ## 2026-08-05 アーカイブ分
 
 - [platform.claude.com] モデル一覧 — Fable 5 は GA 継続・輸出管理による提供終了の記載なし（2026-07-29 処理）

@@ -9,6 +9,13 @@
 
 ## 処理済み
 
+- https://x.com/connect24h/status/2087157600513356221 （2026-08-12）
+- https://x.com/RIT_yasutake/status/2086633112642183494 （2026-08-12）
+- https://x.com/hiro44_pino/status/2086063111711428675 （2026-08-12）
+- https://x.com/DanKornas/status/2085449811923283976 （2026-08-12）
+- https://x.com/distortgeekin/status/2086501760894386222 （2026-08-12）
+- https://x.com/SwapAgarwal/status/2085996404506522073 （2026-08-12）
+- https://x.com/istupidpreneur/status/2085237142603677879 （2026-08-12）
 - https://x.com/kodagen/status/2083817728494964795 （2026-08-05）
 - https://x.com/ClaudeCode_aca/status/2083145653627363709 （2026-08-05）
 - https://x.com/FAyaguchi/status/2082802015449812999 （2026-08-05）
@@ -21,15 +28,5 @@
 - https://x.com/wayen_ai/status/2078392327761182868 （2026-07-29）
 - https://x.com/dr_cintas/status/2077450639068553433 （2026-07-29）
 - https://x.com/codi_fyy/status/2076875759063347201 （2026-07-29）
-- https://x.com/VivekIntel/status/2078752946423206013 （2026-07-29）
-- https://x.com/mido_lucci/status/2076966432320241962 （2026-07-29）
-- https://x.com/DavidReynoldsAI/status/2079047779343884553 （2026-07-29）
-- https://x.com/CaptainHaHaa/status/2078059070263857381 （2026-07-29）
-- https://x.com/Oluwaphilemon1/status/2077418440323735800 （2026-07-29）
-- https://x.com/satyaXBT/status/2076993225982869659 （2026-07-29）
-- https://x.com/CuriousRefuge/status/2077936446120636444 （2026-07-29）
-- https://x.com/shiba_program/status/2078042021546078588 （2026-07-29）
-- https://x.com/cryptojezuz/status/2081544168938291607 （2026-07-29）
-- https://x.com/NAIRA680411/status/2081904628741153162 （2026-07-29）
 
-（処理済みが20件を超えたため、古い10件を drafts/best-practices-archive-xmcp.md の「2026-08-05 アーカイブ分」へ移動）
+（処理済みが20件を超えたため、古い10件を drafts/best-practices-archive-xmcp.md の「2026-08-12 アーカイブ分」へ移動）

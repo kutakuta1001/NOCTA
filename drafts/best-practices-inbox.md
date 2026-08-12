@@ -28,6 +28,12 @@
 
 ## 処理済み
 
+- [changelog v2.1.223] Bash 権限チェックからコマンドの一部を隠せる不備を2件修正（細工したコマンド／タブと不可視 Unicode のパディング）。approved-guard は「コマンド文字列全体が見える」前提に依存 （2026-08-12 処理）
+- [changelog v2.1.223] `/review` が `/code-review` のエイリアスに変更（現在の diff か PR をレビュー）。NOCTA 自作の `/review`・`/review-diff`（Codex CLI 連携）と衝突しうる （2026-08-12 処理）
+- [changelog v2.1.224] サブエージェント生成上限200個/セッションが撤去（同時実行数と深さの制限は継続）。v2.1.212 由来の記載が失効 （2026-08-12 処理）
+- [changelog v2.1.224] `crossSessionInbound` と `dialogExpiry` を新設。bypassPermissions で動くセッション宛のクロスセッションメッセージは承認保留になる（NOCTA は該当） （2026-08-12 処理）
+- [changelog v2.1.224] フィードバック調査のトランスクリプト共有が、同意時に system prompt（CLAUDE.md の指示を含む）・ツール定義・モデルパラメータも送信するよう変更 （2026-08-12 処理）
+- [changelog v2.1.228] セッションクリーンアップがプロジェクトの memory フォルダ内を削除する不具合を修正（auto-memory 14件が消えうる。v2.1.228 で解消済み） （2026-08-12 処理）
 - [changelog v2.1.221] バックグラウンドセッションが作業保全のため自動で commit/push するよう変更。CLAUDE.md の git 指示に従い、必要時のみ draft PR を作成 （2026-08-05 処理）
 - [changelog v2.1.221] zsh の `[[ ]]` 正規表現条件式で Bash ツールの権限チェックを回避できる脆弱性を修正（CEO 環境は zsh・要アップデート） （2026-08-05 処理）
 - [changelog v2.1.222] worktree 分離セッションとそのサブエージェントが main チェックアウトに破壊的 git コマンドを実行できた問題を修正。分離が全セッション種別のファイル編集と Bash に適用 （2026-08-05 処理）
@@ -44,15 +50,5 @@
 - [code.claude.com] 動的ワークフロー — 制約: 同時16エージェント・1実行あたり合計1,000エージェント・25エージェント超または150万トークン超で「Large workflow」警告 （2026-08-05 処理）
 - [code.claude.com] 動的ワークフロー — ワークフローのサブエージェントは常に acceptEdits で動作しファイル編集が自動承認される。権限モードは起動プロンプトのみを制御 （2026-08-05 処理）
 - [changelog v2.1.221] `claude-api` スキルに `prompt-audit` サブコマンド追加。古いモデル向けに書かれたプロンプト・ツール記述を監査できる（NOCTA の60本超のスキル群に有効） （2026-08-05 処理）
-- [changelog v2.1.222] `/usage` が MCP サーバーへの使用量を過大計上していた問題を修正。過去の MCP 別コスト内訳は水増しされていた （2026-08-05 処理）
-- [changelog v2.1.221] WebSearch が effort `xhigh`・`max` で thinking 無効時に 400 エラーになる問題を修正（trend-analyst・copyright-agent に影響） （2026-08-05 処理）
-- [changelog v2.1.215] `/verify` と `/code-review` スキルが自動実行されなくなり明示呼び出しが必要に。長時間ツールのハートビート進捗表示追加（2026-07-29 処理）
-- [changelog v2.1.214] Windows PowerShell の権限チェックバイパス脆弱性を修正（要アップデート）。EndConversation ツール追加（2026-07-29 処理）
-- [changelog v2.1.212] `/fork` がバックグラウンドセッションを作成する方式に変更。Web検索のセッション上限200回・サブエージェント生成上限200個のガード追加（2026-07-29 処理）
-- [platform.claude.com] モデル一覧 — Opus 4.1（claude-opus-4-1-20250805）非推奨・2026-08-05廃止。NOCTA未使用のため影響なし（2026-07-29 処理）
-- [platform.claude.com] モデル一覧 — Sonnet 5 の effort デフォルトが Claude API / Claude Code で high に（2026-07-29 処理）
-- [code.claude.com] 概要 — auto-memory が公式機能としてドキュメント化（2026-07-29 処理）
-- [code.claude.com] 概要 — Chrome 統合でライブWebアプリのデバッグが可能に（2026-07-29 処理）
-- [platform.claude.com] モデル一覧 — 【新モデル】Claude Opus 5（claude-opus-5）が現行モデルに追加。Opus 4.8 はレガシー表へ移動（2026-07-29 処理）
 
-（処理済みが20件を超えたため、古い10件を drafts/best-practices-archive.md の「2026-08-05 アーカイブ分」へ移動）
+（処理済みが20件を超えたため、古い10件を drafts/best-practices-archive.md の「2026-08-12 アーカイブ分」へ移動）
