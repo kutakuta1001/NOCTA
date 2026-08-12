@@ -1,0 +1,39 @@
+<!-- ══════════════════════════════════════════════════════════════
+     NOCTA License Gate — 組み込みスニペット雛形
+     既存アプリのデザインに合わせてゲートを自前で持ちたい場合の最小マークアップ。
+     id を変えた場合は init() の selectors で対応するセレクタを指定すること。
+     {{...}} は各アプリで差し替えるプレースホルダ。
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- 1) <head> に CSS を読み込む（任意・自動注入を使うなら不要） -->
+<link rel="stylesheet" href="./nocta-license-gate.css">
+
+<!-- 2) <body> 内にゲートDOMを置く（自動注入を使うなら省略可） -->
+<div id="gate">
+  <div class="ng-title">{{APP_NAME}}</div>
+  <div class="ng-msg" id="gate-msg">ライセンスキーを入力してください</div>
+  <input id="gate-input" type="text"
+         placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" autocomplete="off" spellcheck="false">
+  <button id="gate-btn">はじめる</button>
+  <a href="{{GUMROAD_PRODUCT_URL}}" id="gate-buy" target="_blank" rel="noopener">Gumroadで購入 →</a>
+</div>
+
+<!-- 3) </body> 直前でモジュールを読み込み init() する -->
+<script src="./nocta-license-gate.js"></script>
+<script>
+  // Tier1（ハッシュリスト・既定）の例
+  NoctaLicenseGate.init({
+    appId: '{{APP_ID}}',                       // 例: 'still' / 'seed' / 'verse' / 'inner-canvas'
+    buyUrl: '{{GUMROAD_PRODUCT_URL}}',
+    onUnlock: () => startApp(),                // 解錠後に呼ぶアプリ起動関数に差し替え
+  });
+
+  // Tier2（Gumroad License API）に上げる場合はこちら:
+  // NoctaLicenseGate.init({
+  //   appId: '{{APP_ID}}',
+  //   mode: 'gumroad-api',
+  //   gumroad: { productId: '{{GUMROAD_PRODUCT_ID}}', verifyEndpoint: '/api/verify-license' },
+  //   buyUrl: '{{GUMROAD_PRODUCT_URL}}',
+  //   onUnlock: () => startApp(),
+  // });
+</script>

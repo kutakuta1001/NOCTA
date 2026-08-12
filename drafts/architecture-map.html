@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOCTA — サービスとアプリの全体像</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#0A0906; --panel:#100d09; --ink:#E8E0D0; --silver:#B8B4AE;
+    --dim:rgba(232,224,208,0.55); --faint:rgba(232,224,208,0.32);
+    --line:rgba(184,180,174,0.22); --line-strong:rgba(184,180,174,0.5);
+    --serif:'EB Garamond',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --display:'Bebas Neue',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--bg); color:var(--ink); font-family:var(--serif);
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+    background-image:
+      radial-gradient(120% 80% at 80% -10%, rgba(184,180,174,0.10), transparent 60%),
+      radial-gradient(90% 70% at -10% 110%, rgba(184,180,174,0.06), transparent 55%);
+  }
+  /* 粒状ノイズのオーバーレイ */
+  body::after{
+    content:""; position:fixed; inset:0; pointer-events:none; z-index:50; opacity:0.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* デッキ枠 */
+  .frame{position:fixed; inset:18px; border:1px solid var(--line); pointer-events:none; z-index:40}
+  .frame::before,.frame::after{content:""; position:absolute; width:9px; height:9px; border:1px solid var(--line-strong)}
+  .frame::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+  .frame::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+
+  .kicker{position:fixed; top:34px; left:42px; z-index:42; font-family:var(--mono);
+    font-size:11px; letter-spacing:.34em; color:var(--faint); text-transform:uppercase}
+  .kicker b{color:var(--silver); font-weight:500}
+
+  /* スライド領域 */
+  .stage{position:fixed; inset:0; display:flex; align-items:center; justify-content:center}
+  .slide{
+    position:absolute; width:min(1120px,92vw); height:min(640px,82vh);
+    padding:66px 72px; opacity:0; transform:translateY(14px) scale(.992);
+    transition:opacity .55s ease, transform .55s ease; pointer-events:none;
+    display:flex; flex-direction:column;
+  }
+  .slide.active{opacity:1; transform:none; pointer-events:auto}
+
+  /* 入場時の段階表示 */
+  .slide.active .rise{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+  .slide.active .rise:nth-child(2){animation-delay:.06s}
+  .slide.active .rise:nth-child(3){animation-delay:.12s}
+  .slide.active .rise:nth-child(4){animation-delay:.18s}
+  .slide.active .rise:nth-child(5){animation-delay:.24s}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  .sec{font-family:var(--mono); font-size:11px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--silver); margin-bottom:18px; display:flex; align-items:center; gap:14px}
+  .sec::before{content:""; width:26px; height:1px; background:var(--silver); display:inline-block}
+
+  h1{font-weight:500; line-height:1.02; letter-spacing:.01em}
+  h2{font-size:clamp(26px,3.4vw,40px); font-weight:500; line-height:1.12; margin-bottom:8px}
+  .lead{color:var(--dim); font-size:18px; font-style:italic}
+
+  /* 表紙 */
+  .cover{justify-content:center}
+  .cover .mark{font-family:var(--display); font-size:clamp(72px,15vw,168px); line-height:.9;
+    letter-spacing:.04em; color:var(--ink); position:relative}
+  .cover .mark span{color:var(--silver)}
+  .cover .sub{font-size:clamp(20px,2.6vw,30px); margin-top:10px; color:var(--ink); font-style:italic}
+  .cover .meta{margin-top:34px; font-family:var(--mono); font-size:12px; letter-spacing:.2em;
+    color:var(--faint); display:flex; gap:22px; text-transform:uppercase}
+
+  /* 表 */
+  table{width:100%; border-collapse:collapse; font-size:15.5px; margin-top:6px}
+  th,td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top}
+  th{font-family:var(--mono); font-weight:500; font-size:10.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--silver)}
+  td .mono{font-family:var(--mono); font-size:12.5px; color:var(--dim)}
+  td b{font-weight:600; color:var(--ink)}
+  tr:last-child td{border-bottom:none}
+
+  /* 図キャンバス */
+  .diagram{flex:1; display:flex; gap:30px; min-height:0; margin-top:6px}
+  .diagram .canvas{flex:1; min-width:0; display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line); border-radius:2px; background:rgba(184,180,174,0.03); padding:18px}
+  .diagram .canvas .mermaid{width:100%}
+  .diagram .canvas svg{max-width:100%; height:auto; max-height:42vh; display:block; margin:0 auto}
+  .notes{width:270px; flex-shrink:0; align-self:center}
+  .notes li{list-style:none; padding:11px 0; border-top:1px solid var(--line);
+    font-size:15px; color:var(--dim); line-height:1.5}
+  .notes li:first-child{border-top:none}
+  .notes b{color:var(--ink); font-weight:600}
+  .tag{font-family:var(--mono); font-size:11px; color:var(--silver)}
+
+  /* 3層 */
+  .layers{display:flex; flex-direction:column; gap:12px; margin-top:10px}
+  .layer{display:grid; grid-template-columns:54px 1fr; gap:18px; align-items:center;
+    border:1px solid var(--line); border-left:2px solid var(--silver); padding:14px 18px;
+    background:rgba(184,180,174,0.03)}
+  .layer .n{font-family:var(--display); font-size:40px; color:var(--silver); line-height:1}
+  .layer .t{font-size:18px; color:var(--ink); margin-bottom:2px}
+  .layer .d{font-size:14px; color:var(--dim); line-height:1.45}
+
+  .end h1{font-size:clamp(30px,5vw,58px)}
+  .end .lead{margin-top:14px; max-width:60ch}
+
+  /* ナビ */
+  .nav{position:fixed; bottom:30px; right:42px; z-index:42; display:flex; align-items:center; gap:18px}
+  .count{font-family:var(--mono); font-size:12px; letter-spacing:.18em; color:var(--faint)}
+  .count b{color:var(--silver); font-weight:500}
+  .arrow{width:38px; height:38px; border:1px solid var(--line-strong); background:transparent;
+    color:var(--silver); cursor:pointer; font-family:var(--serif); font-size:18px; border-radius:50%;
+    transition:all .2s; display:flex; align-items:center; justify-content:center}
+  .arrow:hover{background:var(--silver); color:var(--bg)}
+  .dots{position:fixed; bottom:34px; left:42px; z-index:42; display:flex; gap:9px}
+  .dot{width:7px; height:7px; border:1px solid var(--line-strong); border-radius:50%; cursor:pointer; transition:all .25s}
+  .dot.on{background:var(--silver); border-color:var(--silver); transform:scale(1.15)}
+  .hint{position:fixed; bottom:34px; left:50%; transform:translateX(-50%); z-index:42;
+    font-family:var(--mono); font-size:10px; letter-spacing:.2em; color:var(--faint); text-transform:uppercase}
+  @media (max-width:720px){.diagram{flex-direction:column} .notes{width:100%}}
+</style>
+</head>
+<body>
+<div class="frame"></div>
+<div class="kicker">NOCTA <b>· ARCHITECTURE</b></div>
+
+<div class="stage">
+
+  <!-- 01 表紙 -->
+  <section class="slide cover active">
+    <div class="rise sec">Studio Overview · 2026-06-16</div>
+    <div class="rise mark">NO<span>C</span>TA</div>
+    <div class="rise sub">サービスとアプリの全体像</div>
+    <div class="rise meta"><span>Music × Visual × Words × Code</span><span>4 Apps · 1 Hub</span></div>
+  </section>
+
+  <!-- 02 名前の対応 -->
+  <section class="slide">
+    <div class="rise sec">Naming Map</div>
+    <h2 class="rise">呼び名と実体の対応</h2>
+    <p class="rise lead">普段の呼び名を、正式名・リポジトリ・ホスティングに紐づける。</p>
+    <div class="rise" style="margin-top:18px">
+      <table>
+        <thead><tr><th>呼び名</th><th>正式名</th><th>ディレクトリ / repo</th><th>ホスティング</th><th>アプリ</th></tr></thead>
+        <tbody>
+          <tr><td>New World (MemoUp)</td><td><b>NuWord / memo-app</b></td><td><span class="mono">~/memo-app · repo: nuword</span></td><td><span class="mono">Vercel</span></td><td>Seed・Verse</td></tr>
+          <tr><td>Inner Campus</td><td><b>Inner Canvas</b></td><td><span class="mono">~/nner-canvas</span></td><td><span class="mono">Vercel</span></td><td>Inner Canvas</td></tr>
+          <tr><td>Stell</td><td><b>still</b></td><td><span class="mono">NOCTA repo / website/still/</span></td><td><span class="mono">GitHub Pages</span></td><td>still</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:14px; color:var(--faint); font-size:13.5px">still は独立リポジトリではなく <span class="tag">NOCTA HP 本体の一部</span>（website/still/）。</p>
+    </div>
+  </section>
+
+  <!-- 03 図1 基本関係 -->
+  <section class="slide">
+    <div class="rise sec">Figure 1 · 基本関係</div>
+    <h2 class="rise">ディレクトリとアプリの関係</h2>
+    <div class="rise diagram">
+      <div class="canvas">
+        <pre class="mermaid">
+flowchart TD
+  NOCTA["NOCTA HP（総元締め・ポートフォリオ）<br/><i>repo: NOCTA / GitHub Pages</i>"]
+  subgraph D1["~/memo-app  ·  repo: nuword  ·  Next.js"]
+    SEED["Seed"]
+    VERSE["Verse"]
+  end
+  subgraph D2["~/nner-canvas  ·  Vite + React"]
+    IC["Inner Canvas"]
+  end
+  subgraph D3["NOCTA repo 内  ·  website/still/（静的）"]
+    STILL["still"]
+  end
+  NOCTA -->|紹介・リンク| SEED
+  NOCTA -->|紹介・リンク| VERSE
+  NOCTA -->|紹介・リンク| IC
+  NOCTA -->|内包・ホスト| STILL
+        </pre>
+      </div>
+      <ul class="notes">
+        <li><b>NOCTA HP</b> が全アプリの入口（紹介・リンク）。</li>
+        <li><b>memo-app（nuword）</b> は1つのコードで <b>Seed と Verse の2アプリ</b>。</li>
+        <li><b>nner-canvas</b> は <b>Inner Canvas</b> 単独。</li>
+        <li><b>still</b> は NOCTA HP の中に同居。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 04 図2 インフラ＋収益化 -->
+  <section class="slide">
+    <div class="rise sec">Figure 2 · 共有インフラと収益化</div>
+    <h2 class="rise">認証・権限・決済の全体像</h2>
+    <div class="rise diagram">
+      <div class="canvas">
+        <pre class="mermaid">
+flowchart TD
+  NOCTA["NOCTA HP"]
+  STILL["still（静的）"]
+  SEED["Seed"]; VERSE["Verse"]; IC["Inner Canvas"]
+  SUPA["Supabase（共有）<br/>認証 + entitlements"]
+  GUM["Gumroad（決済）"]
+  NOCTA --> STILL & SEED & VERSE & IC
+  SEED -.認証/権限.-> SUPA
+  VERSE -.認証/権限.-> SUPA
+  IC -.認証/権限.-> SUPA
+  GUM -->|ライセンスキー Tier1| STILL
+  GUM -->|購入Webhook| SUPA
+        </pre>
+      </div>
+      <ul class="notes">
+        <li><b>Seed・Verse・Inner Canvas</b> は<b>同一 Supabase</b>を共有（認証＋権限）。</li>
+        <li>収益化は2系統: <b>still=キー照合(Tier1)</b> / <b>Vercel系=Webhook→Supabase権限(all-access)</b>。</li>
+        <li>Supabaseデプロイは <b>1回で3アプリ分</b>。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 05 3層モデル -->
+  <section class="slide">
+    <div class="rise sec">Monetization · 3 Layers</div>
+    <h2 class="rise">収益化の3層モデル</h2>
+    <p class="rise lead">「どこまでやれば何ができるか」を正確に。</p>
+    <div class="rise layers">
+      <div class="layer"><div class="n">1</div><div><div class="t">決済を受け付ける</div><div class="d">Gumroad商品作成 → 売上は立てられる。</div></div></div>
+      <div class="layer"><div class="n">2</div><div><div class="t">購入がアプリの権限に反映される</div><div class="d">still=不要 / Vercel系=Supabaseデプロイ＋Ping設定が必須 → 「買った人＝権限あり」。</div></div></div>
+      <div class="layer"><div class="n">3</div><div><div class="t">権限で機能が解錠される</div><div class="d">PremiumGate を機能に適用（プロダクト成熟後・後回し）。</div></div></div>
+    </div>
+  </section>
+
+  <!-- 06 まとめ -->
+  <section class="slide end" style="justify-content:center">
+    <div class="rise sec">Summary</div>
+    <h1 class="rise">1つのHUBと、3つのコードベース。</h1>
+    <p class="rise lead">NOCTA HP が入口。memo-app(Seed/Verse)・nner-canvas(Inner Canvas)・still。<br/>
+      Vercel系3アプリは同一Supabaseを共有し、Gumroadで all-access として収益化する。</p>
+    <p class="rise tag" style="margin-top:30px">詳細 → drafts/architecture-map.md · drafts/monetization-kit/MONETIZATION-STATUS.md</p>
+  </section>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<div class="hint">← → / Space で移動</div>
+<div class="nav">
+  <button class="arrow" id="prev" aria-label="前へ">&#8592;</button>
+  <span class="count"><b id="cur">01</b> / <span id="total">06</span></span>
+  <button class="arrow" id="next" aria-label="次へ">&#8594;</button>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad:true, theme:'base', securityLevel:'loose',
+    flowchart:{curve:'basis', htmlLabels:true, padding:14},
+    themeVariables:{
+      background:'#0A0906', primaryColor:'#15120d', primaryBorderColor:'#B8B4AE',
+      primaryTextColor:'#E8E0D0', secondaryColor:'#15120d', tertiaryColor:'#15120d',
+      lineColor:'#8f897e', fontFamily:'EB Garamond, serif', fontSize:'15px',
+      clusterBkg:'rgba(184,180,174,0.05)', clusterBorder:'rgba(184,180,174,0.3)',
+      titleColor:'#B8B4AE', edgeLabelBackground:'#0A0906'
+    }
+  });
+
+  const slides=[...document.querySelectorAll('.slide')];
+  const dotsWrap=document.getElementById('dots');
+  const cur=document.getElementById('cur');
+  document.getElementById('total').textContent=String(slides.length).padStart(2,'0');
+  let i=0;
+  slides.forEach((_,n)=>{
+    const d=document.createElement('div'); d.className='dot'+(n===0?' on':'');
+    d.onclick=()=>go(n); dotsWrap.appendChild(d);
+  });
+  const dots=[...document.querySelectorAll('.dot')];
+  function go(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+    cur.textContent=String(i+1).padStart(2,'0');
+  }
+  document.getElementById('next').onclick=()=>go(i+1);
+  document.getElementById('prev').onclick=()=>go(i-1);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(i+1);}
+    if(e.key==='ArrowLeft')go(i-1);
+    if(e.key==='Home')go(0); if(e.key==='End')go(slides.length-1);
+  });
+</script>
+</body>
+</html>

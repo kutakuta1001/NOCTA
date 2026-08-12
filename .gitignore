@@ -4,6 +4,16 @@ sample/
 outputs/audio/**/*.mp3
 outputs/audio/**/*.wav
 
+# 制作素材の実ファイル（git に入れない。website/ の公開アセットは対象外で従来どおり追跡する）
+# 追跡中の公開アセットは website/images/*.jpg と website/img/**/*.png なので、
+# 下記の除外はそれらに影響しない。
+visual/*.png
+visual/*.jpg
+visual/*.jpeg
+outputs/pv/images/
+website/images/*.png
+website/sankou/
+
 # 機密ファイル（APIキー・証明書・環境変数）
 .env
 .env.*

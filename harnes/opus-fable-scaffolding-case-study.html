@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opus 4.8 "Fable化"計画 — scaffolding で capability gap を埋める</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#15110d;--bg-2:#1d1813;--panel:#221c16;--code-bg:#0e0b08;
+    --ink:#f2ece1;--muted:#998d7c;--faint:#6a604f;--line:#352c22;
+    --amber:#e8a33d;--amber-dim:#a8782b;--red:#e5675f;--green:#7fb069;--blue:#7aa6c2;
+    --serif:"Fraunces",Georgia,serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--ink);font-family:var(--mono);overflow:hidden;-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:2;
+    background:radial-gradient(120% 90% at 80% 0%,rgba(232,163,61,.06),transparent 55%),
+               radial-gradient(100% 80% at 0% 100%,rgba(122,166,194,.045),transparent 50%)}
+  .deck{position:fixed;inset:0}
+  .slide{position:absolute;inset:0;padding:clamp(1.6rem,4.5vw,5rem);display:none;flex-direction:column;justify-content:center;opacity:0}
+  .slide.active{display:flex;animation:fade .5s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .reveal{opacity:0;transform:translateY(16px)}
+  .active .reveal{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+  .active .reveal:nth-child(1){animation-delay:.04s}.active .reveal:nth-child(2){animation-delay:.11s}
+  .active .reveal:nth-child(3){animation-delay:.18s}.active .reveal:nth-child(4){animation-delay:.25s}
+  .active .reveal:nth-child(5){animation-delay:.32s}.active .reveal:nth-child(6){animation-delay:.39s}
+  .active .reveal:nth-child(7){animation-delay:.46s}.active .reveal:nth-child(8){animation-delay:.53s}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  .kicker{font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:1.3rem;display:flex;gap:.9rem;align-items:center}
+  .kicker::before{content:"";width:2.2rem;height:1px;background:var(--amber-dim)}
+  .kicker.part::after{content:attr(data-part);margin-left:auto;color:var(--faint);letter-spacing:.18em;font-weight:500}
+  h1{font-family:var(--serif);font-weight:600;line-height:1.02;letter-spacing:-.02em}
+  h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.7rem,3.8vw,3.2rem);line-height:1.05;letter-spacing:-.02em;margin-bottom:1.3rem}
+  h2.sm{font-size:clamp(1.3rem,2.6vw,2rem);margin-bottom:.9rem}
+  .lead{color:var(--muted);font-size:clamp(.9rem,1.45vw,1.12rem);line-height:1.7;max-width:62ch}
+  em{font-style:italic;color:var(--amber);font-family:var(--serif);font-weight:500}
+  strong{color:var(--ink);font-weight:700}
+  .mono-accent{color:var(--amber);font-weight:500}
+
+  #s0 h1{font-size:clamp(2.6rem,8vw,6.4rem)}
+  #s0 .sub{font-family:var(--serif);font-style:italic;font-weight:300;font-size:clamp(1.3rem,3vw,2.2rem);color:var(--muted);line-height:1.3;margin-top:.4rem}
+  .meta-row{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1.4rem;font-size:.78rem;color:var(--faint);letter-spacing:.06em}
+  .meta-row b{color:var(--muted);font-weight:500}
+
+  .cols{display:grid;gap:1.3rem;margin-top:.3rem}
+  .c2{grid-template-columns:1fr 1fr}.c3{grid-template-columns:repeat(3,1fr)}
+  .card{background:linear-gradient(180deg,var(--panel),var(--bg-2));border:1px solid var(--line);border-radius:4px;padding:1.4rem;position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber-dim)}
+  .card.red::before{background:var(--red)}.card.green::before{background:var(--green)}.card.blue::before{background:var(--blue)}
+  .card h3{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-bottom:.6rem;font-weight:700}
+  .card.red h3{color:var(--red)}.card.green h3{color:var(--green)}.card.blue h3{color:var(--blue)}
+  .card p{font-size:.84rem;line-height:1.6;color:var(--muted)}
+  .card .big{font-family:var(--serif);font-size:2rem;color:var(--ink);font-weight:600;line-height:1;margin-bottom:.4rem}
+
+  ul.clean{list-style:none;display:flex;flex-direction:column;gap:.85rem;margin-top:.4rem}
+  ul.clean li{font-size:.92rem;line-height:1.55;color:var(--muted);padding-left:1.4rem;position:relative}
+  ul.clean li::before{content:"▸";position:absolute;left:0;color:var(--amber);font-size:.78rem;top:.15rem}
+  ul.clean li b{color:var(--ink)}
+
+  table.bench{width:100%;border-collapse:collapse;margin-top:.4rem;font-size:.9rem}
+  table.bench th,table.bench td{text-align:left;padding:.8rem 1rem;border-bottom:1px solid var(--line)}
+  table.bench th{color:var(--faint);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
+  table.bench td.metric{color:var(--ink)}
+  table.bench .fable{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--red)}
+  table.bench .opus{color:var(--amber);font-weight:700}
+
+  .flow{display:flex;align-items:stretch;gap:0;margin-top:.8rem;flex-wrap:wrap}
+  .node{flex:1;min-width:140px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:1rem 1.1rem}
+  .node .tag{font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--amber);font-weight:700}
+  .node .title{font-family:var(--serif);font-size:1.05rem;color:var(--ink);margin:.3rem 0;font-weight:600}
+  .node .desc{font-size:.76rem;color:var(--muted);line-height:1.5}
+  .arrow{display:flex;align-items:center;justify-content:center;color:var(--amber);font-size:1.25rem;padding:0 .6rem}
+
+  /* code */
+  .filename{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:.5rem;display:flex;gap:.55rem;align-items:center}
+  .filename::before{content:"▣";color:var(--amber-dim)}
+  .filename .badge{margin-left:auto;color:var(--faint);letter-spacing:.1em;font-size:.62rem}
+  pre.code{background:var(--code-bg);border:1px solid var(--line);border-left:3px solid var(--amber-dim);border-radius:4px;padding:1rem 1.2rem;font-family:var(--mono);font-size:clamp(.58rem,1.02vw,.78rem);line-height:1.6;color:#d8cfc0;overflow:auto;max-height:64vh;white-space:pre;tab-size:2}
+  pre.code .c{color:var(--faint)}
+  pre.code .k{color:var(--amber)}
+  pre.code .s{color:var(--green)}
+  pre.code .fn{color:var(--blue)}
+  .codecols{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;align-items:start}
+  .side ul.clean li{font-size:.85rem}
+
+  .verdict-list{display:flex;flex-direction:column;gap:.6rem;margin-top:.3rem}
+  .verdict{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;background:var(--bg-2);border:1px solid var(--line);border-radius:4px;padding:.62rem 1rem}
+  .verdict .claim{font-size:.8rem;color:var(--muted);line-height:1.4}
+  .verdict .claim b{color:var(--ink)}
+  .verdict .score{display:flex;align-items:center;gap:.55rem;white-space:nowrap}
+  .dots{display:flex;gap:3px}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .dot.r{background:var(--red)}
+  .stat{font-size:.7rem;font-weight:700;letter-spacing:.06em}
+  .stat.ok{color:var(--green)}.stat.no{color:var(--red)}
+
+  .quote{font-family:var(--serif);font-style:italic;font-size:clamp(1.3rem,2.6vw,2rem);line-height:1.4;color:var(--ink);max-width:32ch}
+  .quote .src{display:block;font-family:var(--mono);font-style:normal;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-top:1.3rem}
+
+  .big-stat{display:flex;gap:3rem;flex-wrap:wrap;margin:.8rem 0}
+  .big-stat .n{font-family:var(--serif);font-size:clamp(2.8rem,6.5vw,5rem);font-weight:600;line-height:.9;color:var(--amber)}
+  .big-stat .n.red{color:var(--red)}
+  .big-stat .l{font-size:.76rem;color:var(--muted);letter-spacing:.06em;margin-top:.5rem;line-height:1.5;max-width:18ch}
+
+  .steps{display:flex;flex-direction:column;gap:.7rem;margin-top:.3rem;counter-reset:st}
+  .step{display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:baseline;background:var(--bg-2);border:1px solid var(--line);border-radius:4px;padding:.8rem 1.1rem}
+  .step::before{counter-increment:st;content:counter(st);font-family:var(--serif);font-size:1.4rem;color:var(--amber);font-weight:600;line-height:1}
+  .step .t{font-size:.88rem;color:var(--ink);font-weight:700;line-height:1.4}
+  .step .t span{display:block;font-weight:400;color:var(--muted);font-size:.8rem;margin-top:.2rem}
+
+  .progress{position:fixed;top:0;left:0;height:3px;background:var(--amber);z-index:5;transition:width .4s ease}
+  .counter{position:fixed;bottom:1.3rem;right:1.7rem;font-size:.72rem;letter-spacing:.1em;color:var(--faint);z-index:5}
+  .counter b{color:var(--amber)}
+  .label-tl{position:fixed;top:1.3rem;left:1.7rem;font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);z-index:5}
+  .hint{position:fixed;bottom:1.3rem;left:1.7rem;font-size:.64rem;letter-spacing:.12em;color:var(--faint);z-index:5}
+  .hint b{color:var(--muted)}
+  @media(max-width:820px){.c2,.c3,.codecols{grid-template-columns:1fr}.flow{flex-direction:column}.arrow{transform:rotate(90deg);padding:.3rem 0}}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<div class="label-tl">Opus 4.8 · Fable-class scaffolding</div>
+<div class="deck" id="deck">
+
+  <!-- 0 TITLE -->
+  <section class="slide" id="s0">
+    <div class="kicker reveal">社内事例紹介 / Engineering Case Study</div>
+    <h1 class="reveal">Opus 4.8<br>“Fable化”計画</h1>
+    <p class="sub reveal">使えないモデルの品質を、<em>足回り</em>で取りに行く</p>
+    <p class="lead reveal" style="margin-top:1.5rem">capability gap（重みの差）はプロンプトで埋まらない。では何が埋まるのか — <strong>scaffolding（足回り）</strong>を設計し直し、<strong>実装と自己検証まで</strong>到達した記録。<br><span style="color:var(--faint)">※ 本資料には再現可能な実装コードを同梱（末尾 PART IV）</span></p>
+    <div class="meta-row reveal">
+      <span>NTT docomo R&D — 行動変容技術チーム</span>
+      <span><b>対象</b> Claude Code ハーネス改修 &nbsp;·&nbsp; <b>期間</b> 2026-06</span>
+    </div>
+  </section>
+
+  <!-- 1 課題 -->
+  <section class="slide" id="s1">
+    <div class="kicker part reveal" data-part="PART I — 物語">01 — 出発点</div>
+    <h2 class="reveal">使いたいモデルが、使えない</h2>
+    <div class="cols c2">
+      <div class="reveal"><ul class="clean">
+        <li><b>Fable 5</b> = Claude 5 系の最初のモデル（Mythos-class、Opus 上位）。2026-06-09 リリース</li>
+        <li>2026-06-12、<b>米国の輸出管理ディレクティブで提供停止</b>。外国籍ユーザーは国内外問わず触れない</li>
+        <li>事実上の fallback は <span class="mono-accent">Opus 4.8</span>。ここで戦うしかない</li>
+      </ul></div>
+      <div class="reveal">
+        <table class="bench">
+          <tr><th>Benchmark</th><th>Fable 5</th><th>Opus 4.8</th></tr>
+          <tr><td class="metric">SWE-Bench Pro</td><td class="fable">80.3%</td><td class="opus">69.2%</td></tr>
+          <tr><td class="metric">FrontierCode</td><td class="fable">29.3%</td><td class="opus">13.4%</td></tr>
+        </table>
+        <p class="lead" style="margin-top:1rem;font-size:.84rem">この差は<strong>モデル重みの差</strong>。一発正答率（raw capability）はプロンプトでは動かない。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 戦略 -->
+  <section class="slide" id="s2">
+    <div class="kicker part reveal" data-part="PART I — 物語">02 — 戦略の核心</div>
+    <h2 class="reveal">埋まらないものと、埋まるものを分ける</h2>
+    <div class="cols c2 reveal">
+      <div class="card red"><h3>埋まらない — capability</h3><p>一発正答率。重みに刻まれた生の推論力。<strong>プロンプトでもスキルでも動かせない</strong>。ここを諦める判断が起点。</p></div>
+      <div class="card green"><h3>埋まる — scaffolding</h3><p>足回り。<strong>effort / 並列 subagent / memory / fresh-context 検証</strong>。設計でいくらでも積める領域。ここに全リソースを寄せる。</p></div>
+    </div>
+    <p class="lead reveal" style="margin-top:1.4rem">北極星は <em>設計・要件定義・実装計画への落とし込み力</em>。raw 差より「熟考の深さ／収束前の探索幅／敵対的検証」という scaffolding が効く領域。</p>
+  </section>
+
+  <!-- 3 全体像 -->
+  <section class="slide" id="s3">
+    <div class="kicker part reveal" data-part="PART I — 物語">03 — 打ち手の全体像</div>
+    <h2 class="reveal">2つの施策で足回りを組み直す</h2>
+    <div class="cols c2">
+      <div class="card blue reveal"><h3>施策 1 — effort-fit advisor</h3><p class="big">正しい effort</p><p>難易度と effort 設定がミスマッチな時だけ <span class="mono-accent">/effort</span> 変更を勧告する hook 2本。<strong>本番稼働中</strong>。</p></div>
+      <div class="card reveal"><h3>施策 2 — A/B/D スキル改修</h3><p class="big">設計プロセスの質</p><p>brainstorming / writing-plans を改修。<strong>探索幅・接地・敵対的検証</strong>を設計フローに組み込む。</p></div>
+    </div>
+    <p class="lead reveal" style="margin-top:1.3rem">「正しい effort」と「設計プロセスの質」は<strong>直交・補完</strong>。両輪で Fable に寄せる。</p>
+  </section>
+
+  <!-- 4 施策1 arch -->
+  <section class="slide" id="s4">
+    <div class="kicker part reveal" data-part="PART II — 実装">04 — 施策1 / effort-fit advisor</div>
+    <h2 class="reveal">難易度と effort のズレを、着手前に勧告</h2>
+    <div class="flow reveal">
+      <div class="node"><div class="tag">PreToolUse hook</div><div class="title">effort-stash</div><div class="desc">毎ツール呼び出しで現在の <span class="mono-accent">effort.level</span> を state file に退避</div></div>
+      <div class="arrow">→</div>
+      <div class="node"><div class="tag">UserPromptSubmit hook</div><div class="title">effort-fit</div><div class="desc">stash を読み「現在 effort=X。明確ミスマッチ時だけ勧告せよ」を文脈注入</div></div>
+      <div class="arrow">→</div>
+      <div class="node"><div class="tag">Model + User</div><div class="title">判定→勧告→トグル</div><div class="desc">難易度判定はモデル。effort 変更はユーザーが <span class="mono-accent">/effort</span></div></div>
+    </div>
+    <p class="lead reveal" style="margin-top:1.3rem"><strong>責務分離</strong>が肝 — 意味的な難易度判定は<em>モデル</em>、現在値の機械的供給は<em>hook</em>。bash でキーワード判定する脆い設計を捨てた。</p>
+  </section>
+
+  <!-- 5 code: effort-stash -->
+  <section class="slide" id="s5">
+    <div class="kicker part reveal" data-part="PART II — 実装">05 — 実装 / hook ①</div>
+    <h2 class="sm reveal">effort を退避する PreToolUse hook</h2>
+    <div class="reveal"><div class="filename">~/.claude/hooks/effort-stash.sh<span class="badge">bash · PreToolUse</span></div>
+<pre class="code"><span class="c">#!/usr/bin/env bash</span>
+<span class="c"># PreToolUse hook — 現在の effort を state file に退避</span>
+<span class="c"># 根拠: PreToolUse の env にだけ CLAUDE_EFFORT / SESSION_ID が在る（実機確認）</span>
+cat &gt;/dev/null 2&gt;&amp;1 || true            <span class="c"># stdin を drain（broken-pipe 回避）</span>
+level=<span class="s">"${CLAUDE_EFFORT:-}"</span>
+sid=<span class="s">"${CLAUDE_CODE_SESSION_ID:-default}"</span>
+<span class="k">if</span> [ -n <span class="s">"$level"</span> ]; <span class="k">then</span>
+  mkdir -p <span class="s">"$HOME/.claude/state"</span>
+  printf <span class="s">'%s'</span> <span class="s">"$level"</span> &gt; <span class="s">"$HOME/.claude/state/effort-$sid"</span>
+<span class="k">fi</span>
+<span class="k">exit</span> 0                                  <span class="c"># ツール呼び出しを絶対にブロックしない</span></pre></div>
+  </section>
+
+  <!-- 6 code: effort-fit -->
+  <section class="slide" id="s6">
+    <div class="kicker part reveal" data-part="PART II — 実装">06 — 実装 / hook ②</div>
+    <h2 class="sm reveal">勧告を文脈注入する UserPromptSubmit hook</h2>
+    <div class="reveal"><div class="filename">~/.claude/hooks/effort-fit.sh<span class="badge">bash · UserPromptSubmit</span></div>
+<pre class="code"><span class="c">#!/usr/bin/env bash</span>
+<span class="c"># UserPromptSubmit hook — 現在 effort +「明確ミスマッチ時のみ勧告」を注入</span>
+cat &gt;/dev/null 2&gt;&amp;1 || true
+sid=<span class="s">"${CLAUDE_CODE_SESSION_ID:-default}"</span>
+f=<span class="s">"$HOME/.claude/state/effort-$sid"</span>
+level=<span class="s">""</span>; [ -r <span class="s">"$f"</span> ] &amp;&amp; level=<span class="s">"$(cat "$f" 2&gt;/dev/null)"</span>
+level=<span class="s">"${level:-unknown}"</span>             <span class="c"># stash 欠損は unknown にデグレード</span>
+
+<span class="c"># JSON を壊す二重引用符は使わず「」で代用（printf fallback 安全化）</span>
+ctx=<span class="s">"[effort-fit] 現在effort=${level}。着手前に難易度を評価し、明確にミスマッチ</span>
+<span class="s">な時だけ /effort &lt;level&gt; を1行勧告。xhigh寄り=新規アーキ/不可逆選定/複数サブ</span>
+<span class="s">システム/深いデバッグ。high以下=局所修正/定型/明確指示。適正なら触れるな。"</span>
+
+<span class="k">if</span> command -v jq &gt;/dev/null 2&gt;&amp;1; <span class="k">then</span>
+  jq -nc --arg c <span class="s">"$ctx"</span> <span class="s">'{hookSpecificOutput:{hookEventName:"UserPromptSubmit",additionalContext:$c}}'</span>
+<span class="k">else</span>
+  printf <span class="s">'{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"%s"}}\n'</span> <span class="s">"$ctx"</span>
+<span class="k">fi</span>
+<span class="k">exit</span> 0</pre></div>
+  </section>
+
+  <!-- 7 code: register + フィジ -->
+  <section class="slide" id="s7">
+    <div class="kicker part reveal" data-part="PART II — 実装">07 — 実装 / 登録 + 能力境界</div>
+    <h2 class="sm reveal">settings.json へ登録 ＆ 設計前の実在確認</h2>
+    <div class="codecols">
+      <div class="reveal"><div class="filename">登録（ユーザーが手動実行）<span class="badge">jq</span></div>
+<pre class="code"><span class="c"># hook を実行可能に</span>
+chmod +x ~/.claude/hooks/effort-stash.sh \
+         ~/.claude/hooks/effort-fit.sh
+
+<span class="c"># settings.json へ登録（必ず .bak を取る）</span>
+cp ~/.claude/settings.json ~/.claude/settings.json.bak
+jq <span class="s">'.hooks.PreToolUse += [{"matcher":"*",
+   "hooks":[{"type":"command","command":
+   "/ABS/.claude/hooks/effort-stash.sh"}]}]
+ | .hooks.UserPromptSubmit += [{"hooks":
+   [{"type":"command","command":
+   "/ABS/.claude/hooks/effort-fit.sh"}]}]'</span> \
+  ~/.claude/settings.json &gt; /tmp/s \
+  &amp;&amp; mv /tmp/s ~/.claude/settings.json</pre></div>
+      <div class="reveal side">
+        <div class="filename">probe で確定した hook の能力境界</div>
+        <ul class="clean">
+          <li><b style="color:var(--green)">◎ 注入</b> — additionalContext で文脈注入は可</li>
+          <li><b style="color:var(--blue)">△ effort 読取</b> — PreToolUse stdin にのみ存在。UPS には無い → <b>stash 方式が必須</b></li>
+          <li><b style="color:var(--red)">× effort 変更</b> — 正規手段なし → 「勧告＋手動トグル」に確定</li>
+        </ul>
+        <p class="lead" style="margin-top:.9rem;font-size:.82rem">一度きりの probe（stdin+env ダンプ）で境界を確定 → <strong>手戻りゼロ</strong>。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 A/B/D 概要 -->
+  <section class="slide" id="s8">
+    <div class="kicker part reveal" data-part="PART II — 実装">08 — 施策2 / A·B·D スキル改修</div>
+    <h2 class="reveal">設計フローに3つの足回りを差す</h2>
+    <div class="cols c3">
+      <div class="card reveal"><h3>A — 多筋フレーミング</h3><p>brainstorming Phase 2。表層違いの案でなく<strong>本質的に異なる軸</strong>で発散</p></div>
+      <div class="card reveal"><h3>B — 敵対的 critic ゲート</h3><p>承認→計画の間に <span class="mono-accent">adversarial-review</span> を <strong>fresh-context subagent</strong> で挟む</p></div>
+      <div class="card reveal"><h3>D — Explore 接地</h3><p>既存コードベース設計は<strong>原則 Explore から</strong>。読まずに推測で設計しない</p></div>
+    </div>
+    <p class="lead reveal" style="margin-top:1.3rem">共通原則 — <strong>生成は Main・検証だけ subagent</strong>。「設計判断はメインスレッドが最も品質が高い」を死守しつつ、検証だけ独立文脈に出す。</p>
+  </section>
+
+  <!-- 9 A code -->
+  <section class="slide" id="s9">
+    <div class="kicker part reveal" data-part="PART II — 実装">09 — A / 多筋フレーミング</div>
+    <h2 class="sm reveal">2-3案ではなく、2-3の<em>世界観</em></h2>
+    <div class="reveal"><div class="filename">~/.claude/skills/brainstorming/SKILL.md — Phase 2 抜粋<span class="badge">改修後</span></div>
+<pre class="code"><span class="c">**発火判定（2段階）— 設計の「探索幅の必要性」で測る</span>
+<span class="c">  （実行難易度や effort 設定とは別軸）**</span>
+- 非自明な設計        → A（多筋フレーミング）を発火
+- 高リスク（不可逆/影響範囲大）→ B（critic ゲート）も発火
+
+1. アプローチを提案
+   - 非自明な設計では、表層が違うだけの 2-3 案でなく、<span class="k">本質的に異なる</span>
+     <span class="k">フレーミングを 2-3 軸</span>で出す:
+       MVP優先 / リスク優先 / ユーザー優先 / 制約優先
+     各軸が「何を最大化し・何を捨てるか」を明示する
+   - 生成は <span class="k">Main 逐次</span>（"設計生成は Main" 原則。subagent 分散しない）
+   - ⚠ 宣言を入れる:「設計モードなので act-don't-survey
+     バイアスは適用しない — 収束前に探索幅を意図的に広げる」</pre></div>
+  </section>
+
+  <!-- 10 B code (skill) -->
+  <section class="slide" id="s10">
+    <div class="kicker part reveal" data-part="PART II — 実装">10 — B / 敵対的 critic ゲート</div>
+    <h2 class="sm reveal">自分の設計を、自分以外に殴らせる</h2>
+    <div class="reveal"><div class="filename">~/.claude/skills/brainstorming/SKILL.md — Phase 2 step 6<span class="badge">改修後</span></div>
+<pre class="code">6. 承認後・敵対的 critic ゲート<span class="k">（高リスク＝不可逆 or 影響範囲大 のみ）</span>
+   - 承認と writing-plans 移行の<span class="k">間に</span> adversarial-review を
+     <span class="k">fresh-context subagent</span> で挟む（生成 Main・検証だけ subagent）
+   - context に設計書パスだけでなく
+     「採用理由・棄却した代替案・主要制約」を渡す
+       <span class="c">→ 検討済みの論点を蒸し返すノイズを防ぐ</span>
+   - 検証 subagent のモデルは<span class="k">設計モデルと同等以上</span>
+       <span class="c">（能力差があると fresh-context の利得が消える）</span>
+   - 棄却された主張は evidence を吟味して設計に反映してから移行</pre></div>
+  </section>
+
+  <!-- 11 B workflow code -->
+  <section class="slide" id="s11">
+    <div class="kicker part reveal" data-part="PART II — 実装">11 — B / 反証パネルの実装</div>
+    <h2 class="sm reveal">3レンズ × 並列 subagent の Workflow</h2>
+    <div class="reveal"><div class="filename">adversarial-review — Workflow script（3レンズ懐疑役パネル）<span class="badge">javascript</span></div>
+<pre class="code"><span class="k">const</span> VERDICT = {type:<span class="s">'object'</span>, properties:{refuted:{type:<span class="s">'boolean'</span>},
+  evidence:{type:<span class="s">'string'</span>}}, required:[<span class="s">'refuted'</span>,<span class="s">'evidence'</span>]}
+<span class="k">const</span> LENSES = [
+  <span class="s">'正確性レンズ: 事実誤認・論理飛躍・古い情報を探して反証せよ'</span>,
+  <span class="s">'反例レンズ: 主張が崩れる具体的な反例・エッジケースを構築せよ'</span>,
+  <span class="s">'前提レンズ: 暗黙の前提を列挙し、成り立たない状況を示せ'</span>,
+]
+<span class="k">const</span> results = <span class="k">await</span> Promise.all(args.claims.map(<span class="k">async</span> (claim, i) =&gt; {
+  <span class="c">// 3レンズを並列起動。「不確実なら refuted=true に倒せ」が肝</span>
+  <span class="k">const</span> votes = <span class="k">await</span> <span class="fn">parallel</span>(LENSES.map(lens =&gt; () =&gt;
+    <span class="fn">agent</span>(<span class="s">`${lens}\n\n対象の主張: ${claim}\n\nコンテキスト: ${args.context}`</span>
+        + <span class="s">`\n\n反証を試みよ。確信を持って反証できる場合のみ refuted=false。`</span>,
+      {label:<span class="s">`claim${i}`</span>, phase:<span class="s">'Refute'</span>, schema:VERDICT})))
+  <span class="k">const</span> refuted = votes.filter(Boolean).filter(v =&gt; v.refuted).length
+  <span class="k">return</span> {claim, confirmed: refuted &lt;= 1}   <span class="c">// 過半数が落とせねば「確証」</span>
+}))</pre></div>
+  </section>
+
+  <!-- 12 D code -->
+  <section class="slide" id="s12">
+    <div class="kicker part reveal" data-part="PART II — 実装">12 — D / Explore 接地</div>
+    <h2 class="sm reveal">読まずに推測で設計しない（が、追従もしない）</h2>
+    <div class="codecols">
+      <div class="reveal"><div class="filename">brainstorming/SKILL.md — Phase 1 抜粋</div>
+<pre class="code"><span class="c"># 既存コードベース設計は原則 Explore から</span>
+- <span class="k">原則 Explore subagent 接地から入る</span>（model: sonnet）
+    関連サブシステム・既存パターン・命名規約・制約を把握
+- ただし接地は<span class="k">「現状把握」</span>であって
+    <span class="k">既存パターンへの追従を強制しない</span>
+    <span class="c"># 負債は継続せず改善対象として織り込む</span>
+- スキップ可: 新規ゼロ / 1-2 ファイルに自明に閉じる場合</pre></div>
+      <div class="reveal side">
+        <ul class="clean">
+          <li><b>探索はコスト効率の良い Sonnet</b> に投げ、<b>設計判断は Main</b> が握る（棲み分け）</li>
+          <li>後の自己検証で「接地が<b>下方アンカリング</b>を生む」と指摘され、追従強制でない旨を明記</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 dogfood -->
+  <section class="slide" id="s13">
+    <div class="kicker part reveal" data-part="PART III — 自己検証">13 — ハイライト / ドッグフード</div>
+    <h2 class="reveal">作ったゲートで、その改修自体を反証した</h2>
+    <div class="big-stat reveal">
+      <div><div class="n">7</div><div class="l">改修の根幹判断（claim）</div></div>
+      <div><div class="n">21</div><div class="l">並列 subagent（7主張 × 3レンズ）</div></div>
+      <div><div class="n red">5</div><div class="l">うち <b style="color:var(--red)">棄却</b> された主張</div></div>
+    </div>
+    <p class="lead reveal" style="margin-top:.5rem">B ゲートの設計思想（生成は自分・検証は fresh-context）が、<strong>まさに自分の改修に対して機能した</strong>。棄却 = 機能の撤回ではなく <em>「主張が過剰／正当化が誤り」</em> の検出。</p>
+  </section>
+
+  <!-- 14 verdict -->
+  <section class="slide" id="s14">
+    <div class="kicker part reveal" data-part="PART III — 自己検証">14 — 検証結果</div>
+    <h2 class="reveal">確証 2 / 棄却 5</h2>
+    <div class="verdict-list reveal">
+      <div class="verdict"><div class="claim"><b>A:</b> 多筋フレーミングは表層違いより設計品質が上がる</div><div class="score"><span class="dots"><i class="dot r"></i><i class="dot"></i><i class="dot"></i></span><span class="stat ok">確証 1/3</span></div></div>
+      <div class="verdict"><div class="claim"><b>A:</b> 多筋生成は Main 逐次（subagent 分散しない）</div><div class="score"><span class="dots"><i class="dot r"></i><i class="dot"></i><i class="dot"></i></span><span class="stat ok">確証 1/3</span></div></div>
+      <div class="verdict"><div class="claim"><b>B:</b> fresh-context 検証は自己批判より優れる</div><div class="score"><span class="dots"><i class="dot r"></i><i class="dot r"></i><i class="dot r"></i></span><span class="stat no">棄却 3/3</span></div></div>
+      <div class="verdict"><div class="claim"><b>B:</b> 非自明な設計には critic ゲートを常時発火させる</div><div class="score"><span class="dots"><i class="dot r"></i><i class="dot r"></i><i class="dot r"></i></span><span class="stat no">棄却 3/3</span></div></div>
+      <div class="verdict"><div class="claim"><b>B:</b> 両側（発火元＋通過確認）強制で堅牢化する</div><div class="score"><span class="dots"><i class="dot r"></i><i class="dot r"></i><i class="dot"></i></span><span class="stat no">棄却 2/3</span></div></div>
+      <div class="verdict"><div class="claim"><b>D:</b> Explore 接地をデフォルト化し推測設計を禁止する</div><div class="score"><span class="dots"><i class="dot r"></i><i class="dot r"></i><i class="dot"></i></span><span class="stat no">棄却 2/3</span></div></div>
+      <div class="verdict"><div class="claim"><b>共通:</b> 発火判定を effort-fit の難易度基準と揃える</div><div class="score"><span class="dots"><i class="dot r"></i><i class="dot r"></i><i class="dot r"></i></span><span class="stat no">棄却 3/3</span></div></div>
+    </div>
+  </section>
+
+  <!-- 15 修正 -->
+  <section class="slide" id="s15">
+    <div class="kicker part reveal" data-part="PART III — 自己検証">15 — 棄却から得た修正</div>
+    <h2 class="reveal">反証は、そのまま設計改善になった</h2>
+    <div class="cols c2">
+      <div class="card red reveal"><h3>Claim4 — 自己矛盾</h3><p>「非自明＝常時発火」が adversarial-review 自身の<strong>「高リスク判断専用」原則と矛盾</strong> → B を<strong>高リスク（不可逆/影響範囲大）のみ</strong>に絞った</p></div>
+      <div class="card red reveal"><h3>Claim7 — 軸違い</h3><p>effort-fit は<strong>実行難易度</strong>、発火判定は<strong>設計探索幅</strong>。目的関数が別 → 連動を切り A/B を2段階閾値に分離</p></div>
+      <div class="card red reveal"><h3>Claim3 — 能力差</h3><p>検証 subagent が Sonnet だと fresh-context の利得が消える → <strong>検証モデルは設計モデルと同等以上</strong>＋棄却済み代替案を context に渡す</p></div>
+      <div class="card red reveal"><h3>Claim6 — アンカリング</h3><p>Explore 接地が<strong>既存パターンへの追従</strong>を誘発 → 「接地＝現状把握／負債は改善対象」と明記し「禁止」を緩和</p></div>
+    </div>
+  </section>
+
+  <!-- 16 原則 -->
+  <section class="slide" id="s16">
+    <div class="kicker part reveal" data-part="PART IV — 横展開 & 再現">16 — 横展開できる原則</div>
+    <h2 class="reveal">この案件から持ち帰れるもの</h2>
+    <div class="cols c2">
+      <ul class="clean reveal">
+        <li><b>capability と scaffolding を分離する</b> — 諦める領域を決めると打ち手が定まる</li>
+        <li><b>責務分離</b> — 意味判断はモデル、機械的な状態供給は hook</li>
+        <li><b>生成は Main・検証は fresh-context</b> — エラー相関を切る棲み分け</li>
+      </ul>
+      <ul class="clean reveal">
+        <li><b>プリミティブ実在確認を設計の前に</b> — probe 一発で能力境界を確定し手戻りゼロ</li>
+        <li><b>自己批判より独立検証</b>（ただし能力差・文脈飢餓に注意）</li>
+        <li><b>ドッグフード</b> — 作った検証機構を自分に向ける。過剰な正当化が即座に剥がれる</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 17 再現ガイド -->
+  <section class="slide" id="s17">
+    <div class="kicker part reveal" data-part="PART IV — 横展開 & 再現">17 — 再現ガイド</div>
+    <h2 class="sm reveal">この資料を Claude に見せれば、同じことができる</h2>
+    <div class="steps">
+      <div class="step reveal"><div class="t">hook 2本を作成（PART II の実物コード）<span>~/.claude/hooks/ に置いて chmod +x</span></div></div>
+      <div class="step reveal"><div class="t">settings.json に登録<span>PreToolUse "*" + UserPromptSubmit。破壊的なので .bak を取り差分確認</span></div></div>
+      <div class="step reveal"><div class="t">brainstorming / writing-plans に A/B/D を反映<span>発火判定2段階・多筋フレーミング・critic ゲート・Explore 接地</span></div></div>
+      <div class="step reveal"><div class="t">高リスク設計で adversarial-review ゲートを発火<span>3レンズ並列パネル（PART II の Workflow script）</span></div></div>
+      <div class="step reveal"><div class="t">仕上げに、その改修自体を自己反証（ドッグフード）<span>過剰な正当化を棄却 → 設計に還元</span></div></div>
+    </div>
+  </section>
+
+  <!-- 18 再現プロンプト -->
+  <section class="slide" id="s18">
+    <div class="kicker part reveal" data-part="PART IV — 横展開 & 再現">18 — Claude への再現プロンプト</div>
+    <h2 class="sm reveal">そのまま貼って使える指示</h2>
+    <div class="reveal"><div class="filename">Copy → Claude Code に貼り付け<span class="badge">prompt</span></div>
+<pre class="code">あなたは Claude Code です。<span class="k">このスライドに埋め込まれた実装</span>を、
+私の環境に再現してください。
+
+<span class="k">【ゴール】</span>Opus 4.8 を scaffolding で Fable 5 品質に寄せる:
+  1. effort-fit advisor（hook 2本）を導入
+  2. brainstorming / writing-plans に A/B/D を反映
+  3. 高リスク設計で adversarial-review ゲートを発火
+  4. 仕上げに、その改修自体を adversarial-review で自己反証
+
+<span class="k">【進め方 — 必ず守る】</span>
+  - 着手前に私の OS・既存 ~/.claude/settings.json・既存スキルを確認
+  - settings.json への書き込みは破壊的。<span class="k">必ず差分を見せ承認を取る</span>
+  - 各 hook は probe（stdin+env ダンプ）で能力境界を実機確認してから本実装
+  - PART II のコードをベースに、私の環境に合わせて調整
+  - 最後に作った critic ゲートで自分の変更を反証し、棄却は設計に還元</pre></div>
+  </section>
+
+  <!-- 19 close -->
+  <section class="slide" id="s19">
+    <div class="kicker part reveal" data-part="PART IV — 横展開 & 再現">19 — まとめ</div>
+    <p class="quote reveal">生 capability は諦めた。<br>その代わり、<em>足回り</em>は<br>いくらでも設計できる。
+      <span class="src">Opus 4.8 “Fable化”計画 — fin.</span></p>
+    <p class="lead reveal" style="margin-top:1.8rem">使えないモデルへの嫉妬を、ハーネス設計のエネルギーに変えた記録。そして — <strong>作った検証機構が、設計者自身の過信を 5/7 で棄却した</strong>のが一番の収穫。<br><span style="color:var(--faint)">本資料の実装コードはすべて実機稼働済み。Claude に見せれば再現できる。</span></p>
+  </section>
+
+</div>
+
+<div class="counter"><b id="cur">01</b> / <span id="tot">20</span></div>
+<div class="hint">← → / <b>Space</b> でページ送り</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];let i=0;
+  const cur=document.getElementById('cur'),tot=document.getElementById('tot'),prog=document.getElementById('prog');
+  tot.textContent=String(slides.length).padStart(2,'0');
+  function show(n){i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    cur.textContent=String(i+1).padStart(2,'0');
+    prog.style.width=((i+1)/slides.length*100)+'%';}
+  function next(){show(i+1)}function prev(){show(i-1)}
+  window.addEventListener('keydown',e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown'].includes(e.key)){e.preventDefault();next()}
+    else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();prev()}
+    else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);});
+  document.getElementById('deck').addEventListener('click',e=>{
+    if(e.target.closest('pre.code'))return;            /* コードは選択しやすく */
+    (e.clientX>window.innerWidth/2)?next():prev();});
+  show(0);
+</script>
+</body>
+</html>
