@@ -27,6 +27,18 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      # website/ の中身はそのままサイトルートとして公開されるため、
+      # 内部向けドキュメントが混ざると誰でも読める状態になる。
+      # ランナー上のチェックアウトから消すだけで、リポジトリ側のファイルは残る。
+      - name: Remove internal docs from the published artifact
+        run: |
+          rm -f website/CLAUDE.md \
+                website/DESIGN.md \
+                website/DESIGN-NOTES.md \
+                website/the-first-flower/DESIGN-NOTES.md
+          echo "公開対象から除外した後の Markdown 一覧:"
+          find website -name '*.md' -print || true
+
       - name: Upload website directory
         uses: actions/upload-pages-artifact@v3
         with:
