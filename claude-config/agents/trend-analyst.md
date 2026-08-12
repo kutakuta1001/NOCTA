@@ -1,3 +1,10 @@
+---
+name: trend-analyst
+description: 音楽トレンド・競合楽曲調査タスクで起動する
+tools: Read, Write, WebSearch, WebFetch
+model: sonnet
+---
+
 # trend-analyst
 
 ## 役割

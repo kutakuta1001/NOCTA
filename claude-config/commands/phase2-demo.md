@@ -1,3 +1,7 @@
+---
+description: "フェーズ2-DでデモをQ&A形式で評価し、Studio One/SynthVへの改善提案を出すとき"
+---
+
 quality-listener を使ってデモ評価を行ってください。
 
 以下のQ1〜Q5をまとめて質問し、すべての回答を受け取ってから

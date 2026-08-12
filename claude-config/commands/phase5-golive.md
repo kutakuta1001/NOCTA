@@ -1,3 +1,7 @@
+---
+description: "リリース当日の最終チェックリストを作成・確認するとき（承認ゲート⑨）"
+---
+
 リリース当日の最終チェックを実行してください。
 
 context.md・handoff.md・outputs/approved/release_checklist.md を読み込み、

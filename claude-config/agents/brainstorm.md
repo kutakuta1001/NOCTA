@@ -1,3 +1,10 @@
+---
+name: brainstorm
+description: 各フェーズ開始前にCEOと対話して合意を取る場面で起動する
+tools: Read, Write
+model: sonnet
+---
+
 # brainstorm
 
 ## 役割

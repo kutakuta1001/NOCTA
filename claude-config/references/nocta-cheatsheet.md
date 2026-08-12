@@ -53,7 +53,7 @@ CLAUDE.md から分離した参照情報。常時ロードされないので、�
 
 | コマンド | 動作 |
 |---|---|
-| `/review [計画書]` / `/review-diff` | Codex CLI で第三者レビュー |
+| `/codex-review [計画書]` / `/codex-diff` | Codex CLI で第三者レビュー |
 | `/persona-review` | 観点別ペルソナ6視点でレビュー |
 | `/ultrareview [PR#]` | クラウドマルチエージェントコードレビュー |
 | `/weekly-check` | 収集・レビュースキルの実行ガイド（3日/週1ペース） |

@@ -1,3 +1,10 @@
+---
+name: concept-director
+description: 楽曲のPVコンセプト・絵コンテ設計タスクで起動する
+tools: Read, Write
+model: sonnet
+---
+
 # concept-director
 
 ## 役割

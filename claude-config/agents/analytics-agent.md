@@ -1,3 +1,10 @@
+---
+name: analytics-agent
+description: リリース後のKPI設計・計測準備タスクで起動する
+tools: Read, Write
+model: haiku
+---
+
 # analytics-agent
 
 ## 役割

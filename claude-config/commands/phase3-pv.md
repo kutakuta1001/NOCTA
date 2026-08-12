@@ -1,3 +1,7 @@
+---
+description: "フェーズ3でPVコンセプト・Runway/Kling映像プロンプトを生成するとき（/brainstorm phase3 完了後）"
+---
+
 【重要】このコマンドを実行する前に
 /brainstorm phase3 を先に実行してください。
 brainstorm_phase3.md が存在しない場合は

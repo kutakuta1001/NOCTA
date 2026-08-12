@@ -1,3 +1,10 @@
+---
+name: press-release-writer
+description: プレスリリース・メディアアウトリーチ文書生成タスクで起動する
+tools: Read, Write
+model: sonnet
+---
+
 # press-release-writer
 
 ## 役割

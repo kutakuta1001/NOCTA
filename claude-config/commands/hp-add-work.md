@@ -1,3 +1,8 @@
+---
+description: "HP の Works セクションに新楽曲を追加するとき"
+argument-hint: "[曲名] [YouTubeID]"
+---
+
 HP の Works セクションに新しい楽曲を追加してください。
 
 引数: $ARGUMENTS（形式: [曲名] [YouTubeID]）
@@ -46,5 +51,12 @@ HP の Works セクションに新しい楽曲を追加してください。
    「Netlify が自動デプロイを開始します。1〜2分後にサイトを確認してください」と案内する
 
    no の場合: 「キャンセルしました。works-data.js の変更は保持されています。確認後に git add → commit → push してください」と案内する
+
+9. push 成功後に追加内容を検証する（yes → push 成功時のみ）:
+   `website/works-data.js` を Read して先頭エントリを確認する:
+   - `title` が [曲名] と一致すること
+   - `youtubeId` が [YouTubeID] と一致すること
+   一致していれば「works-data.js への追加を確認しました。」と表示する。
+   不一致があれば「確認エラー: 先頭エントリが期待値と異なります。手動で確認してください。」と表示する。
 
 注意: descJa / descEn はプレースホルダーのままプッシュします。サイト反映後に works-data.js を直接編集してください。

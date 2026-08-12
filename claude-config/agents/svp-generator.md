@@ -1,3 +1,10 @@
+---
+name: svp-generator
+description: SynthV Studio PRO用のSVPファイル生成タスクで起動する
+tools: Read, Write, Bash
+model: opus
+---
+
 # svp-generator
 
 ## 役割

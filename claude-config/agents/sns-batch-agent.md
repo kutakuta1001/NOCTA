@@ -1,3 +1,10 @@
+---
+name: sns-batch-agent
+description: X/Instagram/TikTok/YouTube投稿コンテンツ一括生成タスクで起動する
+tools: Read, Write
+model: sonnet
+---
+
 # sns-batch-agent
 
 ## 役割

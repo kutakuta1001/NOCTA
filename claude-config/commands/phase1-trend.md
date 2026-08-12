@@ -1,3 +1,7 @@
+---
+description: "フェーズ1のトレンド分析（BPM・キー・参考楽曲・クリシェ）を実行するとき"
+---
+
 trend-analyst を使ってトレンド分析を実行してください。
 
 context.md を読み込み、以下を drafts/trend_report.md に出力してください:

@@ -1,3 +1,7 @@
+---
+description: "フェーズ2-Aで楽曲仕様書・歌詞草稿をAgent Teams並列生成するとき（/brainstorm phase2 完了後）"
+---
+
 【重要】このコマンドを実行する前に
 /brainstorm phase2 を先に実行してください。
 brainstorm_phase2.md が存在しない場合は

@@ -1,3 +1,10 @@
+---
+name: quality-listener
+description: CEOとのQ&A形式でデモ評価・改善提案を行う場面で起動する
+tools: Read, Write
+model: sonnet
+---
+
 # quality-listener
 
 ## 役割
