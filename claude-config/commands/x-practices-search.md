@@ -15,6 +15,17 @@ X（Twitter）から Claude Code / AI 運用に関するベストプラクティ
 
 両ファイルの「## 未処理」と「## 処理済み」に含まれるURLを合算して重複チェック用セットとして保持する。
 
+**アーカイブも重複チェック対象に含める（必須）。** 処理済みが20件を超えた分は
+`drafts/best-practices-archive-xmcp.md` へ移動しているため、そこを含めないと過去に処理した
+ツイートを再収集する。全文 Read せず tweet ID の grep で照合する:
+
+```bash
+grep -ho "status/[0-9]*" /Users/fghmacbook013/NOCTA/project_NOCTA/drafts/best-practices-archive-xmcp.md | sort -u
+```
+
+X 由来のエントリは同じツイートを再掲する価値がないため、一致したものは Step 3 で**除外する**
+（公式ドキュメント由来の知見を注記付きで残す `/claude-docs-review` とは扱いが異なる）。
+
 ---
 
 ## Step 1: 検索クエリを準備する

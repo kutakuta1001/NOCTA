@@ -14,6 +14,19 @@ Anthropic 公式ドキュメント・Claude Code リリースノートを巡回�
 `project_NOCTA/drafts/best-practices-inbox.md` を Read する。
 「## 未処理」と「## 処理済み」に含まれるエントリを抽出し、重複チェック用セットとして保持する。
 
+**アーカイブも重複チェック対象に含める（必須）。** 処理済みが20件を超えると古い分は
+`drafts/best-practices-archive.md` へ移されるため、インボックスだけを見ると1〜2ヶ月前の知見が
+重複チェックをすり抜ける（2026-08-21 に4件を再収集した。「effort 既定は high」は3回目だった）。
+アーカイブは全文 Read せず、Step 2 で抽出した各トピックの固有キーワード（機能名・環境変数名・
+バージョン番号）で grep して照合する:
+
+```bash
+grep -n "<キーワード>" /Users/fghmacbook013/NOCTA/project_NOCTA/drafts/best-practices-archive.md
+```
+
+一致した場合もエントリを落とさず、**要点の末尾に「（YYYY-MM-DD にも収集）」を付けて残す**。
+過去に収集済みでも CLAUDE.md に未反映なら提案する価値があるため、除外ではなく注記で扱う。
+
 ---
 
 ## Step 1: 公式ドキュメントを並列取得する
