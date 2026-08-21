@@ -4,6 +4,19 @@ best-practices-inbox-xmcp.md の処理済みセクションが20件を超えた�
 
 ---
 
+## 2026-08-21 アーカイブ分
+
+- https://x.com/FAyaguchi/status/2082802015449812999 （2026-08-05）
+- https://x.com/HeyAnjula/status/2083780677338902964 （2026-08-05）
+- https://x.com/HeyAnjula/status/2083578967643291659 （2026-08-05）
+- https://x.com/rosemoni18/status/2083744269857378757 （2026-08-05）
+- https://x.com/jackhuwubenak/status/2084787645419340249 （2026-08-05）
+- https://x.com/seisei_ai_1st/status/2082505366672408696 （2026-08-05）
+- https://x.com/light940/status/2077173043328127125 （2026-07-29）
+- https://x.com/wayen_ai/status/2078392327761182868 （2026-07-29）
+- https://x.com/dr_cintas/status/2077450639068553433 （2026-07-29）
+- https://x.com/codi_fyy/status/2076875759063347201 （2026-07-29）
+
 ## 2026-08-12 アーカイブ分
 
 - https://x.com/VivekIntel/status/2078752946423206013 （2026-07-29）
