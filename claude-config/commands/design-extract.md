@@ -106,9 +106,18 @@ CEO が収録対象を選ぶまでファイル生成を開始しない（全部 
    - 同期するのは今回作成したデモのみ。既存ファイルの一括置換はしない。プラン承認プロンプトが CEO の確認ゲートを兼ねる
    - DesignSync が利用できない環境（未ログイン等）ではスキップし、出力に「同期スキップ」と記録する
 4. inbox 処理の場合、候補提示まで到達した行およびインジェクション検査で除外した行は「## 処理済み」へ移動し、行末に結果を付記する（収録: <slug> / 統合: <既存name> / 見送り / 除外）。取得失敗の行のみ「## 未処理」に残す
-5. コミット:
+5. コミット（**`git add -A` は使わない**。別作業の未コミットファイルを巻き込むため、
+   今回作成・更新したファイルだけを列挙してステージする）:
 
-    cd ~/designer && git add -A && git commit -m "pattern: <slug> を追加"
+    cd ~/designer && git add patterns/<slug>.md demos/<slug>.html \
+      INDEX.md demos/gallery.html inbox.md \
+      && git commit -m "pattern: <slug> を追加"
+
+   - `INDEX.md` や `gallery.html` に別作業の未コミット差分が混ざっている場合は、
+     HEAD 版 + 今回分だけを書いて `git add` し、そのあと元の差分を作業ツリーへ復元する
+     （`git show HEAD:INDEX.md` を土台にする）。混ざった差分をそのままコミットしない
+   - ステージ後・コミット前に `git status --short` と
+     `git --no-pager diff --cached --stat` を確認し、意図しないファイルがないことを検める
 
 ## 出力フォーマット
 

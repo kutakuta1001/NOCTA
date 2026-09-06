@@ -62,7 +62,9 @@ CLAUDE.md から分離した参照情報。常時ロードされないので、�
 | `/model-review` | 新モデルリリース時にモデル棲み分けを再議論 |
 | `/interaction-review` | 依頼パターン分析・改善提案 |
 | `/insights` | セッション利用パターン分析 |
-| `/research` | X と Web の並列リサーチ |
+| `/research` | X と Web の並列リサーチ（話題の探索・記事ノート化） |
+| `/facts [論点]` | デスクリサーチ部隊。角度別3体＋検証1体で二次情報を集め、ファクト集・比較・相場・制度を返す。正本は `~/facts/`、呼び出し元にコピー。規約は `~/.claude/references/fact-discipline.md` |
+| `/factbook [議題/修正指示]` | 経営向けファクトブック三点セット（詳細版・要点版・説明版）の作成・改訂。`~/consulting/_firm/playbooks/executive-factbook.md` のルール（説明版は迷ったら削る・表2つは2軸グラフへ・イメージ図はClaude Design不使用）を自動適用 |
 
 ### コンサル・壁打ち
 

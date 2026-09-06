@@ -12,7 +12,7 @@
 
 認証フォールバック: 終了コード 75 または出力に CODEX_AUTH_FAILED を含む場合、
 ChatGPT Plus 連携が切れている。勝手に従量課金へ切り替えず、必ずユーザーに確認してから
-CODEX_AUTH=apikey で再実行する（/codex-review スキルと同じ運用）。
+CODEX_AUTH=apikey で再実行する（/review スキルと同じ運用）。
 
 ## 通常批評テンプレート（/design-extract 用）
 

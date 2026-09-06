@@ -10,7 +10,8 @@ AI の役割は設計書・プロンプト・文章・コード・ファイル�
 
 - 全体方針・各領域のロードマップ: `drafts/roadmap.md`
 - 運用チートシート（コマンド一覧・セッション運用・ゼロベース見直しの記録）: `~/.claude/references/nocta-cheatsheet.md`
-- 制作ツール選択肢（Suno 代替・映像生成・調査 MCP・ローカル LLM）: `~/.claude/references/nocta-tools.md`
+- 制作ツール選択肢（Suno 代替・ステム分離/MIDI化・映像生成・調査 MCP・ローカル LLM）: `~/.claude/references/nocta-tools.md`
+- DTM 制作の注意点・補完ソフト（Studio One 周辺の設定・ゲインステージング・無料音源）: `~/.claude/references/dtm-guide.md`
 - モデル仕様・切替通知ルール・Agent Teams のモデル割当: `~/.claude/references/model-lineup.md`
 - HP 作業のルール: `website/CLAUDE.md`（HP のファイルを触るとき自動で読み込まれる）
 
@@ -114,7 +115,8 @@ CEO が Studio One で「アレンジOKです」と明示するまで `/phase2-s
 
 Suno で生成した mp3 は LALAL.AI で分離して drums / bass / chord / melody のパーツとして使う。
 CEO が作れない部分（ドラム・ベース）は Suno のパーツをそのまま使ってよい。この場合の MIDI 生成はコード・メロディのみに絞る。
-代替候補（ACE-Step / Khala / Mureka）と Suno の著作権判決を含む選定状況は `~/.claude/references/nocta-tools.md`。
+ドラム・ベースのパターンを編集したい場合は Suno Studio（Get MIDI）または RipX DAW で MIDI 化し、Impact XT 等で差し替える選択肢がある。
+代替候補（ACE-Step / Khala / Mureka）・分離/MIDI 化ツールの比較と Suno の著作権判決を含む選定状況は `~/.claude/references/nocta-tools.md`。
 
 ### R-14: 対話してから作業する
 

@@ -44,9 +44,13 @@ argument-hint: <パターン name（patterns/ のファイル名）>
 1. 昇格物をグローバルに配置する（(a) 追記 または (b) 新規作成）（(b) の場合、配置先ファイルが既に存在するときは上書きせず、CEO に別名または統合方針を確認する）
 2. レシピの `status:` を `graduated` に更新する
 3. `~/designer/INDEX.md` の該当行の末尾に ` (graduated)` を付ける
-4. コミット:
+4. コミット（`git add -A` は使わない。触ったファイルだけを列挙する。
+   グローバル配置先は ~/.claude 配下なのでこのリポジトリのコミット対象には入らない）:
 
-    cd ~/designer && git add -A && git commit -m "promote: <name> をグローバル昇格"
+    cd ~/designer && git add patterns/<name>.md INDEX.md \
+      && git commit -m "promote: <name> をグローバル昇格"
+
+   `INDEX.md` に別作業の未コミット差分がある場合は、その差分を含めずにステージする
 
 5. (a) で design-graduated.md を初めて作成した場合: グローバル CLAUDE.md の
    「フロントエンド作成（frontend-design）」節に design-graduated.md への参照が

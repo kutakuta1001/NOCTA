@@ -28,8 +28,12 @@ CEO がパターンの採用を明言したら:
    - project 名はカレントの作業プロジェクトから判断し、確信がなければ CEO に確認する
 2. `used_in` が 2 件以上かつ `status: active` のパターンは `status: candidate` に変更し、
    「このパターンは昇格候補になりました。/design-promote <name> でスキル化できます。」と通知する
-3. コミット:
+3. コミット（`git add -A` は使わない。触ったファイルだけを列挙する）:
 
-    cd ~/designer && git add -A && git commit -m "used_in: <name> に実績追加"
+    cd ~/designer && git add patterns/<name>.md INDEX.md \
+      && git commit -m "used_in: <name> に実績追加"
+
+   `INDEX.md` に別作業の未コミット差分がある場合は、その差分を含めずにステージする
+   （HEAD 版 + 今回分を書いて `git add` し、元の差分は作業ツリーへ復元する）
 
 採用されなかった場合は何も書き込まない。

@@ -1,7 +1,7 @@
 # NOCTA 制作ツール選択肢
 
 CLAUDE.md から分離した参照情報。ツール選定を検討するときだけ読む。
-最終更新: 2026-08-05
+最終更新: 2026-08-16
 
 ---
 
@@ -14,6 +14,23 @@ CLAUDE.md から分離した参照情報。ツール選定を検討するとき�
 | ACE-Step UI（fspecii） | 候補 | ACE-Step 1.5 ベースの OSS UI。ステム分離（ドラム/ベース/ボーカル）搭載で LALAL.AI 代替候補。4分超の楽曲・ボーカル生成対応 |
 | Khala 1.0 | 候補 | 中央音楽学院発・OSS。RTX 3090 で動作確認後に ACE-Step と品質比較。LoRA 微調整可 |
 | Mureka V9 | 候補 | 独立ブラインドテストで Suno・Udio 超えのベンチマーク1位（2026-05-28 時点）。@TadAI_official 2.1 経由でテスト可能 |
+
+## ステム分離・オーディオ→MIDI（R-13 の分離・MIDI 化選択肢）
+
+| ツール | 料金 | できること | メモ |
+|---|---|---|---|
+| LALAL.AI | 有料 | ステム分離のみ | 現行採用（R-13）。分離品質は高いが MIDI 化はできない |
+| Suno Studio | Suno サブスク内 | ステム分離 + Get MIDI | 2026-07 に Advanced Stem Separation / Export Stems as MIDI が追加。Suno 曲なら追加コストゼロでまず試す価値あり |
+| RipX DAW | 買い切り・購入決定 | 分離 + ノート単位編集 + MIDI 書き出し | 分離結果をピアノロールで整理してから MIDI 化できるのが強み。無印を購入決定（2026-08-16 CEO 判断・PRO は不要）。国内代理店はハイ・リゾリューション。手順書: `~/rip x/RipX-StudioOne-guide.md` |
+| UVR (Ultimate Vocal Remover) | 無料 | ステム分離のみ | ローカル実行（Demucs 等のモデル同梱）。LALAL.AI の無料代替 |
+| Basic Pitch (Spotify) | 無料 | 単体オーディオ→MIDI | 分離済みステム 1 本を MIDI 化する用途。ブラウザ版あり |
+| Melodyne Essential | Studio One Pro 同梱 | 単音のピッチ検出 + MIDI 抽出 | ARA 連携で Studio One 内で完結。ボーカル・ベース向き |
+
+使い分けの目安: Suno 曲のパーツ利用は Suno Studio → 不満なら RipX DAW。
+ドラム・ベースはオーディオのまま使う（R-13）のが基本だが、パターンを編集したい場合は MIDI 化して
+Impact XT 等で差し替える。DTM 全般の注意点・補完音源は `dtm-guide.md`。
+MIDI 化したパーツはリリース曲に使う前提（2026-08-16 CEO 確認）のため、ツール選定より先に
+Suno の商用利用条件（Pro プラン以上必須・帰属保証なし・2026-07-31 ミュンヘン判決で厳格化）の確認を優先する。
 
 ## 映像生成（R-04 の T2V 選択肢）
 
