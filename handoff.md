@@ -99,3 +99,12 @@
 2026-09-06: Codex CLI を 0.144.6→0.153.4 に更新し、`/codex-review`・`/codex-diff` の既定を **gpt-6-astra・effort high** へ切替（実測検証済み）。CLI バージョン追随の自動検知を実装（`codex-review.sh` 実行時＝npm照会24hキャッシュ・古くてもレビューは続行／`/weekly-check` Step 2＝`version-check`）。モデル名の正本を codex-review-setup.md に一元化し、グローバル CLAUDE.md からは削除・model-lineup.md とメモリも整合。claude-config 同期済み（未コミット）。次: CEO が claude-config の未コミット差分（今回4件＋過去ドリフト16件）のコミット可否を判断。GPT-6 の価格・ベンチマークは未調査のため次回 `/model-review` で確定させる。
 2026-09-06: `/weekly-check` フルルーティン完了（Step A〜E 全実行）。X 12件・公式ドキュメント18件を収集し、インボックス30件を一括処理（記事ノート30件・commit 済み）。Web レビューは20項目中12件が既に実装済みで、`.claudeignore` と Claude Code Workflow Studio は**存在しない機能**と確定（誤情報2件）。`/model-review` で **Fable 5 → Fable 5.1 交代を CEO 承認**（カットオフが2026年6月で Opus 5 の2026年5月を追い越したため、使い分け根拠をカットオフから価格へ差し替え）。GPT-6 Astra のスペック確定（$10/$50・1.05M・カットオフ2026-04-30・GA 未達）と **GPT-5.6 3階層の価格誤り3件を訂正**。model-lineup.md rev.8。
 次: CEO が `~/.claude/CLAUDE.md` G-01 と `project_NOCTA/CLAUDE.md` R-09 への Fable 5.1 反映を判断（提案のみで自動変更していない）。Haiku 4.5 の廃止下限が2026-10-15 のため後継監視が必要。
+
+- 2026-09-06 Codex: HiNa素材感改善（Gyu IOR上書き修正・PT照明、Hare毛筆/水彩、Ichi立体花弁と満開キャッシュ）を実装。検証・限界は drafts/hina-material-realism-2026-09-06.md。
+- ローカルChromiumで筆圧・PNG・7花形・13石・PTを確認。main push/公開なし。次は実機での感触確認と公開判断。
+
+- 2026-09-06 Codex: 素材感レビューのB-1筆タップ/B-2カップ葉重複を修正。捕捉失敗時解除・矩形取得・roughness配線・不要分岐も整理。Chromiumフィクスチャ検証合格。C-1大輪キャッシュ/C-2 PT照明は判断待ちで未変更。詳細は drafts/hina-material-realism-2026-09-06.md 末尾。公開なし。
+
+- 2026-09-07 Claude: 素材感レビューの残件を実装。C-1 満開スプライトを適応上限320px（大輪の拡大5.2→2.6倍）＋総画素予算8Mpx（RGBA約32MB）＋LRU解放で解決、A-4 komoriを小花クラスターに復元・奥の花のぼかしを復活。hana.js?v=13。C-2 PT追加光は現状維持（CEO了承）。
+- 検証: スプライト予算は最悪25〜28MBで天井超えなし・クリアで0MB、blit差0.039→0.040ms（実質無コスト）、save/restore 336ケース均衡、3ページpageerror 0、押し花PNG・季節切替の再生成・reduce動作合格。レビュー報告は drafts/hina-material-realism-review-2026-09-06.md。次: CEOがiPhone/Safari実機とペンタブレットで確認 → commit・push判断。
+- 2026-09-07: CEO 指示により実機確認前に main へ push（本番反映）。残タスクは iPhone/Safari 実機とペンタブレットでの事後確認（`window.__hanaSprites` の mb が32超えないこと・筆の感触・capture 失敗経路）。
