@@ -3,7 +3,7 @@
  *
  * 「この色に浸る」から進化した、その色のインクで書ける小さな書斎。
  * 中央に和紙、周囲にかさね配色で描いた季節の伝統文様（麻の葉/青海波/矢絣/市松）、
- * 筆・カリグラフィの2種で速度依存の太さ変化・にじみ・かすれ・払いを表現する。
+ * 筆・水彩・カリグラフィの3種。筆圧・速度・毛先のかすれと、水彩の吸水を表現する。
  *
  * 依存: なし（NoctaZukan.escAttrのみ・任意）
  * 提供: window.NoctaFude.mount(container, colorData) → detach()
@@ -198,8 +198,9 @@
             }).join('') +
           '</div>' +
           '<div class="fude-pens" role="radiogroup" aria-label="筆の種類">' +
-            '<button type="button" class="fude-pen" role="radio" aria-checked="false" data-pen="fude">筆</button>' +
-            '<button type="button" class="fude-pen active" role="radio" aria-checked="true" data-pen="calligraphy">カリグラフィ</button>' +
+            '<button type="button" class="fude-pen active" role="radio" aria-checked="true" data-pen="fude">筆</button>' +
+            '<button type="button" class="fude-pen" role="radio" aria-checked="false" data-pen="water">水彩</button>' +
+            '<button type="button" class="fude-pen" role="radio" aria-checked="false" data-pen="calligraphy">カリグラフィ</button>' +
           '</div>' +
           '<div class="fude-actions">' +
             '<button type="button" class="fude-btn" data-action="tegami">お手本</button>' +
@@ -222,285 +223,182 @@
   function createInkEngine(canvas, initialInk) {
     var ctx = canvas.getContext('2d');
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var ink = initialInk;
-    var pen = 'calligraphy';   /* v5: デフォルトをカリグラフィに */
-    var stroke = null;   /* { last:{x,y,t}, v:平滑化速度, reservoir, ink, pen } */
-
+    var ink = initialInk, pen = 'fude', stroke = null;
+    var wet = [], raf = 0, disposed = false;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function rgbaInk(hex, a) {
+      var c = hex2rgb(hex);
+      return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + Math.max(0, Math.min(1, a)) + ')';
+    }
+    // Deposits are bounded and settle on the same canvas used by PNG export.
+    // This approximates absorption and pigment edges, rather than a fluid solver.
+    function deposit(d, age) {
+      var r = d.r * (1 + age * 0.19);
+      var g = ctx.createRadialGradient(d.x, d.y, r * 0.35, d.x, d.y, r);
+      g.addColorStop(0, rgbaInk(d.ink, 0.006));
+      g.addColorStop(0.77, rgbaInk(d.ink, 0.014));
+      g.addColorStop(0.9, rgbaInk(d.ink, 0.034 * (1 - age * 0.35)));
+      g.addColorStop(1, rgbaInk(d.ink, 0));
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      for (var i = 0; i <= 40; i++) {
+        var a = i / 40 * Math.PI * 2;
+        var edge = r * (1 + 0.025 * Math.sin(a * 7 + d.x) + 0.018 * Math.sin(a * 13 + d.y));
+        var x = d.x + Math.cos(a) * edge, y = d.y + Math.sin(a) * edge * 0.94;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.closePath(); ctx.fill();
+    }
+    function tick(now) {
+      raf = 0;
+      if (disposed) return;
+      ctx.save(); ctx.globalCompositeOperation = 'multiply';
+      wet = wet.filter(function (d) {
+        var step = Math.min(8, Math.floor((now - d.born) / 90));
+        while (d.step < step) { d.step++; deposit(d, d.step / 8); }
+        return d.step < 8;
+      });
+      ctx.restore();
+      if (wet.length) raf = requestAnimationFrame(tick);
+    }
+    function absorb(x, y, r, color) {
+      var d = { x: x, y: y, r: r, ink: color, born: performance.now(), step: 0 };
+      if (reduce.matches) { for (var i = 1; i <= 8; i++) deposit(d, i / 8); return; }
+      if (wet.length >= 96) wet.shift();
+      wet.push(d);
+      if (!raf) raf = requestAnimationFrame(tick);
+    }
+    function stop() {
+      if (stroke) {
+        var id = stroke.id; stroke = null;
+        try { if (canvas.hasPointerCapture(id)) canvas.releasePointerCapture(id); } catch (_) {}
+      }
+    }
     function resize() {
       var rect = canvas.getBoundingClientRect();
-      var w = Math.max(1, Math.floor(rect.width * dpr));
-      var h = Math.max(1, Math.floor(rect.height * dpr));
+      var w = Math.max(1, Math.round(rect.width * dpr)), h = Math.max(1, Math.round(rect.height * dpr));
       if (canvas.width === w && canvas.height === h) return;
-      /* 既存描画を保持してリサイズ（新サイズにフルフィットでスケール） */
+      stop();
       var prev = document.createElement('canvas');
       prev.width = canvas.width; prev.height = canvas.height;
-      var hadPrev = canvas.width > 0 && canvas.height > 0;
-      if (hadPrev) prev.getContext('2d').drawImage(canvas, 0, 0);
+      prev.getContext('2d').drawImage(canvas, 0, 0);
+      wet.forEach(function (d) { d.x *= w / canvas.width; d.y *= h / canvas.height; d.r *= Math.min(w / canvas.width, h / canvas.height); });
       canvas.width = w; canvas.height = h;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (hadPrev) {
-        /* CSSピクセル座標系で全体スケール（画面回転や紙サイズ変更でも縮尺が合う） */
-        var newCssW = w / dpr, newCssH = h / dpr;
-        ctx.drawImage(prev, 0, 0, prev.width, prev.height, 0, 0, newCssW, newCssH);
+      ctx.drawImage(prev, 0, 0, prev.width, prev.height, 0, 0, w / dpr, h / dpr);
+    }
+    function point(e, rect) {
+      rect = rect || canvas.getBoundingClientRect();
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top, t: e.timeStamp,
+        p: e.pointerType === 'pen' ? Math.max(0.025, e.pressure) : 0.55 };
+    }
+    function width(p, speed) {
+      if (stroke.pen === 'calligraphy') return 16;
+      if (stroke.pen === 'water') return 18 + 30 * p;
+      return (3 + 27 * Math.pow(p, 0.7)) / (1 + Math.min(2, speed) * 0.35);
+    }
+    function segment(a, b, wa, wb) {
+      var dx = b.x - a.x, dy = b.y - a.y, dist = Math.hypot(dx, dy);
+      var angle = dist > 0.01 ? Math.atan2(dy, dx) : stroke.angle;
+      var nx = -Math.sin(angle), ny = Math.cos(angle);
+      ctx.save(); ctx.globalCompositeOperation = stroke.pen === 'calligraphy' ? 'source-over' : 'multiply';
+      if (stroke.pen === 'calligraphy') {
+        // Flat nib keeps its orientation, including on very fast pointer moves.
+        var steps = Math.max(1, Math.ceil(dist / 1.5));
+        ctx.fillStyle = rgbaInk(stroke.ink, 0.85);
+        for (var s = 0; s <= steps; s++) {
+          ctx.beginPath(); ctx.ellipse(a.x + dx * s / steps, a.y + dy * s / steps, 8, 2.2, -Math.PI / 4, 0, Math.PI * 2); ctx.fill();
+        }
+      } else if (stroke.pen === 'water') {
+        var count = Math.max(1, Math.ceil(dist / 1.5));
+        for (var j = 1; j <= count; j++) {
+          var t = j / count, x = a.x + dx * t, y = a.y + dy * t, r = (wa + (wb - wa) * t) / 2;
+          var g = ctx.createRadialGradient(x, y, 0, x, y, r);
+          g.addColorStop(0, rgbaInk(stroke.ink, 0.026));
+          g.addColorStop(0.8, rgbaInk(stroke.ink, 0.032));
+          g.addColorStop(1, rgbaInk(stroke.ink, 0));
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+          stroke.waterDistance += dist / count;
+          if (stroke.waterDistance >= 5 || dist < 0.1) { absorb(x, y, r, stroke.ink); stroke.waterDistance = 0; }
+        }
+      } else {
+        // Persistent bristles join between events: pressure spreads hairs, distance dries ink.
+        var dry = 1 - stroke.reservoir;
+        for (var i = 0; i < 38; i++) {
+          var f = (i + 0.5) / 38 * 2 - 1;
+          var grain = 0.5 + 0.5 * Math.sin(i * 19.73 + Math.floor(stroke.distance / 9) * 2.3);
+          var aInk = (0.72 + 0.27 * (1 - Math.abs(f))) * Math.sqrt(stroke.reservoir);
+          if (grain < dry * 0.65) aInk *= 0.12;
+          var old = stroke.tips[i];
+          var bx = b.x + nx * f * wb * 0.5, by = b.y + ny * f * wb * 0.5;
+          ctx.strokeStyle = rgbaInk(stroke.ink, aInk);
+          ctx.lineWidth = Math.max(0.35, wb / 38 * (0.85 + grain * 0.75)); ctx.lineCap = 'butt';
+          ctx.beginPath(); ctx.moveTo(old ? old.x : a.x + nx * f * wa * 0.5, old ? old.y : a.y + ny * f * wa * 0.5);
+          ctx.lineTo(bx, by); ctx.stroke(); stroke.tips[i] = { x: bx, y: by };
+        }
+        stroke.waterDistance += dist;
+        if (stroke.reservoir > 0.7 && stroke.waterDistance > 16) { absorb(b.x, b.y, wb * 0.48, stroke.ink); stroke.waterDistance = 0; }
       }
+      ctx.restore(); stroke.angle = angle;
     }
-    resize();
-
-    function clientToLocal(e) {
-      var rect = canvas.getBoundingClientRect();
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top, t: (e.timeStamp || performance.now()) };
-    }
-
-    /* 筆スタンプ v6b: 実線コア + 縁のソフトフェードの2層構造（さらに強化）
-       - 内側 (半径 w/2 * 0.92): ほぼ全径を均一濃度の実線に → 送り中の存在感を最大化
-       - 外側 (半径 w/2 * 0.92 〜 w/2 * 1.25): 徐々にフェード → 縁のにじみ感 */
-    function stampFude(x, y, w, inkHex, alpha) {
-      var rgb = hex2rgb(inkHex);
-      var coreR = w / 2 * 0.92;
-      var outerR = w / 2 * 1.25;
-      /* 内側コア（実線・ほぼ不透明で送り中の太さを担保） */
-      ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.95).toFixed(3) + ')';
-      ctx.beginPath();
-      ctx.arc(x, y, coreR, 0, Math.PI * 2);
-      ctx.fill();
-      /* 外側の縁フェード（にじみ感） */
-      var g = ctx.createRadialGradient(x, y, coreR, x, y, outerR);
-      g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (alpha * 0.6).toFixed(3) + ')');
-      g.addColorStop(1, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, outerR, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    /* カリグラフィスタンプ: 斜め45°の平ペン（扁平楕円ニブ）
-       v5: 「本物のカリグラフィ」の物理特性 — ニブを扁平化（5:1比）することで、
-       動く方向に応じて線の太さが自然に変わる:
-         - ニブ短軸方向(左上→右下, 逆斜め)に動かす → 太い線
-         - ニブ長軸方向(右上→左下)に動かす → 細い線
-         - 水平/垂直方向 → 中間の太さ
-       これがカリグラフィ書体の美しさの本質。ユーザーは自由に動かせる。 */
-    function stampCalligraphy(x, y, w, inkHex, alpha) {
-      var rgb = hex2rgb(inkHex);
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(-Math.PI / 4);
-      ctx.fillStyle = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.85)';
-      ctx.beginPath();
-      /* 5:1の扁平楕円 — 平ペンの物理特性で方向依存の線幅変化を生む */
-      ctx.ellipse(0, 0, w / 2, Math.max(1.5, w * 0.20), 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-    function stamp(x, y, w, inkHex, alpha) {
-      if (pen === 'calligraphy') stampCalligraphy(x, y, w, inkHex, alpha);
-      else stampFude(x, y, w, inkHex, alpha);
-    }
-    /* にじみブロブ（インク溜まり）— 筆で使用 */
-    function blot(x, y, w, inkHex, strength) {
-      var s = strength || 1;
-      var r = w * 1.8 * s;
-      var rgb = hex2rgb(inkHex);
-      var g = ctx.createRadialGradient(x, y, 0, x, y, r);
-      g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (0.28 * s).toFixed(3) + ')');
-      g.addColorStop(0.6, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + (0.12 * s).toFixed(3) + ')');
-      g.addColorStop(1, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    /* 筆の周辺にじみ（薄く不定形に広がる痕跡）— 数スタンプに1回 */
-    function bleed(x, y, w, inkHex) {
-      var rgb = hex2rgb(inkHex);
-      for (var i = 0; i < 3; i++) {
-        var ang = Math.random() * Math.PI * 2;
-        var dist = w * (0.4 + Math.random() * 0.7);
-        var bx = x + Math.cos(ang) * dist;
-        var by = y + Math.sin(ang) * dist;
-        var br = w * (0.5 + Math.random() * 0.5);
-        var g = ctx.createRadialGradient(bx, by, 0, bx, by, br);
-        g.addColorStop(0, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0.09)');
-        g.addColorStop(1, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(bx, by, br, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
     function begin(e) {
-      if (e.button !== undefined && e.button !== 0) return;
-      try { canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); } catch (_) { /* Safari/古いWebViewは無視 */ }
-      var p = clientToLocal(e);
-      stroke = { last: p, start: { x: p.x, y: p.y }, v: 0, reservoir: 1.0, ink: ink, pen: pen, dwellAt: p, dwellSince: p.t, pointerId: e.pointerId, stampCount: 0 };
-      ctx.save();
-      /* 筆=multiply（紙に染みる）／カリグラフィ=source-over（蛍光ペンは重ねても濃くならない） */
-      ctx.globalCompositeOperation = stroke.pen === 'calligraphy' ? 'source-over' : 'multiply';
+      if (disposed || stroke || (e.button !== undefined && e.button !== 0)) return;
+      var p = point(e);
+      stroke = { id: e.pointerId, pen: pen, ink: ink, last: p, v: 0, reservoir: 1,
+        distance: 0, waterDistance: 0, tips: [], angle: -Math.PI / 4 };
+      stroke.w = width(p.p, 0);
+      try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
       if (stroke.pen === 'fude') {
-        /* v6b: 起筆のインク溜まり（送りが太くなったので相対的にやや控えめ） */
-        blot(p.x, p.y, 22, stroke.ink, 1.3);
-      }
-      /* 筆はwMax相当の24pxで存在感のある起筆点・カリグラフィは16pxでキュッと */
-      stamp(p.x, p.y, stroke.pen === 'calligraphy' ? 16 : 24, stroke.ink, 0.95);
-      ctx.restore();
-      stroke.recentDirs = [];    /* v7: 払いの向き安定化用の方向履歴 */
+        // A stationary touch leaves ink; bristle direction starts with the first move.
+        ctx.save(); ctx.globalCompositeOperation = 'multiply';
+        ctx.fillStyle = rgbaInk(stroke.ink, 0.82);
+        ctx.beginPath(); ctx.ellipse(p.x, p.y, stroke.w * 0.5, stroke.w * 0.36, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      } else segment(p, p, stroke.w, stroke.w);
       e.preventDefault();
     }
-
+    function sample(e, rect) {
+      var p = point(e, rect), a = stroke.last, dist = Math.hypot(p.x - a.x, p.y - a.y);
+      if (dist < 0.05) return;
+      stroke.v = stroke.v * 0.65 + dist / Math.max(1, p.t - a.t) * 0.35;
+      stroke.distance += dist; stroke.reservoir = Math.max(0.28, 1 - stroke.distance / 1500);
+      var w = stroke.w * 0.35 + width(p.p, stroke.v) * 0.65;
+      segment(a, p, stroke.w, w); stroke.last = p; stroke.w = w;
+    }
     function move(e) {
-      if (!stroke) return;
-      var isCalli = stroke.pen === 'calligraphy';
-      var p = clientToLocal(e);
-      var dx = p.x - stroke.last.x, dy = p.y - stroke.last.y;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      /* v5: 45°方向スナップは撤去（なぞりを阻害するため）。
-         代わりにカリグラフィペンのニブを扁平化することで、動く方向に応じて
-         線の太さが自然に変わる本物の平ペン特性（stampCalligraphy側）を活用する。
-         斜めに動かせば太い線、水平/垂直だと細い線が自然に出る。 */
-      if (dist < 0.6) {
-        /* 完全静止でもにじみ検出だけは走らせる（筆のみ・カリグラフィは蛍光ペンなのでにじまない） */
-        if (!isCalli) {
-          var dwellMs0 = p.t - stroke.dwellSince;
-          if (dwellMs0 > 120) {
-            ctx.save();
-            ctx.globalCompositeOperation = 'multiply';
-            blot(stroke.last.x, stroke.last.y, 10, stroke.ink, 1.0);
-            ctx.restore();
-            stroke.dwellSince = p.t + 200;
-          }
-        }
-        return;
-      }
-      var dt = Math.max(1, p.t - stroke.last.t);
-      var vInst = dist / dt;                              /* px/ms */
-      stroke.v = stroke.v * 0.6 + vInst * 0.4;            /* EMA */
-      /* v7: 直近5点の進行方向を保持（endの払いで平均方向として使う・向き安定化） */
-      if (stroke.recentDirs) {
-        stroke.recentDirs.push({ ux: dx / dist, uy: dy / dist });
-        if (stroke.recentDirs.length > 5) stroke.recentDirs.shift();
-      }
-
-      var w, alpha;
-      if (isCalli) {
-        /* カリグラフィ = 蛍光ペン: 速度非依存の均一太さ・alpha固定・reservoir/払い/かすれなし */
-        w = 16;
-        alpha = 1.0;   /* stampCalligraphy側で0.72に固定 */
-      } else {
-        /* 筆: 「入り太・送り太・抜き細」の三段構成を実現（v6b: さらに太く）
-             wMax 24px: 起筆と送りで存在感のある太い線
-             wMin 15px: 速度が上がっても細くなりすぎない
-             k 0.008:   速度依存を弱める */
-        var wMax = 24, wMin = 15, k = 0.008;
-        w = Math.max(wMin, Math.min(wMax, wMax - k * stroke.v * 1000));
-        stroke.reservoir = Math.max(0.75, stroke.reservoir - dist / 5000);
-        alpha = 0.95 * stroke.reservoir;
-      }
-      /* ドライブラシ: 筆のみ・reservoir<0.6でランダム間引き（v3: 発動条件を緩和） */
-      var thin = !isCalli && stroke.reservoir < 0.6 && Math.random() < (0.6 - stroke.reservoir);
-      /* 停留検出（にじみ追加）— 筆のみ */
-      var moved = Math.hypot(p.x - stroke.dwellAt.x, p.y - stroke.dwellAt.y);
-      if (moved > 4) { stroke.dwellAt = p; stroke.dwellSince = p.t; }
-      var dwellMs = p.t - stroke.dwellSince;
-      ctx.save();
-      ctx.globalCompositeOperation = isCalli ? 'source-over' : 'multiply';
-      if (!isCalli && dwellMs > 120 && stroke.v < 0.05) {
-        blot(p.x, p.y, w, stroke.ink, 1.0);
-        stroke.dwellSince = p.t + 200;  /* クールダウン */
-      }
-      if (!thin) {
-        /* 補間スタンプ（40%オーバーラップ） */
-        var step = Math.max(1, w * 0.4);
-        var n = Math.ceil(dist / step);
-        for (var i = 1; i <= n; i++) {
-          var t = i / n;
-          stamp(stroke.last.x + dx * t, stroke.last.y + dy * t, w, stroke.ink, alpha);
-          stroke.stampCount++;
-          /* 筆のみ: 数スタンプに1回、周辺にじみを追加 */
-          if (!isCalli && stroke.stampCount % 5 === 0 && stroke.reservoir > 0.5) {
-            bleed(stroke.last.x + dx * t, stroke.last.y + dy * t, w, stroke.ink);
-          }
-        }
-      }
-      ctx.restore();
-      stroke.last = p;
+      if (!stroke || e.pointerId !== stroke.id) return;
+      var events = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+      var rect = canvas.getBoundingClientRect();
+      if (events.length) events.forEach(function (event) { sample(event, rect); }); else sample(e, rect);
+      e.preventDefault();
     }
-
     function end(e) {
-      if (!stroke) return;
-      /* 払い（はらい）— 筆のみ・書道の「収筆」を表現
-         v7強化: 直近5点の平均方向で払いを外挿し、向きを安定化。
-         尾を長く（〜120px）、送り太→抜き細の二重テーパー、筆先の揺らぎで浮遊感。 */
-      if (stroke.pen !== 'calligraphy' && stroke.v > 0.2 && stroke.recentDirs && stroke.recentDirs.length > 0) {
-        /* 直近5点の平均方向（ノイズに強い） */
-        var avgUx = 0, avgUy = 0;
-        stroke.recentDirs.forEach(function (d) { avgUx += d.ux; avgUy += d.uy; });
-        avgUx /= stroke.recentDirs.length; avgUy /= stroke.recentDirs.length;
-        var mag = Math.sqrt(avgUx * avgUx + avgUy * avgUy);
-        if (mag > 0.01) {
-          var ux = avgUx / mag, uy = avgUy / mag;
-          var nx = -uy, ny = ux;                  /* 揺らぎ用の法線 */
-          /* 尾の長さは速度に応じて（速いほど長く伸ばす）*/
-          var tailLen = Math.min(120, 30 + stroke.v * 100);
-          var steps = 8;
-          /* 起点は送り幅と連続 */
-          var w0 = 22;
-          ctx.save();
-          ctx.globalCompositeOperation = 'multiply';
-          for (var i = 1; i <= steps; i++) {
-            var frac = i / steps;
-            /* 距離は非線形（前半緩やか・後半加速）で自然な尾の伸び */
-            var t = tailLen * Math.pow(frac, 1.15);
-            /* 幅テーパー: 起点22→最終0.6px（消える） */
-            var wFade = Math.pow(1 - frac, 1.5);
-            var w = Math.max(0.6, w0 * wFade);
-            /* 濃度フェード: 最終は0付近 */
-            var aFade = Math.pow(1 - frac, 1.7);
-            /* 筆先が浮く揺らぎ（後半ほど大きく揺れる・穂先の割れ感） */
-            var jitter = frac * 5;
-            var jx = (Math.random() - 0.5) * jitter;
-            var jy = (Math.random() - 0.5) * jitter;
-            var px = stroke.last.x + ux * t + nx * jx;
-            var py = stroke.last.y + uy * t + ny * jy;
-            stamp(px, py, w, stroke.ink, 0.9 * stroke.reservoir * aFade);
-          }
-          ctx.restore();
-        }
-      }
-      try {
-        if (canvas.hasPointerCapture && canvas.hasPointerCapture(e.pointerId)) {
-          canvas.releasePointerCapture(e.pointerId);
-        }
-      } catch (_) { /* pointercancel後・別要素にキャプチャ移動後などは無視 */ }
-      stroke = null;
+      if (!stroke || e.pointerId !== stroke.id) return;
+      // No invented 120px tail beyond the user's actual gesture; cancel never paints.
+      if (e.type === 'pointerup') sample(e);
+      stop();
     }
-
-    /* touch-actionはcssで制御 */
-    var onLeave = function (e) { if (stroke) end(e); };
+    function leave(e) {
+      if (!stroke || e.pointerId !== stroke.id) return;
+      try { if (canvas.hasPointerCapture(e.pointerId)) return; } catch (_) {}
+      stop();
+    }
+    function clear() { stop(); wet = []; cancelAnimationFrame(raf); raf = 0; ctx.clearRect(0, 0, canvas.width / dpr, canvas.height / dpr); }
+    resize();
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+    canvas.addEventListener('pointerleave', leave);
     canvas.addEventListener('pointerdown', begin);
     canvas.addEventListener('pointermove', move);
     canvas.addEventListener('pointerup', end);
     canvas.addEventListener('pointercancel', end);
-    canvas.addEventListener('pointerleave', onLeave);
-
-    function clearNow() {
-      ctx.save();
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.restore();
-    }
-    return {
-      setInk: function (v) { ink = v; },
-      setPen: function (v) { pen = v; },
-      clear: clearNow,
-      resize: resize,
-      canvas: canvas,
-      detach: function () {
-        canvas.removeEventListener('pointerdown', begin);
-        canvas.removeEventListener('pointermove', move);
-        canvas.removeEventListener('pointerup', end);
-        canvas.removeEventListener('pointercancel', end);
-        canvas.removeEventListener('pointerleave', onLeave);
-      }
+    canvas.addEventListener('lostpointercapture', end);
+    return { setInk: function (v) { ink = v; }, setPen: function (v) { pen = v; }, clear: clear, resize: resize, canvas: canvas,
+      detach: function () { disposed = true; stop(); wet = []; cancelAnimationFrame(raf);
+        window.removeEventListener('pointerup', end); window.removeEventListener('pointercancel', end);
+        canvas.removeEventListener('pointerleave', leave);
+        canvas.removeEventListener('pointerdown', begin); canvas.removeEventListener('pointermove', move);
+        canvas.removeEventListener('pointerup', end); canvas.removeEventListener('pointercancel', end); canvas.removeEventListener('lostpointercapture', end); }
     };
   }
 
@@ -582,6 +480,8 @@
        - CSSキーフレームで帯を移動（900ms、reduce-motionではフェードのみ300ms）
        - 帯が画面中央を過ぎるタイミングでclearNow()を呼び、視覚的に「拭いたら消えた」感を出す */
     var sweepBusy = false;
+    var uiTimers = [];
+    function later(fn, ms) { var id = setTimeout(function () { uiTimers = uiTimers.filter(function (t) { return t !== id; }); fn(); }, ms); uiTimers.push(id); }
     function triggerClearSweep() {
       if (sweepBusy) return;
       var sweep = container.querySelector('.fude-sweep');
@@ -595,9 +495,9 @@
       void sweep.offsetWidth;
       sweep.classList.add('animate');
       /* 中盤でクリア（帯が中央を横切るタイミング） */
-      setTimeout(function () { engine.clear(); }, duration * 0.5);
+      later(function () { engine.clear(); }, duration * 0.5);
       /* アニメ完了時にクラスを外す */
-      setTimeout(function () {
+      later(function () {
         sweep.classList.remove('animate');
         sweepBusy = false;
       }, duration + 40);
@@ -611,7 +511,7 @@
       if (el.classList.contains('on')) {
         /* 表示中→非表示に */
         el.classList.remove('on');
-        setTimeout(function () { el.innerHTML = ''; }, 500);
+        later(function () { el.innerHTML = ''; }, 500);
         tegamiIdx = -1;
       } else {
         /* 非表示→ランダム表示（直前と別のものを選ぶ） */
@@ -631,6 +531,7 @@
         container.removeEventListener('click', onClick);
         window.removeEventListener('resize', onWinResize);
         if (ro) ro.disconnect();
+        uiTimers.forEach(clearTimeout); uiTimers = [];
         engine.detach();
       },
       resize: engine.resize
