@@ -1,5 +1,21 @@
 # ベストプラクティス処理済みアーカイブ（xmcp自動収集）
 
+## 2026-09-06 アーカイブ分
+
+- https://x.com/D3VAUX/status/2090461847954567262 （2026-08-21）
+- https://x.com/thisisdimm/status/2089510589211038191 （2026-08-21）
+- https://x.com/TaoRInne/status/2089230748792561903 （2026-08-21）
+- https://x.com/TaoRInne/status/2089593137354469688 （2026-08-21）
+- https://x.com/connect24h/status/2087157600513356221 （2026-08-12）
+- https://x.com/RIT_yasutake/status/2086633112642183494 （2026-08-12）
+- https://x.com/hiro44_pino/status/2086063111711428675 （2026-08-12）
+- https://x.com/DanKornas/status/2085449811923283976 （2026-08-12）
+- https://x.com/distortgeekin/status/2086501760894386222 （2026-08-12）
+- https://x.com/SwapAgarwal/status/2085996404506522073 （2026-08-12）
+- https://x.com/istupidpreneur/status/2085237142603677879 （2026-08-12）
+- https://x.com/kodagen/status/2083817728494964795 （2026-08-05）
+- https://x.com/ClaudeCode_aca/status/2083145653627363709 （2026-08-05）
+
 best-practices-inbox-xmcp.md の処理済みセクションが20件を超えたため移動。
 
 ---

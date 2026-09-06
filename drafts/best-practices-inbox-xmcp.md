@@ -9,6 +9,18 @@
 
 ## 処理済み
 
+- https://x.com/me_zifan/status/2094021233553859043 （2026-09-06）
+- https://x.com/rosemoni18/status/2094923340062622201 （2026-09-06）
+- https://x.com/LearnWithBrij/status/2095956814211010921 （2026-09-06）
+- https://x.com/1006_amit7481/status/2095749729023905880 （2026-09-06）
+- https://x.com/The_AGI_WAY/status/2094219689576829041 （2026-09-06）
+- https://x.com/theoutdoors/status/2095735817344053337 （2026-09-06）
+- https://x.com/switch1e_swoof/status/2094469153348288900 （2026-09-06）
+- https://x.com/Nagi_storymusic/status/2094211485098815640 （2026-09-06）
+- https://x.com/Shion_41creator/status/2095473884590186797 （2026-09-06）
+- https://x.com/k_koga555/status/2095283893595500639 （2026-09-06）
+- https://x.com/app_saikou/status/2095715340433129680 （2026-09-06）
+- https://x.com/ReN_12_30/status/2094983657345978751 （2026-09-06）
 - https://x.com/ClaudeCode_UT/status/2089623351665078636 （2026-08-21）
 - https://x.com/FLINTKYA/status/2090091427673846243 （2026-08-21）
 - https://x.com/aiedge_/status/2089499533093036133 （2026-08-21）
@@ -17,18 +29,5 @@
 - https://x.com/VipulKewatTech/status/2088966503978991908 （2026-08-21）
 - https://x.com/claudecode84/status/2089182499960483961 （2026-08-21）
 - https://x.com/diguapet/status/2089577418134876530 （2026-08-21）
-- https://x.com/D3VAUX/status/2090461847954567262 （2026-08-21）
-- https://x.com/thisisdimm/status/2089510589211038191 （2026-08-21）
-- https://x.com/TaoRInne/status/2089230748792561903 （2026-08-21）
-- https://x.com/TaoRInne/status/2089593137354469688 （2026-08-21）
-- https://x.com/connect24h/status/2087157600513356221 （2026-08-12）
-- https://x.com/RIT_yasutake/status/2086633112642183494 （2026-08-12）
-- https://x.com/hiro44_pino/status/2086063111711428675 （2026-08-12）
-- https://x.com/DanKornas/status/2085449811923283976 （2026-08-12）
-- https://x.com/distortgeekin/status/2086501760894386222 （2026-08-12）
-- https://x.com/SwapAgarwal/status/2085996404506522073 （2026-08-12）
-- https://x.com/istupidpreneur/status/2085237142603677879 （2026-08-12）
-- https://x.com/kodagen/status/2083817728494964795 （2026-08-05）
-- https://x.com/ClaudeCode_aca/status/2083145653627363709 （2026-08-05）
 
-（処理済みが20件を超えたため、古い10件を drafts/best-practices-archive-xmcp.md の「2026-08-21 アーカイブ分」へ移動）
+（処理済みを直近20件に保ち、古い13件を drafts/best-practices-archive-xmcp.md の「2026-09-06 アーカイブ分」へ移動）
