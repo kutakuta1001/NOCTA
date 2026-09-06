@@ -98,7 +98,7 @@
     ctx.save();
     ctx.translate(o.x, o.y);
     ctx.rotate(o.rot || 0);
-    if (o.leaves && o.leaves.length) {
+    if (form !== 'tulip' && form !== 'bell' && o.leaves && o.leaves.length) {
       var greenBase = { r: 0x6E, g: 0x7A, b: 0x55 };   /* セージグリーン */
       for (var li = 0; li < o.leaves.length; li++) {
         var lf = o.leaves[li];
@@ -118,55 +118,166 @@
         ctx.restore();
       }
     }
-    if (depth > 0.5) { ctx.shadowColor = rgba(hexToRgb(pal.petals[0]), 0.5); ctx.shadowBlur = r * 0.5; } /* 奥は柔らかく */
-    for (var i = 0; i < n - shed; i++) {
+    // Side-view cups distinguish tulips and hanging bells from radial blossoms.
+    if (form === 'tulip' || form === 'bell') {
+      var cup = hexToRgb(pal.petals[0]);
+      var cw = r * (0.27 + 0.46 * bloom), ch = r * (1.02 - 0.12 * bloom);
       ctx.save();
-      ctx.rotate((i / n) * Math.PI * 2);
-      ctx.scale(openAng, openAng);
-      /* 花びら毎の色ゆらぎ（ベタ感の解消） */
-      var baseCol = hexToRgb(pal.petals[Math.floor(rng() * pal.petals.length) % pal.petals.length]);
-      var jitter = (rng() - 0.5) * 24;
-      var pc = { r: baseCol.r + jitter, g: baseCol.g + jitter * 0.6, b: baseCol.b + jitter * 0.4 };
-      var len = (form === 'kiku') ? r * 1.25 : (form === 'tulip') ? r * 1.05 : r;
-      /* 付け根=濃 → 先端=淡・地色寄り・低alpha（光の透過感） */
-      var grad = ctx.createLinearGradient(0, 0, 0, -len);
-      grad.addColorStop(0, rgba(pc, baseA));
-      grad.addColorStop(0.6, rgba(pc, baseA * 0.92));
-      grad.addColorStop(1, rgba(mixRgb(pc, ground, 0.55), baseA * 0.38));
-      ctx.fillStyle = grad;
-      if (form === 'kiku') { petal(ctx, r * 1.25, r * 0.12); }
-      else if (form === 'tulip') { petal(ctx, r * 1.05, r * 0.42); }
-      else if (form === 'komori') { ctx.beginPath(); ctx.arc(0, -r * 0.6, r * 0.42, 0, Math.PI * 2); }
-      else if (form === 'star') { petal(ctx, r * 1.15, r * 0.16); }               /* 尖った細弁 */
-      else if (form === 'bell') { petal(ctx, r * 1.3, r * 0.30); }                /* 細長く反る弁 */
-      else if (form === 'layered') { ctx.beginPath(); ctx.arc(0, -r * 0.55, r * 0.4, 0, Math.PI * 2); } /* 丸弁(外層) */
-      else { petal(ctx, r, r * 0.34); }
-      ctx.fill();
-      if (form === 'sakura') { ctx.fillStyle = rgba(ground, baseA * 0.9); ctx.beginPath(); ctx.moveTo(0, -r); ctx.lineTo(r * 0.09, -r * 0.8); ctx.lineTo(-r * 0.09, -r * 0.8); ctx.closePath(); ctx.fill(); }
-      ctx.restore();
+      if (form === 'bell') ctx.rotate(Math.PI);
+      ctx.translate(0, r * 0.38);
+      ctx.strokeStyle = rgba({r:93,g:120,b:69},baseA * 0.85);
+      ctx.lineWidth = Math.max(0.7,r * 0.035);
+      ctx.beginPath(); ctx.moveTo(0,ch * 0.17); ctx.bezierCurveTo(-r * 0.12,r * 0.7,r * 0.24,r,r * 0.13,r * 1.25); ctx.stroke();
+      ctx.save(); ctx.translate(r * 0.04,r * 0.8); ctx.rotate(0.8);
+      ctx.fillStyle = rgba({r:114,g:139,b:85},baseA * 0.75); petal(ctx,r * 0.66,r * 0.15);ctx.fill();ctx.restore();
+      for (var cp = 0; cp < 3; cp++) {
+        var off = (cp - 1) * cw * 0.34;
+        ctx.beginPath(); ctx.moveTo(0, ch * 0.22);
+        ctx.bezierCurveTo(-cw * 0.86, ch * 0.08, -cw + off * 0.3, -ch * 0.6, -cw * 0.7 + off, -ch);
+        ctx.bezierCurveTo(off - cw * 0.12, -ch * (0.83 + cp * 0.035), off + cw * 0.15, -ch * 1.06, cw * 0.55 + off, -ch * 0.96);
+        ctx.bezierCurveTo(cw + off * 0.2, -ch * 0.45, cw * 0.8, ch * 0.13, 0, ch * 0.22);
+        ctx.closePath();
+        var cgCup = ctx.createLinearGradient(-cw + off, 0, cw + off, -ch * 0.4);
+        cgCup.addColorStop(0, rgba(mixRgb(cup, {r:69,g:24,b:44},0.3), baseA));
+        cgCup.addColorStop(0.42, rgba(mixRgb(cup, {r:255,g:248,b:230},0.48), baseA));
+        cgCup.addColorStop(1, rgba(cup, baseA));
+        ctx.fillStyle = cgCup; ctx.fill();
+        ctx.strokeStyle = rgba(mixRgb(cup, {r:255,g:248,b:230},0.65), baseA * 0.38);
+        ctx.lineWidth = Math.max(0.35,r * 0.009); ctx.stroke();
+      }
+      // A recessed mouth and visible anthers keep the cup readable as a flower.
+      ctx.fillStyle = rgba(mixRgb(cup,{r:64,g:28,b:33},0.6),baseA * 0.7);
+      ctx.beginPath();ctx.ellipse(0,-ch * 0.98,cw * 0.52,cw * 0.11,0,0,Math.PI * 2);ctx.fill();
+      for (var an = 0; an < 5; an++) {
+        var ax = (an - 2) * cw * 0.16;
+        ctx.strokeStyle = rgba(hexToRgb(pal.core),baseA); ctx.lineWidth = Math.max(0.4,r * 0.012);
+        ctx.beginPath();ctx.moveTo(ax * 0.65,-ch * 0.94);ctx.lineTo(ax,-ch * (1.02 + (an % 2) * 0.04));ctx.stroke();
+        ctx.fillStyle = rgba(hexToRgb(pal.core),baseA);ctx.beginPath();ctx.arc(ax,-ch * (1.02 + (an % 2) * 0.04),Math.max(0.5,r * 0.022),0,Math.PI * 2);ctx.fill();
+      }
+      ctx.restore(); ctx.restore(); return;
     }
-    ctx.shadowBlur = 0;
-    if (form === 'layered') {
-      var inner = 5;
-      for (var j = 0; j < inner; j++) {
-        ctx.save();
-        ctx.rotate((j / inner) * Math.PI * 2 + Math.PI / inner);   /* 外層と半ピッチずらす */
-        ctx.scale(openAng * 0.62, openAng * 0.62);
-        var ic = hexToRgb(pal.petals[Math.floor(rng() * pal.petals.length) % pal.petals.length]);
-        var ig = ctx.createLinearGradient(0, 0, 0, -r * 0.7);
-        ig.addColorStop(0, rgba(ic, baseA)); ig.addColorStop(1, rgba(mixRgb(ic, ground, 0.5), baseA * 0.5));
-        ctx.fillStyle = ig; ctx.beginPath(); ctx.arc(0, -r * 0.45, r * 0.34, 0, Math.PI * 2); ctx.fill();
+    /* komori: 小花が環になったクラスター（梅・紫陽花・金木犀）。1輪の大きな花ではなく
+       小さな花が集まった塊として読ませる。旧実装の丸5個から、他形状と同じ花弁の陰影・
+       縁のハイライトを持つ小輪の集まりへ作り直した（A-4）。 */
+    if (form === 'komori') {
+      var ringR = r * 0.5 * (0.4 + 0.6 * easeOutCubic(bloom));
+      var fR = r * 0.42 * (0.45 + 0.55 * bloom);
+      var gone = Math.min(shed, n - 1);        /* 散りは外周の小輪から欠ける。中心の1輪は残す */
+      if (depth > 0.5) { ctx.shadowColor = rgba(hexToRgb(pal.petals[0]), 0.5); ctx.shadowBlur = r * 0.5; }   /* 奥は柔らかく */
+      for (var ki = 0; ki <= n; ki++) {
+        var kj = rng(), kt = rng(), kr = rng();               /* shedに関わらず消費列を一定に保つ */
+        if (ki < n && ki >= n - gone) continue;
+        var seatA = ki / n * Math.PI * 2 + (kj - 0.5) * 0.18;
+        var isCenter = (ki === n);
+        var sx = isCenter ? 0 : Math.cos(seatA - Math.PI / 2) * ringR;
+        var sy = isCenter ? 0 : Math.sin(seatA - Math.PI / 2) * ringR;
+        var kc = hexToRgb(pal.petals[Math.floor(kt * pal.petals.length) % pal.petals.length]);
+        var kShade = mixRgb(kc, { r: 71, g: 30, b: 44 }, 0.28);
+        var kLight = mixRgb(kc, { r: 255, g: 249, b: 234 }, 0.5);
+        var rad = fR * (isCenter ? 0.86 : 1) * (0.9 + kr * 0.2);
+        ctx.save(); ctx.translate(sx, sy); ctx.rotate(seatA * 0.6 + kr * 1.2);
+        for (var kp = 0; kp < 5; kp++) {
+          ctx.save(); ctx.rotate(kp / 5 * Math.PI * 2);
+          var kl = rad, kw = rad * 0.62;
+          ctx.beginPath(); ctx.moveTo(0, rad * 0.06);
+          ctx.bezierCurveTo(kw * 0.62, -kl * 0.18, kw * 0.72, -kl * 0.86, 0, -kl);
+          ctx.bezierCurveTo(-kw * 0.72, -kl * 0.86, -kw * 0.62, -kl * 0.18, 0, rad * 0.06);
+          ctx.closePath();
+          var kg = ctx.createLinearGradient(-kw * 0.6, 0, kw * 0.5, -kl);
+          kg.addColorStop(0, rgba(kShade, baseA));
+          kg.addColorStop(0.45, rgba(kc, baseA));
+          kg.addColorStop(1, rgba(kLight, baseA * 0.94));
+          ctx.fillStyle = kg; ctx.fill();
+          ctx.strokeStyle = rgba(kLight, baseA * 0.4); ctx.lineWidth = Math.max(0.3, r * 0.006); ctx.stroke();
+          ctx.restore();
+        }
+        var kcore = hexToRgb(pal.core), kcr = Math.max(0.6, rad * 0.2);
+        var kcg = ctx.createRadialGradient(-kcr * 0.3, -kcr * 0.4, 0, 0, 0, kcr);
+        kcg.addColorStop(0, rgba(mixRgb(kcore, { r: 255, g: 244, b: 190 }, 0.5), baseA));
+        kcg.addColorStop(1, rgba(mixRgb(kcore, { r: 90, g: 51, b: 25 }, 0.4), baseA));
+        ctx.fillStyle = kcg; ctx.beginPath(); ctx.arc(0, 0, kcr, 0, Math.PI * 2); ctx.fill();
+        if (bloom > 0.5) {
+          for (var ks = 0; ks < 6; ks++) {
+            var ka = ks * 2.39996, ksr = kcr * (1 + 0.7 * Math.sqrt((ks + 1) / 6));
+            ctx.strokeStyle = rgba(kcore, baseA * 0.6); ctx.lineWidth = Math.max(0.3, r * 0.008);
+            ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(Math.cos(ka) * ksr, Math.sin(ka) * ksr); ctx.stroke();
+          }
+        }
+        ctx.restore();
+      }
+      ctx.shadowBlur = 0;
+      ctx.restore(); return;
+    }
+    // Layered cups open from the outside inward. Seeded asymmetry stays still in the wind.
+    if (depth > 0.5) { ctx.shadowColor = rgba(hexToRgb(pal.petals[0]), 0.5); ctx.shadowBlur = r * 0.5; }   /* 奥は柔らかく（A-4で復活） */
+    var layers = form === 'kiku' ? 3 : form === 'layered' ? 3 : 1;
+    for (var layer = 0; layer < layers; layer++) {
+      var layerBloom = Math.max(0.04, Math.min(1, (bloom - layer * 0.12) / (1 - layer * 0.12)));
+      var spread = 0.22 + 0.78 * easeOutCubic(layerBloom);
+      var scale = Math.pow(form === 'kiku' ? 0.76 : 0.68, layer);
+      var count = n;
+      for (var i = 0; i < count; i++) {
+        var jitter = rng(), tint = rng(), curl = rng();
+        if (i >= count - Math.min(shed, count - 1)) continue;
+        var angle = i / count * Math.PI * 2 + layer * 0.37 + (jitter - 0.5) * 0.13;
+        var pc = hexToRgb(pal.petals[Math.floor(tint * pal.petals.length) % pal.petals.length]);
+        var len = r * scale * (0.92 + jitter * 0.16) * (form === 'kiku' ? 1.24 : 1);
+        var wid = len * (form === 'kiku' ? 0.13 : form === 'star' ? 0.20 : form === 'layered' ? 0.62 : 0.48);
+        ctx.save(); ctx.rotate(angle); ctx.scale(0.5 + spread * 0.5, spread);
+        ctx.translate(0, -r * 0.035 * layer);
+        ctx.beginPath(); ctx.moveTo(0, r * 0.07);
+        if (form === 'sakura') {
+          // Actual cleft contour: no patch of background paint over other petals.
+          ctx.bezierCurveTo(wid, -len * 0.27, wid * 0.9, -len * 1.08, len * 0.09, -len);
+          ctx.lineTo(0, -len * 0.87); ctx.lineTo(-len * 0.09, -len);
+          ctx.bezierCurveTo(-wid * 0.9, -len * 1.08, -wid, -len * 0.27, 0, r * 0.07);
+        } else if (form === 'star' || form === 'kiku') {
+          ctx.bezierCurveTo(wid, -len * 0.3, wid * 0.8, -len * 0.83, (curl - 0.5) * wid, -len);
+          ctx.bezierCurveTo(-wid * 0.8, -len * 0.8, -wid, -len * 0.3, 0, r * 0.07);
+        } else {
+          ctx.bezierCurveTo(wid * 0.5, -len * 0.16, wid * 1.1, -len * 0.7, wid * 0.46, -len * 0.94);
+          ctx.bezierCurveTo(wid * 0.2, -len * 1.07, -wid * 0.8, -len * 1.08, -wid * 0.65, -len * 0.65);
+          ctx.bezierCurveTo(-wid * 0.68, -len * 0.38, -wid * 0.28, -len * 0.1, 0, r * 0.07);
+        }
+        ctx.closePath();
+        var shade = mixRgb(pc, { r: 71, g: 30, b: 44 }, 0.3);
+        var light = mixRgb(pc, { r: 255, g: 249, b: 234 }, 0.55);
+        var grad = ctx.createLinearGradient(-wid * 0.7, 0, wid * 0.55, -len);
+        grad.addColorStop(0, rgba(shade, baseA));
+        grad.addColorStop(0.36, rgba(pc, baseA));
+        grad.addColorStop(0.72, rgba(light, baseA * 0.96));
+        grad.addColorStop(1, rgba(pc, baseA * 0.8));
+        ctx.fillStyle = grad; ctx.fill();
+        ctx.strokeStyle = rgba(light, baseA * 0.45); ctx.lineWidth = Math.max(0.35, r * 0.009); ctx.stroke();
+        ctx.clip();
+        // Fine veins and a shaded fold give petals thickness without a heavy shadow blur.
+        if (r > 12 && depth < 0.7) {
+          for (var vein = -1; vein <= 1; vein++) {
+            ctx.strokeStyle = rgba(shade, 0.14 * baseA); ctx.lineWidth = Math.max(0.3, r * 0.006);
+            ctx.beginPath(); ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(vein * wid * 0.15, -len * 0.3, vein * wid * 0.43, -len * 0.6, vein * wid * 0.48, -len * 0.89); ctx.stroke();
+          }
+        }
         ctx.restore();
       }
     }
-    /* 花芯: 中心明→縁濃のラジアル */
-    var coreR = r * (form === 'kiku' ? 0.28 : 0.2);
+    ctx.shadowBlur = 0;   /* 花芯・雄しべには奥のぼかしを乗せない（旧実装と同じ位置で解除） */
+    var coreR = r * (form === 'layered' ? 0.09 : form === 'kiku' ? 0.18 : 0.13) * (0.4 + bloom * 0.6);
     var core = hexToRgb(pal.core);
-    var cg = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR);
-    cg.addColorStop(0, rgba(mixRgb(core, { r: 255, g: 255, b: 255 }, 0.4), 1));
-    cg.addColorStop(1, rgba(core, 1));
-    ctx.fillStyle = cg;
-    ctx.beginPath(); ctx.arc(0, 0, coreR, 0, Math.PI * 2); ctx.fill();
+    var cg = ctx.createRadialGradient(-coreR * 0.3, -coreR * 0.4, 0, 0, 0, coreR);
+    cg.addColorStop(0, rgba(mixRgb(core, { r: 255, g: 244, b: 190 }, 0.5), baseA));
+    cg.addColorStop(1, rgba(mixRgb(core, { r: 90, g: 51, b: 25 }, 0.4), baseA));
+    ctx.fillStyle = cg; ctx.beginPath(); ctx.arc(0, 0, coreR, 0, Math.PI * 2); ctx.fill();
+    if (bloom > 0.45 && form !== 'layered') {
+      for (var st = 0; st < (form === 'kiku' ? 24 : 12); st++) {
+        var ang = st * 2.39996, sr = coreR * (1 + 0.65 * Math.sqrt((st + 1) / 24));
+        var sx = Math.cos(ang) * sr, sy = Math.sin(ang) * sr;
+        ctx.strokeStyle = rgba(core, baseA * 0.65); ctx.lineWidth = Math.max(0.4, r * 0.012);
+        ctx.beginPath(); ctx.moveTo(sx * 0.35, sy * 0.35); ctx.lineTo(sx, sy); ctx.stroke();
+        ctx.fillStyle = rgba(mixRgb(core, { r: 255, g: 246, b: 183 }, 0.42), baseA);
+        ctx.beginPath(); ctx.arc(sx, sy, Math.max(0.45, r * 0.019), 0, Math.PI * 2); ctx.fill();
+      }
+    }
     ctx.restore();
   }
 
@@ -327,6 +438,18 @@
   }
 
   var MAX_FLOWERS = 400, STEP = 26;   /* 距離サンプリング間隔(px) */
+  /* 満開スプライトの解像度と総量（C-1/D-3）。
+     解像度だけを上げるとメモリが増えるため、1枚あたりの上限と総画素数の予算を必ずセットで持つ。
+       SPRITE_MAX_SIDE  : 1枚の一辺の上限。r=104の大輪(必要832px@dpr2)を5.2倍拡大→2.6倍拡大に改善する
+       SPRITE_BUDGET_PX : 全スプライトの総画素数の上限。RGBAで約32MBに相当し、これがハードな天井になる
+       SPRITE_SIDES     : 一辺の階段。庭の混み具合で解像度を落とすとき、細かく変えて再生成が
+                          頻発しないよう段階を粗くする（最悪ケースで従来の160に着地する）
+     予算の主機構は「キャッシュ枚数が増えるほど新規スプライトを小さく作る」ことで、
+     枚数nでの一辺は sqrt(SPRITE_BUDGET_PX / n) に収まる＝総量が予算へ自然に漸近する。
+     LRU解放と確保拒否はその裏を取るための保険。 */
+  var SPRITE_MAX_SIDE = 320;
+  var SPRITE_BUDGET_PX = 8 * 1024 * 1024;
+  var SPRITE_SIDES = [64, 96, 128, 160, 192, 224, 256, 320];
   function createGarden(canvas, opts) {
     opts = opts || {};
     var reduce = !!opts.reduce;
@@ -351,8 +474,43 @@
       var valid = opts.flowerKinds.filter(function (fk) { return !!(fk && fk.color); });
       return valid.length ? valid : null;
     })();
-    var flowers = [];        /* {x,y,r,baseRot,form,seed,bornT,dur,depth,vigor,swayPhase,swayW,holdMs,shed,nextShedT,maxShed,palette} */
+    var flowers = [];        /* {x,y,r,baseRot,form,seed,bornT,dur,depth,vigor,swayPhase,swayW,holdMs,shed,nextShedT,maxShed,palette,sprite} */
     var rafId = null, running = false;
+    /* 満開スプライトの予算管理（C-1/D-3）。spritePxは確保中の総画素数、spriteCountは枚数、
+       spriteFrameはredraw毎に進むLRU用の単調カウンタ。 */
+    var spritePx = 0, spriteCount = 0, spriteFrame = 0;
+    function releaseSprite(f) {
+      if (f && f.sprite) { spritePx -= f.sprite.px; spriteCount--; f.sprite = null; }
+      return f;
+    }
+    /* flowers配列ごと差し替える経路(clear/farewell)用。個別解放よりこちらが確実。 */
+    function resetSprites() {
+      for (var i = 0; i < flowers.length; i++) if (flowers[i]) flowers[i].sprite = null;
+      spritePx = 0; spriteCount = 0;
+    }
+    /* 一辺の決定: 表示に必要なdevice px・1枚の上限・予算の枚数割当のうち最小を階段に丸める。
+       枚数が増えるほど小さく作るので、総量は SPRITE_BUDGET_PX へ漸近する。 */
+    function spriteSideFor(span) {
+      var need = Math.ceil(span * dpr);
+      var share = Math.floor(Math.sqrt(SPRITE_BUDGET_PX / Math.max(1, spriteCount + 1)));
+      var want = Math.min(need, SPRITE_MAX_SIDE, share);
+      for (var i = SPRITE_SIDES.length - 1; i > 0; i--) if (SPRITE_SIDES[i] <= want) return SPRITE_SIDES[i];
+      return SPRITE_SIDES[0];
+    }
+    /* 予算超過時は「今フレームに使っていないスプライト」から古い順に解放する。
+       画面外・退場中・描画順が後ろの花が先に落ちる。全部が今フレーム使用中なら解放できないので、
+       呼び出し側は false を受けてベクター描画にフォールバックする（メモリを予算内に固定する）。 */
+    function reserveSprite(px) {
+      if (spritePx + px <= SPRITE_BUDGET_PX) return true;
+      var held = [];
+      for (var i = 0; i < flowers.length; i++) if (flowers[i].sprite) held.push(flowers[i]);
+      held.sort(function (a, b) { return a.sprite.usedAt - b.sprite.usedAt; });
+      for (var j = 0; j < held.length && spritePx + px > SPRITE_BUDGET_PX; j++) {
+        if (held[j].sprite.usedAt >= spriteFrame) break;   /* 今フレーム使用中に到達＝これ以上落とせない */
+        releaseSprite(held[j]);
+      }
+      return spritePx + px <= SPRITE_BUDGET_PX;
+    }
     var seedCounter = 1;
     var lastPressLabel = '';   /* 直近press()のラベル文字列(テスト用snapshotLabel()の裏付け) */
     var farewelling = false, farewellT = 0, lastFrameT = 0, farewellTimer = null;
@@ -535,7 +693,7 @@
         shed: 0, nextShedT: 0, maxShed: 0,
         leaves: []
       };
-      flowers.push(f); if (flowers.length > MAX_FLOWERS) flowers.shift();
+      flowers.push(f); if (flowers.length > MAX_FLOWERS) releaseSprite(flowers.shift());   /* FIFO排出時にスプライトの予算も返す */
       ambientCount++;   /* Phase2h Task2: fillRatioの出所はこのカウンタのみ(spawn/spawnGrandでは増やさない) */
       /* 自生は音を鳴らさない(onSpawnを呼ばない)＝静かに芽吹く */
     }
@@ -582,6 +740,7 @@
     function redraw() {
       var rect = canvas.getBoundingClientRect();
       ctx.clearRect(0, 0, rect.width, rect.height);
+      spriteFrame++;   /* スプライトLRUの世代。今フレームで使ったものは usedAt === spriteFrame になる */
       var t = now();
       /* Phase2g Task2: fillRatioが変わった時だけmount側(.hana-stage背景)へ通知する。 */
       var fr = currentFillRatio();
@@ -702,13 +861,36 @@
            入力であるvigorをこの時だけ僅かに引き上げ(最大+0.3)、1枚あたりの不透明度
            (baseA)をわずかに濃くして重なりでも花の発色が沈まないようにする。stageComp=0
            (地がまだ暗い間)ではf.vigorのまま=完全不変。 */
-        drawEntity(ctx, {
+        var paint = {
           x: f.x, y: f.y, r: f.r, rot: f.baseRot + sway, bloom: bloom,
-          /* Phase2h Task3: f.palette(図鑑連動の個別パレット)があれば優先、なければ従来のcurrentPalette()
-             (季節/シード)。f.paletteは常にundefined/nullなタップ・緑・シード花には影響しない。 */
           form: f.form, palette: f.palette || currentPalette(), rng: makeRng(f.seed),
           vigor: Math.min(1, f.vigor + stageComp * 0.3), depth: f.depth, shed: f.shed, leaves: f.leaves, kind: f.kind
-        });
+        };
+        /* 満開の花は揺れても陰影が変わらないので、1輪1枚のスプライトを使い回して風の再描画を軽くする。
+           解像度は spriteSideFor が「必要px・1枚上限320・予算の枚数割当」の最小を返す（C-1）。
+           既存スプライトは解像度を理由に作り直さない（階段をまたぐ度に全輪が再生成されるのを防ぐ）。
+           内容が変わったとき(散り・季節・明地補正)だけ作り直す。開花途中と書き出しはベクターのまま。 */
+        if (bloom === 1 && (!f.kind || f.kind === 'flower')) {
+          var key = [f.r, f.shed, paint.vigor.toFixed(2), paint.palette.petals.join(), paint.palette.core, paint.palette.ground].join('|');
+          if (f.sprite && f.sprite.key !== key) releaseSprite(f);
+          if (!f.sprite) {
+            var span = Math.max(8, f.r * 4);
+            var side = spriteSideFor(span);
+            if (reserveSprite(side * side)) {
+              var tile = document.createElement('canvas'); tile.width = tile.height = side;
+              var tc = tile.getContext('2d'); tc.scale(side / span, side / span);
+              drawEntity(tc, Object.assign({}, paint, { x: span / 2, y: span / 2, rot: 0 }));
+              f.sprite = { canvas: tile, span: span, key: key, px: side * side, usedAt: spriteFrame };
+              spritePx += side * side; spriteCount++;
+            }
+          }
+          if (f.sprite) {
+            f.sprite.usedAt = spriteFrame;
+            ctx.save(); ctx.translate(f.x, f.y); ctx.rotate(paint.rot);
+            ctx.drawImage(f.sprite.canvas, -f.sprite.span / 2, -f.sprite.span / 2, f.sprite.span, f.sprite.span);
+            ctx.restore();
+          } else drawEntity(ctx, paint);   /* 予算が空かず確保できなかった＝ベクターで描く */
+        } else { releaseSprite(f); drawEntity(ctx, paint); }
       }
       /* 落下花びらパーティクル */
       var dt = lastAgeT ? Math.min(100, t - lastAgeT) : 16; lastAgeT = t;
@@ -793,7 +975,7 @@
       /* FIFO保持（描画順は redraw 側で depth ソート）。容量超過時は最古(先頭)を削除。
          depth順に挿入して shift すると新規花自身が消え得るバグを避けるため push+shift にする。 */
       flowers.push(f);
-      if (flowers.length > MAX_FLOWERS) flowers.shift();
+      if (flowers.length > MAX_FLOWERS) releaseSprite(flowers.shift());   /* FIFO排出時にスプライトの予算も返す */
       if (opts.onSpawn) { try { opts.onSpawn(f); } catch (_) {} }
       kick();
     }
@@ -821,7 +1003,7 @@
         swayPhase: rng() * Math.PI * 2, swayW: 0.0005 + rng() * 0.0004,
         holdMs: (fastAge ? 600 : (20000 + rng() * 10000)), shed: 0, nextShedT: 0, maxShed: 0 };
       f.leaves = [{ ang: 2.3, len: 1.25 }, { ang: -2.3, len: 1.15 }];
-      flowers.push(f); if (flowers.length > MAX_FLOWERS) flowers.shift();
+      flowers.push(f); if (flowers.length > MAX_FLOWERS) releaseSprite(flowers.shift());   /* FIFO排出時にスプライトの予算も返す */
       if (opts.onSpawn) { try { opts.onSpawn(f); } catch (_) {} }
       kick();
     }
@@ -894,7 +1076,7 @@
            armSproutTimer は flowers を空にした後に呼ぶ(満杯ガードに阻まれず再arm＝満杯からのクリアでも自生が戻る)。 */
         lastInteractT = t; scheduleSprout(t);
         if (reduce) {
-          flowers = []; petals = []; ambientCount = 0; redraw();
+          resetSprites(); flowers = []; petals = []; ambientCount = 0; redraw();
           if (opts.onGust) { try { opts.onGust(); } catch (_) {} }
           return;
         }
@@ -917,7 +1099,7 @@
             });
           }
         }
-        flowers = [];                                     /* 花は吹き飛んだ→即座に空。粒子だけが流れて消える */
+        resetSprites(); flowers = [];                     /* 花は吹き飛んだ→即座に空。粒子だけが流れて消える */
         ambientCount = 0;                                  /* Phase2h Task2: 庭を空にした=充実度0。fillRatioも即座に暗側へ戻す */
         armSproutTimer();                                  /* 空にしてから再arm(満杯ガードを抜ける)→クリア後IDLE_MS待って自生が再開 */
         if (opts.onGust) { try { opts.onGust(); } catch (_) {} }
@@ -1083,6 +1265,9 @@
       /* テスト用: 直近press()のラベル文字列(実挙動には影響しない) */
       snapshotLabel: function () { return lastPressLabel; },
       snapshotCount: function () { return flowers.length; },
+      /* テスト・実機観測用: 満開スプライトの保持量。予算 SPRITE_BUDGET_PX を超えないことの確認に使う
+         （iPhone実機でも Safari のコンソールから window.__hanaSprites で見られる）。 */
+      spriteStats: function () { return { count: spriteCount, px: spritePx, mb: +(spritePx * 4 / 1048576).toFixed(2), budgetPx: SPRITE_BUDGET_PX }; },
       /* テスト用: 庭の充実度(花+緑の総数)。自生(自然芽吹き)がFILL_TARGETで頭打ちすることの観測用。 */
       entityCount: function () { return flowers.length; },
       /* Phase2g Task2: 庭の充実度(0..1)。mount側が.hana-stage背景の暗→生成りlerpに使う他、
@@ -1141,11 +1326,12 @@
           /* 退場完了: 花を消し、状態を戻す。閉じずに再利用されても清浄な空庭に戻る
              （farewellingが立ちっぱなしだと新規花が二度と描かれない不具合を防ぐ） */
           farewellTimer = null;
-          flowers = []; petals = []; ambientCount = 0; farewelling = false;   /* W1修正(Codex 2h): clear()同様、退場完了時も充実度を0へ戻す(空庭なのにfillRatioが過去値で明るいまま、を防ぐ) */
+          resetSprites(); flowers = []; petals = []; ambientCount = 0; farewelling = false;   /* W1修正(Codex 2h): clear()同様、退場完了時も充実度を0へ戻す(空庭なのにfillRatioが過去値で明るいまま、を防ぐ) */
           if (done) done();
         }, 820);
       },
       detach: function () {
+        resetSprites();
         running = false; if (rafId) cancelAnimationFrame(rafId);
         clearHold();
         /* farewell待ち中に別経路(ESC等)でdetachされた場合、遅延callbackが後から
@@ -1342,7 +1528,7 @@
       if (typeof requestAnimationFrame === 'function') inviteWhenSized(10);
       else garden.invite();
     }
-    function publishCount() { if (typeof window !== 'undefined') { window.__hanaCount = garden.snapshotCount(); window.__hanaFill = garden.fillRatio(); } }
+    function publishCount() { if (typeof window !== 'undefined') { window.__hanaCount = garden.snapshotCount(); window.__hanaFill = garden.fillRatio(); window.__hanaSprites = garden.spriteStats(); } }
     var countTimer = setInterval(publishCount, 200);
 
     var onClick = function (e) {
