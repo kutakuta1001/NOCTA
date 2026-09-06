@@ -9,6 +9,8 @@
 #
 # 前提:
 #   - codex CLI がインストール済み（npm i -g @openai/codex / brew install codex）
+#     既定モデル gpt-6-astra は CLI 0.153.4 以降が必要。追随できているかは
+#     レビュー実行時に自動チェックし、`codex-review.sh version-check` で明示確認できる。
 #   - 主: ChatGPT Plus でログイン済み（codex login。トークンは ~/.codex/auth.json）
 #   - 副: フォールバック用 OpenAI API キーを ~/.codex/fallback-api-key に保存（chmod 600）
 #
@@ -39,11 +41,18 @@ CODEX_AUTH="${CODEX_AUTH:-chatgpt}"
 FALLBACK_KEY_FILE="${CODEX_FALLBACK_KEY_FILE:-$HOME/.codex/fallback-api-key}"
 # ChatGPT 連携で使うモデル。codex の既定 gpt-5.3-codex は API 専用で
 # ChatGPT アカウントでは 400 拒否されるため、ChatGPT 対応モデルを明示する。
-# gpt-5.6-sol（3階層中フラッグシップ。sol=最上位/terra=中位/luna=軽量・最下位）は
-# CLI 0.144.6 以降で ChatGPT Plus 利用可（検証済み 2026-07-21）。
-# 単体の "gpt-5.6" は非対応（metadata未定義で400拒否される）。階層名の指定が必須。
-# 古い CLI では gpt-5.5 / gpt-5.4 にフォールバックすること。
-CODEX_CHATGPT_MODEL="${CODEX_CHATGPT_MODEL:-gpt-5.6-sol}"
+# gpt-6-astra（GPT-6 世代のフラッグシップ・モデル一覧の priority 1）は
+# CLI 0.153.4 以降で ChatGPT Plus 利用可（検証済み 2026-09-06）。
+# 0.144.6 では同じモデル名が 400（requires a newer version of Codex）で拒否された。
+# 古い CLI では gpt-5.6-sol / gpt-5.5 にフォールバックすること。
+CODEX_CHATGPT_MODEL="${CODEX_CHATGPT_MODEL:-gpt-6-astra}"
+
+# 推論の深さ。GPT-6 世代は low/medium/high/xhigh/max/ultra の6段階。
+# astra の既定は low だが、レビューは欠陥発見の網羅性が最優先なので high を明示する。
+# 空文字を渡すと指定を省略してモデル既定に委ねる。
+# chatgpt モードのみに適用する。apikey モードは主が死んだときの最後の手段であり、
+# 未検証の config キーを足して経路ごと壊すリスクを避ける。
+CODEX_REASONING_EFFORT="${CODEX_REASONING_EFFORT:-high}"
 # apikey モード専用の CODEX_HOME。主の ~/.codex（ChatGPT 連携）と完全分離して
 # 認証の優先順位の曖昧さを排除する。codex の状態ファイルもここに隔離される。
 APIKEY_HOME="${CODEX_APIKEY_HOME:-$HOME/.codex-apikey}"
@@ -91,6 +100,83 @@ warn_if_near_limit() {
   fi
 }
 
+# ---- CLI バージョン追随の検知 ----
+# 新しいモデルは新しい CLI を要求する。実例として gpt-6-astra は CLI 0.153.4 で動くが
+# 0.144.6 では 400 "requires a newer version of Codex" で拒否された（2026-09-06 実測）。
+# CLI を放置すると既定モデルが突然使えなくなるため、レビュー実行時に自動で気づけるようにする。
+# npm へのアクセスは INTERVAL 秒に1回だけ行い、キャッシュヒット時はネットワークに触らない
+# （通常のレビュー実行に遅延を持ち込まないため）。
+CODEX_VERSION_CHECK="${CODEX_VERSION_CHECK:-1}"
+CODEX_VERSION_CHECK_INTERVAL_SEC="${CODEX_VERSION_CHECK_INTERVAL_SEC:-86400}"   # 24h
+CODEX_VERSION_CACHE="${CODEX_VERSION_CACHE:-$HOME/.codex/.cli-version-check}"
+CODEX_VERSION_CHECK_TIMEOUT_SEC="${CODEX_VERSION_CHECK_TIMEOUT_SEC:-5}"
+
+local_cli_version() {
+  codex --version 2>/dev/null | awk '{print $NF}'
+}
+
+# npm の latest を取得する。オフラインで固まらせないため watchdog 付き。
+# 成功時のみバージョン文字列を stdout に出し、失敗時は非ゼロを返す。
+fetch_latest_cli_version() {
+  local tmp rc=0 npm_pid wd_pid
+  tmp="$(mktemp -t codex-npmver.XXXXXX)"
+  npm view @openai/codex version > "$tmp" 2>/dev/null &
+  npm_pid=$!
+  ( sleep "$CODEX_VERSION_CHECK_TIMEOUT_SEC"; kill -TERM "$npm_pid" 2>/dev/null ) &
+  wd_pid=$!
+  disown "$wd_pid" 2>/dev/null || true
+  wait "$npm_pid" || rc=$?
+  kill -TERM "$wd_pid" 2>/dev/null || true
+  [[ $rc -eq 0 ]] && tr -d ' \r\n' < "$tmp"
+  rm -f "$tmp"
+  return $rc
+}
+
+# $1 が $2 より古いバージョンなら真
+version_lt() {
+  [[ "$1" != "$2" ]] \
+    && [[ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -1)" == "$1" ]]
+}
+
+# 引数に force を渡すとキャッシュを無視し、最新だった場合もその旨を表示する。
+check_cli_version() {
+  local force="${1:-}"
+  [[ "$CODEX_VERSION_CHECK" == "1" || -n "$force" ]] || return 0
+
+  local now local_ver cached_at cached_latest latest fetched
+  now=$(date +%s)
+  local_ver="$(local_cli_version)"
+  cached_at=0
+  cached_latest=""
+  if [[ -f "$CODEX_VERSION_CACHE" ]]; then
+    read -r cached_at cached_latest < "$CODEX_VERSION_CACHE" || true
+    [[ "$cached_at" =~ ^[0-9]+$ ]] || cached_at=0
+  fi
+
+  latest="$cached_latest"
+  if [[ -n "$force" ]] || (( now - cached_at >= CODEX_VERSION_CHECK_INTERVAL_SEC )); then
+    if fetched="$(fetch_latest_cli_version)" && [[ -n "$fetched" ]]; then
+      latest="$fetched"
+      mkdir -p "$(dirname "$CODEX_VERSION_CACHE")"
+      printf '%s %s\n' "$now" "$latest" > "$CODEX_VERSION_CACHE"
+    elif [[ -n "$force" ]]; then
+      echo "⚠️  npm から最新バージョンを取得できませんでした（オフライン/タイムアウト）。" >&2
+      echo "   ローカル: ${local_ver:-unknown}" >&2
+      return 0
+    fi
+  fi
+
+  [[ -n "$latest" && -n "$local_ver" ]] || return 0
+
+  if version_lt "$local_ver" "$latest"; then
+    echo "⚠️  Codex CLI が古い: ローカル ${local_ver} / npm 最新 ${latest}" >&2
+    echo "   新モデルは新版の CLI を要求する（例 gpt-6-astra は 0.153.4 以降）。" >&2
+    echo "   更新: npm install -g @openai/codex@latest" >&2
+  elif [[ -n "$force" ]]; then
+    echo "✅ Codex CLI は最新: ${local_ver}（npm 最新 ${latest}）" >&2
+  fi
+}
+
 # コマンドを watchdog 付きで実行する。macOS には coreutils の `timeout` が
 # 入っていない前提で、純 bash のバックグラウンド + kill 方式で実装する。
 # CODEX_TIMEOUT_SEC で上書き可（既定 180 秒）。
@@ -107,12 +193,17 @@ run_codex() {
   local -a launcher
   case "$CODEX_AUTH" in
     chatgpt)
+      check_cli_version
       warn_if_near_limit
       record_usage
-      echo "🔑 認証モード: chatgpt（ChatGPT Plus 連携 / model=${CODEX_CHATGPT_MODEL}）" >&2
+      echo "🔑 認証モード: chatgpt（ChatGPT Plus 連携 / model=${CODEX_CHATGPT_MODEL}${CODEX_REASONING_EFFORT:+ / effort=${CODEX_REASONING_EFFORT}}）" >&2
       # 主の ~/.codex を使う。env のキーが残っていても拾わせない。
       # ChatGPT 対応モデルを明示指定（既定モデルは API 専用で拒否されるため）。
       launcher=(env -u OPENAI_API_KEY codex exec -m "$CODEX_CHATGPT_MODEL")
+      # 推論の深さを明示する。astra の既定は low で、レビューの網羅性が落ちる。
+      if [[ -n "$CODEX_REASONING_EFFORT" ]]; then
+        launcher+=(-c "model_reasoning_effort=${CODEX_REASONING_EFFORT}")
+      fi
       ;;
     apikey)
       if [[ ! -f "$FALLBACK_KEY_FILE" ]]; then
@@ -181,8 +272,10 @@ run_codex() {
      && grep -qiE 'not supported when using codex with a chatgpt account|requires a newer version of codex' "$out_file"; then
     echo "" >&2
     echo "CODEX_MODEL_UNSUPPORTED: ChatGPT アカウントでモデル '${CODEX_CHATGPT_MODEL}' が使えません。" >&2
-    echo "  対処: CODEX_CHATGPT_MODEL に ChatGPT 対応モデル（例 gpt-5.6-terra / gpt-5.5）を指定するか、" >&2
-    echo "        Codex CLI を更新してください（gpt-5.6-sol 等の新モデルは新版が必要）。" >&2
+    echo "  対処: Codex CLI を更新（npm install -g @openai/codex@latest）するか、" >&2
+    echo "        CODEX_CHATGPT_MODEL に対応モデル（例 gpt-5.6-sol / gpt-5.5）を指定してください。" >&2
+    # このエラーの主因は CLI の古さなので、その場でバージョン差を突き合わせて示す。
+    check_cli_version force
     return "$CODEX_AUTH_FAILED_EXIT"
   fi
 
@@ -315,6 +408,12 @@ EOF
     echo "  ログ: $USAGE_LOG"
     ;;
 
+  version-check)
+    # キャッシュを無視して npm の最新版と突き合わせる（/weekly-check から呼ばれる）。
+    echo "使用モデル: ${CODEX_CHATGPT_MODEL}${CODEX_REASONING_EFFORT:+ / effort=${CODEX_REASONING_EFFORT}}" >&2
+    check_cli_version force
+    ;;
+
   *)
     cat <<EOF
 Usage: $0 <mode> [args]
@@ -325,6 +424,7 @@ Modes:
   file <path>         特定ファイルのコードレビュー
   custom "<prompt>"   自由プロンプトレビュー
   usage               Codex 使用量（ローカル追跡）を表示
+  version-check       CLI が npm 最新版に追随しているか確認（キャッシュ無視）
 
 Examples:
   $0 plan docs/superpowers/plans/2026-04-18-seeds-m1-fts5.md
@@ -333,6 +433,7 @@ Examples:
   $0 file src/app/api/cards/route.ts
   $0 custom "src/lib/db.ts のコネクションプーリングを評価せよ"
   $0 usage
+  $0 version-check
 
 認証:
   既定は chatgpt（ChatGPT Plus 連携）。認証失敗時は終了コード 75 と
@@ -340,14 +441,20 @@ Examples:
 
 Env overrides:
   CODEX_AUTH                 認証モード（chatgpt|apikey・既定 chatgpt）
-  CODEX_CHATGPT_MODEL        ChatGPT 連携で使うモデル（既定: gpt-5.6-sol・要 CLI 0.144+）
+  CODEX_CHATGPT_MODEL        ChatGPT 連携で使うモデル（既定: gpt-6-astra・要 CLI 0.153+）
                              ※ codex 既定 gpt-5.3-codex は API 専用で ChatGPT 不可
                              ※ 単体 "gpt-5.6" は非対応。sol/terra/luna の階層名が必須
+  CODEX_REASONING_EFFORT     推論の深さ（既定: high。空文字でモデル既定に委ねる）
+                             ※ GPT-6 世代は low/medium/high/xhigh/max/ultra
+                             ※ chatgpt モードのみ適用
   CODEX_FALLBACK_KEY_FILE    フォールバックキーの場所（既定: ~/.codex/fallback-api-key）
   CODEX_USAGE_LOG            使用ログのパス（既定: ~/.codex/usage.log）
   CODEX_USAGE_WINDOW_SEC     追跡ウィンドウ秒数（既定: 18000 = 5h）
   CODEX_USAGE_WARN_AT        警告閾値（既定: 20 回）
   CODEX_USAGE_LIMIT_ESTIMATE ChatGPT Plus 推定上限（既定: 30 回）
+  CODEX_VERSION_CHECK        CLI バージョン追随チェック（既定: 1。0 で無効）
+  CODEX_VERSION_CHECK_INTERVAL_SEC  npm 照会の間隔（既定: 86400 = 24h）
+  CODEX_VERSION_CHECK_TIMEOUT_SEC   npm 照会のタイムアウト（既定: 5 秒）
 EOF
     exit 1
     ;;
