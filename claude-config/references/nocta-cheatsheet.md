@@ -60,6 +60,7 @@ CLAUDE.md から分離した参照情報。常時ロードされないので、�
 | `/best-practices-review` | インボックスの一括レビュー（5件以上で実行） |
 | `/claude-docs-review` / `/x-practices-search` / `/web-practices-review` | 公式ドキュメント・X・Web からの収集 |
 | `/model-review` | 新モデルリリース時にモデル棲み分けを再議論 |
+| `/version-audit` | ツールのバージョン追随を点検（月1ペース・Claude Code / Codex CLI / npm / Homebrew / Actions） |
 | `/interaction-review` | 依頼パターン分析・改善提案 |
 | `/insights` | セッション利用パターン分析 |
 | `/research` | X と Web の並列リサーチ（話題の探索・記事ノート化） |

@@ -1,0 +1,21 @@
+# GitHub Actions で使う action のバージョン追随を Dependabot に検知させる。
+#
+# 背景: 2026-09-06 に deploy-pages.yml の4つの action が Node.js 20 非推奨のまま
+# 放置されていたことが発覚した。警告は Actions のログに出ていたが、
+# CEO がログを読むまで誰も気づかない状態だった。
+#
+# 方針:
+# - 自動マージはしない。Dependabot は PR を立てるだけで、マージは CEO が判断する
+#   （2026-09-06 の upload-pages-artifact v4 のように破壊的変更が入ることがある）
+# - グループ化しない。1 action = 1 PR にして、壊れたときの切り分けを容易にする
+# - 月次。action の更新頻度に対して週次は過剰
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "chore(ci)"
+    open-pull-requests-limit: 5
