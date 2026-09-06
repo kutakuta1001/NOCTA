@@ -10,8 +10,8 @@
  *
  * 公開: NoctaGem3d.mount(container, gemData, opts) → { setTilt, detach, isReady }
  *   container: canvasを入れる要素
- *   gemData: { cut, gem3d, ior, accentColor, name, hardness, dispersion }
- *     hardness: モース硬度（number か "6.5-7.5" 等の範囲文字列）。roughness算出に使用
+ *   gemData: { cut, gem3d, ior, accentColor, name, roughness, dispersion }
+ *     roughness: 研磨面の粗さ（任意、0〜1）。モース硬度とは独立
  *     dispersion: 分散（ファイア）強度 0〜1
  *   opts.reduce: prefers-reduced-motion
  *
@@ -135,10 +135,9 @@ function brilliantGeometry(mains, opts) {
 
   var da = (Math.PI * 2) / N;   /* ガードル頂点1つあたりの角度 */
 
-  /* 個体差: ガードル各頂点に微小な半径・高さのジッター（±2.5%・±0.012）。
-     完全対称を崩し、傾けたとき本物の研磨石のように不規則にきらめく */
+  /* 研磨面の対称性を保つ。大きな頂点ジッターは欠けた輪郭と不自然な反射を作る。 */
   var jitR = [], jitY = [];
-  for (var k = 0; k < N; k++) { jitR.push(1 + (rng() - 0.5) * 0.05); jitY.push((rng() - 0.5) * 0.024); }
+  for (var k = 0; k < N; k++) { jitR.push(1 + (rng() - 0.5) * 0.002); jitY.push((rng() - 0.5) * 0.001); }
 
   /* --- テーブル面（上面の正多角形・mains角） --- */
   var tableCenter = new THREE.Vector3(0, crownY, 0);
@@ -614,14 +613,8 @@ function makeMaterial(gemData) {
   var kind = gemData.gem3d || 'transparent';
   var ior = gemData.ior || 1.9;
 
-  /* 硬度依存の表面粗さ（記事の知見: 完全な透明roughness=0は「作り物臭い/安っぽい」。
-     硬度の低い石ほど表面を軽く曇らせ透過光を適度にぼかすと自然な深みが出る）。
-     モース硬度10(ダイヤ)=0 → 6=約0.04。roughnessは屈折のぼかしも兼ねるので控えめに上限0.05。 */
-  /* "6.5-7.5"等の範囲は parseFloat が下限を返す（=より軟らかい側=わずかに曇る方向）。
-     保守的に曇り寄りへ倒す意図で下限採用。数値・範囲文字列どちらも可 */
-  var hardness = parseFloat(gemData.hardness);
-  if (!(hardness > 0)) hardness = 8;
-  var rough = Math.max(0, Math.min(0.05, (10 - hardness) * 0.01));
+  // Polish is a surface finish, independent of Mohs hardness.
+  var rough = (typeof gemData.roughness === 'number') ? Math.max(0, Math.min(1, gemData.roughness)) : 0.012;
 
   if (kind === 'opaque') {
     return new THREE.MeshPhysicalMaterial({
@@ -660,19 +653,18 @@ function makeMaterial(gemData) {
     transmission: 1.0,
     thickness: 1.8,
     ior: ior,
-    roughness: rough,   /* 硬度依存: 軟らかい石ほど微かに曇り透過に深みが出る */
+    roughness: rough,
     metalness: 0.0,
-    reflectivity: 0.55,
+    // reflectivity setter overwrites ior in Three.js; preserve the stone's IOR.
     attenuationColor: color,
     attenuationDistance: attenDist,
     specularIntensity: 1.0,
-    /* clearcoatを強めるとフラットシェーディングのファセット境界でフレネル反射が際立ち、
-       稜線がキラッと光る（ベベルの視覚効果をジオメトリを増やさず材質で得る） */
-    clearcoat: 1.0,
+    // A polished mineral has one dielectric interface, not a varnish layer.
+    clearcoat: 0.0,
     clearcoatRoughness: 0.0,
     envMapIntensity: 1.9,
     side: THREE.DoubleSide,   /* 透明石は屈折で内部の裏面ファセットも見えるため両面描画 */
-    flatShading: true
+    flatShading: gemData.cut !== 'cabochon'
   });
   /* 分散（ファイア）: three r167+ で対応。石別のdispersion（データ未指定は0.5）。
      不正値に備え0〜1にクランプ */
@@ -1087,7 +1079,7 @@ function mount(container, gemData, opts) {
       return;
     }
     if (devReq) return; devReq = true;
-    import('./gem3d-pathtracer.js?v=5').then(function (mod) {
+    import('./gem3d-pathtracer.js?v=6').then(function (mod) {
       /* import 解決＝in-flight 完了。ラッチを解除する（成功・早期return どちらの経路も一箇所で解除）。
          これがないと、傾け等で下の renderMode ガードにより早期returnしたとき devReq が true のまま固着し、
          以後 develop が永久に起動しなくなる。 */

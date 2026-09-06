@@ -108,12 +108,24 @@ export function createDeveloper(opts) {
                                            環境を強く反射するため、ここを明るくすると輪郭が反射光を拾って
                                            黒背景から分離する（縁が暗く溶ける問題への本質的対処）。 */
     }
+    // Distinct studio reflections reveal facets instead of a uniform gray dome.
+    var shift = (DIR_SIGN[direction] || 0) * 0.32;
+    var cards = [
+      { dir: new THREE.Vector3(-0.75 + shift, 0.2, 0.8).normalize(), power: 5.5, sharp: 160 },
+      { dir: new THREE.Vector3(0.8 + shift, 0.45, 0.5).normalize(), power: 4.5, sharp: 190 },
+      { dir: new THREE.Vector3(shift, 1, 0.2).normalize(), power: 2.8, sharp: 12 }
+    ];
     var spot = spotVecFor(direction);
     var boost = 1 + Math.max(0, Math.min(2, intensity || 0)) * 0.1;
     tex.generationCallback = function (polar, uv, coord, color) {
       _tmpDir.setFromSpherical(polar);
       var t = _tmpDir.y * 0.5 + 0.5;
       color.lerpColors(tex.bottomColor, tex.topColor, Math.pow(t, tex.exponent));
+      for (var c = 0; c < cards.length; c++) {
+        var card = cards[c];
+        var energy = Math.pow(Math.max(0, _tmpDir.dot(card.dir)), card.sharp) * card.power;
+        color.r += SPOT_COLOR.r * energy; color.g += SPOT_COLOR.g * energy; color.b += SPOT_COLOR.b * energy;
+      }
       var cosA = _tmpDir.dot(spot);
       if (cosA > 0.75) {
         var s = Math.pow(cosA, SPOT_SHARPNESS) * SPOT_PEAK * boost;
