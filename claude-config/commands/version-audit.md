@@ -162,4 +162,9 @@ CEO が更新を実行した場合は、その旨も同じ行に含める。
   急ぐときは `HOMEBREW_NO_AUTO_UPDATE=1` を付けるが、その場合はリポジトリ情報が古いままなので月次点検では付けない
 - `npm outdated -g` は終了コード1を返すことがある（outdated があるとき）。エラーではない
 - Claude Code の native install は自動更新されるため、ここが古い場合は更新機構自体の異常を意味する
-- Dependabot は設定した翌月から動く。設定直後は PR がなくても異常ではない
+- **Dependabot は `dependabot.yml` を追加した時点で初回スキャンを走らせる**（2026-09-06 実測: push 後5秒以内に
+  `Dependabot Updates` が起動し33秒で完了）。以降は設定した月次スケジュールで動く。
+  **PR が0件なのは「更新対象なし」という正常な結果**であり、動いていないことを意味しない。
+  実際に動いたかは `gh run list` の `Dependabot Updates` で確認する（`gh pr list` だけでは判別できない）
+- Dependabot の脆弱性アラート（`dependabot/alerts` API）はこのリポジトリでは無効。
+  version updates とは別機能で、NOCTA は npm/pip の依存を持たない静的サイトのため有効化の必要はない
