@@ -108,3 +108,15 @@
 - 2026-09-07 Claude: 素材感レビューの残件を実装。C-1 満開スプライトを適応上限320px（大輪の拡大5.2→2.6倍）＋総画素予算8Mpx（RGBA約32MB）＋LRU解放で解決、A-4 komoriを小花クラスターに復元・奥の花のぼかしを復活。hana.js?v=13。C-2 PT追加光は現状維持（CEO了承）。
 - 検証: スプライト予算は最悪25〜28MBで天井超えなし・クリアで0MB、blit差0.039→0.040ms（実質無コスト）、save/restore 336ケース均衡、3ページpageerror 0、押し花PNG・季節切替の再生成・reduce動作合格。レビュー報告は drafts/hina-material-realism-review-2026-09-06.md。次: CEOがiPhone/Safari実機とペンタブレットで確認 → commit・push判断。
 - 2026-09-07: CEO 指示により実機確認前に main へ push（本番反映）。残タスクは iPhone/Safari 実機とペンタブレットでの事後確認（`window.__hanaSprites` の mb が32超えないこと・筆の感触・capture 失敗経路）。
+2026-09-07: HP TOOLS節にNuWord「書く前の、寄り道。」の入口を追加（commit a647fd1）。NuWord側で/beforeを本番公開したが、NuWordトップページはAuthGuardの公開パス外で未ログイン訪問者は/signinへ流れるため、未ログインでも開ける唯一の導線としてNOCTA HP側に設置。HiNa/NuWordコレクションのピルと同じクラス・target="_blank" rel="noopener noreferrer"で3つ目のピルを追加、リンク先https://nuword-nu.vercel.app/before、i18nキーtools.beforeを日英辞書に追加（ja「書く前の、寄り道。→」/en「A Little Detour →」）。検証: data-i18n全45キーが日英2辞書に定義済み・インラインJS6ブロックの構文チェック通過・HTMLタグ未クローズ/不整合なし。GitHub Actions Deploy to GitHub Pages成功・本番で新ピル表示とリンク先200、既存ピルの健全性を確認。次: なし（完結）。
+
+- 2026-09-07 Codex: HiNa Kihi「紋」を website/kihi/ に実装（12家紋・検索/お気に入り・5配色/3配置・PNG保存・全出典）。HiNa第四部とApps一覧へ追加。計画/検証は drafts/kihi-*-2026-09-07.md。
+- 検証: Chromium PC/390px/320px・タッチ/キーボード・保存復元/拒否・1200×1500 PNG・出典と画面を確認。既存未コミット変更は保持。次: CEOの画面確認、iPhone/Safari実機確認、公開判断（commit/push未実施）。
+
+- 2026-09-07 Codex: Kihiを12→20紋へ拡張（伊達・上杉・池田・南部・井伊・豊臣・長宗我部・柴田）。鳥と蝶分類・作者別PNGクレジット・出典生成を追加。記録: drafts/kihi-expansion-2026-09-07.md。
+- 検証: 20紋整合・7/5/8分類・新規8紋のPNG/直接URL・保存復元・出典・PC/390/320px合格。次: CEOの確認、本番公開判断（未commit/push）。
+
+- 2026-09-07 Codex: Kihiを20→30紋へ拡張（藤堂・鍋島・水野・立花・佐竹・本多・酒井・京極・丹羽・足利）。道具と結び分類、原図の抜きを保つ輝度マスクを追加。記録: drafts/kihi-30-crests-2026-09-07.md。
+- 検証: 30紋整合・11/5/3/11分類・新規10紋PNG/直接URL・原図7件比較・マスクID・保存復元・出典・PC/390/320px合格。次: CEOの確認、本番公開判断（未commit/push）。
+- 2026-09-07 Claude: Kihi をレビューし修正不要と判定して公開（ca4acec 本体 / e72ad07 HiNa 第四部・Apps 登録）。Commons API で図案19件の作者・ライセンス一致、sources.html 再生成一致、SVG に script/外部参照なし、PC/390/320px 横はみ出し0、検索・お気に入り復元・PNG 1200×1500（出典表記入り）・マスクID一意・HiNa 往来を Chromium で確認。証跡は /private/tmp/hina-realism-review/kihi/。
+- 次: CEO が iPhone/Safari 実機で確認（a.download の挙動は Safari では新規タブ表示になり得る）。website/kihi/README.md と generate-sources.mjs は Pages に配信されるが機密なし（除外したければ deploy-pages.yml の rm リストへ追加）。
