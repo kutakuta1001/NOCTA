@@ -14,6 +14,17 @@
  */
 const NOCTA_APPS = [
   {
+    title: "HiNa Kihi",
+    cat: "app",
+    url: "./kihi/index.html",
+    imgUrl: "./kihi/cover.svg",
+    thumbClass: "thumb-4",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "銀猫が見つけた三十の家紋。かたちを眺め、色と余白をしつらえて、一枚の絵に。",
+    descEn: "Thirty Japanese family crests found by a silver cat. Contemplate their forms and compose a keepsake with color and space."
+  },
+  {
     title: "HiNa Hare",
     cat: "app",
     url: "./iro/index.html",
