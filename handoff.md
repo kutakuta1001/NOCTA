@@ -120,3 +120,4 @@
 - 検証: 30紋整合・11/5/3/11分類・新規10紋PNG/直接URL・原図7件比較・マスクID・保存復元・出典・PC/390/320px合格。次: CEOの確認、本番公開判断（未commit/push）。
 - 2026-09-07 Claude: Kihi をレビューし修正不要と判定して公開（ca4acec 本体 / e72ad07 HiNa 第四部・Apps 登録）。Commons API で図案19件の作者・ライセンス一致、sources.html 再生成一致、SVG に script/外部参照なし、PC/390/320px 横はみ出し0、検索・お気に入り復元・PNG 1200×1500（出典表記入り）・マスクID一意・HiNa 往来を Chromium で確認。証跡は /private/tmp/hina-realism-review/kihi/。
 - 次: CEO が iPhone/Safari 実機で確認（a.download の挙動は Safari では新規タブ表示になり得る）。website/kihi/README.md と generate-sources.mjs は Pages に配信されるが機密なし（除外したければ deploy-pages.yml の rm リストへ追加）。
+- 2026-09-07 Claude: 「書く前の、寄り道。」を YORI コレクションとして名付け直し（CEO 指示）。NOCTA HP の TOOLS ピルを ja「YORI コレクション →」/ en「YORI Collection →」に変更。NuWord 側（~/memo-app＝nuword main）も /before の title・ヘッダー・eyebrow・各遊び title・戻りリンク・トップのリンクを YORI に統一し push 済み（Vercel 自動デプロイ）。副題「書く前の、寄り道。」と本文中の普通名詞「寄り道」は据え置き。Kihi の副題「小さな寄り道」も無関係のため据え置き。
