@@ -14,6 +14,17 @@
  */
 const NOCTA_APPS = [
   {
+    title: /* strategy-name:start */ "Kai" /* strategy-name:end */,
+    cat: "app",
+    url: "./strategy/index.html",
+    imgUrl: "./strategy/cover.svg",
+    thumbClass: "thumb-4",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "銀猫が古い書斎で見つけた、十八の思考の地図。歴史の判断を図でたどり、言葉を拾い、今日の仕事へ映す。",
+    descEn: "Eighteen maps of thought, found in an old study by a silver cat. Trace historical decisions, collect words, and reflect on your work."
+  },
+  {
     title: "HiNa Kihi",
     cat: "app",
     url: "./kihi/index.html",
