@@ -121,3 +121,15 @@
 - 2026-09-07 Claude: Kihi をレビューし修正不要と判定して公開（ca4acec 本体 / e72ad07 HiNa 第四部・Apps 登録）。Commons API で図案19件の作者・ライセンス一致、sources.html 再生成一致、SVG に script/外部参照なし、PC/390/320px 横はみ出し0、検索・お気に入り復元・PNG 1200×1500（出典表記入り）・マスクID一意・HiNa 往来を Chromium で確認。証跡は /private/tmp/hina-realism-review/kihi/。
 - 次: CEO が iPhone/Safari 実機で確認（a.download の挙動は Safari では新規タブ表示になり得る）。website/kihi/README.md と generate-sources.mjs は Pages に配信されるが機密なし（除外したければ deploy-pages.yml の rm リストへ追加）。
 - 2026-09-07 Claude: 「書く前の、寄り道。」を YORI コレクションとして名付け直し（CEO 指示）。NOCTA HP の TOOLS ピルを ja「YORI コレクション →」/ en「YORI Collection →」に変更。NuWord 側（~/memo-app＝nuword main）も /before の title・ヘッダー・eyebrow・各遊び title・戻りリンク・トップのリンクを YORI に統一し push 済み（Vercel 自動デプロイ）。副題「書く前の、寄り道。」と本文中の普通名詞「寄り道」は据え置き。Kihi の副題「小さな寄り道」も無関係のため据え置き。
+2026-09-07: セッション締め。HiNa 質感改善（Gyu/Ichi/Hare）レビュー→Blocker 2件修正→C-1 スプライト予算・A-4 komori 復元→公開、HiNa Kihi（家紋30種）レビュー→修正不要で公開、「書く前の、寄り道。」を YORI コレクションへ改称（NOCTA 8190406 / NuWord a3a8d13）。次: CEO の iPhone/Safari 実機確認を1回にまとめる（Ichi `window.__hanaSprites` の mb≦32・Hare 筆の感触と capture 失敗経路・Kihi の PNG 保存挙動）。NuWord 側の無関係な未コミット（PremiumGate.tsx / entitlement.ts / 引き継ぎ書2件）は別セッションで扱う。
+
+- 2026-09-07 Codex: 軍師コレクション「思考の地図（仮）」を `website/strategy/` に実装（12題・48段階・3モード・出典・栞・メモ・PNG/TXT）。HiNa第五部とApps入口を追加。名称未定、未commit/push。
+- 実装・出典・確認結果・名称変更手順: `drafts/2026-09-07-strategy-collection.md`。ローカル `http://127.0.0.1:18781/strategy/`。既存のhandoff変更は保持。
+
+- 2026-09-07 Codex: 思考の地図（仮）を18題・72図へ拡充。思考を拾うを5段階（場面→判断→言い換え→自分の問い→言葉）にし、仕事への対応表と具体例を全題に追加。既存メモ保持・90段階とモバイル表示を検証。
+- 詳細は `drafts/2026-09-07-strategy-collection.md` 末尾。確認入口 `/strategy/study.html?case=garden&mode=thought&think=0`。未commit/push、名称は未定のまま。
+
+- 2026-09-07 Codex: 軍師コレクションの正式名称を Kai に統一。既存 `/strategy/` をコンセプトページとし、NOCTA Apps・HiNa 第五部の入口も更新。URL・保存キーは継続、未commit/push。詳細は `drafts/2026-09-07-strategy-collection.md`。
+- 2026-09-07 Claude: Kai を公開前レビュー。修正2件: content.js の新城市 広報PDF（三段撃ち企画展）のURLが404→backnumber配下へ（PDF本文で企画展の記載を確認）、style.css に 360px以下の読み方タブ調整（320pxで3本目が19px隠れていた）。名称統一・導線・相対パス・外部通信0・18題72図の整合・引用原文5件の照合・栞/メモ/TXT/PNG 36枚・保存不能時・dialog/キーボード・390/320px・hina/HP への影響なしを確認。報告: drafts/kai-review-2026-09-07.md。未commit/push。
+- 次: CEO が公開指示 → commit（strategy 13ファイル・apps-data・hina・drafts 2件・handoff を個別指定）→ push。iPhone Safari 実機（PNG/TXT の保存UI・dialog）と Historic England の dowding ページの手動クリックは公開後でも可。表示名「Kai」単独か「HiNa Kai」かの並びは提案のみ。
+- 2026-09-07: CEO 指示により Kai を公開（3fbccd9 本体 / df1dc5b HiNa 第五部・Apps）。残タスクは iPhone Safari 実機（PNG/TXT の保存UI・dialog）と Historic England の dowding ページの手動クリック確認。
