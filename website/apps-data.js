@@ -14,7 +14,7 @@
  */
 const NOCTA_APPS = [
   {
-    title: /* strategy-name:start */ "Kai" /* strategy-name:end */,
+    title: /* strategy-name:start */ "HiNa Kai" /* strategy-name:end */,
     cat: "app",
     url: "./strategy/index.html",
     imgUrl: "./strategy/cover.svg",
