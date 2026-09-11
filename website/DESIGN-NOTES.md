@@ -116,7 +116,11 @@ NOCTA LP には縦スクロール＝物語として、**「AI＝幾何（冷た�
 
 ### 素材
 - **切り出し済みスプライト（repo にコミット済み）**: `website/img/cat/`
-  - 猫: `silver-paint / walk / sit / sleep / peek .png`
+  - 猫: `silver-paint / walk / sit / sleep / peek / reach .png`
+    （`silver-reach.png` は 2026-09-11 追加。前足を右へ伸ばして伏せる姿。
+    Codex が内蔵 image_gen で生成した透過素材 `silver-reach-v1.png`（1774×887）を
+    760×380 に縮小して収録。生成プロンプトは `~/codex/output/nocta-preview/img/cat/silver-reach-v1-prompt.md`。
+    **トップページには使わない**（CEO 指定）。現在の使用先は HiNa コンセプトページの序のみ）
   - 色付き肉球: `paw-red / amber / green / teal / blue / purple .png`
   - 区切り線: `paw-divider.png`
 - **元シート（repo外・`project_NOCTA/visual/` にローカル保管。画像はgit管理外規約のため未コミット）**: `ぎんねこ透過.png / ２ / ３ / ４`, `くろねこ透過.png`（猫＋ラベル入りの全身ストーリーボード・透過）。新ポーズが要るときは PIL で `crop` → `getbbox()` 自動トリムで切り出す（座標はラベルを避ける）。**別PCにはこの元シートは渡らない点に注意**（スプライトは渡る）。
@@ -146,6 +150,18 @@ HP本編の銀猫ストーリー（絵の具→足跡→ギャラリー→歩く
 - 足跡の色は `config.pawColors`（core側の任意設定）で各アプリが個別に指定。既定値（未指定）は本編と同じシルバー単色。
 - **命名規則は NuWord 方式を継承**: 各アプリ自身のページ内では単独名（`Gyu`/`Ichi`/`Hare`）のみを表示し、「HiNa」はHP Appsカードのタイトル（`apps-data.js`）にのみ「HiNa Gyu」の形で付与する（NuWord Still の `still — NOCTA` が単独ページ内で「NuWord」を名乗らない前例に合わせる）。
 - コピーの語り口: 3アプリの説明文は「銀猫が見つけた◯◯を静かに眺める図鑑」で始める共通フレーミングを採用し、シリーズとしての一体感を出す。
+
+#### 序の銀猫（2026-09-11 追加）
+
+HiNa コンセプトページのヒーロー直後、序の2行の下に `silver-reach.png` を置いた。
+
+> 銀猫は、美しいものを集めて、静かに眺める。
+> ときどき手を伸ばすと、それはあそびになる。
+
+**「手を伸ばす」その姿をそのまま見せる**のが狙い。前足が右へ伸びているので、
+言葉の下に置くと視線が次のコレクションへ送られる。
+幅は `clamp(210px, 32vw, 360px)`・`opacity: 0.9`・既存の `.reveal reveal-d2` でフェード登場。
+これでこのページの猫は2枚（序の reach と、フッターの sit）。増やさない。
 
 #### HiNa 体験原則の4カ条（2026-07-05 追加）
 
