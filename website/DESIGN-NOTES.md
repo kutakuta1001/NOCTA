@@ -265,3 +265,106 @@ hero → about（平面） → statement（浮き面） → portfolio（沈み�
 - 狭い幅で横スクロールが出る。本番実測で 390px は 5px、320px は 37px。
   `overflow-x: hidden/clip` で囲われていない突出要素は0件なので、単一要素ではなく
   `100vw` 指定・ネガティブマージン・スクロールバー幅の扱いのいずれかが疑わしい。未調査
+
+---
+
+## 10. トップページ 猫の物語・足跡・Visual 展示（2026-09-11）
+
+Codex のプレビュー（`~/codex/output/nocta-preview/`）で検討した内容を、CEO 確定事項に沿って本番へ実装した。
+依頼書は同ディレクトリの `CLAUDE-PRODUCTION-BRIEF.md`。プレビューの HTML で本番を上書きせず、必要な差分だけを入れている。
+
+### Visual の見出し（Pattern A → Pattern B）
+
+`VISUAL` の大文字ディスプレイ（Bebas/EB Garamond・Pattern A）を廃し、
+**section-tag「Visual」＋和文の見出し＋サブタイトル**（Pattern B）に変えた。確定コピーは CEO 指定。
+
+> やりたかったことを、（改行）やりなさい。
+
+英語は `Do what you've always wanted to do.`（対応訳案。CEO 指定の確定原文ではない）。
+i18n キーは `visual.headline`（`data-i18n-html` で `<br>` と `<em>` を保持）。
+DESIGN.md の「作品を見せる面は Pattern A」という原則からは外れるが、
+この面は作品より先に**言葉で誘う**設計に変わったため、説明の面＝Pattern B として扱う。
+Statement の「遊ぶことで人生を彩ろう。」や Hero の確定コピーは変更していない。
+
+### Statement の構図
+
+- PC は言葉が左・猫が右下。`.statement-grid`（`minmax(0,1fr) auto`）で場所を分けているので構造上重ならない
+- 900px 以下は1カラムになり、言葉の下に猫が来る
+- 「彩ろう。」は `.statement-accent { white-space: nowrap }` で語中改行を防いでいる
+- 猫は既存の `silver-paint.png`。元素材の右端に写り込んだ図解は `clip-path` で隠す（`.paint-cat-img`）
+- 猫の前足と皿の先に、物語の起点として静止した赤い足跡を1つ置く（`.first-step`・常に `#CC5B4A`）
+
+### 足跡の遊び（仕様変更）
+
+| 項目 | 旧 | 新 |
+|---|---|---|
+| 色 | 5色（緑 #4FA597 を含む）を順送り | **4色からランダム**（赤 #CC5B4A / 黄 #D9A441 / 青 #5586BE / 紫 #9472B8） |
+| 同時数 | 最大60・古い順に削除 | 同じ |
+| 濃淡 | なし | 5歩を目安に `[.66,.53,.40,.29,.19]` と落とす。サイズも 30→24.8px |
+| 向き | ランダム回転 | 進行方向へ向け、左右交互に ±9px ずらす |
+| 置く場所 | 帯のどこでも | 文字と操作部の矩形を除外（`allowed()`） |
+| タッチ | pointerdown で即発火 | **短いタップのみ**（600ms 未満・移動 12px 未満）。スクロールやスワイプでは撒かない |
+| キーボード | なし | 「余白に、ひと足。」ボタン（`#one-step`） |
+| 消去 | なし | 「やりなおす」（`#clear-paint`） |
+| フッター | なし | `#echo-paw` にその訪問で最後に使った色を映す（既定は赤） |
+| reduced-motion | 起動時に return するだけ | 動的な遊びを止め、ボタンを無効化し、文言を `play.hintReduced` に差し替える。**設定の実行中の変更にも追従**（`matchMedia` の change）。起点の足跡は残す |
+
+色名は読み上げ用の `role="status"`（`#paint-status`）にも出す。緑 #4FA597 は Portfolio の足跡にのみ残っている。
+
+### 猫の旅
+
+Portfolio の足跡を左右対称6個の飾りから、**右から歩いてきた非対称5個**（`right:4%→16%`・濃淡と回転が進行方向に落ちる）に変えた。
+Hero / About / Tools には猫も装飾も追加しない（Tools の静けさは維持）。Blog の歩き猫、Footer の眠る猫はそのまま。
+猫の登場数は5枚（paint / sit / walk / paw-divider / sleep）で増やしていない。プレビューの新作猫 `silver-reach-v1.png` は採用していない。
+
+### Visual は「いくつか見てから一覧へ」
+
+- 1作品を大きく展示し、前/次の矢印で切り替える。自動送りはしない
+- キーボードは矢印ボタンのフォーカスと、figure 上の ←/→ キーの両方に対応。現在位置を `01 / 04` で表示し `aria-live` で読み上げる
+- 最初と最後は循環。`.art-frame` に `aspect-ratio:3/4` を固定しているので切り替えで高さが跳ねない
+- 作品は縦横比を壊さず全体を見せる（`object-fit: contain`。一覧のカードは従来どおり `object-cover`）
+- 作品名・alt・説明は画像と一緒に更新する。説明は既存の `[data-desc-ja]/[data-desc-en]` の仕組みに乗せているので言語切替に追従する
+- 展示する作品は `visual-data.js` を唯一のデータ源とし、`NOCTA_VISUALS_WORKS` 全件 + `NOCTA_VISUALS_ART` の先頭3件（現在4作品）を使う
+- 装飾の猫は既存の `silver-sit.png`。右の作品の方を向くよう `scaleX(-1)` で反転
+- 「作品一覧を見る」（`#visual-all-toggle`）で `#visual-all` を開閉する。`aria-expanded` と `aria-controls` を対応させ、
+  従来の Works / Art / Music の3グリッド・Zora リンク・分類見出し・i18n はそのまま中に保持している。
+  既定は閉じており、カードの画像は `loading="lazy"` なので開くまで読み込まれない
+
+### IPFS ゲートウェイのフォールバック（重要な運用上の発見）
+
+**実装前から、本番の Visual 画像は 14/14 すべて表示できていなかった。**
+`ipfs.io` は Cloudflare 越しにブラウザからの画像要求へ 403 の判定ページを返すことがあり、
+その応答が `cross-origin-resource-policy: same-origin` を持つため、Chromium では
+`ERR_BLOCKED_BY_RESPONSE.NotSameOrigin` として画像が出なくなる。
+headless でも headed（実 GPU・実ブラウザ）でも同じで、curl に `Sec-Fetch-*` と `Referer` を付けると再現する。
+
+実ブラウザでの各ゲートウェイの可否（2026-09-11 実測）:
+
+| ゲートウェイ | 結果 |
+|---|---|
+| `ipfs.io` | 不可（CORP でブロック） |
+| `dweb.link` / `<cid>.ipfs.dweb.link` | 不可（同じ） |
+| `w3s.link` / `nftstorage.link` | 不可（サブドメイン形式へのリダイレクト先で失敗） |
+| **`gateway.pinata.cloud`** | **可** |
+| **`ipfs.filebase.io`** | **可** |
+
+`visual-data.js` は正本として `ipfs.io` の URL のまま置き、**表示できなかったときだけ別ゲートウェイへ差し替える**
+フォールバックを `visual-data.js` の読み込み直前に入れた（`img` の error はバブルしないので capture で受ける）。
+これでカルーセルと一覧グリッドの両方が復旧し、一覧は 14/14 表示を確認した。
+カルーセルのエラー文は全ゲートウェイを試し終えてから出す（`data-ipfs-exhausted`）。
+
+恒久対応としては `visual-data.js` の `imgUrl` を動くゲートウェイへ寄せる案もあるが、
+第三者ゲートウェイへの依存先を選ぶ判断になるため CEO に委ねている。
+
+### 併せて直したもの
+
+- 狭い幅の横スクロール: Blog のカテゴリフィルタが `inline-flex` のまま折り返せず、
+  320px で 37px・390px で 5px のはみ出しを出していた。520px 以下で `flex-wrap: wrap` にして解消（1440/1024/768/390/320px すべて 0）
+- `.statement-copy` に `pointer-events: none` を置くと中の操作ボタンまで押せなくなるため、置いていない
+  （足跡の判定は JS 側の `allowed()` が文字の矩形を除外している）
+
+### 本番へ持ち込まなかったもの（依頼書の指示どおり）
+
+プレビューの仮展示画像・新作猫 `silver-reach-v1.png`・右下の試作メニュー（`.preview-dock`）・
+`before.html` / `cat-studies.html`・比較セレクター・手動の色選択パレット・検証画像。
+フォームの送信処理は本番のものを維持している。

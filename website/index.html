@@ -156,6 +156,139 @@
             .paw-svg { opacity: 0.5; animation: none; }
             .cat-fig { opacity: 1; transform: none; }
             .cat-breathe, .cat-paint { animation: none; }
+            /* 動的な遊びは止めるが、物語の起点である静止した赤い足跡は残す。
+               .cat-scene.in-view .first-step の方が詳細度が高いのでセレクタを揃える */
+            .first-step,
+            .cat-scene.in-view .first-step { animation: none !important; opacity: 0.7; }
+            .paint-print svg { animation: none !important; }
+        }
+
+        /* ===== Statement: 言葉と猫の配置、訪問者が残す足跡 =====
+           PC は言葉が左・猫が右下で重ねない。スマホは言葉の下に猫。
+           足跡は固定4色からランダムに選び、5歩を目安に濃淡を落とす。 */
+        .statement-stage { position: relative; }
+        /* PC: 言葉が左・猫が右下。グリッドで場所を分けるので文字と猫は構造上重ならない。
+           スマホ: 1カラムになり、言葉の下に猫が来る */
+        .statement-grid { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: 48px; align-items: end; }
+        .statement-cat { position: relative; width: clamp(240px, 30vw, 420px); align-self: end; justify-self: end; }
+        .statement-cat img { width: 100%; height: auto; display: block; }
+        @media (max-width: 900px) {
+            .statement-grid { grid-template-columns: minmax(0,1fr); row-gap: 28px; }
+            .statement-cat { width: min(370px, 100%); justify-self: center; }
+        }
+        /* 足跡の判定は JS 側の allowed() が文字の矩形を除外しているので、
+           ここで pointer-events を切る必要はない。切ると中の操作ボタンまで押せなくなる */
+        .statement-copy  { position: relative; z-index: 2; }
+        /* 「彩ろう。」は語中で改行させない（CEO確定コピーの読みを守る） */
+        .statement-accent { font-style: italic; color: #B8B4AE; white-space: nowrap; }
+        /* 元素材の右端に図解が写り込んでいるため、CSS で隠して猫だけを見せる */
+        .paint-cat-img { clip-path: polygon(0 0, 89% 0, 89% 70%, 94% 70%, 94% 100%, 0 100%); }
+        /* 物語の起点。動的な足跡と違い、常に赤で静止している */
+        .first-step {
+            position: absolute; width: 28px; color: #CC5B4A; opacity: 0;
+            transform: rotate(66deg); pointer-events: none;
+        }
+        .cat-scene.in-view .first-step { animation: firstPrint 1.6s ease both; }
+        .first-step svg { width: 100%; height: auto; display: block; }
+        @keyframes firstPrint { from { opacity: 0; transform: rotate(66deg) scale(0.86); } to { opacity: 0.7; transform: rotate(66deg) scale(1); } }
+
+        .paint-print { position: absolute; display: block; pointer-events: none; }
+        .paint-print svg {
+            display: block; width: 100%; height: 100%;
+            opacity: var(--print-opacity, 0.5);
+            animation: inkSettle 0.8s ease both;
+        }
+        @keyframes inkSettle { from { opacity: 0; transform: scale(0.82); } to { opacity: var(--print-opacity, 0.5); transform: scale(1); } }
+
+        .play-controls { position: relative; z-index: 3; max-width: 370px; margin-top: 40px; }
+        #one-step {
+            font-family: var(--font-jp, 'Noto Sans JP'), sans-serif; font-size: 14px; letter-spacing: 0.12em;
+            color: #E8E0D0; padding: 10px 0; background: none; border: 0;
+            border-bottom: 1px solid #726e64; cursor: pointer;
+        }
+        #one-step span { margin-left: 16px; color: #B8B4AE; }
+        #play-instruction { font-size: 11px; color: #9A8A7A; letter-spacing: 0.03em; margin: 12px 0 0; }
+        .paint-tools { display: flex; align-items: center; gap: 12px; margin-top: 10px; font-size: 10px; letter-spacing: 0.06em; color: #9A8A7A; }
+        #clear-paint { font-size: 11px; color: #9A8A7A; letter-spacing: 0.06em; background: none; border: 0; padding: 8px 4px; cursor: pointer; }
+        #clear-paint:hover { color: #E8E0D0; }
+        .play-controls button:disabled { opacity: 0.4; cursor: default; }
+        .play-controls button:focus-visible { outline: 2px solid #E8E0D0; outline-offset: 4px; }
+        .story-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+        /* ===== Visual: 1作品を大きく見てから一覧へ ===== */
+        .gallery-grid { display: grid; grid-template-columns: 1fr 1.1fr; column-gap: 72px; align-items: start; }
+        .gallery-work { margin: 0; position: relative; z-index: 2; }
+        .art-frame {
+            padding: 14px; background: #171511; border: 1px solid #38342d;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.27);
+            aspect-ratio: 3 / 4; display: flex; align-items: center; justify-content: center;
+        }
+        /* 作品の縦横比を壊さず全体を見せる（切り抜かない） */
+        .art-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .gallery-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 18px; margin-top: 16px; }
+        .gallery-pagination button {
+            width: 44px; height: 44px; border: 1px solid #514c44; border-radius: 50%;
+            font-size: 18px; color: #E8E0D0; background: transparent; cursor: pointer;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+        .gallery-pagination button:hover { border-color: #B8B4AE; background: rgba(255,255,255,0.04); }
+        .gallery-pagination button:focus-visible,
+        .gallery-work:focus-visible { outline: 2px solid #B8B4AE; outline-offset: 5px; }
+        #gallery-position { font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 0.1em; min-width: 52px; text-align: center; color: #B8B4AE; }
+        .gallery-work figcaption { display: flex; justify-content: space-between; gap: 16px; padding-top: 14px; color: #9A8A7A; }
+        .gallery-work figcaption .g-title { font-family: 'Syne', sans-serif; font-size: 10px; letter-spacing: 0.1em; }
+        .gallery-work figcaption .g-caption { font-size: 10px; letter-spacing: 0.03em; max-width: 62%; text-align: right; line-height: 1.7; }
+        #gallery-error { font-size: 12px; line-height: 1.7; color: #9A8A7A; margin-top: 12px; }
+        .gallery-side { position: relative; padding-top: 40px; min-height: 320px; display: flex; flex-direction: column; }
+        .gallery-note { margin-top: auto; padding-top: 48px; }
+        #visual-all[hidden] { display: none; }
+        #gallery-title {
+            font-family: 'Shippori Mincho','Noto Sans JP',serif; font-weight: 600;
+            line-height: 1.5; letter-spacing: 0.03em; color: #E8E0D0; margin: 22px 0 14px;
+        }
+        #gallery-title em { font-style: normal; font-weight: 600; color: #B8B4AE; }
+        html[lang="ja"] #gallery-title { font-size: clamp(21px, 2.8vw, 40px); }
+        html[lang="en"] #gallery-title {
+            font-family: 'EB Garamond', serif; font-weight: 400; line-height: 1.15;
+            font-size: clamp(30px, 3.4vw, 50px); letter-spacing: -0.01em;
+        }
+        html[lang="en"] #gallery-title em { font-style: italic; }
+        /* 猫は作品（右側）の方を向く。素材は既存の座り猫のまま */
+        .gallery-cat { width: clamp(96px, 11vw, 150px); margin: 40px 0 0 6%; }
+        .gallery-cat img { width: 100%; height: auto; display: block; transform: scaleX(-1); }
+        .gallery-all-btn {
+            font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+            color: #B8B4AE; background: none; border: 0; border-bottom: 1px solid #514c44;
+            padding: 10px 2px; cursor: pointer; transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .gallery-all-btn:hover { color: #E8E0D0; border-color: #B8B4AE; }
+        .gallery-all-btn:focus-visible { outline: 2px solid #B8B4AE; outline-offset: 4px; }
+        /* フッターの小さな足跡。その訪問中に最後に使った色を映す（既定は赤） */
+        #echo-paw {
+            position: absolute; z-index: 1; right: 22%; bottom: 18%; width: 24px;
+            transform: rotate(70deg); color: var(--last-paint, #CC5B4A); opacity: 0.4; pointer-events: none;
+        }
+        #echo-paw svg { width: 100%; height: auto; display: block; }
+        @media (max-width: 900px) {
+            .gallery-cat { margin: 24px 0 0 0; }
+            #echo-paw { right: 44%; bottom: 14%; width: 21px; }
+        }
+
+        /* 狭い幅の横スクロール対策。Blog のカテゴリフィルタが inline-flex のまま
+           折り返せず、320px で 37px・390px で 5px の横はみ出しを出していた */
+        @media (max-width: 520px) {
+            #blog .inline-flex.glass { display: flex; flex-wrap: wrap; justify-content: center; max-width: 100%; }
+            #about { overflow: hidden; }
+        }
+
+        @media (max-width: 900px) {
+            .gallery-grid { grid-template-columns: 1fr; row-gap: 40px; }
+            .gallery-side { padding-top: 0; min-height: 0; }
+            .gallery-note { padding-top: 0; }
+            .gallery-work { order: 2; }
+            .gallery-side { order: 1; }
+            .gallery-work figcaption { flex-wrap: wrap; }
+            .gallery-work figcaption .g-caption { max-width: 100%; text-align: left; }
         }
 
         /* Glass */
@@ -716,20 +849,42 @@
     </defs>
 </svg>
 
-<section id="statement" class="relative z-10 border-y border-white/5 bg-white/[0.02] backdrop-blur-sm overflow-hidden">
-    <!-- STORY ORIGIN: 銀猫が絵の具へ向かう水彩イラスト(透過PNG) -->
-    <div class="cat-scene absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
-        <img class="cat-fig" src="img/cat/silver-paint.png" alt=""
-             style="position:absolute; left:12%; bottom:10%; width:clamp(240px,34vw,440px);">
-    </div>
-    <!-- PLAY: 訪問者のポインタ/タップの軌跡に水彩の足跡が残る（「遊ぶことで彩る」の実演） -->
-    <div id="statement-paws" class="paw-trail in-view absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
-    <div class="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-12 py-28 md:py-36">
-        <p class="section-tag reveal">Statement</p>
-        <h2 class="reveal reveal-delay-1"
-            style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(34px,6vw,76px); font-weight:600; line-height:1.2; letter-spacing:0.04em; color:#E8E0D0; max-width:640px; margin-top:24px;">
-            遊ぶことで人生を<span style="font-style:italic; color:#B8B4AE;">彩ろう</span>。
-        </h2>
+<section id="statement" class="relative z-10 border-y border-white/5 bg-white/[0.02] backdrop-blur-sm overflow-hidden" aria-labelledby="statement-title">
+    <div class="statement-stage max-w-[1200px] mx-auto px-6 lg:px-12 py-28 md:py-36">
+        <!-- PLAY: 訪問者のポインタ/タップの軌跡に水彩の足跡が残る（「遊ぶことで彩る」の実演）。
+             色は固定4色からの偶然、最大60個で古いものから消える。文字と操作部の上には置かない -->
+        <div id="statement-paws" class="absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
+
+        <div class="statement-grid relative z-10">
+            <div class="statement-copy">
+                <p class="section-tag reveal">Statement</p>
+                <h2 id="statement-title" class="reveal reveal-delay-1"
+                    style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(34px,6vw,76px); font-weight:600; line-height:1.2; letter-spacing:0.04em; color:#E8E0D0; max-width:640px; margin-top:24px;">
+                    遊ぶことで人生を<span class="statement-accent">彩ろう。</span>
+                </h2>
+                <!-- キーボードだけでも足跡を残せる導線。マウス/タップと同じ描画関数を使う -->
+                <div class="play-controls reveal reveal-delay-2">
+                    <button type="button" id="one-step" aria-describedby="play-instruction">
+                        <span data-i18n="play.step">余白に、ひと足。</span><span aria-hidden="true"> ↗</span>
+                    </button>
+                    <p id="play-instruction" data-i18n="play.hint">余白をなぞる、またはタップしてみてください。</p>
+                    <div class="paint-tools">
+                        <span data-i18n="play.chance">色は、そのときの偶然に。</span>
+                        <button type="button" id="clear-paint" data-i18n="play.clear" aria-label="足跡を消して最初から">やりなおす</button>
+                    </div>
+                    <span class="story-sr" role="status" id="paint-status"></span>
+                </div>
+            </div>
+
+            <!-- STORY ORIGIN: 銀猫が絵の具へ向かう水彩イラスト(透過PNG)。
+                 前足と皿の先に、物語の起点として静止した赤い足跡を1つ置く -->
+            <div class="cat-scene statement-cat" aria-hidden="true">
+                <img class="cat-fig paint-cat-img" src="img/cat/silver-paint.png" alt="" width="543" height="271">
+                <span class="first-step" style="left:87%; top:90%;">
+                    <svg viewBox="0 0 100 100"><use href="#cat-paw" filter="url(#watercolor)"/></svg>
+                </span>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -740,14 +895,14 @@
 <section id="portfolio" class="py-24 relative z-10 bg-black/30 border-y border-white/5 scroll-mt-20">
     <div class="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-8">
         <div class="relative text-center reveal">
-            <!-- watercolor cat-paw trail: colorful prints in the empty space around the PORTFOLIO title (slow walk) -->
-            <div class="paw-trail absolute inset-x-0 z-0 overflow-visible" style="--paw-dur:1.8s; top:-20px; bottom:-8px;" aria-hidden="true">
-                <span class="paw" style="left:2%;  top:6%;  width:44px; transform:rotate(-14deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#CC5B4A; animation-delay:0s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
-                <span class="paw" style="left:10%; top:48%; width:38px; transform:rotate(10deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#D9A441; animation-delay:.5s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
-                <span class="paw" style="left:4%;  top:86%; width:34px; transform:rotate(-6deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#5586BE; animation-delay:1s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
-                <span class="paw" style="right:3%; top:8%;  width:42px; transform:rotate(12deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#9472B8; animation-delay:1.5s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
-                <span class="paw" style="right:11%;top:50%; width:38px; transform:rotate(-9deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#4FA597; animation-delay:2s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
-                <span class="paw" style="right:5%; top:88%; width:34px; transform:rotate(8deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#CC5B4A; animation-delay:2.5s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+            <!-- STORY: Statement の猫が右から歩いてきた短い足跡。左右対称の飾りではなく、
+                 進行方向と濃淡の落ちで「通り過ぎた」ことだけを示す（猫は増やさない） -->
+            <div class="paw-trail" aria-hidden="true">
+                <span class="paw" style="right:4%;  top:2%;  width:40px; transform:rotate(-20deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#CC5B4A; opacity:0.62; animation-delay:0s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+                <span class="paw" style="right:9%;  top:26%; width:36px; transform:rotate(-16deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#D9A441; opacity:0.5;  animation-delay:0.23s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+                <span class="paw" style="right:6%;  top:50%; width:33px; transform:rotate(-12deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#5586BE; opacity:0.39; animation-delay:0.46s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+                <span class="paw" style="right:12%; top:72%; width:30px; transform:rotate(-8deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#9472B8; opacity:0.28; animation-delay:0.69s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+                <span class="paw" style="right:16%; top:92%; width:27px; transform:rotate(-4deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#CC5B4A; opacity:0.17; animation-delay:0.92s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
             </div>
             <h2 class="relative z-10 font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">PORTFOLIO</h2>
             <p class="relative z-10 font-jp text-brand-sub text-[15px] tracking-wider" data-i18n="portfolio.subtitle">AIと感性が生んだ、作品たち</p>
@@ -811,15 +966,47 @@
 <section id="visual" class="py-32 relative z-10 bg-black/30 border-y border-white/5">
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
 
-        <div class="relative text-center mb-12 reveal">
-            <!-- 座って作品を眺める銀猫(後ろ姿でギャラリーを見つめる) -->
-            <div class="cat-scene absolute right-[3%] md:right-[9%] -bottom-7 z-0 pointer-events-none" aria-hidden="true">
-                <img class="cat-fig" src="img/cat/silver-sit.png" alt="" style="width:clamp(88px,11vw,138px);">
+        <!-- ギャラリー: 1作品を大きく見てから一覧へ。見出しは Visual 固有の確定コピー（CEO指定） -->
+        <div class="gallery-grid mb-16">
+            <div class="gallery-side">
+                <p class="section-tag reveal">Visual</p>
+                <h2 id="gallery-title" class="reveal reveal-delay-1" data-i18n-html="visual.headline">やりたかったことを、<br><em>やりなさい。</em></h2>
+                <p class="font-jp text-brand-sub text-[13px] tracking-wider reveal reveal-delay-2">Art &amp; NFT Collection</p>
+
+                <!-- 座って作品を眺める銀猫（既存素材。右の作品の方を向く） -->
+                <div class="cat-scene gallery-cat" aria-hidden="true">
+                    <img class="cat-fig" src="img/cat/silver-sit.png" alt="" width="300" height="300">
+                </div>
+
+                <div class="gallery-note reveal">
+                    <button type="button" id="visual-all-toggle" class="gallery-all-btn"
+                            aria-expanded="false" aria-controls="visual-all">
+                        <span data-i18n="visual.all">作品一覧を見る</span><span aria-hidden="true"> ↓</span>
+                    </button>
+                </div>
             </div>
-            <h2 class="relative z-10 font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">VISUAL</h2>
-            <p class="relative z-10 font-jp text-brand-sub text-[15px] tracking-wider">Art & NFT Collection</p>
+
+            <figure class="gallery-work reveal reveal-delay-1" role="group"
+                    aria-roledescription="カルーセル" aria-label="ビジュアルをひとつずつ眺める" tabindex="0">
+                <div class="art-frame">
+                    <img id="featured-image" src="" alt="" loading="eager" decoding="async">
+                </div>
+                <div class="gallery-pagination">
+                    <button type="button" id="gallery-prev" data-i18n-aria="visual.prev" aria-label="前の作品">&#8592;</button>
+                    <span id="gallery-position" aria-live="polite" aria-atomic="true">01 / 01</span>
+                    <button type="button" id="gallery-next" data-i18n-aria="visual.next" aria-label="次の作品">&#8594;</button>
+                </div>
+                <figcaption>
+                    <span class="g-title" id="featured-title"></span>
+                    <span class="g-caption" id="featured-caption"></span>
+                </figcaption>
+                <p id="gallery-error" role="status" data-i18n="visual.error" hidden>画像を表示できません。矢印で次の作品をご覧ください。</p>
+            </figure>
         </div>
 
+        <!-- 全作品一覧。従来の Works / Art / Music とリンク・分類・i18n をそのまま保持し、
+             「作品一覧を見る」で開閉する -->
+        <div id="visual-all" hidden>
         <!-- Works セクション -->
         <div class="mb-16">
             <div class="flex items-center gap-4 mb-8 reveal">
@@ -860,6 +1047,7 @@
             </div>
             <div id="visual-grid-music">
             </div>
+        </div>
         </div>
     </div>
 </section>
@@ -1014,6 +1202,8 @@
 </div>
 
 <footer class="relative overflow-hidden border-t border-white/5 bg-[#0A0906] py-16">
+    <!-- STORY: この訪問で最後に使った絵の具の色を映す小さな足跡 -->
+    <span id="echo-paw" aria-hidden="true"><svg viewBox="0 0 100 100"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
     <!-- STORY END: 眠る銀猫（旅の終わり） -->
     <div class="cat-scene absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <img class="cat-fig" src="img/cat/silver-sleep.png" alt=""
@@ -1159,6 +1349,27 @@
 <!-- =============================================
      JAVASCRIPT
      ============================================= -->
+<!-- IPFS ゲートウェイのフォールバック。
+     ipfs.io は Cloudflare のボット判定でブラウザからの画像要求に 403 を返すことがあり、
+     その応答が cross-origin-resource-policy: same-origin を持つため
+     Chromium では ERR_BLOCKED_BY_RESPONSE.NotSameOrigin として画像が出なくなる。
+     visual-data.js は正本のまま置き、表示できなかったときだけ別ゲートウェイへ差し替える。
+     img の error はバブルしないので capture で受ける -->
+<script>
+(function () {
+    var GATEWAYS = ['https://gateway.pinata.cloud/ipfs/', 'https://ipfs.filebase.io/ipfs/'];
+    document.addEventListener('error', function (e) {
+        var img = e.target;
+        if (!img || img.tagName !== 'IMG' || !img.getAttribute('src')) return;
+        var m = img.src.match(/\/ipfs\/(ba[a-z2-7]+|Qm[1-9A-HJ-NP-Za-km-z]+)/);
+        if (!m) return;
+        var tried = Number(img.dataset.ipfsTry || 0);
+        if (tried >= GATEWAYS.length) { img.dataset.ipfsExhausted = '1'; return; }
+        img.dataset.ipfsTry = String(tried + 1);
+        img.src = GATEWAYS[tried] + m[1];
+    }, true);
+})();
+</script>
 <script src="visual-data.js"></script>
 <script src="apps-data.js"></script>
 <script src="blog-data.js"></script>
@@ -1656,6 +1867,17 @@ const I18N = {
     'tools.hina': 'HiNa コレクション →',
     'tools.nuword': 'NuWord コレクション →',
     'tools.before': 'YORI コレクション →',
+    'visual.headline': 'やりたかったことを、<br><em>やりなさい。</em>',
+    'visual.all': '作品一覧を見る',
+    'visual.allClose': '作品一覧を閉じる',
+    'visual.prev': '前の作品',
+    'visual.next': '次の作品',
+    'visual.error': '画像を表示できません。矢印で次の作品をご覧ください。',
+    'play.step': '余白に、ひと足。',
+    'play.hint': '余白をなぞる、またはタップしてみてください。',
+    'play.hintReduced': '動きを減らす設定に合わせ、静かな足跡を展示しています。',
+    'play.chance': '色は、そのときの偶然に。',
+    'play.clear': 'やりなおす',
     'contact.h2': '<span class="inline-block">AIが多くを担う時代に、</span><br><span class="inline-block">人間に必要なのは</span><span class="inline-block">「<span class="text-gradient">遊び</span>」だ。</span>',
     'contact.subtitle': '<span class="inline-block">効率でも、消費でもなく。</span><br><span class="inline-block">音楽・映像・言葉・コードを越えて、</span><span class="inline-block">遊ぶように創る。</span><br><span class="inline-block">その問いを面白がれる人を、</span><span class="inline-block">いつでも歓迎します。</span>',
     'contact.social.x': '最新情報をいち早く',
@@ -1698,6 +1920,17 @@ const I18N = {
     'tools.hina': 'HiNa Collection →',
     'tools.nuword': 'NuWord Collection →',
     'tools.before': 'YORI Collection →',
+    'visual.headline': 'Do what you&rsquo;ve<br><em>always wanted to do.</em>',
+    'visual.all': 'See all works',
+    'visual.allClose': 'Close the list',
+    'visual.prev': 'Previous work',
+    'visual.next': 'Next work',
+    'visual.error': 'This image could not be shown. Use the arrows to see the next work.',
+    'play.step': 'One step in the margin.',
+    'play.hint': 'Trace the margin, or tap it.',
+    'play.hintReduced': 'Reduced motion is on, so a still paw print is shown instead.',
+    'play.chance': 'The color is left to chance.',
+    'play.clear': 'Start over',
     'contact.h2': "In an age where AI does so much,<br>what humans need is <span class=\"text-gradient\">play</span>.",
     'contact.subtitle': 'Not efficiency, not consumption —<br>creating as if at play, across music, video, words and code.<br>Anyone who finds that question fun is always welcome.',
     'contact.social.x': 'Latest news, first.',
@@ -1740,6 +1973,10 @@ function setLang(lang) {
     const k = el.dataset.i18nPh;
     if (dict[k] !== undefined) el.placeholder = dict[k];
   });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const k = el.dataset.i18nAria;
+    if (dict[k] !== undefined) el.setAttribute('aria-label', dict[k]);
+  });
   document.querySelectorAll('[data-desc-ja]').forEach(el => {
     el.textContent = lang === 'en' && el.dataset.descEn ? el.dataset.descEn : el.dataset.descJa;
   });
@@ -1755,45 +1992,194 @@ function toggleLang() {
 
 document.addEventListener('DOMContentLoaded', () => setLang(currentLang));
 </script>
-<!-- Statement band: 訪問者が「彩る」— ポインタ移動/タップで水彩の足跡を残す -->
+<!-- Statement band: 訪問者が「彩る」— ポインタ移動/タップ/キーボードで水彩の足跡を残す
+     色は固定4色からの偶然、最大60個で古い順に消える。文字と操作部の上には置かない。
+     旧実装（5色の順送り・タッチでも pointerdown 発火）からの置き換えで、二重登録はしていない -->
 <script>
-    (function () {
-        var band  = document.getElementById('statement');
-        var layer = document.getElementById('statement-paws');
-        if (!band || !layer) return;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+(function () {
+    var band  = document.getElementById('statement');
+    var stage = band && band.querySelector('.statement-stage');
+    var layer = document.getElementById('statement-paws');
+    var copy  = band && band.querySelector('.statement-copy');
+    var ctrls = band && band.querySelector('.play-controls');
+    var echo  = document.getElementById('echo-paw');
+    var hint  = document.getElementById('play-instruction');
+    var status = document.getElementById('paint-status');
+    var stepBtn = document.getElementById('one-step');
+    var clearBtn = document.getElementById('clear-paint');
+    if (!band || !stage || !layer || !copy || !ctrls) return;
 
-        // About の4本柱と同じ固定パレット（赤/黄/緑/青/紫）— DESIGN-NOTES.md §7
-        var COLORS = ['#CC5B4A', '#D9A441', '#4FA597', '#5586BE', '#9472B8'];
-        var MAX_PAWS = 60, MIN_DIST = 85;
-        var idx = 0, last = null;
+    // About の4本柱と同じ固定色から、1歩ごとにランダムに選ぶ（DESIGN-NOTES.md §7）。
+    // 緑 #4FA597 は Portfolio の足跡にのみ残し、この遊びでは4色に絞っている
+    var COLORS = ['#CC5B4A', '#D9A441', '#5586BE', '#9472B8'];
+    var NAMES  = { '#CC5B4A': '赤', '#D9A441': '黄', '#5586BE': '青', '#9472B8': '紫' };
+    var NAMES_EN = { '#CC5B4A': 'red', '#D9A441': 'yellow', '#5586BE': 'blue', '#9472B8': 'purple' };
+    var MAX_PAWS = 60, MIN_DIST = 58, TAP_MS = 600, TAP_SLOP = 12;
+    var FADE = [0.66, 0.53, 0.40, 0.29, 0.19];   // 5歩を目安に濃淡を落とす
+    var step = 0, count = 0, last = null, touchStart = null;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-        function addPaw(clientX, clientY) {
-            var r = layer.getBoundingClientRect();
-            var x = clientX - r.left, y = clientY - r.top;
-            var size = 26 + Math.random() * 12;
-            var rot  = Math.random() * 44 - 22;
-            var paw  = document.createElement('span');
-            paw.className = 'paw';
-            paw.style.cssText = 'left:' + (x - size / 2) + 'px; top:' + (y - size / 2) + 'px; width:' + size + 'px; transform:rotate(' + rot + 'deg);';
-            paw.innerHTML = '<svg class="paw-svg" viewBox="0 0 100 100" style="color:' + COLORS[idx++ % COLORS.length] + '"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
-            layer.appendChild(paw);
-            while (layer.children.length > MAX_PAWS) layer.removeChild(layer.firstChild);
+    function inRect(x, y, r, pad) {
+        pad = pad || 0;
+        return x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+    }
+    // 文字と操作部の上には足跡を置かない
+    function allowed(x, y) {
+        var r = stage.getBoundingClientRect();
+        return inRect(x, y, r) && !inRect(x, y, copy.getBoundingClientRect(), 15)
+                               && !inRect(x, y, ctrls.getBoundingClientRect(), 12);
+    }
+    function addPaw(clientX, clientY, angle) {
+        if (reduce.matches || !allowed(clientX, clientY)) return false;
+        var r = layer.getBoundingClientRect();
+        var color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        var phase = step % 5;
+        var size = 30 - phase * 1.3;
+        var paw = document.createElement('span');
+        paw.className = 'paint-print';
+        paw.style.cssText = 'left:' + (clientX - r.left - size / 2) + 'px;top:' + (clientY - r.top - size / 2) +
+            'px;width:' + size + 'px;height:' + size + 'px;transform:rotate(' + (angle || 45) +
+            'deg);color:' + color + ';--print-opacity:' + FADE[phase];
+        paw.innerHTML = '<svg viewBox="0 0 100 100"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
+        layer.appendChild(paw);
+        while (layer.children.length > MAX_PAWS) layer.removeChild(layer.firstElementChild);
+        step++; count++;
+        if (echo) echo.style.setProperty('--last-paint', color);
+        if (status) {
+            var en = document.documentElement.lang === 'en';
+            status.textContent = en ? ('A ' + NAMES_EN[color] + ' paw print was left.')
+                                    : (NAMES[color] + 'の足跡を残しました。');
         }
+        return true;
+    }
 
-        band.addEventListener('pointermove', function (e) {
-            if (e.pointerType === 'touch') return; // タッチはタップのみ（スクロール妨害を避ける）
-            if (last) {
-                var dx = e.clientX - last.x, dy = e.clientY - last.y;
-                if (dx * dx + dy * dy < MIN_DIST * MIN_DIST) return;
-            }
+    band.addEventListener('pointermove', function (e) {
+        if (e.pointerType === 'touch' || reduce.matches) return;   // タッチはタップのみ（スクロールを妨げない）
+        if (!allowed(e.clientX, e.clientY)) { last = null; return; }
+        var dx = last ? e.clientX - last.x : 0, dy = last ? e.clientY - last.y : 0;
+        if (last && Math.sqrt(dx * dx + dy * dy) < MIN_DIST) return;
+        // 進行方向へ向け、左右交互に少しずらして歩いた跡に見せる
+        var angle = last ? Math.atan2(dy, dx) * 180 / Math.PI + 90 : 45;
+        var rad = (angle - 90) * Math.PI / 180;
+        var side = (step % 2) ? 9 : -9;
+        if (addPaw(e.clientX - Math.sin(rad) * side, e.clientY + Math.cos(rad) * side, angle)) {
             last = { x: e.clientX, y: e.clientY };
-            addPaw(e.clientX, e.clientY);
+        }
+    });
+    band.addEventListener('pointerleave', function () { last = null; });
+    band.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('button, a, input, textarea, select')) return;
+        if (e.pointerType === 'touch') {
+            touchStart = { x: e.clientX, y: e.clientY, t: (window.performance || Date).now() };
+        } else {
+            addPaw(e.clientX, e.clientY, 45);
+        }
+    });
+    // 短いタップだけを拾う。スクロールやスワイプでは足跡をばらまかない
+    band.addEventListener('pointerup', function (e) {
+        if (e.pointerType === 'touch' && touchStart) {
+            var dt = (window.performance || Date).now() - touchStart.t;
+            var dx = e.clientX - touchStart.x, dy = e.clientY - touchStart.y;
+            if (dt < TAP_MS && Math.sqrt(dx * dx + dy * dy) < TAP_SLOP) addPaw(e.clientX, e.clientY, 45);
+        }
+        touchStart = null;
+    });
+    band.addEventListener('pointercancel', function () { touchStart = null; });
+
+    if (stepBtn) stepBtn.addEventListener('click', function () {
+        var r = stage.getBoundingClientRect();
+        var y = copy.getBoundingClientRect().bottom + 45 + (count % 3) * 28;
+        if (y > r.bottom - 20) y = r.bottom - 40 - (count % 3) * 26;
+        addPaw(r.left + r.width * (0.62 + (count % 4) * 0.07), y, 55);
+    });
+    if (clearBtn) clearBtn.addEventListener('click', function () {
+        layer.replaceChildren();
+        count = 0; step = 0; last = null;
+        if (echo) echo.style.setProperty('--last-paint', '#CC5B4A');
+        if (status) status.textContent = document.documentElement.lang === 'en' ? 'Paw prints cleared.' : '足跡を消しました。';
+    });
+
+    // 設定を実行中に変えても追従する。止めるのは動的な遊びだけで、起点の足跡は残る
+    function syncMotion() {
+        if (stepBtn) stepBtn.disabled = reduce.matches;
+        if (clearBtn) clearBtn.disabled = reduce.matches;
+        if (hint) hint.setAttribute('data-i18n', reduce.matches ? 'play.hintReduced' : 'play.hint');
+        if (reduce.matches) { layer.replaceChildren(); last = null; count = 0; step = 0; }
+        if (typeof setLang === 'function' && typeof currentLang === 'string') setLang(currentLang);
+    }
+    if (reduce.addEventListener) reduce.addEventListener('change', syncMotion);
+    else if (reduce.addListener) reduce.addListener(syncMotion);
+    syncMotion();
+})();
+</script>
+
+<!-- Visual: 1作品を大きく見て、矢印で切り替え、必要なら全作品一覧へ。
+     作品は visual-data.js を唯一のデータ源にしている -->
+<script>
+(function () {
+    var img = document.getElementById('featured-image');
+    var titleEl = document.getElementById('featured-title');
+    var capEl = document.getElementById('featured-caption');
+    var posEl = document.getElementById('gallery-position');
+    var errEl = document.getElementById('gallery-error');
+    var figure = document.querySelector('.gallery-work');
+    var prev = document.getElementById('gallery-prev');
+    var next = document.getElementById('gallery-next');
+    if (!img || !figure || !posEl) return;
+
+    // 既存データから数点を選ぶ（Works の完成品 + Art の先頭3点）。URLは data 側にのみ置く
+    var works = [];
+    if (typeof NOCTA_VISUALS_WORKS !== 'undefined') works = works.concat(NOCTA_VISUALS_WORKS);
+    if (typeof NOCTA_VISUALS_ART !== 'undefined') works = works.concat(NOCTA_VISUALS_ART.slice(0, 3));
+    works = works.filter(function (w) { return w && w.imgUrl; });
+    if (!works.length) { figure.hidden = true; return; }
+
+    var index = 0;
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function show(n) {
+        index = (n + works.length) % works.length;
+        var w = works[index];
+        if (errEl) errEl.hidden = true;
+        img.alt = w.title;
+        delete img.dataset.ipfsTry;
+        delete img.dataset.ipfsExhausted;
+        img.src = w.imgUrl;
+        titleEl.textContent = w.title;
+        // 既存の言語切替（[data-desc-ja] のループ）にそのまま乗せる
+        capEl.setAttribute('data-desc-ja', w.descJa || '');
+        capEl.setAttribute('data-desc-en', w.descEn || w.descJa || '');
+        capEl.textContent = (document.documentElement.lang === 'en' && w.descEn) ? w.descEn : (w.descJa || '');
+        posEl.textContent = pad(index + 1) + ' / ' + pad(works.length);
+    }
+    // ゲートウェイのフォールバックが残っている間はエラー文を出さない
+    img.addEventListener('error', function () {
+        if (errEl && img.dataset.ipfsExhausted === '1') errEl.hidden = false;
+    });
+    if (prev) prev.addEventListener('click', function () { show(index - 1); });
+    if (next) next.addEventListener('click', function () { show(index + 1); });
+    figure.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); show(index - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); }
+    });
+    show(0);   // 自動送りはしない。見る時間は訪問者が決める
+
+    // 全作品一覧の開閉
+    var toggle = document.getElementById('visual-all-toggle');
+    var all = document.getElementById('visual-all');
+    if (toggle && all) {
+        var label = toggle.querySelector('span[data-i18n]');
+        toggle.addEventListener('click', function () {
+            var open = all.hidden;
+            all.hidden = !open;
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (label) {
+                label.setAttribute('data-i18n', open ? 'visual.allClose' : 'visual.all');
+                if (typeof setLang === 'function' && typeof currentLang === 'string') setLang(currentLang);
+            }
+            if (open) all.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
-        band.addEventListener('pointerdown', function (e) {
-            addPaw(e.clientX, e.clientY);
-        });
-    })();
+    }
+})();
 </script>
 <!-- Cat-paw trails: reveal one-by-one when scrolled into view -->
 <script>

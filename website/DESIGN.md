@@ -602,7 +602,24 @@ The live homepage realizes the editorial principles below. Treat this section as
 ### Statement band (voltage moment)
 A full-bleed **raised glassy band** (`bg-white/[0.02] backdrop-blur-sm border-y`) sits between about and portfolio, carrying a `{component.section-tag}` eyebrow ("Statement") and one large `{typography.display-hero}` line with a single italic-silver emphasis word. It is the dark-mode analog of a signature card: voltage from scale + surface lift, not from a second color. Copy is editorial/brand and CEO-owned (currently "遊ぶことで人生を彩ろう"). Keep to one such band per page.
 
-The band is also the page's single **interactive play moment** (added 2026-07-04): pointer movement (or taps on touch) leaves watercolor cat-paw prints (`#statement-paws` layer, reusing the `#cat-paw` symbol + `#watercolor` filter and the fixed four-pillar palette). The visitor literally "colors" the statement — the philosophy performed, not just stated. Capped at 60 prints, disabled under `prefers-reduced-motion`. Do not add similar interactions to other sections (scarcity keeps it special).
+The band is also the page's single **interactive play moment** (added 2026-07-04, reworked 2026-09-11):
+pointer movement, a short tap, or the "余白に、ひと足。" button leaves watercolor cat-paw prints
+(`#statement-paws` layer, reusing the `#cat-paw` symbol + `#watercolor` filter). The visitor literally
+"colors" the statement — the philosophy performed, not just stated. Do not add similar interactions to
+other sections (scarcity keeps it special).
+
+Current rules: each step picks at random from **four** fixed colors (red `#CC5B4A` / yellow `#D9A441` /
+blue `#5586BE` / purple `#9472B8` — green `#4FA597` stays on the Portfolio trail only); capped at 60 prints
+with the oldest removed; opacity and size fall over five steps; prints face the direction of travel and
+alternate left/right; the copy and the controls are excluded from the drop area; touch fires only on a
+short tap so scrolling never scatters prints; "やりなおす" clears them; the footer's `#echo-paw` takes the
+last color used in that visit. Under `prefers-reduced-motion` the dynamic play stops, the buttons are
+disabled and the hint swaps to `play.hintReduced`, while the story's still red print (`.first-step`,
+by the cat's paw and dish) remains — and the page follows a change of that setting while open.
+
+**Composition:** on desktop the copy sits left and the cat bottom-right, separated by `.statement-grid`
+(`minmax(0,1fr) auto`) so they cannot overlap; below 900px it becomes one column with the cat under the
+copy. "彩ろう。" carries `white-space: nowrap` so the phrase never breaks mid-word.
 
 ### Portfolio chapter-opener (`#portfolio`)
 The `works` grid band was replaced by a **chapter-opener**: a sink band (`bg-black/30 border-y`) carrying only the Pattern-A headline `PORTFOLIO`, the subtitle `AIと感性が生んだ、作品たち`, the slow watercolor paw trail, and three entries — internal links to Tools (`#apps`) and Visual (`#visual`) plus a non-linked `Music — Coming Soon` label. `works-data.js` is **not loaded** by `index.html` and `NOCTA_WORKS` is not referenced anywhere on the page. The file is kept for the grid's planned return at the first track release.
@@ -616,6 +633,31 @@ Three data-driven counts in a `grid-cols-3` row, dynamically computed from the d
 Element ids are `stat-visual` / `stat-blog` / `stat-apps`.
 **`楽曲数` is not displayed** — Music is still pre-release, and `NOCTA_WORKS` is not loaded on the page. Restore it as a fourth count (`grid-cols-4`) at the first track release, together with the works grid.
 The retired stats (公開楽曲数 / 公開PV本数 / 制作中 / 可能性∞) are gone.
+
+### Visual section: one work at a time, then the whole list (2026-09-11)
+The Visual band leads with words, not the work: a `{component.section-tag}` eyebrow ("Visual"), a Japanese
+serif headline (CEO-fixed copy, `visual.headline` in the I18N dict, rendered via `data-i18n-html` so the
+`<br>` and `<em>` survive a language switch), and the `Art & NFT Collection` subtitle. The former all-caps
+`VISUAL` display headline (Pattern A) is gone — **this band is now a Pattern-B surface**, the one portfolio
+band that reads as explanatory, because the copy now does the inviting.
+
+One work shows large inside `.art-frame` (`aspect-ratio: 3/4`, `object-fit: contain` so nothing is cropped
+and the frame height never jumps between works). Prev/next buttons and ←/→ on the focused `figure` move
+through the set; position reads `01 / 04` with `aria-live`. No autoplay. The set comes from
+`visual-data.js` only — currently all of `NOCTA_VISUALS_WORKS` plus the first three of `NOCTA_VISUALS_ART`.
+Title, `alt` and description update with the image; the description rides the existing
+`[data-desc-ja]`/`[data-desc-en]` mechanism so it follows the language switch.
+
+`#visual-all-toggle` ("作品一覧を見る") expands `#visual-all`, which still holds the original Works / Art /
+Music grids, the Zora link and their category headings unchanged. It is collapsed by default, and the cards
+are `loading="lazy"`, so those images are not fetched until a visitor asks for the list.
+
+**IPFS gateway fallback:** `ipfs.io` intermittently answers browser image requests with a Cloudflare 403
+whose headers include `cross-origin-resource-policy: same-origin`, which Chromium surfaces as
+`ERR_BLOCKED_BY_RESPONSE.NotSameOrigin` — every Visual image was failing in production because of it.
+A capture-phase `error` listener installed just before `visual-data.js` retries a failed `/ipfs/<cid>`
+through `gateway.pinata.cloud` then `ipfs.filebase.io` (both verified in a real browser). `visual-data.js`
+keeps the canonical `ipfs.io` URLs. Rationale and the full gateway survey: `DESIGN-NOTES.md` §10.
 
 ### Multi-domain identity
 NOCTA is framed as a **multi-domain creative project, not a music-only label**. The four pillars (music / visual / words / code) appear in the About diagram and copy ("音楽、映像、画像、言葉"), in the "越境 (Crossing)" value card, in the fixed four-color paw palette, and in the footer tagline `Music × Visual × Words × Code`. The stats bar currently carries only three of them (music is pre-release; see the stats-bar section). Do not re-narrow copy to music-only, and do not reintroduce vocal-synthesis (歌声合成 / VOCALOID) as a headline theme.
