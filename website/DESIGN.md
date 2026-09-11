@@ -594,29 +594,34 @@ Use: track LP (inheritance low), immersive.
 The live homepage realizes the editorial principles below. Treat this section as the canonical spec for `index.html` structure.
 
 ### Section order & surface rhythm
-`hero → stats → about (flat) → statement band (raised) → works (sink) → tools/apps (flat) → visual (sink) → blog (flat) → contact (flat) → footer`
+`hero → stats → about (flat) → statement band (raised) → portfolio chapter-opener (sink) → tools/apps (flat) → visual (sink) → blog (flat) → contact (flat) → footer`
 
-- **Surface rhythm:** content bands alternate between flat canvas and a recessed `bg-black/30 border-y` "sink" so the dark scroll never reads as one uniform band (Airtable principle: never repeat the same surface mode in consecutive bands). Sink bands keep glass-card contrast high. Currently `works` and `visual` are sink; `about / apps / blog` are flat.
+- **Surface rhythm:** content bands alternate between flat canvas and a recessed `bg-black/30 border-y` "sink" so the dark scroll never reads as one uniform band (Airtable principle: never repeat the same surface mode in consecutive bands). Sink bands keep glass-card contrast high. Currently `portfolio` and `visual` are sink; `about / apps / blog` are flat.
 - Every band keeps `{spacing.section}`+ vertical rhythm (`py-32`).
 
 ### Statement band (voltage moment)
-A full-bleed **raised glassy band** (`bg-white/[0.02] backdrop-blur-sm border-y`) sits between about and works, carrying a `{component.section-tag}` eyebrow ("Statement") and one large `{typography.display-hero}` line with a single italic-silver emphasis word. It is the dark-mode analog of a signature card: voltage from scale + surface lift, not from a second color. Copy is editorial/brand and CEO-owned (currently "遊ぶことで人生を彩ろう"). Keep to one such band per page.
+A full-bleed **raised glassy band** (`bg-white/[0.02] backdrop-blur-sm border-y`) sits between about and portfolio, carrying a `{component.section-tag}` eyebrow ("Statement") and one large `{typography.display-hero}` line with a single italic-silver emphasis word. It is the dark-mode analog of a signature card: voltage from scale + surface lift, not from a second color. Copy is editorial/brand and CEO-owned (currently "遊ぶことで人生を彩ろう"). Keep to one such band per page.
 
 The band is also the page's single **interactive play moment** (added 2026-07-04): pointer movement (or taps on touch) leaves watercolor cat-paw prints (`#statement-paws` layer, reusing the `#cat-paw` symbol + `#watercolor` filter and the fixed four-pillar palette). The visitor literally "colors" the statement — the philosophy performed, not just stated. Capped at 60 prints, disabled under `prefers-reduced-motion`. Do not add similar interactions to other sections (scarcity keeps it special).
 
-### Featured-first grid
-The Works grid renders the **first card at `lg:col-span-2`** (a wide featured card) to break the uniform 3-up "spec sheet" feel. Remaining cards stay uniform. Generated in the `NOCTA_WORKS.map` render (`i === 0`). md/mobile fall back to normal cards.
+### Portfolio chapter-opener (`#portfolio`)
+The `works` grid band was replaced by a **chapter-opener**: a sink band (`bg-black/30 border-y`) carrying only the Pattern-A headline `PORTFOLIO`, the subtitle `AIと感性が生んだ、作品たち`, the slow watercolor paw trail, and three entries — internal links to Tools (`#apps`) and Visual (`#visual`) plus a non-linked `Music — Coming Soon` label. `works-data.js` is **not loaded** by `index.html` and `NOCTA_WORKS` is not referenced anywhere on the page. The file is kept for the grid's planned return at the first track release.
 
-### Stats bar (four pillars)
-Four data-driven counts, dynamically computed from the data arrays (auto-update as content grows):
-`楽曲数` = `NOCTA_WORKS` · `ビジュアル数` = `NOCTA_VISUALS_WORKS + ART + MUSIC` · `ブログ数` = `NOCTA_BLOG` · `アプリ数` = `NOCTA_APPS`.
+### Featured-first grid (dormant — for the works grid's return)
+Not on the page today (see the chapter-opener above). When the grid comes back, render the **first card at `lg:col-span-2`** (a wide featured card) to break the uniform 3-up "spec sheet" feel; remaining cards stay uniform (`NOCTA_WORKS.map` with `i === 0`). md/mobile fall back to normal cards.
+
+### Stats bar (three counts)
+Three data-driven counts in a `grid-cols-3` row, dynamically computed from the data arrays (auto-update as content grows):
+`ビジュアル数` = `NOCTA_VISUALS_WORKS + ART + MUSIC` · `ブログ数` = `NOCTA_BLOG` · `アプリ数` = `NOCTA_APPS`.
+Element ids are `stat-visual` / `stat-blog` / `stat-apps`.
+**`楽曲数` is not displayed** — Music is still pre-release, and `NOCTA_WORKS` is not loaded on the page. Restore it as a fourth count (`grid-cols-4`) at the first track release, together with the works grid.
 The retired stats (公開楽曲数 / 公開PV本数 / 制作中 / 可能性∞) are gone.
 
 ### Multi-domain identity
-NOCTA is framed as a **multi-domain creative project, not a music-only label**. The four pillars (music / visual / words / code) appear in the stats, in the About copy ("音楽、映像、画像、言葉"), in the "越境 (Crossing)" value card, and in the footer tagline `Music × Visual × Words × Code`. Do not re-narrow copy to music-only, and do not reintroduce vocal-synthesis (歌声合成 / VOCALOID) as a headline theme.
+NOCTA is framed as a **multi-domain creative project, not a music-only label**. The four pillars (music / visual / words / code) appear in the About diagram and copy ("音楽、映像、画像、言葉"), in the "越境 (Crossing)" value card, in the fixed four-color paw palette, and in the footer tagline `Music × Visual × Words × Code`. The stats bar currently carries only three of them (music is pre-release; see the stats-bar section). Do not re-narrow copy to music-only, and do not reintroduce vocal-synthesis (歌声合成 / VOCALOID) as a headline theme.
 
 ### About signature visual (four-pillar orbital)
-The About section's right column is a signature diagram: **Music / Visual / Words / Code** nodes converge by thin silver lines onto a center **living orb**. The orb is a metallic radial-gradient sphere (`.nocta-orb`: highlight top-left → silver → shadow edge) that gently breathes/floats (`orbFloat` 6s + `orbShine` 7s) — no text label (an earlier "SOUL" / "NOCTA" wordmark was removed as it read cheap). Two slow rotating rings (`orbit-1/2`) frame it. The diagram visually restates the four-pillar identity; keep the labels in sync with the stats pillars.
+The About section's right column is a signature diagram: **Music / Visual / Words / Code** nodes converge by thin silver lines onto a center **living orb**. The orb is a metallic radial-gradient sphere (`.nocta-orb`: highlight top-left → silver → shadow edge) that gently breathes/floats (`orbFloat` 6s + `orbShine` 7s) — no text label (an earlier "SOUL" / "NOCTA" wordmark was removed as it read cheap). Two slow rotating rings (`orbit-1/2`) frame it. The diagram visually restates the four-pillar identity; keep its four labels in sync with the footer tagline (the stats bar shows only three counts while Music is pre-release).
 
 ### Hero background loop (geometric)
 The hero's decorative background (formerly a giant faint "2026") is a **seamless geometric loop**: concentric rotating polygons + dashed rings + pulsing orbiting dots, faint silver line-art, bottom-right, behind content (`z-0`, clipped by the hero's `overflow-hidden`). Every element's period is a divisor of the **30s master loop** (30s / 15s) so the whole composition returns to its first frame exactly every 30s (rotations are individually seamless). Respects `prefers-reduced-motion`. CSS lives under `.hero-geo` / `.geo-*` with `@keyframes geoSpinCW/CCW/geoBreathe/geoPulse`.

@@ -1,6 +1,6 @@
 # NOCTA Website — 設計引き継ぎ書（DESIGN-NOTES）
 
-最終更新: 2026-06-15
+最終更新: 2026-09-11
 
 このドキュメントは NOCTA ホームページ（`website/`）の**デザインの意図・考え方・経緯**を、後から見ても理解できるように残すための引き継ぎ書です。
 
@@ -15,7 +15,8 @@
 ## 1. ブランドの核となる考え方
 
 - **多領域クリエイティブプロジェクト**であり、音楽専門レーベルではない。4本柱 = **音楽 / ビジュアル / 言葉（ブログ）/ コード（アプリ）**。
-- この4本柱は、ヒーロー下の STATS（楽曲数 / ビジュアル数 / ブログ数 / アプリ数）、About本文、価値カード「越境（Crossing）」、footerタグライン `Music × Visual × Words × Code` に一貫して現れる。
+- この4本柱は、About の収束図と本文、価値カード「越境（Crossing）」、肉球と足跡の固定4色、footerタグライン `Music × Visual × Words × Code` に一貫して現れる。
+- ヒーロー下の STATS は現在**3項目**（ビジュアル数 / ブログ数 / アプリ数）。楽曲数は Music がリリース前のため出していない（`works-data.js` は index.html から読み込まれていない）。初回リリース時に4項目へ戻す。
 - トーンは **dark editorial serif-led**（落ち着いた・余白主体・印刷的）。声高でなく、必要な箇所だけ静かに強い。
 
 ---
@@ -52,12 +53,12 @@
 実装済みの原則:
 
 1. **96px+ のセクションリズム**（`py-32`）— 全帯で一定の呼吸。
-2. **サーフェスのリズム**（2026-06-15追加）— 同じ面を連続させない。`works`/`visual` を `bg-black/30` の沈み面、`about`/`apps`/`blog` を平面にして交互の抑揚を作る。沈み面はグラスカードのコントラストも保つ。
-3. **ステートメント帯（voltage moment）**（2026-06-15追加）— about と works の間に浮き面（`bg-white/[0.02]` glassy）の全幅帯。大型 EB Garamond の一文＋一語だけイタリック・シルバー。色を足さずスケールと面の浮きで「山」を作る。＝ダークモード版のシグネチャカード。1ページに1つ。
-4. **featured-first グリッド**（2026-06-15追加）— Works 先頭カードを `lg:col-span-2` の横長に。均質な3列グリッドの「スペックシート感」を崩す。
+2. **サーフェスのリズム**（2026-06-15追加）— 同じ面を連続させない。`portfolio`/`visual` を `bg-black/30` の沈み面、`about`/`apps`/`blog` を平面にして交互の抑揚を作る。沈み面はグラスカードのコントラストも保つ。
+3. **ステートメント帯（voltage moment）**（2026-06-15追加）— about と portfolio の間に浮き面（`bg-white/[0.02]` glassy）の全幅帯。大型 EB Garamond の一文＋一語だけイタリック・シルバー。色を足さずスケールと面の浮きで「山」を作る。＝ダークモード版のシグネチャカード。1ページに1つ。
+4. **featured-first グリッド**（2026-06-15追加・**現在は休止**）— Works 先頭カードを `lg:col-span-2` の横長に。均質な3列グリッドの「スペックシート感」を崩す。作品グリッド自体を章扉に置き換えたため、いまページ上には存在しない（復活時に適用する仕様として残す）。
 5. **glass-and-noise first のelevation** — 影は最小。深さは半透明グラス＋常時のグレインノイズ＋（hover時のみの）シルバーglowで作る。glow は常時点灯しない。
 6. **アクセントの希少性** — プライマリCTAは1ビューポートに1つ。シルバーは差し色として控えめに。
-7. **About シグネチャビジュアル**（2026-06-15・案F）— About右の図を「中央SOULノードグラフ」から **4本柱（Music/Visual/Words/Code）が中央の動くシルバー球体に収束する図**へ刷新。中央の安っぽいテキスト（SOUL/NOCTA）は廃し、メタリックなグラデーション球体（`.nocta-orb`・`orbFloat`/`orbShine` で呼吸・浮遊）に。STATS/タグラインの4本柱と図のラベルを常に一致させる。
+7. **About シグネチャビジュアル**（2026-06-15・案F）— About右の図を「中央SOULノードグラフ」から **4本柱（Music/Visual/Words/Code）が中央の動くシルバー球体に収束する図**へ刷新。中央の安っぽいテキスト（SOUL/NOCTA）は廃し、メタリックなグラデーション球体（`.nocta-orb`・`orbFloat`/`orbShine` で呼吸・浮遊）に。図の4ラベルは footer タグラインの4本柱と常に一致させる（STATS は Music リリース前のため3項目）。
 8. **ヒーロー背景の幾何ループ**（2026-06-15）— 旧「2026」を、同心の回転多角形・ダッシュリング・脈動ドット（シルバー線画）の **30秒シームレスループ**に置換。全要素の周期は30秒の約数（30s/15s）でぴったり最初に戻る。`prefers-reduced-motion` で停止。CSSは `.hero-geo` / `.geo-*` / `@keyframes geoSpinCW/CCW/geoBreathe/geoPulse`。
 
 **ブランド肩書き**: 公開表記は「Music Entertainment / 音楽エンタメ」→ **「Creative / クリエイティブ」** に変更（2026-06-15・`<title>`・ヒーローeyebrow・footer）。音楽専門レーベルではないため領域中立に保つ。
@@ -80,7 +81,7 @@
 
 ## 6. 保守メモ
 
-- **STATS の数値は手動更新不要**。`works/visual/blog/apps` 各データ配列の件数を JS が自動カウント（`index.html` 内「Stats bar: データ配列から件数を動的カウント」スクリプト）。
+- **STATS の数値は手動更新不要**。`visual/blog/apps` 各データ配列の件数を JS が自動カウント（`index.html` 内「Stats bar: データ配列から件数を動的カウント」スクリプト）。`works` は現在カウント対象外（上記のとおり3項目）。
 - **コンテンツデータ**は `works-data.js` / `visual-data.js`（3配列）/ `apps-data.js` / `blog-data.js`。追加は各スキル（`/hp-add-work`・`/visual-add`・`/blog-publish`）参照。
 - **ステートメント帯のコピー**はブランドメッセージ＝CEO領域。現在は静的（i18n未対応）。EN切替時も日本語表示。文言確定後に i18n キー追加を検討。
 - **デッドコード**: `.vocaloid-bar` / `.vocaloid-card-tag` は body 未使用の旧CSS（非表示・無害）。除去は任意。
@@ -212,3 +213,55 @@ NuWord同様の「HiNaコレクション」コンセプトページ。図鑑3部
 
 ### 誕生HiNa（12ヶ月の贈り物棚・戦略H1）
 月を選ぶと誕生花＋誕生石＋HiNa誕生色(iro48から月ごとに1色を編集選定=NOCTA独自)＋銀猫の祝福1文が、暖色の贈り物カード(生成り#F0EAD8・花名大→三色帯→キャプション→祝福文主役→銀猫落款=手紙調)に。PNG保存(Canvas 1080×1440・toBlob+objectURL+revoke・保存中disabled・document.fonts.ready待ち)。`?m=1〜12`で該当月に直リンク(不正は今日の月へ)。Open in HiNaで各アプリへ。3枚(1/5/10月)が仕上げ基準・他9枚は叩き台(CEO選択待ち)。データ hina-birth-data.js / ロジック birth-hina.js。設計/計画: docs/superpowers/plans/2026-07-11-hina-concept-birth.md。戦略: drafts/hina-collection-strategy.md。
+
+---
+
+## 9. トップページ構成の変更記録（2026-09-11 追記）
+
+ライブサイトを正とする運用のため、ドキュメントが実装から遅れていた箇所をここにまとめる。
+
+### 作品グリッド → Portfolio 章扉
+
+`works` の作品グリッド帯を**章扉**（`#portfolio`）に置き換えた。
+章扉には Pattern-A の見出し `PORTFOLIO`、サブタイトル「AIと感性が生んだ、作品たち」、
+ゆっくり現れる水彩足跡、そして3つの入口（Tools `#apps` と Visual `#visual` への内部リンク、
+リンクなしの `Music — Coming Soon` ラベル）だけを置く。沈み面（`bg-black/30 border-y`）は維持。
+
+- `works-data.js` は**index.html から読み込んでいない**。`NOCTA_WORKS` はページ内のどこからも参照されていない
+- ファイル自体は残してある（初回の楽曲リリース時に作品グリッドを復活させる前提）
+- これに伴い §4-4 の featured-first グリッドは**休止中**。復活時に適用する仕様として残す
+
+### STATS が4項目 → 3項目
+
+ヒーロー下の STATS は `grid-cols-3` で、ビジュアル数 / ブログ数 / アプリ数の3項目のみ
+（要素 id は `stat-visual` / `stat-blog` / `stat-apps`）。
+**楽曲数は表示していない** — Music がリリース前で、`NOCTA_WORKS` も読み込まれていないため。
+初回リリース時に作品グリッドとあわせて4項目（`grid-cols-4`）へ戻す。
+
+4本柱そのものは、About の収束図、About 本文「音楽、映像、画像、言葉」、価値カード「越境（Crossing）」、
+肉球の固定4色、footer タグライン `Music × Visual × Words × Code` に残っている。
+**4本柱のアイデンティティは変えていない。STATS の表示項目だけが3つになっている。**
+
+### BEHIND NOCTA セクションの削除（2026-09-11・commit `70c9a4a`）
+
+CONTACT とフッターの間にあった「BEHIND NOCTA（支えるチーム）」帯を削除した。
+「このプロジェクトは、CEO と、ローカル環境で働く AI エージェントチームが支えています」というリード文と、
+デザイナーチーム / コンサルチームの2カード（各チームの `manual:` としてローカルのファイルパス
+`~/designer/CLAUDE.md` と `~/.claude/commands/references/consulting-common.md` を表示していた）で構成されていた。
+
+削除したもの: セクション本体23行と、ja / en の i18n キー6つずつ（`behind.tag` / `behind.lead` /
+`behind.design.name` / `behind.design.desc` / `behind.consult.name` / `behind.consult.desc`）。
+あわせてローカルのファイルパスの公開表示もなくなった。
+
+現在のセクション構成は8つ。
+
+```
+hero → about（平面） → statement（浮き面） → portfolio（沈み面・章扉）
+     → apps（平面） → visual（沈み面） → blog（平面） → contact（平面） → footer
+```
+
+### 既知の残課題（今回の変更とは無関係）
+
+- 狭い幅で横スクロールが出る。本番実測で 390px は 5px、320px は 37px。
+  `overflow-x: hidden/clip` で囲われていない突出要素は0件なので、単一要素ではなく
+  `100vw` 指定・ネガティブマージン・スクロールバー幅の扱いのいずれかが疑わしい。未調査
