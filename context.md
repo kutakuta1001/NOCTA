@@ -2,13 +2,13 @@
 # NOCTA プロジェクト情報
 
 ## スタジオ概要
-NOCTA は Music × Visual × Words × Code の複数領域クリエイティブスタジオ。
+NOCTA は Music × Visual × Words × Tools の複数領域クリエイティブスタジオ。
 CEO + AIエージェントで企画〜制作〜公開を完結させるスタッフゼロ型。
 各領域は独立した並行ストリームとして進む（楽曲の進捗に他領域は依存しない）。
 全体方針とタスク優先度は drafts/roadmap.md を参照。
 
 ## アクティブストリーム
-- Code/Web: NOCTA HP（LP完成・継続改善）
+- Tools/Web: NOCTA HP（LP完成・継続改善）
 - Apps: 4本ライブ（NuWord still / Seed / Verse / inner canvas）。still を Gumroad 収益化フェーズへ
 - Visual: AIアート14作品（NFT連動）・NOCTA Visual 01 PV 制作中
 - Words: ブログ（3記事）・HP コピー

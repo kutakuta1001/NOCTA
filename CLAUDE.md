@@ -1,6 +1,6 @@
 # CLAUDE.md — NOCTA クリエイティブスタジオ（正本）
 
-Music × Visual × Words × Code の複数領域クリエイティブスタジオ。CEO と AI エージェントチームで
+Music × Visual × Words × Tools の複数領域クリエイティブスタジオ。CEO と AI エージェントチームで
 企画から公開までを完結させるスタッフゼロ型会社。各領域は独立した並行ストリームとして進み、楽曲制作はそのうちの1本（CEO ペースで進行）。
 CEO は Studio One Pro / Synthesizer V Studio PRO / UR22C / MPM-1000 を自ら操作する制作者兼ディレクターで、
 作曲・編曲・ボーカル制作・ミックスまで自分で行う。
