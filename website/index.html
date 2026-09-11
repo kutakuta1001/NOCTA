@@ -2127,11 +2127,20 @@ document.addEventListener('DOMContentLoaded', () => setLang(currentLang));
     var next = document.getElementById('gallery-next');
     if (!img || !figure || !posEl) return;
 
-    // 既存データから数点を選ぶ（Works の完成品 + Art の先頭3点）。URLは data 側にのみ置く
-    var works = [];
-    if (typeof NOCTA_VISUALS_WORKS !== 'undefined') works = works.concat(NOCTA_VISUALS_WORKS);
-    if (typeof NOCTA_VISUALS_ART !== 'undefined') works = works.concat(NOCTA_VISUALS_ART.slice(0, 3));
-    works = works.filter(function (w) { return w && w.imgUrl; });
+    // 展示する作品は CEO 指定の4点（この順序）。作品名で visual-data.js を引くので、
+    // URL・説明・バッジはデータ側にしか置かない
+    var PICKS = ['Art and information flood', 'wisteria flowers', 'Witch girl Sunny afternoon', 'SILENCE'];
+    var pool = [];
+    if (typeof NOCTA_VISUALS_WORKS !== 'undefined') pool = pool.concat(NOCTA_VISUALS_WORKS);
+    if (typeof NOCTA_VISUALS_ART !== 'undefined') pool = pool.concat(NOCTA_VISUALS_ART);
+    if (typeof NOCTA_VISUALS_MUSIC !== 'undefined') pool = pool.concat(NOCTA_VISUALS_MUSIC);
+    var works = PICKS.map(function (t) {
+        for (var i = 0; i < pool.length; i++) if (pool[i] && pool[i].title === t) return pool[i];
+        if (window.console && console.warn) console.warn('Visual: 指定の作品が visual-data.js に見つかりません — ' + t);
+        return null;
+    }).filter(function (w) { return w && w.imgUrl; });
+    // 指定が全て取れなかったときは、落とすのではなく既存データの先頭から補う
+    if (!works.length) works = pool.filter(function (w) { return w && w.imgUrl; }).slice(0, 4);
     if (!works.length) { figure.hidden = true; return; }
 
     var index = 0;
