@@ -81,6 +81,159 @@
   .act-open-arrow{ transition:transform 0.3s ease; display:inline-block; }
   .act-open:hover .act-open-arrow{ transform:translateX(3px); }
 
+  /* 画面イメージ（.act-shot） — 各アプリの実画面を縮約再現した図。
+     写真やスクリーンショットは使わず、HTML/CSS/インラインSVGだけで組む（外部リクエストを
+     増やさず、どの幅でも潰れず、文字も選択できる状態を保つため）。
+     数値・文言・配色はすべて実データから取っている:
+       Gyu  = gems/gems-data.js（ルビー 02/36・#9B111E）
+       Ichi = flora/flora-data.js（梅 02/24・#F7C6D4）
+       Hare = iro/iro-data.js（甕覗 16/48・#A2D7DD・かさね 藍色/白鼠）
+       Kihi = kihi/data.js（30紋・織田木瓜ほか。紋は実物と同じ幾何を SVG で描画）
+       Kai  = strategy/content.js（18題・孫子 謀攻篇「戦う前に、目的へ。」） */
+  .act-shot{
+    position:relative; margin-top:24px; overflow:hidden; max-width:560px;
+    border:1px solid rgba(184,180,174,0.14);
+    background:#0A0906; color:#E8E0D0;
+    aspect-ratio:16/10;
+    container-type:inline-size;
+  }
+  @supports not (container-type:inline-size){ .act-shot{ min-height:230px; } }
+
+  .shot-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:7px 11px; border-bottom:1px solid rgba(184,180,174,0.08);
+  }
+  .shot-brand{ font-family:'Syne',sans-serif; font-size:7px; letter-spacing:0.22em; text-transform:uppercase; color:rgba(184,180,174,0.55); }
+  .shot-en{
+    font-family:'Syne',sans-serif; font-size:6px; letter-spacing:0.18em; color:rgba(184,180,174,0.5);
+    border:1px solid rgba(184,180,174,0.22); border-radius:99px; padding:2px 6px;
+  }
+  .shot-pill{
+    position:absolute; left:10px; bottom:8px;
+    font-family:'Noto Sans JP',sans-serif; font-size:5.5px; letter-spacing:0.08em; color:rgba(232,224,208,0.6);
+    border:1px solid rgba(184,180,174,0.2); border-radius:99px; padding:2.5px 7px;
+  }
+
+  /* ---- 図鑑3部作の共通フレーム（zukan-core を共有しているので構造も同じ）
+         テキストは右寄せ、写真は右端まで届いて上下に抜ける、右端にドットレール ---- */
+  .shot-body{ position:relative; display:flex; height:calc(100% - 27px); }
+  .shot-col{
+    flex:1 1 54%; min-width:0; text-align:right;
+    padding:10px 14px 24px 14px; display:flex; flex-direction:column; justify-content:center; align-items:flex-end; gap:3px;
+  }
+  .shot-idx{ font-family:'Syne',sans-serif; font-size:6.5px; letter-spacing:0.24em; color:rgba(184,180,174,0.5); }
+  .shot-rome{ font-family:'Syne',sans-serif; font-size:7px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; }
+  .shot-title{ font-family:'Shippori Mincho',serif; font-size:22px; line-height:1.15; letter-spacing:0.1em; color:#E8E0D0; margin:2px 0 0; }
+  .shot-sci{ font-family:'EB Garamond',serif; font-style:italic; font-size:7px; color:rgba(184,180,174,0.6); margin-top:2px; }
+  .shot-rule{ width:32px; height:1px; margin:5px 0 5px auto; }
+  .shot-line{ font-family:'Noto Sans JP',sans-serif; font-size:7.5px; line-height:1.8; color:rgba(232,224,208,0.66); }
+  .shot-kotoba-l{ font-family:'Noto Sans JP',sans-serif; font-size:6px; letter-spacing:0.14em; margin-top:5px; }
+  .shot-kotoba{ font-family:'Shippori Mincho',serif; font-size:11px; letter-spacing:0.06em; color:#E8E0D0; }
+  .shot-chips{ display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; justify-content:flex-end; align-items:center; }
+  .shot-paw{ width:11px; height:11px; border-radius:50%; border:1px solid rgba(184,180,174,0.25); display:inline-block; }
+  .shot-chip{
+    font-family:'Noto Sans JP',sans-serif; font-size:5.5px; letter-spacing:0.04em;
+    border:1px solid rgba(184,180,174,0.22); border-radius:99px; padding:2.5px 6px;
+    color:rgba(232,224,208,0.62); white-space:nowrap;
+  }
+  .shot-chip--on{ color:#E8E0D0; }
+  .shot-cta{
+    font-family:'Noto Sans JP',sans-serif; font-size:6px; letter-spacing:0.08em;
+    border:1px solid currentColor; border-radius:99px; padding:3.5px 9px; margin-top:7px; white-space:nowrap;
+  }
+  /* 写真は右端（レール分の 20px）まで届き、上下に抜ける */
+  .shot-figure{ flex:0 0 44%; min-width:0; position:relative; margin-right:20px; overflow:hidden; }
+  .shot-figure svg{ position:absolute; inset:0; width:100%; height:100%; }
+  .shot-credit{
+    position:absolute; left:0; right:0; bottom:0; padding:3px 5px;
+    font-family:'Noto Sans JP',sans-serif; font-size:4.5px; letter-spacing:0.02em;
+    color:rgba(255,255,255,0.75); background:linear-gradient(transparent,rgba(0,0,0,0.6));
+  }
+  .shot-rail{ position:absolute; right:7px; top:10px; bottom:10px; display:flex; flex-direction:column; justify-content:space-between; align-items:center; }
+  .shot-rail i{ width:2px; height:2px; border-radius:50%; background:rgba(184,180,174,0.3); }
+
+  /* ---- Hare は色そのものが画面を満たす（実画面と同じく地が色、文字は濃色） ---- */
+  .act-shot--iro{ color:#2B302E; }
+  .act-shot--iro .shot-bar{ border-bottom-color:rgba(0,0,0,0.08); }
+  .act-shot--iro .shot-brand,
+  .act-shot--iro .shot-en{ color:rgba(43,48,46,0.6); }
+  .act-shot--iro .shot-en{ border-color:rgba(43,48,46,0.25); }
+  .act-shot--iro .shot-pill{ color:rgba(43,48,46,0.6); border-color:rgba(43,48,46,0.22); }
+  .shot-card{
+    position:absolute; left:14px; top:12px; width:58%;
+    background:rgba(255,255,255,0.26); border:1px solid rgba(255,255,255,0.4);
+    padding:10px 12px 11px; display:flex; flex-direction:column; gap:2px;
+  }
+  .shot-iro-idx{ font-family:'Syne',sans-serif; font-size:6.5px; letter-spacing:0.24em; color:rgba(43,48,46,0.55); }
+  .shot-iro-name{ font-family:'Shippori Mincho',serif; font-size:20px; letter-spacing:0.08em; color:#22261F; margin:1px 0 0; }
+  .shot-iro-kana{ font-family:'Noto Sans JP',sans-serif; font-size:6px; letter-spacing:0.18em; color:rgba(43,48,46,0.6); }
+  .shot-iro-line{ font-family:'Noto Sans JP',sans-serif; font-size:6.5px; line-height:1.8; color:rgba(43,48,46,0.78); margin-top:5px; }
+  .shot-kasane-l{ font-family:'Noto Sans JP',sans-serif; font-size:5.5px; letter-spacing:0.14em; color:rgba(43,48,46,0.55); margin-top:7px; }
+  .shot-kasane{ display:flex; height:9px; border-radius:99px; overflow:hidden; margin-top:3px; }
+  .shot-kasane i{ flex:1; }
+  .shot-iro-pills{ display:flex; gap:5px; margin-top:6px; }
+  .shot-iro-pill{
+    display:inline-flex; align-items:center; gap:4px;
+    font-family:'Noto Sans JP',sans-serif; font-size:5.5px; color:rgba(43,48,46,0.8);
+    background:rgba(255,255,255,0.5); border-radius:99px; padding:2.5px 7px 2.5px 3px;
+  }
+  .shot-iro-pill b{ width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .act-shot--iro .shot-chips{ justify-content:flex-start; margin-top:7px; }
+  .act-shot--iro .shot-chip{ color:rgba(43,48,46,0.8); border-color:rgba(43,48,46,0.22); }
+  .act-shot--iro .shot-paw{ border-color:rgba(43,48,46,0.25); }
+  .act-shot--iro .shot-cta{ align-self:flex-end; color:#22261F; background:rgba(255,255,255,0.45); }
+  .shot-vert{
+    position:absolute; right:26px; top:50%; transform:translateY(-50%);
+    writing-mode:vertical-rl; font-family:'Shippori Mincho',serif; font-size:40px;
+    letter-spacing:0.06em; color:rgba(34,38,31,0.9); line-height:1;
+  }
+  .shot-rail--iro i{ background:rgba(43,48,46,0.28); }
+
+  /* ---- Kihi は一覧グリッド ---- */
+  .shot-head{ padding:10px 12px 0 14px; }
+  .shot-eyebrow{ font-family:'EB Garamond',serif; font-size:6px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(184,180,174,0.6); }
+  .shot-h{ font-family:'Shippori Mincho',serif; font-size:13px; letter-spacing:0.06em; color:#E8E0D0; margin-top:4px; }
+  /* グリッド版は縦フレックスにして、一覧が枠の残りの高さを満たす（実画面の切り取りとして見せる） */
+  .act-shot--grid{ display:flex; flex-direction:column; }
+  .act-shot--grid .shot-head{ flex:none; }
+  .shot-grid{
+    display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); grid-auto-rows:1fr;
+    gap:1px; background:rgba(184,180,174,0.1); margin:9px 12px 12px 14px; flex:1; min-height:0;
+  }
+  .shot-cell{ background:#0A0906; padding:8px 2px; text-align:center; display:flex; flex-direction:column; justify-content:center; }
+  .shot-cell--on{ background:rgba(232,224,208,0.07); box-shadow:inset 0 -1px 0 rgba(232,224,208,0.55); }
+  .shot-cell svg{ width:40px; height:40px; display:block; margin:0 auto 8px; }
+  .shot-mon{ font-family:'Shippori Mincho',serif; font-size:6.5px; color:#E8E0D0; letter-spacing:0.04em; }
+  .shot-clan{ font-family:'Noto Sans JP',sans-serif; font-size:5px; color:rgba(184,180,174,0.55); margin-top:1px; }
+  .shot-count{ font-family:'Noto Sans JP',sans-serif; font-size:5.5px; color:rgba(184,180,174,0.55); }
+
+  /* ---- Kai は思考の棚。図のカードが主役 ---- */
+  .shot-field{
+    font-family:'Noto Sans JP',sans-serif; font-size:5.5px; color:rgba(184,180,174,0.5);
+    border:1px solid rgba(184,180,174,0.2); padding:3.5px 7px; white-space:nowrap;
+  }
+  .shot-diagram{ position:relative; margin:9px 14px 0; border:1px solid rgba(184,180,174,0.12); background:rgba(255,255,255,0.012); }
+  .shot-diagram svg{ display:block; width:100%; height:auto; }
+  .shot-meta{ font-family:'Noto Sans JP',sans-serif; font-size:5.5px; letter-spacing:0.08em; color:rgba(184,180,174,0.6); margin:8px 14px 0; }
+  .shot-kai-h{ font-family:'Shippori Mincho',serif; font-size:15px; letter-spacing:0.05em; color:#E8E0D0; margin:4px 14px 0; }
+  .shot-src{ font-family:'Noto Sans JP',sans-serif; font-size:5.5px; color:rgba(184,180,174,0.5); margin:5px 14px 0; }
+
+  /* 実寸が小さいほど細部を間引いて潰れを防ぐ */
+  @container (max-width:460px){
+    .shot-title{ font-size:16px; }
+    .shot-kotoba{ font-size:9px; }
+    .shot-chips{ display:none; }
+    .shot-cta{ display:none; }
+    .shot-card{ width:64%; }
+    .shot-iro-name{ font-size:15px; }
+    .shot-vert{ font-size:26px; right:20px; }
+    .shot-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .shot-cell:nth-child(n+9){ display:none; }
+    .shot-cell svg{ width:28px; height:28px; }
+    .shot-kai-h{ font-size:12px; }
+    .shot-field:nth-child(n+3){ display:none; }
+  }
+
   /* キーボード操作の現在位置を示す(主要な操作要素のみ) */
   .act-open:focus-visible,
   .hina-birth-m:focus-visible,
@@ -289,6 +442,7 @@
     .reveal{ opacity:1; transform:none; transition:none; }
     .act-open-arrow{ transition:none; transform:none; }
     .act-open:hover .act-open-arrow{ transform:none; }
+    .shot-brush path{ animation:none !important; }
     .act-open,
     .hina-birth-m,
     .hina-birth-save,
@@ -348,6 +502,43 @@
             <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">石言葉・誕生石の図鑑</span></p>
             <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">かざす（光にきらめく）</span></p>
           </div>
+
+          <!-- 画面イメージ: Gyu の鑑賞画面（gems-data.js の 02/36 ルビー） -->
+          <figure class="act-shot" role="img" aria-label="Gyu の画面イメージ。左に石の番号・英名・和名・一文・石言葉と誕生石などの札、右に宝石の写真と出典、右端に36石のうち現在地を示すドットレール。">
+            <div class="shot-bar"><span class="shot-brand">&larr; NOCTA</span><span class="shot-en">EN</span></div>
+            <div class="shot-body">
+              <div class="shot-col">
+                <span class="shot-idx">02 / 36</span>
+                <span class="shot-rome" style="color:#C2606B;">Ruby</span>
+                <p class="shot-title">ルビー</p>
+                <span class="shot-rule" style="background:rgba(194,96,107,0.6);"></span>
+                <p class="shot-line">血の色を宿しながら、内側では<br>静かに光を持ち続ける石。</p>
+                <span class="shot-kotoba-l" style="color:#C2606B;">石言葉</span>
+                <p class="shot-kotoba">「情熱・勇気・威厳」</p>
+                <div class="shot-chips">
+                  <span class="shot-paw"></span>
+                  <span class="shot-chip shot-chip--on" style="border-color:rgba(194,96,107,0.55);">7月の誕生石</span>
+                  <span class="shot-chip">モース硬度: 9</span>
+                </div>
+              </div>
+              <div class="shot-figure">
+                <svg viewBox="0 0 100 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <rect width="100" height="140" fill="#efe9e2"/>
+                  <g stroke="rgba(255,255,255,0.55)" stroke-width="0.6">
+                    <g fill="#b8123a"><path d="M20 34 34 26 48 34 41 50 27 50Z"/><path d="M55 22 70 18 80 28 72 40 58 36Z"/></g>
+                    <g fill="#d6295c"><path d="M62 48 80 44 86 60 72 70 60 62Z"/><path d="M12 58 28 54 34 68 22 78 12 72Z"/></g>
+                    <g fill="#8e0f2c"><path d="M36 60 54 56 58 74 44 84 34 74Z"/><path d="M70 78 88 76 90 92 76 98 68 90Z"/></g>
+                    <g fill="#e0447a"><path d="M18 88 36 84 42 98 28 108 18 100Z"/><path d="M46 92 64 88 70 106 54 116 44 106Z"/></g>
+                    <g fill="#a7112f"><path d="M24 112 44 118 42 132 24 132Z"/><path d="M56 118 78 112 84 126 64 134Z"/></g>
+                  </g>
+                  <g fill="rgba(255,255,255,0.8)"><path d="M30 30 38 28 34 36Z"/><path d="M66 24 74 22 70 30Z"/><path d="M44 62 52 60 48 68Z"/><path d="M52 96 60 94 56 102Z"/></g>
+                </svg>
+                <span class="shot-credit">出典: Wikimedia Commons · CC BY-SA 4.0 · Sasaki kijinuko</span>
+              </div>
+              <div class="shot-rail"><i></i><i style="background:#C2606B;width:3px;height:3px"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <span class="shot-pill">目次</span>
+          </figure>
           <a href="../gems/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
         </div>
       </div>
@@ -367,6 +558,47 @@
             <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">花言葉・誕生花の図鑑</span></p>
             <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">咲かせる（庭が育つ）</span></p>
           </div>
+
+          <!-- 画面イメージ: Ichi の鑑賞画面（flora-data.js の 02/24 梅） -->
+          <figure class="act-shot" role="img" aria-label="Ichi の画面イメージ。左に花の番号・英名・和名・学名・一文・花言葉と誕生花などの札と咲かせる入口、右に花の写真と出典、右端に24種のうち現在地を示すドットレール。">
+            <div class="shot-bar"><span class="shot-brand">&larr; NOCTA</span><span class="shot-en">EN</span></div>
+            <div class="shot-body">
+              <div class="shot-col">
+                <span class="shot-idx">02 / 24</span>
+                <span class="shot-rome" style="color:#E58AA8;">Plum Blossom</span>
+                <p class="shot-title">梅</p>
+                <span class="shot-sci">Prunus mume</span>
+                <span class="shot-rule" style="background:rgba(229,138,168,0.6);"></span>
+                <p class="shot-line">まだ雪の残る枝で、<br>春をいちばんに告げる花。</p>
+                <span class="shot-kotoba-l" style="color:#E58AA8;">花言葉</span>
+                <p class="shot-kotoba">「忍耐・高潔・忠実」</p>
+                <div class="shot-chips">
+                  <span class="shot-paw"></span>
+                  <span class="shot-chip shot-chip--on" style="border-color:rgba(229,138,168,0.55);">2月の誕生花</span>
+                  <span class="shot-chip">開花期: 2月〜3月</span>
+                </div>
+                <span class="shot-cta" style="color:#E58AA8;">この花を咲かせる</span>
+              </div>
+              <div class="shot-figure">
+                <svg viewBox="0 0 100 140" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                  <rect width="100" height="140" fill="#cfd3c6"/>
+                  <rect y="96" width="100" height="44" fill="#f4f1ea"/>
+                  <rect y="130" width="100" height="10" fill="#a8323f"/>
+                  <g stroke="#4c3a2e" stroke-width="1.6" fill="none" stroke-linecap="round">
+                    <path d="M34 96c2-18-4-30 2-44"/><path d="M36 66c-6-6-12-8-18-6"/><path d="M37 78c6-5 12-6 17-3"/>
+                    <path d="M70 96c-1-16 4-28 0-40"/><path d="M70 64c5-5 11-6 16-3"/><path d="M69 76c-5-4-10-5-15-2"/>
+                  </g>
+                  <g fill="#e8789c"><circle cx="22" cy="56" r="4"/><circle cx="30" cy="48" r="3.4"/><circle cx="53" cy="72" r="3.6"/><circle cx="18" cy="66" r="3"/><circle cx="86" cy="58" r="4"/><circle cx="78" cy="50" r="3.2"/><circle cx="55" cy="62" r="2.8"/></g>
+                  <g fill="#fdf3f4"><circle cx="26" cy="62" r="3"/><circle cx="82" cy="66" r="3.2"/><circle cx="46" cy="54" r="2.6"/></g>
+                  <g fill="#c2415c"><circle cx="40" cy="70" r="2.6"/><circle cx="64" cy="56" r="2.4"/></g>
+                  <g fill="#8b6b4f"><ellipse cx="34" cy="100" rx="13" ry="4"/><ellipse cx="70" cy="100" rx="12" ry="4"/></g>
+                </svg>
+                <span class="shot-credit">出典: Wikimedia Commons · CC BY-SA 3.0 · Hide-sp</span>
+              </div>
+              <div class="shot-rail"><i></i><i style="background:#E58AA8;width:3px;height:3px"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <span class="shot-pill">目次</span>
+          </figure>
           <a href="../flora/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
         </div>
       </div>
@@ -386,6 +618,35 @@
             <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">色の物語・かさねの図鑑</span></p>
             <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">筆あそび（選んだ色のインク）</span></p>
           </div>
+
+          <!-- 画面イメージ: Hare の鑑賞画面（iro-data.js の 16/48 甕覗）。
+               実画面と同じく地が色そのもので満たされ、文字は濃色、右に縦書きの色名が立つ -->
+          <figure class="act-shot act-shot--iro" style="background:#A2D7DD;" role="img" aria-label="Hare の画面イメージ。全面が甕覗の色で、左のカードに番号・色名・読み・一文・かさねの配色帯・16進値と季節の札・この色で筆あそびの入口、右に縦書きの大きな色名、右端に48色のドットレール。">
+            <div class="shot-bar"><span class="shot-brand">&larr; NOCTA</span><span class="shot-en">EN</span></div>
+            <div class="shot-body">
+              <div class="shot-card">
+                <span class="shot-iro-idx">16 / 48</span>
+                <p class="shot-iro-name">甕覗</p>
+                <span class="shot-iro-kana">かめのぞき &mdash; Kamenozoki</span>
+                <p class="shot-iro-line">藍甕をほんの一度だけ覗かせた、<br>いちばん淡い藍。</p>
+                <span class="shot-kasane-l">配色 &mdash; かさね</span>
+                <div class="shot-kasane"><i style="background:#A2D7DD"></i><i style="background:#165E83"></i><i style="background:#B4B4B4"></i></div>
+                <div class="shot-iro-pills">
+                  <span class="shot-iro-pill"><b style="background:#165E83"></b>藍色</span>
+                  <span class="shot-iro-pill"><b style="background:#B4B4B4"></b>白鼠</span>
+                </div>
+                <div class="shot-chips">
+                  <span class="shot-paw"></span>
+                  <span class="shot-chip">#A2D7DD</span>
+                  <span class="shot-chip">季節: 夏</span>
+                </div>
+                <span class="shot-cta">この色で筆あそび →</span>
+              </div>
+              <p class="shot-vert">甕覗</p>
+              <div class="shot-rail shot-rail--iro"><i></i><i></i><i></i><i></i><i></i><i style="background:rgba(34,38,31,0.75);width:3px;height:3px"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <span class="shot-pill">目次</span>
+          </figure>
           <a href="../iro/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
         </div>
       </div>
@@ -401,6 +662,23 @@
             <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">武家ゆかりの三十の紋</span></p>
             <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">しつらえる（色と余白の一枚）</span></p>
           </div>
+
+          <!-- 画面イメージ: Kihi の一覧画面（kihi/data.js の30紋）。
+               紋は実物と同じ幾何（武田菱・六連銭・三つ鱗ほか）をインライン SVG で描いている -->
+          <figure class="act-shot act-shot--grid" role="img" aria-label="Kihi の画面イメージ。上に見出しと分類の札、下に家紋を並べた一覧。先頭の織田木瓜が選ばれている。">
+            <div class="shot-head">
+              <p class="shot-eyebrow">The Little Collection</p>
+              <p class="shot-h">三十の紋、三十の気配。</p>
+              <div class="shot-chips" style="margin-top:7px;justify-content:flex-start;">
+                <span class="shot-chip shot-chip--on" style="background:rgba(232,224,208,0.12);">すべて</span>
+                <span class="shot-chip">花と葉</span>
+                <span class="shot-chip">鳥と蝶</span>
+                <span class="shot-chip">円と線</span>
+                <span class="shot-count" style="margin-left:auto;">30 紋</span>
+              </div>
+            </div>
+            <div class="shot-grid"><div class="shot-cell shot-cell--on"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><ellipse cx="50" cy="22" rx="15" ry="17"/><ellipse cx="77" cy="42" rx="15" ry="17" transform="rotate(72 77 42)"/><ellipse cx="66" cy="76" rx="15" ry="17" transform="rotate(144 66 76)"/><ellipse cx="34" cy="76" rx="15" ry="17" transform="rotate(216 34 76)"/><ellipse cx="23" cy="42" rx="15" ry="17" transform="rotate(288 23 42)"/><circle cx="50" cy="52" r="17" fill="#0A0906"/><circle cx="50" cy="52" r="13"/><circle cx="50" cy="52" r="5" fill="#0A0906"/></g></svg><p class="shot-mon">織田木瓜</p><p class="shot-clan">織田家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><path d="M50 8 66 30 50 52 34 30Z"/><path d="M50 48 66 70 50 92 34 70Z"/><path d="M26 28 42 50 26 72 10 50Z"/><path d="M74 28 90 50 74 72 58 50Z"/></g></svg><p class="shot-mon">武田菱</p><p class="shot-clan">武田家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="24" cy="34" r="13"/><circle cx="50" cy="34" r="13"/><circle cx="76" cy="34" r="13"/><circle cx="24" cy="70" r="13"/><circle cx="50" cy="70" r="13"/><circle cx="76" cy="70" r="13"/><g fill="#0A0906"><rect x="19" y="29" width="10" height="10"/><rect x="45" y="29" width="10" height="10"/><rect x="71" y="29" width="10" height="10"/><rect x="19" y="65" width="10" height="10"/><rect x="45" y="65" width="10" height="10"/><rect x="71" y="65" width="10" height="10"/></g></g></svg><p class="shot-mon">六連銭</p><p class="shot-clan">真田家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><path d="M50 12 71 48H29Z"/><path d="M27 52 48 88H6Z"/><path d="M73 52 94 88H52Z"/></g></svg><p class="shot-mon">三つ鱗</p><p class="shot-clan">北条家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="50" cy="50" r="38" fill="none" stroke="#B8B4AE" stroke-width="8"/><rect x="45" y="14" width="10" height="72"/><rect x="14" y="45" width="72" height="10"/></g></svg><p class="shot-mon">丸に十の字</p><p class="shot-clan">島津家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><rect x="16" y="22" width="68" height="9"/><circle cx="50" cy="52" r="11"/><circle cx="26" cy="76" r="11"/><circle cx="74" cy="76" r="11"/></g></svg><p class="shot-mon">一文字三星</p><p class="shot-clan">毛利家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="50" cy="50" r="15"/><circle cx="50" cy="19" r="8.5"/><circle cx="72" cy="28" r="8.5"/><circle cx="81" cy="50" r="8.5"/><circle cx="72" cy="72" r="8.5"/><circle cx="50" cy="81" r="8.5"/><circle cx="28" cy="72" r="8.5"/><circle cx="19" cy="50" r="8.5"/><circle cx="28" cy="28" r="8.5"/></g></svg><p class="shot-mon">九曜</p><p class="shot-clan">細川家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="50" cy="50" r="35"/><circle cx="50" cy="50" r="14" fill="#0A0906"/></g></svg><p class="shot-mon">蛇の目</p><p class="shot-clan">加藤家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><circle cx="50" cy="50" r="35"/></svg><p class="shot-mon">白餅</p><p class="shot-clan">黒田家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="50" cy="19" r="15"/><circle cx="79" cy="40" r="15"/><circle cx="68" cy="75" r="15"/><circle cx="32" cy="75" r="15"/><circle cx="21" cy="40" r="15"/><circle cx="50" cy="51" r="10"/></g></svg><p class="shot-mon">加賀梅鉢</p><p class="shot-clan">前田家</p></div></div>
+          </figure>
           <a href="../kihi/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
         </div>
       </div>
@@ -417,6 +695,41 @@
             <p><span class="act-mode-label">たどる</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">古典と歴史、十八の思考の地図</span></p>
             <p><span class="act-mode-label">拾う</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">言葉・問い・仕事への手掛かり</span></p>
           </div>
+
+          <!-- 画面イメージ: Kai の思考の棚（strategy/content.js の18題）。
+               図は「目的と手段の見取り図」（孫子・謀攻篇）の実際の構図をなぞっている -->
+          <figure class="act-shot" role="img" aria-label="Kai の画面イメージ。上に思考の棚の見出しと絞り込み、下に一題の図。左に自分の側、右に相手の城を置いた見取り図と、題名「戦う前に、目的へ。」。">
+            <div class="shot-head">
+              <p class="shot-h" style="margin-top:0;">思考の棚</p>
+              <div class="shot-chips" style="margin-top:8px;gap:5px;justify-content:flex-start;">
+                <span class="shot-field">言葉・人物で探す</span>
+                <span class="shot-field">すべての時代</span>
+                <span class="shot-field">栞のある題だけ</span>
+                <span class="shot-count" style="margin-left:auto;">18 / 18 題</span>
+              </div>
+            </div>
+            <div class="shot-diagram">
+              <svg viewBox="0 0 300 122" fill="none" aria-hidden="true">
+                <text x="150" y="13" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="6" fill="rgba(184,180,174,0.5)">目的と手段の見取り図</text>
+                <g stroke="rgba(184,180,174,0.13)" stroke-width="0.8">
+                  <path d="M6 44c48-15 96 12 144-3s96-12 144 5"/>
+                  <path d="M6 56c48-15 96 12 144-3s96-12 144 5"/>
+                  <path d="M6 68c48-15 96 12 144-3s96-12 144 5"/>
+                  <path d="M6 80c48-15 96 12 144-3s96-12 144 5"/>
+                  <path d="M6 92c48-15 96 12 144-3s96-12 144 5"/>
+                </g>
+                <path d="M9 22h7M9 22v7M291 112h-7M291 112v-7" stroke="rgba(184,180,174,0.25)" stroke-width="0.9"/>
+                <circle cx="70" cy="56" r="4" fill="rgba(232,224,208,0.85)"/>
+                <text x="70" y="70" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="6" fill="rgba(232,224,208,0.72)">自分の側</text>
+                <rect x="194" y="40" width="40" height="30" fill="none" stroke="rgba(196,153,136,0.5)" stroke-width="0.9"/>
+                <path d="M214 48.5 221 55l-7 6.5-7-6.5Z" fill="#C49988"/>
+                <text x="214" y="82" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="6" fill="rgba(232,224,208,0.72)">相手の城</text>
+              </svg>
+            </div>
+            <p class="shot-meta">中国古典 ・ 目的</p>
+            <p class="shot-kai-h">戦う前に、目的へ。</p>
+            <p class="shot-src">孫子・謀攻篇</p>
+          </figure>
           <a href="../strategy/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
         </div>
       </div>
