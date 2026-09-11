@@ -209,7 +209,8 @@
         #one-step span { margin-left: 16px; color: #B8B4AE; }
         #play-instruction { font-size: 11px; color: #9A8A7A; letter-spacing: 0.03em; margin: 12px 0 0; }
         .paint-tools { display: flex; align-items: center; gap: 12px; margin-top: 10px; font-size: 10px; letter-spacing: 0.06em; color: #9A8A7A; }
-        #clear-paint { font-size: 11px; color: #9A8A7A; letter-spacing: 0.06em; background: none; border: 0; padding: 8px 4px; cursor: pointer; }
+        /* 左の余白を 0 にして上の説明文と頭を揃える。右と上下は指で押せる幅を残す */
+        #clear-paint { font-size: 11px; color: #9A8A7A; letter-spacing: 0.06em; background: none; border: 0; padding: 10px 14px 10px 0; cursor: pointer; }
         #clear-paint:hover { color: #E8E0D0; }
         .play-controls button:disabled { opacity: 0.4; cursor: default; }
         .play-controls button:focus-visible { outline: 2px solid #E8E0D0; outline-offset: 4px; }
@@ -869,7 +870,6 @@
                     </button>
                     <p id="play-instruction" data-i18n="play.hint">余白をなぞる、またはタップしてみてください。</p>
                     <div class="paint-tools">
-                        <span data-i18n="play.chance">色は、そのときの偶然に。</span>
                         <button type="button" id="clear-paint" data-i18n="play.clear" aria-label="足跡を消して最初から">やりなおす</button>
                     </div>
                     <span class="story-sr" role="status" id="paint-status"></span>
@@ -1876,7 +1876,6 @@ const I18N = {
     'play.step': '余白に、ひと足。',
     'play.hint': '余白をなぞる、またはタップしてみてください。',
     'play.hintReduced': '動きを減らす設定に合わせ、静かな足跡を展示しています。',
-    'play.chance': '色は、そのときの偶然に。',
     'play.clear': 'やりなおす',
     'contact.h2': '<span class="inline-block">AIが多くを担う時代に、</span><br><span class="inline-block">人間に必要なのは</span><span class="inline-block">「<span class="text-gradient">遊び</span>」だ。</span>',
     'contact.subtitle': '<span class="inline-block">効率でも、消費でもなく。</span><br><span class="inline-block">音楽・映像・言葉・コードを越えて、</span><span class="inline-block">遊ぶように創る。</span><br><span class="inline-block">その問いを面白がれる人を、</span><span class="inline-block">いつでも歓迎します。</span>',
@@ -1929,7 +1928,6 @@ const I18N = {
     'play.step': 'One step in the margin.',
     'play.hint': 'Trace the margin, or tap it.',
     'play.hintReduced': 'Reduced motion is on, so a still paw print is shown instead.',
-    'play.chance': 'The color is left to chance.',
     'play.clear': 'Start over',
     'contact.h2': "In an age where AI does so much,<br>what humans need is <span class=\"text-gradient\">play</span>.",
     'contact.subtitle': 'Not efficiency, not consumption —<br>creating as if at play, across music, video, words and code.<br>Anyone who finds that question fun is always welcome.',
