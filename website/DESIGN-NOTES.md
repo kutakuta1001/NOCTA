@@ -15,7 +15,7 @@
 ## 1. ブランドの核となる考え方
 
 - **多領域クリエイティブプロジェクト**であり、音楽専門レーベルではない。4本柱 = **音楽 / ビジュアル / 言葉（ブログ）/ コード（アプリ）**。
-- この4本柱は、About の収束図と本文、価値カード「越境（Crossing）」、肉球と足跡の固定4色、footerタグライン `Music × Visual × Words × Code` に一貫して現れる。
+- この4本柱は、About の収束図と本文、価値カード「越境（Crossing）」、肉球と足跡の固定4色、footerタグライン `Music × Visual × Words × Tools` に一貫して現れる。
 - ヒーロー下の STATS は現在**3項目**（ビジュアル数 / ブログ数 / アプリ数）。楽曲数は Music がリリース前のため出していない（`works-data.js` は index.html から読み込まれていない）。初回リリース時に4項目へ戻す。
 - トーンは **dark editorial serif-led**（落ち着いた・余白主体・印刷的）。声高でなく、必要な箇所だけ静かに強い。
 
@@ -58,7 +58,7 @@
 4. **featured-first グリッド**（2026-06-15追加・**現在は休止**）— Works 先頭カードを `lg:col-span-2` の横長に。均質な3列グリッドの「スペックシート感」を崩す。作品グリッド自体を章扉に置き換えたため、いまページ上には存在しない（復活時に適用する仕様として残す）。
 5. **glass-and-noise first のelevation** — 影は最小。深さは半透明グラス＋常時のグレインノイズ＋（hover時のみの）シルバーglowで作る。glow は常時点灯しない。
 6. **アクセントの希少性** — プライマリCTAは1ビューポートに1つ。シルバーは差し色として控えめに。
-7. **About シグネチャビジュアル**（2026-06-15・案F）— About右の図を「中央SOULノードグラフ」から **4本柱（Music/Visual/Words/Code）が中央の動くシルバー球体に収束する図**へ刷新。中央の安っぽいテキスト（SOUL/NOCTA）は廃し、メタリックなグラデーション球体（`.nocta-orb`・`orbFloat`/`orbShine` で呼吸・浮遊）に。図の4ラベルは、2026-09-11 に4つ目を **Code → Tools** に変更した（CEO 指示。ページ下部のセクション名 ABOUT / VISUAL / TOOLS / BLOG と揃えるため）。ブランドのタグライン・meta / OG の説明・brandkit.html は `Music × Visual × Words × Code` のままで、揃えるかは CEO 判断として保留している。STATS は Music リリース前のため3項目。
+7. **About シグネチャビジュアル**（2026-06-15・案F）— About右の図を「中央SOULノードグラフ」から **4本柱（Music/Visual/Words/Code）が中央の動くシルバー球体に収束する図**へ刷新。中央の安っぽいテキスト（SOUL/NOCTA）は廃し、メタリックなグラデーション球体（`.nocta-orb`・`orbFloat`/`orbShine` で呼吸・浮遊）に。図の4ラベルは footer タグラインの4本柱と常に一致させる。**4本目の名前は 2026-09-11 に Code → Tools へ改称した**（CEO 判断。ページ下部のセクション名 ABOUT / VISUAL / TOOLS / BLOG と揃えるため）。改称はサイト全体に適用済みで、図のラベル・フッターのタグライン・meta / OG / Twitter の説明・英語の footer.s4・brandkit.html（リード・タグライン・Four Domains 04）・設計文書すべてを Tools にした。柱の名前として Code を復活させない。STATS は Music リリース前のため3項目。
 8. **ヒーロー背景の幾何ループ**（2026-06-15）— 旧「2026」を、同心の回転多角形・ダッシュリング・脈動ドット（シルバー線画）の **30秒シームレスループ**に置換。全要素の周期は30秒の約数（30s/15s）でぴったり最初に戻る。`prefers-reduced-motion` で停止。CSSは `.hero-geo` / `.geo-*` / `@keyframes geoSpinCW/CCW/geoBreathe/geoPulse`。
 
 **ブランド肩書き**: 公開表記は「Music Entertainment / 音楽エンタメ」→ **「Creative / クリエイティブ」** に変更（2026-06-15・`<title>`・ヒーローeyebrow・footer）。音楽専門レーベルではないため領域中立に保つ。
@@ -255,7 +255,7 @@ NuWord同様の「HiNaコレクション」コンセプトページ。図鑑3部
 初回リリース時に作品グリッドとあわせて4項目（`grid-cols-4`）へ戻す。
 
 4本柱そのものは、About の収束図、About 本文「音楽、映像、画像、言葉」、価値カード「越境（Crossing）」、
-肉球の固定4色、footer タグライン `Music × Visual × Words × Code` に残っている。
+肉球の固定4色、footer タグライン `Music × Visual × Words × Tools` に残っている。
 **4本柱のアイデンティティは変えていない。STATS の表示項目だけが3つになっている。**
 
 ### BEHIND NOCTA セクションの削除（2026-09-11・commit `70c9a4a`）
