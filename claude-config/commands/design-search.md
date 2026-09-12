@@ -7,6 +7,8 @@ argument-hint: <用途・キーワード>
 
 ## Step 1: INDEX 検索
 
+検索前に `/Users/fghmacbook013/designer/taste/WORKFLOW.md` と、存在すれば `/Users/fghmacbook013/designer/taste/preferences.json` を読む。用途が合う候補の中で本人の評価・感想・適用場面を考慮し、未評価は好みと推定しない。
+
 `~/designer/INDEX.md` を Read し、`$ARGUMENTS` の用途にタグ・要約がマッチするパターンを最大 5 件特定する。
 
 - `$ARGUMENTS` が空の場合: INDEX.md の全パターンをタグごとに整理した一覧として提示し、「どの用途のパターンをお探しですか?」と尋ねて終了する（この場合は何も書き込まない）
