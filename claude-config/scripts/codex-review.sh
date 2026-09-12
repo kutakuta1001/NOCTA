@@ -15,12 +15,16 @@
 #   - 副: フォールバック用 OpenAI API キーを ~/.codex/fallback-api-key に保存（chmod 600）
 #
 # 認証モード（CODEX_AUTH で切替・既定 chatgpt）:
-#   - chatgpt: OPENAI_API_KEY を env から外して実行 → ChatGPT Plus 連携を使う（主）
-#   - apikey : フォールバックキーファイルを読み込んで従量課金で実行（副）
-#   chatgpt モードで認証失敗（未ログイン・トークン失効等）した場合は、
-#   特別な終了コード 75 と "CODEX_AUTH_FAILED" を出力して呼び出し側に通知する。
-#   呼び出し側（/review・/review-diff スキル）はユーザーに確認した上で
-#   CODEX_AUTH=apikey で再実行する。
+#   - chatgpt: OPENAI_API_KEY を env から外して実行 → ChatGPT Plus 連携を使う（定額）
+#   - apikey : 従量課金。**既定で無効**。CODEX_ALLOW_METERED=1 がない限り実行を拒否する
+#
+# 課金方針（2026-09-12 CEO 決定「定額のみに限定」）:
+#   従量課金には自動でも手動確認でもフォールバックしない。定額枠で完結させる。
+#   モデルが使えない場合（CLI が古い・提供終了等）は、同じ定額枠のまま
+#   CODEX_CHATGPT_MODEL → CODEX_CHATGPT_MODEL_FALLBACKS の順に試す。
+#   それでも全滅したら終了コード 75 と "CODEX_AUTH_FAILED" を出して**課金せずに停止**する。
+#   呼び出し側（/codex-review・/codex-diff スキル）は apikey への切替を提案してはならない。
+#   対処は CLI の更新か codex login の再実行。
 #
 # 設計意図:
 #   - --sandbox read-only で安全にレビューのみ実行（書き込みなし）
@@ -46,6 +50,10 @@ FALLBACK_KEY_FILE="${CODEX_FALLBACK_KEY_FILE:-$HOME/.codex/fallback-api-key}"
 # 0.144.6 では同じモデル名が 400（requires a newer version of Codex）で拒否された。
 # 古い CLI では gpt-5.6-sol / gpt-5.5 にフォールバックすること。
 CODEX_CHATGPT_MODEL="${CODEX_CHATGPT_MODEL:-gpt-6-astra}"
+# astra がモデル未対応で拒否されたときに、同じ ChatGPT Plus 定額枠のまま順に試すモデル。
+# **従量課金でしか使えないモデルを絶対にここへ入れない**（定額のみの方針）。
+# gpt-5.6-sol は CLI 0.144.0 以降・gpt-5.5 は旧既定で古い CLI でも動く。
+CODEX_CHATGPT_MODEL_FALLBACKS="${CODEX_CHATGPT_MODEL_FALLBACKS:-gpt-5.6-sol gpt-5.5}"
 
 # 推論の深さ。GPT-6 世代は low/medium/high/xhigh/max/ultra の6段階。
 # astra の既定は low だが、レビューは欠陥発見の網羅性が最優先なので high を明示する。
@@ -57,8 +65,19 @@ CODEX_REASONING_EFFORT="${CODEX_REASONING_EFFORT:-high}"
 # 認証の優先順位の曖昧さを排除する。codex の状態ファイルもここに隔離される。
 APIKEY_HOME="${CODEX_APIKEY_HOME:-$HOME/.codex-apikey}"
 
+# 従量課金の明示許可フラグ。1 以外なら apikey モードは実行を拒否する（既定で無効）。
+CODEX_ALLOW_METERED="${CODEX_ALLOW_METERED:-0}"
+# apikey モードで使うモデル。**必ず明示指定する。**
+# 指定しないと CODEX_HOME=~/.codex-apikey に config.toml がないため CLI 組み込み既定
+# （CLI 0.154.0 では priority 1 = gpt-6-astra・$10/$50）が黙って使われる。
+# 最安の gpt-5.6-luna（$0.20/$1.20）を既定にして、万一の実行でも出費を最小化する。
+CODEX_APIKEY_MODEL="${CODEX_APIKEY_MODEL:-gpt-5.6-luna}"
+
 # chatgpt モードで認証失敗を検出したときの専用終了コード（呼び出し側で判別）
 CODEX_AUTH_FAILED_EXIT=75
+# モデル未対応。認証失敗とは原因が違い、次の定額モデルを試せば回復しうるため分ける。
+# スクリプト内部でのみ使い、呼び出し側には漏らさない（全滅時は 75 に丸める）。
+CODEX_MODEL_UNSUPPORTED_EXIT=76
 
 # ChatGPT Plus の Codex はおよそ5時間ローリング制限（公称値は非公開、目安として
 # 呼び出し回数で追跡）。chatgpt モードのみカウントする（apikey は従量課金で上限なし）。
@@ -182,10 +201,13 @@ check_cli_version() {
 # CODEX_TIMEOUT_SEC で上書き可（既定 180 秒）。
 CODEX_TIMEOUT_SEC="${CODEX_TIMEOUT_SEC:-180}"
 
-# 認証モードに応じて codex を起動する内部関数。
-# 出力はライブ表示しつつ一時ファイルにも保存し、認証失敗判定に使う。
-run_codex() {
-  local prompt="$1"
+# 1回の codex 起動を担う内部関数。モデルは呼び出し側が必ず明示する。
+# 出力はライブ表示しつつ一時ファイルにも保存し、失敗理由の判定に使う。
+# 戻り値: 0=成功 / 76=モデル未対応（次の定額モデルで回復しうる） /
+#         75=認証失敗（モデルを変えても直らない） / その他=codex の終了コード
+run_codex_once() {
+  local model="$1"
+  local prompt="$2"
 
   # 認証モードごとの起動コマンドを組み立てる。
   # chatgpt: OPENAI_API_KEY を env から外して ChatGPT Plus 連携を使う。
@@ -193,13 +215,10 @@ run_codex() {
   local -a launcher
   case "$CODEX_AUTH" in
     chatgpt)
-      check_cli_version
-      warn_if_near_limit
-      record_usage
-      echo "🔑 認証モード: chatgpt（ChatGPT Plus 連携 / model=${CODEX_CHATGPT_MODEL}${CODEX_REASONING_EFFORT:+ / effort=${CODEX_REASONING_EFFORT}}）" >&2
+      echo "🔑 認証モード: chatgpt（ChatGPT Plus 連携・定額 / model=${model}${CODEX_REASONING_EFFORT:+ / effort=${CODEX_REASONING_EFFORT}}）" >&2
       # 主の ~/.codex を使う。env のキーが残っていても拾わせない。
       # ChatGPT 対応モデルを明示指定（既定モデルは API 専用で拒否されるため）。
-      launcher=(env -u OPENAI_API_KEY codex exec -m "$CODEX_CHATGPT_MODEL")
+      launcher=(env -u OPENAI_API_KEY codex exec -m "$model")
       # 推論の深さを明示する。astra の既定は low で、レビューの網羅性が落ちる。
       if [[ -n "$CODEX_REASONING_EFFORT" ]]; then
         launcher+=(-c "model_reasoning_effort=${CODEX_REASONING_EFFORT}")
@@ -223,8 +242,10 @@ run_codex() {
       chmod 700 "$APIKEY_HOME"
       printf '{"auth_mode":"apikey","OPENAI_API_KEY":"%s"}' "$api_key" > "$APIKEY_HOME/auth.json"
       chmod 600 "$APIKEY_HOME/auth.json"
-      echo "🔑 認証モード: apikey（フォールバック・従量課金 / CODEX_HOME=${APIKEY_HOME}）" >&2
-      launcher=(env -u OPENAI_API_KEY "CODEX_HOME=${APIKEY_HOME}" codex exec)
+      echo "💸 認証モード: apikey（従量課金 / model=${model} / CODEX_HOME=${APIKEY_HOME}）" >&2
+      # -m を必ず渡す。この CODEX_HOME には config.toml がないため、省略すると
+      # CLI 組み込み既定（高額モデル）が黙って使われる。
+      launcher=(env -u OPENAI_API_KEY "CODEX_HOME=${APIKEY_HOME}" codex exec -m "$model")
       ;;
     *)
       echo "ERROR: 不明な CODEX_AUTH=$CODEX_AUTH（chatgpt|apikey のみ）" >&2
@@ -237,7 +258,7 @@ run_codex() {
   # shellcheck disable=SC2064
   trap "rm -f '$out_file'" RETURN
 
-  # 出力をファイルに保存（認証失敗判定に使う）。env が codex を exec するため
+  # 出力をファイルに保存（失敗理由の判定に使う）。env が codex を exec するため
   # $! は codex 本体の PID となり、元実装と同じ単一 PID watchdog が使える。
   # stdin は /dev/null に向ける。さもないと codex exec が標準入力からの
   # 追加入力を待ち続けてハングする（"Reading additional input from stdin..."）。
@@ -250,12 +271,27 @@ run_codex() {
     "$prompt" < /dev/null > "$out_file" 2>&1 &
   local codex_pid=$!
 
-  ( sleep "$CODEX_TIMEOUT_SEC"; kill -TERM "$codex_pid" 2>/dev/null; sleep 3; kill -KILL "$codex_pid" 2>/dev/null ) &
+  # watchdog。1秒刻みで codex の生存を確認し、終わっていれば即座に自分も抜ける。
+  # 単発の `sleep "$CODEX_TIMEOUT_SEC"` だと、親が kill してもその sleep が orphan として
+  # 生き残り、継承した stdout を掴み続けてパイプの EOF を最大 CODEX_TIMEOUT_SEC 遅らせる
+  # （出力を | に通すと固まる。定額フォールバックで1回の実行に watchdog が最大3個
+  # 生まれるようになったため実測で顕在化した）。さらに時間差で PID 再利用後の
+  # 無関係なプロセスへ kill が飛ぶ危険もある。
+  # 対策: fd を /dev/null に落とし、ポーリングで codex の終了を検知して即時 exit する。
+  (
+    for (( _i = 0; _i < CODEX_TIMEOUT_SEC; _i++ )); do
+      sleep 1
+      kill -0 "$codex_pid" 2>/dev/null || exit 0
+    done
+    kill -TERM "$codex_pid" 2>/dev/null || true
+    sleep 3
+    kill -KILL "$codex_pid" 2>/dev/null || true
+  ) >/dev/null 2>&1 &
   local watchdog_pid=$!
   # watchdog が先に死んでも wait がブロックしないよう disown する
   disown "$watchdog_pid" 2>/dev/null || true
 
-  # set -e 下では wait が非ゼロを返すと即終了してしまい、後続の認証失敗検出に
+  # set -e 下では wait が非ゼロを返すと即終了してしまい、後続の失敗検出に
   # 到達できない。|| で受けて rc を捕捉する。
   local rc=0
   wait "$codex_pid" || rc=$?
@@ -266,17 +302,13 @@ run_codex() {
   # 保存した出力をユーザーに見せる
   cat "$out_file"
 
-  # chatgpt モードでモデル非対応/CLI更新要求 → 認証とは別問題として明示通知
-  # （再ログインしても直らないため CODEX_AUTH_FAILED とは分ける）
+  # chatgpt モードでモデル非対応/CLI更新要求 → 次の定額モデルで回復しうるので区別する
+  # （再ログインしても直らないため認証失敗とは分ける）
   if [[ $rc -ne 0 && "$CODEX_AUTH" == "chatgpt" ]] \
      && grep -qiE 'not supported when using codex with a chatgpt account|requires a newer version of codex' "$out_file"; then
     echo "" >&2
-    echo "CODEX_MODEL_UNSUPPORTED: ChatGPT アカウントでモデル '${CODEX_CHATGPT_MODEL}' が使えません。" >&2
-    echo "  対処: Codex CLI を更新（npm install -g @openai/codex@latest）するか、" >&2
-    echo "        CODEX_CHATGPT_MODEL に対応モデル（例 gpt-5.6-sol / gpt-5.5）を指定してください。" >&2
-    # このエラーの主因は CLI の古さなので、その場でバージョン差を突き合わせて示す。
-    check_cli_version force
-    return "$CODEX_AUTH_FAILED_EXIT"
+    echo "CODEX_MODEL_UNSUPPORTED: ChatGPT アカウントでモデル '${model}' が使えません。" >&2
+    return "$CODEX_MODEL_UNSUPPORTED_EXIT"
   fi
 
   # chatgpt モードで失敗 かつ 認証エラーらしき出力 → 認証失敗として通知
@@ -284,8 +316,8 @@ run_codex() {
      && grep -qiE 'not logged in|please run .*login|run `codex login`|unauthorized|401|403|authentication failed|token (has )?expired|credentials|re-?authenticate' "$out_file"; then
     echo "" >&2
     echo "CODEX_AUTH_FAILED: ChatGPT Plus 連携の認証に失敗しました（未ログイン/トークン失効の可能性）。" >&2
-    echo "  対処: ターミナルで \`codex login\` を実行して再ログインするか、" >&2
-    echo "        ユーザー確認の上で CODEX_AUTH=apikey で再実行してください。" >&2
+    echo "  対処: ターミナルで \`codex login\` を実行して再ログインしてください。" >&2
+    echo "  従量課金へはフォールバックしません（定額のみの方針）。" >&2
     return "$CODEX_AUTH_FAILED_EXIT"
   fi
 
@@ -293,6 +325,66 @@ run_codex() {
     echo "⚠️  codex exited with code $rc (timeout=${CODEX_TIMEOUT_SEC}s)" >&2
   fi
   return $rc
+}
+
+# 課金方針を適用したうえで run_codex_once を呼ぶ外側の関数。
+# chatgpt（定額）: モデル未対応なら同じ定額枠の次のモデルへ。全滅したら課金せず停止。
+# apikey（従量課金）: CODEX_ALLOW_METERED=1 がない限り実行を拒否する。
+run_codex() {
+  local prompt="$1"
+
+  if [[ "$CODEX_AUTH" == "apikey" ]]; then
+    if [[ "$CODEX_ALLOW_METERED" != "1" ]]; then
+      echo "ERROR: 従量課金経路は無効化されています（定額のみの方針・2026-09-12 CEO 決定）。" >&2
+      echo "       ChatGPT Plus の定額枠が使えないときは、課金せず停止するのが既定の挙動です。" >&2
+      echo "       対処: npm install -g @openai/codex@latest で CLI を更新、または codex login。" >&2
+      echo "       それでも従量課金で実行する必要がある場合のみ:" >&2
+      echo "         CODEX_ALLOW_METERED=1 CODEX_AUTH=apikey $0 <mode>" >&2
+      echo "       その場合 model=${CODEX_APIKEY_MODEL} で実行されます（最安モデルを固定）。" >&2
+      exit 1
+    fi
+    echo "💸 警告: 従量課金で実行します（CODEX_ALLOW_METERED=1 が指定されています）。" >&2
+    echo "   model=${CODEX_APIKEY_MODEL} ・ ChatGPT Plus の定額枠は使いません。" >&2
+    local rc=0
+    run_codex_once "$CODEX_APIKEY_MODEL" "$prompt" || rc=$?
+    return $rc
+  fi
+
+  # ---- ここから定額経路 ----
+  # CLI バージョン確認・使用量警告・使用量記録は1回だけ行う。
+  # モデル未対応で再試行しても、Plus のレート制限を二重に数えない。
+  check_cli_version
+  warn_if_near_limit
+  record_usage
+
+  local -a models=("$CODEX_CHATGPT_MODEL")
+  # 空白区切りの文字列を配列に展開する（意図的な word splitting）。
+  # shellcheck disable=SC2206
+  models+=($CODEX_CHATGPT_MODEL_FALLBACKS)
+
+  local i rc=0
+  for (( i = 0; i < ${#models[@]}; i++ )); do
+    rc=0
+    run_codex_once "${models[$i]}" "$prompt" || rc=$?
+    # モデル未対応以外（成功・認証失敗・その他エラー）はそのまま返す。
+    # モデルを変えても結果が変わらないため再試行しない。
+    if [[ $rc -ne $CODEX_MODEL_UNSUPPORTED_EXIT ]]; then
+      return $rc
+    fi
+    if (( i + 1 < ${#models[@]} )); then
+      echo "   → 同じ定額枠の次のモデル（${models[$((i + 1))]}）を試します。" >&2
+    fi
+  done
+
+  # 定額枠のモデルが全滅。従量課金には落とさず、ここで止める。
+  echo "" >&2
+  echo "CODEX_AUTH_FAILED: 定額枠で使えるモデルがありませんでした（試行: ${models[*]}）。" >&2
+  echo "  従量課金へはフォールバックしません（定額のみの方針・2026-09-12 CEO 決定）。" >&2
+  echo "  対処1: npm install -g @openai/codex@latest（新モデルは新版 CLI を要求する）" >&2
+  echo "  対処2: codex login で再ログイン" >&2
+  echo "  対処3: Claude 側（Opus 5 / /persona-review）でレビューを代替する" >&2
+  check_cli_version force
+  return "$CODEX_AUTH_FAILED_EXIT"
 }
 
 case "$MODE" in
@@ -411,6 +503,8 @@ EOF
   version-check)
     # キャッシュを無視して npm の最新版と突き合わせる（/weekly-check から呼ばれる）。
     echo "使用モデル: ${CODEX_CHATGPT_MODEL}${CODEX_REASONING_EFFORT:+ / effort=${CODEX_REASONING_EFFORT}}" >&2
+    echo "定額フォールバック: ${CODEX_CHATGPT_MODEL_FALLBACKS}" >&2
+    echo "従量課金: 無効（有効化には CODEX_ALLOW_METERED=1・その場合 model=${CODEX_APIKEY_MODEL}）" >&2
     check_cli_version force
     ;;
 
@@ -429,21 +523,33 @@ Modes:
 Examples:
   $0 plan docs/superpowers/plans/2026-04-18-seeds-m1-fts5.md
   $0 diff
-  CODEX_AUTH=apikey $0 diff       # フォールバック（従量課金）で再実行
+  # 従量課金は既定で無効。必要な場合のみ明示許可する（通常は使わない）
+  # CODEX_ALLOW_METERED=1 CODEX_AUTH=apikey $0 diff
   $0 file src/app/api/cards/route.ts
   $0 custom "src/lib/db.ts のコネクションプーリングを評価せよ"
   $0 usage
   $0 version-check
 
-認証:
-  既定は chatgpt（ChatGPT Plus 連携）。認証失敗時は終了コード 75 と
-  "CODEX_AUTH_FAILED" を出力する。CODEX_AUTH=apikey で従量課金に切替。
+認証と課金方針（2026-09-12 CEO 決定「定額のみに限定」）:
+  既定は chatgpt（ChatGPT Plus 連携・定額）。従量課金には自動でも手動確認でも
+  フォールバックしない。
+  モデルが使えない場合は同じ定額枠のまま CODEX_CHATGPT_MODEL →
+  CODEX_CHATGPT_MODEL_FALLBACKS の順に試し、全滅したら終了コード 75 と
+  "CODEX_AUTH_FAILED" を出して課金せず停止する。
+  apikey モードは CODEX_ALLOW_METERED=1 がない限り実行を拒否する。
 
 Env overrides:
   CODEX_AUTH                 認証モード（chatgpt|apikey・既定 chatgpt）
+  CODEX_ALLOW_METERED        従量課金の明示許可（既定: 0 = 無効）
+                             ※ 1 以外のとき apikey モードは実行を拒否する
   CODEX_CHATGPT_MODEL        ChatGPT 連携で使うモデル（既定: gpt-6-astra・要 CLI 0.153+）
-                             ※ codex 既定 gpt-5.3-codex は API 専用で ChatGPT 不可
+                             ※ codex 既定 gpt-5.3-codex は API 一覧から消滅（2026-09-12）
                              ※ 単体 "gpt-5.6" は非対応。sol/terra/luna の階層名が必須
+  CODEX_CHATGPT_MODEL_FALLBACKS
+                             定額枠での段階フォールバック（既定: "gpt-5.6-sol gpt-5.5"）
+                             ※ 従量課金でしか使えないモデルを入れてはならない
+  CODEX_APIKEY_MODEL         apikey モードのモデル（既定: gpt-5.6-luna を最安で固定）
+                             ※ 省略すると CLI 既定の高額モデルが使われるため必ず指定する
   CODEX_REASONING_EFFORT     推論の深さ（既定: high。空文字でモデル既定に委ねる）
                              ※ GPT-6 世代は low/medium/high/xhigh/max/ultra
                              ※ chatgpt モードのみ適用

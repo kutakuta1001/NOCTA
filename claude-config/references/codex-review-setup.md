@@ -15,26 +15,37 @@ OpenAI の Codex CLI を第三者レビュアーとして呼び出す仕組み�
 
 ---
 
-## 認証構成（主・副の2系統）
+## 認証構成（定額のみ・2026-09-12 CEO 決定で副を封鎖）
 
 | 系統 | 認証 | モデル | 課金 | いつ使うか |
 |---|---|---|---|---|
 | **主** | ChatGPT Plus 連携 | gpt-6-astra（effort **high**） | 定額（Plus料金内） | 既定。通常はこれで走る |
-| **副** | OpenAI API キー | gpt-5.3-codex | 従量課金 | 主が失敗したとき、ユーザー確認の上で |
+| 主の定額フォールバック | ChatGPT Plus 連携 | gpt-5.6-sol → gpt-5.5 | 定額（Plus料金内） | astra がモデル未対応で拒否されたとき自動で順に試す |
+| ~~副~~ | OpenAI API キー | gpt-5.6-luna（固定） | 従量課金 | **既定で無効。`CODEX_ALLOW_METERED=1` がない限り実行を拒否** |
 
-推論の深さ（`model_reasoning_effort`）は **chatgpt モードのみ** に渡す。副は主が死んだときの
-最後の逃げ道であり、未検証の config キーを足して経路ごと壊すリスクを避ける。
+**課金方針: 定額のみ。従量課金へは自動でも手動確認でもフォールバックしない。**
+定額枠のモデルが全滅したら exit 75 で**課金せず停止**する。対処は CLI 更新・`codex login`・
+または Claude 側（Opus 5 / `/persona-review`）でのレビュー代替。
+
+推論の深さ（`model_reasoning_effort`）は **chatgpt モードのみ** に渡す。apikey は未検証の
+config キーを足して経路ごと壊すリスクを避けるため付けない。
+
+`CODEX_CHATGPT_MODEL_FALLBACKS`（既定 `"gpt-5.6-sol gpt-5.5"`）には
+**従量課金でしか使えないモデルを入れてはならない**。定額の前提が崩れる。
 
 - 主の認証情報: `~/.codex/auth.json`（`codex login` で作成・ChatGPTトークン）
 - 副のAPIキー: `~/.codex/fallback-api-key`（chmod 600）。専用 `CODEX_HOME=~/.codex-apikey` で主と完全分離
 - `OPENAI_API_KEY` は環境変数に常駐させない（settings.json・launchctl から撤去済み）。
   常駐するとCodexがAPIキーを優先してしまうため。
 
-### フォールバックの流れ
-1. `/codex-review` 実行 → 既定で ChatGPT Plus（主）で走る
-2. 主が認証失敗 → スクリプトが **終了コード 75 + `CODEX_AUTH_FAILED`** を出力
-3. Claude がそれを検知 → **勝手に従量課金へ切り替えず、ユーザーに確認**
-4. ユーザーが承認 → `CODEX_AUTH=apikey` で再実行（API従量課金）
+### フォールバックの流れ（すべて定額枠内）
+1. `/codex-review` 実行 → ChatGPT Plus で `gpt-6-astra`（effort high）
+2. モデル未対応で拒否 → 同じ定額枠のまま `gpt-5.6-sol` → `gpt-5.5` を順に試す
+3. 認証失敗（未ログイン・トークン失効）→ モデルを変えても直らないので**即停止**。他モデルは試さない
+4. 定額枠が全滅 → **終了コード 75 + `CODEX_AUTH_FAILED`** を出して課金せず終了
+5. Claude は `CODEX_AUTH=apikey` を提案しない。CLI 更新・再ログイン・Claude 側代替を案内する
+
+内部的にはモデル未対応を終了コード 76 で区別して再試行に使い、呼び出し側には 75 に丸めて返す。
 
 ---
 
@@ -67,12 +78,14 @@ OpenAI の Codex CLI を第三者レビュアーとして呼び出す仕組み�
   - `gpt-5.5` → 引き続き動作（旧既定・フォールバック用に維持）
   - `gpt-5.4` / `gpt-5.4-mini` → 動作（古いCLIでも可）
   - `gpt-5.x-codex` / `codex-mini` → ChatGPT非対応（APIキー専用）
-- ベンチマーク（SWE-bench Pro）: GPT-5.6 Sol 64.6%。参考: Claude Opus 4.8 69.2%・Fable 5 80%（Claude系が依然優位）。
-  一方 Codex 内 Coding Agent Index（ターミナル作業・ツール連携）では Sol(max) が最上位評価。
+- ベンチマークの比較値は `~/.claude/references/model-lineup.md` に一元化する（ここでは重複させない）。
+  要点: GPT-6 Astra は SWE-bench Pro 未公表。Coding Agent Index で Astra 67 対 Claude Fable 5.1 70。
+  **Codex を使う理由はスコア優位ではなく「別ベンダーの別の失敗モードを見ること」。**
 
 「Codex CLI（ツール）」は使えているが、その頭脳は gpt-6-astra（GPT-6 世代・欠陥発見精度最優先で選定）。
 旧既定 gpt-5.6-sol は CLI が古い環境向けのフォールバック候補として維持する。
-コード特化の `-codex` モデルを使いたい場合は apikey 副モード（従量課金）でのみ可能。
+コード特化の `-codex` モデルは 2026-09-12 時点で API モデル一覧から消滅しており（`gpt-5.3-codex` は
+価格ページにのみ残存）、かつ apikey 経路は封鎖したため**使用しない**。
 
 ---
 
@@ -89,8 +102,10 @@ CODEX_CHATGPT_MODEL=gpt-5.6-terra ~/.claude/scripts/codex-review.sh diff
 # 推論をさらに深くしたい（消費は増える）
 CODEX_REASONING_EFFORT=xhigh ~/.claude/scripts/codex-review.sh diff
 
-# 明示的にAPI従量課金で走らせたい
+# 従量課金は既定で無効。下記は拒否される（定額のみの方針）
 CODEX_AUTH=apikey ~/.claude/scripts/codex-review.sh diff
+# どうしても必要な場合のみ明示許可する（model=gpt-5.6-luna に固定される）
+# CODEX_ALLOW_METERED=1 CODEX_AUTH=apikey ~/.claude/scripts/codex-review.sh diff
 
 # 使用量の目安を見る（ChatGPT側の5h制限の自前カウンタ）
 ~/.claude/scripts/codex-review.sh usage
@@ -118,8 +133,10 @@ CODEX_AUTH=apikey ~/.claude/scripts/codex-review.sh diff
 - **「requires a newer version of Codex」** → CLIが古い。`npm install -g @openai/codex@latest` で更新。
   Codex は npm グローバル導入（`/opt/homebrew/bin/codex` は node_modules へのシンボリックリンク）。
   ※ この状態は下記「CLIバージョン追随の検知」で自動的に警告される。
-- **`CODEX_AUTH_FAILED`（exit 75）** → ChatGPT連携が切れた。`codex login` で再ログイン、
-  または確認の上で `CODEX_AUTH=apikey`。
+- **`CODEX_AUTH_FAILED`（exit 75）** → 定額枠で実行できなかった。原因は認証切れか、
+  定額枠のモデル全滅のいずれか（出力に試行したモデル名が出る）。
+  対処は `codex login` での再ログイン、`npm install -g @openai/codex@latest` での CLI 更新、
+  または Claude 側（Opus 5 / `/persona-review`）での代替。**従量課金には切り替えない。**
 - **`CODEX_MODEL_UNSUPPORTED`** → 指定モデルがChatGPTアカウントで使えない。
   `CODEX_CHATGPT_MODEL` をChatGPT対応モデル（gpt-5.6-terra / gpt-5.5）にするかCLIを更新。
   ※ GPT-5.6 系は階層名（sol/terra/luna）の指定が必須。単体の `gpt-5.6` は常に非対応。
@@ -138,7 +155,8 @@ CODEX_AUTH=apikey ~/.claude/scripts/codex-review.sh diff
 | `/weekly-check` Step 2 | 週次ルーティン | `version-check` を実行し、古ければ更新を推奨 |
 
 - npm 照会は watchdog 付き5秒。オフライン・タイムアウト時は黙ってスキップしてレビューを止めない
-- `CODEX_MODEL_UNSUPPORTED`（exit 75）検出時はキャッシュを無視して即照会し、バージョン差を突き合わせて表示する
+- 定額枠のモデルが全滅した時点でキャッシュを無視して即照会し、バージョン差を突き合わせて表示する
+  （個々の `CODEX_MODEL_UNSUPPORTED` ごとには照会しない。再試行で npm を何度も叩かないため）
 - 無効化は `CODEX_VERSION_CHECK=0`
 
 導入の経緯: gpt-6-astra は提供開始済みだったが、手元の CLI が 0.144.6 のままで9バージョン遅れており、
