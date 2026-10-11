@@ -155,3 +155,4 @@
 - 次: CEO 判断4件。(1) G-01・R-09・AGENTS 節の Opus 5.5 反映（「CLAUDE.md を更新して」で実施）と svp-generator / consultant-partner / fact-verifier への effort: high 追加、(2) Codex フォールバック鎖を gpt-6-astra → gpt-6-sol → gpt-5.6-sol にするか（先に gpt-6-sol の動作確認が必要）と従量課金枠の gpt-6-luna 化、(3) claude-config/references/model-lineup.md の rev.10 同期、(4) 本日3コミット（2ce71cc・57bd8f8・40bd025）の push。この handoff 追記は未コミット。
 
 - 2026-10-11: Tools に Barside（作者専用の英会話アプリ）の紹介ページとカードを追加しコミット済み（2b4fcef, 24acb36）。push 未。次: CEO が drafts/handoffs/2026-10-11-barside-tools.md の確認項目を見て `git push origin main`。
+- 2026-10-11: Barside の Tools 追加を公開（c1ad846・Deploy success）。本番の /barside/・cover.svg・apps-data.js の Barside エントリを確認済み。9/27 の3コミットも同時に公開。次: なし。
