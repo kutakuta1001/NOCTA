@@ -22,6 +22,13 @@ a{color:inherit}
 .primary{display:inline-flex;align-items:center;min-height:46px;padding:0 22px;border-radius:999px;background:var(--lamp);color:var(--bg);text-decoration:none;font-weight:600;font-size:14px}
 .primary:hover{filter:brightness(1.06)}
 .note{font-size:12px;color:var(--muted);margin-top:12px}
+.lamp-status{display:inline-flex;align-items:center;gap:9px;margin-top:14px;font-size:13px;color:var(--muted);min-height:20px}
+.lamp-status .lamp-dot{position:static;width:8px;height:8px;border-radius:50%;background:#5a4a38;box-shadow:none;transition:background .4s,box-shadow .4s}
+.lamp-status.is-open{color:var(--ink)}
+.lamp-status.is-open .lamp-dot{background:var(--lamp);box-shadow:0 0 14px rgba(227,164,75,.75)}
+.lamp-status.is-checking .lamp-dot{background:#8a7558}
+.primary.is-dim{background:#4a3a2a;color:var(--muted)}
+@media(prefers-reduced-motion:no-preference){.lamp-status.is-checking .lamp-dot{animation:lamp-check 1.2s ease-in-out infinite}@keyframes lamp-check{0%,100%{opacity:.4}50%{opacity:1}}}
 
 .counter{position:relative;border-radius:22px;overflow:hidden;border:1px solid rgba(183,164,140,.14);background:radial-gradient(70% 60% at 50% 0%,rgba(227,164,75,.16),transparent 70%),linear-gradient(180deg,#2a2019 0%,#1c1410 100%);padding:54px 8px 0}
 .counter .sign{position:absolute;left:50%;top:18px;transform:translateX(-50%);font-family:var(--en);font-style:italic;color:var(--lamp);font-size:18px;text-shadow:0 0 18px rgba(227,164,75,.35);white-space:nowrap}
