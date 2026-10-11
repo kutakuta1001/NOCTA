@@ -14,6 +14,17 @@
  */
 const NOCTA_APPS = [
   {
+    title: "Barside",
+    cat: "app",
+    url: "./barside/index.html",
+    imgUrl: "./barside/cover.svg",
+    thumbClass: "thumb-4",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "夜のバーの常連と、英語でひとこと。会話中は直されず、帰り道の手帳でふりかえる。会いに行くほど顔なじみになる、作者専用の会話練習。",
+    descEn: "A little English at the bar, with regulars who remember you. No corrections mid-conversation; a notebook for the walk home. A private practice app by the author."
+  },
+  {
     title: /* strategy-name:start */ "HiNa Kai" /* strategy-name:end */,
     cat: "app",
     url: "./strategy/index.html",
