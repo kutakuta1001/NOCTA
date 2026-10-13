@@ -159,3 +159,4 @@
 - 2026-10-11: Barside 紹介ページに稼働表示（灯り）を追加しコミット済み。push 未。次: CEO が確認して `git push origin main`（詳細は drafts/handoffs/2026-10-11-barside-tools.md の追記）。
 - 2026-10-13: Barside 紹介ページに「使い方（作者用）」リンク（非公開アーティファクト）を追加しコミット済み。push 未。次: CEO が確認して `git push origin main`。
 - 2026-10-13: Barside 稼働表示（c19422b）と使い方リンク（b91cf8a）を公開（1d96b31・Deploy success）。本番の /barside/ に両方が出ていることを確認済み。次: なし。
+- 2026-10-13: Barside 紹介ページに新機能の節「この秋、店に増えたもの」（0a4d22d）と「相手の声」の ElevenLabs 表記（2b5579d）を追加し公開（Deploy success）。本番の /barside/ で #new・判子と黒板の見本・「新しく」リンク、トップの Tools カード説明文を確認済み。次: なし。
