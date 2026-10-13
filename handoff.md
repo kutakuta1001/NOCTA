@@ -158,3 +158,4 @@
 - 2026-10-11: Barside の Tools 追加を公開（c1ad846・Deploy success）。本番の /barside/・cover.svg・apps-data.js の Barside エントリを確認済み。9/27 の3コミットも同時に公開。次: なし。
 - 2026-10-11: Barside 紹介ページに稼働表示（灯り）を追加しコミット済み。push 未。次: CEO が確認して `git push origin main`（詳細は drafts/handoffs/2026-10-11-barside-tools.md の追記）。
 - 2026-10-13: Barside 紹介ページに「使い方（作者用）」リンク（非公開アーティファクト）を追加しコミット済み。push 未。次: CEO が確認して `git push origin main`。
+- 2026-10-13: Barside 稼働表示（c19422b）と使い方リンク（b91cf8a）を公開（1d96b31・Deploy success）。本番の /barside/ に両方が出ていることを確認済み。次: なし。
