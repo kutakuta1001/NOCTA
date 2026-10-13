@@ -156,3 +156,5 @@
 
 - 2026-10-11: Tools に Barside（作者専用の英会話アプリ）の紹介ページとカードを追加しコミット済み（2b4fcef, 24acb36）。push 未。次: CEO が drafts/handoffs/2026-10-11-barside-tools.md の確認項目を見て `git push origin main`。
 - 2026-10-11: Barside の Tools 追加を公開（c1ad846・Deploy success）。本番の /barside/・cover.svg・apps-data.js の Barside エントリを確認済み。9/27 の3コミットも同時に公開。次: なし。
+- 2026-10-11: Barside 紹介ページに稼働表示（灯り）を追加しコミット済み。push 未。次: CEO が確認して `git push origin main`（詳細は drafts/handoffs/2026-10-11-barside-tools.md の追記）。
+- 2026-10-13: Barside 紹介ページに「使い方（作者用）」リンク（非公開アーティファクト）を追加しコミット済み。push 未。次: CEO が確認して `git push origin main`。

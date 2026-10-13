@@ -46,3 +46,21 @@ git push origin main          # GitHub Actions が GitHub Pages にデプロイ�
 - 紹介ページの文章: `website/barside/index.html`（本文は素の HTML）
 - 人物の絵は Barside 側（~/english/client/src/components/CharacterAvatar.tsx）の SVG を静的に書き出したもの。絵を変えるなら Barside 側で変えてから書き出し直す
 - Barside 本体の運用（常駐・公開・トークン）は ~/english/README.md の「外から使う」と ~/english/handoff.md
+
+## 追記（2026-10-11）: 稼働表示
+
+紹介ページのヒーローに「灯り」の稼働表示を追加した（コミット済み・push 未）。
+
+- `website/barside/index.html`: 入口ボタンの下に `#lamp-status`（確認中 / ついている / 消えている）。末尾の `<script>` が Barside サーバーの `GET https://barside.tail12dfa5.ts.net/status` を 6 秒のタイムアウト付きで読み、60 秒ごと・タブ復帰時に再確認する。返ってくるのは `{ ok: true }` だけで、認証もトークンも関係ない
+- `website/barside/style.css`: `.lamp-status` と、消えているときに入口ボタンを沈める `.primary.is-dim`
+- サーバー側は NOCTA のオリジン（https://kutakuta1001.github.io）にだけ CORS を許している。ローカルの file:// や別ドメインで開くと常に「消えている」と出るのは仕様（確認は本番 URL で）
+- Mac が休んでいる・電源がない・Tailscale が止まっているときは「いまは灯りが消えています。作者の Mac が休んでいるときはこうなります。」と出る
+
+確認: push 後に https://kutakuta1001.github.io/NOCTA/barside/ を開き、数秒で「いま、灯りがついています。入れます。」に変わること（Mac が起きていれば）。
+
+## 追記（2026-10-13）: 使い方へのリンク
+
+ヒーローの注記「作者ひとりのための実験です。…」の末尾に「使い方（作者用）↗」を追加した（コミット済み・push 未）。
+リンク先は Claude のアーティファクト（https://claude.ai/artifact/Q2ix1odBFhd7LuAZLH1p3s ）。作者のアカウントでログインしているときだけ開ける非公開ページで、訪問者が押しても中身は見えない。意図どおり。
+同じ内容のファイル版は Barside リポジトリ（非公開）の docs/usage-guide.html。
+
