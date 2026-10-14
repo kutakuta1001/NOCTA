@@ -164,3 +164,4 @@
 - 2026-10-14: lampnook 本体をビルド結果だけで公開（kutakuta1001/lampnook の gh-pages）し、NOCTA を push（57e03b2・Deploy success）。本番の /NOCTA/#apps と /NOCTA/lampnook/ を確認済み。次: CEO が localhost:4180 でバックアップを書き出し、https://kutakuta1001.github.io/lampnook/ で読み込む。
 - 2026-10-14: lampnook の記録の引っ越しは不要と CEO が判断（旧 localhost:4180 の記録は移さない）。lampnook の Tools 追加は完了。次: なし。
 - 2026-10-15: lampnook の紹介ページとカードの文言を、誰でも開ける実態に合わせて修正（入口ボタン「部屋に入る ↗」、作者専用の表現を削除、記録はブラウザの中だけ・消すと消える・バックアップで移す、を明記）。コミット済み・push 未。次: CEO が確認して `git push origin main`。
+- 2026-10-15: lampnook の文言修正を公開（aa3d1d3・03ebe37）。本番の /NOCTA/lampnook/ で「部屋に入る ↗」と新しい注記、カード説明の更新を確認済み。次: なし。
