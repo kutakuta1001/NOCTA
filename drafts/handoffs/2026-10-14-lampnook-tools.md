@@ -115,3 +115,9 @@ git push origin main          # GitHub Actions が GitHub Pages にデプロイ�
 - 紹介ページの文章: `website/lampnook/index.html`（素の HTML）
 - 絵を撮り直す: lampnook を開いて 1440x900 で画面を撮り（UI を隠す）、`python3 ~/goho/scripts/pix2svg.py <png> <svg> 355 30 1085 765 32` で描き写す。屋外（公園・キャンプ場）は末尾に `opaque` を付ける（空を残す）。1 ドットが 5px であることを前提にしている
 - lampnook 本体の運用: ~/goho/README.md と ~/goho/handoff.md
+
+## 追記（2026-10-14 公開済み）
+
+- B で公開した。リポジトリ `kutakuta1001/lampnook`（gh-pages、コミット 1196968、作者は noreply アドレス）。全 37 ファイルが 200、コンソールエラー 0、service worker の範囲は /lampnook/ のみ、オフラインでも開けることを確認。
+- NOCTA を push（57e03b2、Deploy success）。本番の紹介ページは 1440px / 390px とも横スクロールなし・エラー 0、Tools の先頭が lampnook。
+- 残り: 3 の記録の引っ越し（CEO のブラウザ操作）。
