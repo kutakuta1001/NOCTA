@@ -162,3 +162,4 @@
 - 2026-10-13: Barside 紹介ページに新機能の節「この秋、店に増えたもの」（0a4d22d）と「相手の声」の ElevenLabs 表記（2b5579d）を追加し公開（Deploy success）。本番の /barside/ で #new・判子と黒板の見本・「新しく」リンク、トップの Tools カード説明文を確認済み。次: なし。
 - 2026-10-14: Tools に lampnook（作者専用の集中タイマー）の紹介ページとカードを追加しコミット済み（ea926ce）。push 未、lampnook 本体も未公開。次: CEO が drafts/handoffs/2026-10-14-lampnook-tools.md を見て確認し、本体を公開（推奨はビルド結果だけ）してから `git push origin main`。
 - 2026-10-14: lampnook 本体をビルド結果だけで公開（kutakuta1001/lampnook の gh-pages）し、NOCTA を push（57e03b2・Deploy success）。本番の /NOCTA/#apps と /NOCTA/lampnook/ を確認済み。次: CEO が localhost:4180 でバックアップを書き出し、https://kutakuta1001.github.io/lampnook/ で読み込む。
+- 2026-10-14: lampnook の記録の引っ越しは不要と CEO が判断（旧 localhost:4180 の記録は移さない）。lampnook の Tools 追加は完了。次: なし。
