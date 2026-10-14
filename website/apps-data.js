@@ -21,8 +21,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "ドット絵の小さな部屋で、ランプの灯りのそばで二十五分。集中を重ねるほど部屋に物が増え、カフェ・公園・キャンプ場・縁側・雪の山小屋へと行ける場所が開いていく、作者専用の集中タイマー。",
-    descEn: "Twenty-five minutes by lamplight in a small pixel-art room. The more you focus, the more the room fills and the more places open up: a book cafe, a park, a mountain camp, a veranda, a snowy cabin. A private focus timer by the author."
+    descJa: "ドット絵の小さな部屋で、ランプの灯りのそばで二十五分。集中を重ねるほど部屋に物が増え、カフェ・公園・キャンプ場・縁側・雪の山小屋へと行ける場所が開いていく集中タイマー。記録は自分のブラウザの中にだけ残る。",
+    descEn: "Twenty-five minutes by lamplight in a small pixel-art room. The more you focus, the more the room fills and the more places open up: a book cafe, a park, a mountain camp, a veranda, a snowy cabin. A focus timer whose records stay in your own browser."
   },
   {
     title: "Barside",
