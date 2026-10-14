@@ -120,4 +120,4 @@ git push origin main          # GitHub Actions が GitHub Pages にデプロイ�
 
 - B で公開した。リポジトリ `kutakuta1001/lampnook`（gh-pages、コミット 1196968、作者は noreply アドレス）。全 37 ファイルが 200、コンソールエラー 0、service worker の範囲は /lampnook/ のみ、オフラインでも開けることを確認。
 - NOCTA を push（57e03b2、Deploy success）。本番の紹介ページは 1440px / 390px とも横スクロールなし・エラー 0、Tools の先頭が lampnook。
-- 残り: 3 の記録の引っ越し（CEO のブラウザ操作）。
+- 記録の引っ越しは不要（CEO 判断、2026-10-14）。残りなし。
