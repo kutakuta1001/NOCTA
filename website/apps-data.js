@@ -124,7 +124,7 @@ const NOCTA_APPS = [
     descEn: "Keep words close, like verses. A web app to collect and revisit memorable lines from your reading."
   },
   {
-    title: "NuWord inner canvas",
+    title: "NuWord Inner Canvas",
     cat: "app",
     url: "https://nner-canvas.vercel.app",
     imgUrl: "./images/inner-canvas.jpg",
