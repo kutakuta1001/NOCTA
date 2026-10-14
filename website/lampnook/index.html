@@ -1,0 +1,76 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#1c1722">
+<meta name="description" content="lampnook。ドット絵の小さな部屋で、ランプの灯りのそばで二十五分。集中を重ねるほど部屋に物が増え、行ける場所が開いていく、作者専用の集中タイマー。">
+<title>lampnook — NOCTA</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Sans+JP:wght@400;500&family=Shippori+Mincho:wght@600&display=swap">
+<link rel="stylesheet" href="./style.css"></head>
+<body><a href="#main" class="skip">本文へ</a>
+<div class="wrap">
+<header class="top"><a class="brand" href="./index.html">lampnook<i>.</i></a><nav aria-label="このページ"><a class="text-link" href="#places">場所</a><a class="text-link" href="#minutes">二十五分</a><a class="text-link" href="#how">仕組み</a><a class="text-link" href="../index.html#apps">NOCTA Tools ↗</a></nav></header>
+<main id="main">
+
+<section class="hero">
+  <div class="hero-copy">
+    <h1><span class="line">ランプの灯る部屋で、</span><span class="line">二十五分だけ。</span></h1>
+    <p class="lead">ドット絵の小さな部屋で集中するためのタイマー。時刻に合わせて窓の光とランプの影が動き、集中を重ねるほど部屋に物が増え、行ける場所が開いていく。</p>
+    <div class="hero-actions"><a class="primary" href="https://kutakuta1001.github.io/lampnook/" rel="noopener">作者用の入口を開く ↗</a><a class="text-link" href="#places">場所を見る</a></div>
+    <p class="note">作者ひとりのための道具です。記録はこのブラウザの中にだけ残り、どこにも送りません。</p>
+  </div>
+  <figure class="hero-visual">
+    <img class="room" src="./img/room-night.svg" width="146" height="147" alt="夜の部屋。机のランプが灯り、主人公が背を向けて座っている。本棚と観葉植物、床には猫。">
+    <figcaption>夜七時半の部屋。画面のドットを、そのまま一つずつ描き写した。</figcaption>
+  </figure>
+</section>
+
+<section id="places" class="places" aria-labelledby="places-h">
+  <div class="intro-line"><h2 id="places-h">行ける場所は、六つ。</h2><p>集中した時間の合計で、順に開いていく。</p></div>
+  <ol class="place-list">
+    <li class="place"><img src="./img/room-day.svg" width="146" height="147" alt="昼の自分の部屋" loading="lazy"><div class="place-text"><h3>自分の部屋</h3><p class="opens">はじめから</p><p>猫がいて、模様替えができる。家具は集中した時間で増え、旅の絵葉書もここに届く。</p></div></li>
+    <li class="place"><img src="./img/cafe.svg" width="146" height="147" alt="夕方のブックカフェ" loading="lazy"><div class="place-text"><h3>本に囲まれたブックカフェ</h3><p class="opens">はじめから</p><p>壁一面の本とペンダントの灯り。音はカフェのざわめきに切り替わる。</p></div></li>
+    <li class="place"><img src="./img/park.svg" width="146" height="147" alt="昼の公園のベンチ" loading="lazy"><div class="place-text"><h3>昼の公園</h3><p class="opens">合計 15 時間で開く</p><p>ベンチと池と木陰。夕方になると街灯がともる。</p></div></li>
+    <li class="place"><img src="./img/camp.svg" width="146" height="147" alt="夕焼けの山のキャンプ場" loading="lazy"><div class="place-text"><h3>山のキャンプ場</h3><p class="opens">合計 30 時間で開く</p><p>テントと焚き火、草原を流れる川。夜は星が出る。</p></div></li>
+    <li class="place"><img src="./img/engawa.svg" width="146" height="147" alt="夜の和室の縁側" loading="lazy"><div class="place-text"><h3>和室の縁側</h3><p class="opens">合計 50 時間で開く</p><p>行灯と障子、庭の石灯籠。九月と十月の夜は鈴虫が鳴く。</p></div></li>
+    <li class="place"><img src="./img/cabin.svg" width="146" height="147" alt="夜の雪の山小屋" loading="lazy"><div class="place-text"><h3>雪の山小屋</h3><p class="opens">合計 80 時間で開く</p><p>薪ストーブの火が揺れ、窓の外は雪をかぶった森。</p></div></li>
+  </ol>
+</section>
+
+<section id="minutes" class="minutes" aria-labelledby="minutes-h">
+  <div class="intro-line"><h2 id="minutes-h">二十五分のあいだに起きること。</h2><p>集中を邪魔しないように、変化は小さく、ゆっくり、まれに。大きな変化は休憩に回す。</p></div>
+  <div class="track" aria-hidden="true">
+    <span class="tick is-event" style="--m:0"></span><span class="tick" style="--m:1"></span><span class="tick" style="--m:2"></span><span class="tick" style="--m:3"></span><span class="tick" style="--m:4"></span><span class="tick is-event" style="--m:5"></span><span class="tick" style="--m:6"></span><span class="tick" style="--m:7"></span><span class="tick" style="--m:8"></span><span class="tick" style="--m:9"></span><span class="tick is-event" style="--m:10"></span><span class="tick" style="--m:11"></span><span class="tick" style="--m:12"></span><span class="tick" style="--m:13"></span><span class="tick" style="--m:14"></span><span class="tick is-event is-chime" style="--m:15"></span><span class="tick" style="--m:16"></span><span class="tick" style="--m:17"></span><span class="tick" style="--m:18"></span><span class="tick" style="--m:19"></span><span class="tick is-event is-chime" style="--m:20"></span><span class="tick" style="--m:21"></span><span class="tick" style="--m:22"></span><span class="tick" style="--m:23"></span><span class="tick" style="--m:24"></span><span class="tick is-event is-chime" style="--m:25"></span>
+  </div>
+  <ol class="timeline">
+    <li style="--m:0"><span class="at">0 分</span><p>部屋に入ると、題字の光の粒が机のランプへ飛んで、灯りがともる。</p></li>
+    <li style="--m:5"><span class="at">5 分ごと</span><p>机の紙が一枚ずつ増え、マグから湯気が立つ。窓にはときどき雲が流れる。</p></li>
+    <li style="--m:15"><span class="at">15 分・20 分</span><p>残り十分と残り五分で、柔らかい音が一度ずつ鳴る。消音中は鳴らない。</p></li>
+    <li style="--m:25"><span class="at">25 分</span><p>完了の音のあと、休憩。主人公は椅子にもたれ、猫は伸びをして、窓の光が少し明るくなる。</p></li>
+  </ol>
+</section>
+
+<section class="keeps" aria-labelledby="keeps-h">
+  <div class="intro-line"><h2 id="keeps-h">続けた分だけ、部屋に残る。</h2><p>減るものはない。休んだ日があっても、数は戻らない。</p></div>
+  <dl class="keep-list">
+    <div><dt>旅の絵葉書</dt><dd>部屋の外の場所で五回集中するたびに、その場所の絵葉書が一枚届き、部屋の壁に貼られる。十二枚まで。</dd></div>
+    <div><dt>本棚の本</dt><dd>どこで集中しても、十回ごとに背表紙が一冊増える。二十四冊まで。</dd></div>
+    <div><dt>スタンプ帳</dt><dd>集中した日に、暦へ朱の「済」が押される。今月の日数と、これまでの日数が並ぶ。</dd></div>
+  </dl>
+</section>
+
+<section id="how" class="how" aria-labelledby="how-h">
+  <h2 id="how-h">仕組み。</h2>
+  <dl>
+    <div><dt>画面</dt><dd>three.js でボクセルの部屋を組み、低い解像度で描いてから引き伸ばしてドット絵にしている。使う色は三十二色だけ。</dd></div>
+    <div><dt>光</dt><dd>時刻ごとに窓の光と空の色が変わり、夕方からはランプが主役になる。九つの時刻で、白飛びや暗すぎがないかを自動で確かめている。</dd></div>
+    <div><dt>音</dt><dd>雨・焚き火・川のせせらぎ・鈴虫など十三の環境音。CC0 とパブリックドメインの録音、それに手元での合成。出典はアプリの音のパネルから読める。</dd></div>
+    <div><dt>記録</dt><dd>集中の記録・部屋の配置・報酬は、ブラウザの IndexedDB にだけ残る。サーバーには何も送らない。別の端末へはバックアップの書き出しで運ぶ。</dd></div>
+    <div><dt>形</dt><dd>PWA。一度開けば、電波がなくても動く。GitHub Pages に静的に置いている。</dd></div>
+  </dl>
+  <p class="how-note">画面のドット絵は、アプリのスクリーンショットを一ドットずつ SVG に描き写したもの。写真や生成画像は使っていない。</p>
+</section>
+
+<div class="closing"><svg class="lamp-mark" viewBox="0 0 16 16" aria-hidden="true" shape-rendering="crispEdges"><path d="M7 1h2v4H7zM4 5h8v1H4zM3 6h10v3H3zM7 9h2v4H7zM5 13h6v2H5z" fill="currentColor"/></svg>今日の二十五分を、灯りのそばで。</div>
+</main>
+<footer><span>NOCTA Tools</span><span lang="en">lampnook, a lamp-lit nook for twenty-five minutes.</span></footer>
+</div>
+</body></html>

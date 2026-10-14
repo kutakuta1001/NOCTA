@@ -1,0 +1,90 @@
+/* lampnook の紹介ページ。地の色はアプリの夜の紫（#1c1722）、アクセントは机のランプの琥珀だけ。
+   書体は NOCTA の系（Shippori Mincho 600 の見出し・EB Garamond の欧文・Noto Sans JP の本文）。グローは置かない */
+:root{color-scheme:dark;--night:#1c1722;--paper:#241e2c;--ink:#e8e0d0;--muted:#a99d8e;--lamp:#e8a94e;--line:rgba(232,224,208,.12);--display:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif;--sans:'Noto Sans JP','Hiragino Sans','Yu Gothic',system-ui,sans-serif;--en:'EB Garamond',Georgia,serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--night)}
+body{background:var(--night);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{display:block;max-width:100%;height:auto;image-rendering:pixelated}
+.skip:not(:focus){clip-path:inset(50%);width:1px;height:1px;overflow:hidden;position:absolute}
+.skip:focus{position:absolute;top:8px;left:8px;background:var(--ink);color:var(--night);padding:6px 10px;border-radius:6px;z-index:9}
+:focus-visible{outline:2px solid var(--lamp);outline-offset:3px;border-radius:4px}
+
+.wrap{max-width:1080px;margin:0 auto;padding:22px 24px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding:6px 0 24px}
+.brand{font-family:var(--en);font-size:26px;letter-spacing:.01em;text-decoration:none}
+.brand i{font-style:normal;color:var(--lamp)}
+.top nav{display:flex;gap:20px;flex-wrap:wrap;font-size:13px}
+.text-link{color:var(--muted);text-decoration:none;border-bottom:1px solid transparent}
+.text-link:hover,.text-link:focus-visible{color:var(--ink);border-bottom-color:var(--lamp)}
+
+/* 最初の画面: 左に文、右に部屋。部屋の絵がこのページのいちばん大きな物 */
+.hero{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:center;padding:32px 0 96px}
+.hero h1{font-family:var(--display);font-weight:600;font-size:clamp(28px,3.3vw,44px);line-height:1.5;letter-spacing:.04em;margin-bottom:22px}
+.hero h1 .line{display:inline-block;white-space:nowrap}
+.lead{max-width:30em;line-height:2.05}
+.hero-actions{display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin-top:30px}
+.primary{display:inline-flex;align-items:center;min-height:46px;padding:0 24px;border-radius:999px;background:var(--lamp);color:var(--night);text-decoration:none;font-weight:500;font-size:14px}
+.primary:hover{filter:brightness(1.06)}
+.note{font-size:12.5px;color:var(--muted);margin-top:16px;max-width:32em}
+.hero-visual{display:grid;justify-items:center;gap:14px}
+.hero-visual .room{width:min(100%,584px)}
+figcaption{font-size:12.5px;color:var(--muted);text-align:center}
+/* 開いたときに一度だけ、ランプがともるように部屋が明るくなる */
+@media (prefers-reduced-motion:no-preference){
+  .hero-visual .room{animation:lamp-on 2.2s cubic-bezier(.4,0,.2,1) .3s both}
+  @keyframes lamp-on{from{filter:brightness(.45) saturate(.7)}to{filter:none}}
+}
+
+.intro-line{margin-bottom:36px;max-width:40em}
+.intro-line h2,.how h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.6vw,32px);line-height:1.5;letter-spacing:.04em;margin-bottom:8px}
+.intro-line p{color:var(--muted)}
+section+section,.places,.minutes,.keeps,.how{padding-top:96px}
+.hero+section{padding-top:0}
+
+/* 場所: 開く順の一覧。絵を主役にし、枠は付けない */
+.place-list{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px 32px}
+/* 屋内の絵は背景が透けるので、屋外の 2 枚と同じ四角い地に載せてそろえる */
+.place img{width:100%;max-width:292px;margin-bottom:16px;background:var(--paper);border-radius:4px}
+.place h3{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.04em;line-height:1.5}
+.opens{font-size:12.5px;color:var(--lamp);margin:2px 0 6px}
+.place-text p:last-child{font-size:14px;color:var(--muted);line-height:1.85}
+
+/* 二十五分: 一分を一マスにした帯。出来事のある分だけ灯る */
+.track{display:grid;grid-template-columns:repeat(26,minmax(0,1fr));gap:4px;margin-bottom:28px}
+.tick{aspect-ratio:1;background:var(--paper);border-radius:2px}
+.tick.is-event{background:#5b4630}
+.tick.is-chime{background:var(--lamp)}
+.timeline{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.timeline li{border-top:1px solid var(--line);padding-top:14px}
+.at{display:block;font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:.04em;margin-bottom:6px}
+.timeline p{font-size:14px;color:var(--muted);line-height:1.85}
+
+.keep-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
+.keep-list dt{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.04em;margin-bottom:6px}
+.keep-list dd{font-size:14px;color:var(--muted);line-height:1.85}
+
+.how dl{display:grid;gap:0;margin-top:20px;max-width:46em}
+.how dl div{display:grid;grid-template-columns:7em minmax(0,1fr);gap:20px;padding:16px 0;border-top:1px solid var(--line)}
+.how dt{font-weight:500}
+.how dd{color:var(--muted);font-size:14px;line-height:1.9}
+.how-note{font-size:12.5px;color:var(--muted);margin-top:20px;max-width:46em}
+
+.closing{display:flex;align-items:center;justify-content:center;gap:14px;padding:120px 0 72px;font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.06em;text-align:center}
+.lamp-mark{width:24px;height:24px;color:var(--lamp);flex:none}
+footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:20px;font-size:12px;color:var(--muted)}
+footer [lang=en]{font-family:var(--en);font-style:italic;font-size:14px}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr;gap:36px;padding-bottom:72px}
+  .hero-visual{order:-1}
+  .place-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 20px}
+  .timeline,.keep-list{grid-template-columns:1fr 1fr}
+}
+@media (max-width:520px){
+  .wrap{padding:18px 18px 48px}
+  .place-list,.timeline,.keep-list{grid-template-columns:1fr}
+  .place img{max-width:100%}
+  .track{gap:2px}
+  .how dl div{grid-template-columns:1fr;gap:4px}
+}
