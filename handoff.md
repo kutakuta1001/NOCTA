@@ -160,3 +160,4 @@
 - 2026-10-13: Barside 紹介ページに「使い方（作者用）」リンク（非公開アーティファクト）を追加しコミット済み。push 未。次: CEO が確認して `git push origin main`。
 - 2026-10-13: Barside 稼働表示（c19422b）と使い方リンク（b91cf8a）を公開（1d96b31・Deploy success）。本番の /barside/ に両方が出ていることを確認済み。次: なし。
 - 2026-10-13: Barside 紹介ページに新機能の節「この秋、店に増えたもの」（0a4d22d）と「相手の声」の ElevenLabs 表記（2b5579d）を追加し公開（Deploy success）。本番の /barside/ で #new・判子と黒板の見本・「新しく」リンク、トップの Tools カード説明文を確認済み。次: なし。
+- 2026-10-14: Tools に lampnook（作者専用の集中タイマー）の紹介ページとカードを追加しコミット済み（ea926ce）。push 未、lampnook 本体も未公開。次: CEO が drafts/handoffs/2026-10-14-lampnook-tools.md を見て確認し、本体を公開（推奨はビルド結果だけ）してから `git push origin main`。
