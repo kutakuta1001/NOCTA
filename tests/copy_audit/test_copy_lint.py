@@ -108,6 +108,10 @@ class LintHtmlTest(unittest.TestCase):
         div = '<div class="cat-note">作者<span>専用</span></div>'
         self.assertTrue(has(lint.lint_html(div, None, CFG, PATH), "BANNED", "作者専用"))
 
+    def test_author_host_in_href(self):
+        html = '<footer><a href="https://barside.tail00000.ts.net/">作者用</a></footer>'
+        self.assertTrue(has(lint.lint_html(html, None, CFG, PATH), "BANNED", "ts.net"))
+
     def test_sentences_per_paragraph(self):
         nested = "<li><p>一文。二文。</p><p>三文。四文。</p></li>"
         self.assertNotIn("LONG", kinds(lint.lint_html(nested, None, CFG, PATH)))

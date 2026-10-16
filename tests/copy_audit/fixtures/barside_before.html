@@ -15,7 +15,7 @@
     <div class="hero-actions"><a class="primary" href="https://barside-app.github.io/" rel="noopener">自分のキーで使う ↗</a><a class="text-link" href="https://barside-app.github.io/guide.html" rel="noopener">はじめかた ↗</a><a class="text-link" href="#how">仕組みを読む</a></div>
     <p class="note">Claude と ElevenLabs の API キーを自分で用意すれば、だれでも使えます。キーと記録はあなたのブラウザの中だけに置かれ、作者には届きません。API の利用料は各社からあなたに請求されます（1 回の会話で約 0.10 ドルが目安）。</p>
     <p class="lamp-status is-checking" id="lamp-status" role="status" aria-live="polite"><span class="lamp-dot" aria-hidden="true"></span><span class="lamp-text">灯りを確かめています…</span></p>
-    <p class="note">灯りは作者の Mac の店のもので、上の「自分のキーで使う」はいつでも開けます。<a class="text-link" id="enter" href="https://barside.tail12dfa5.ts.net/" rel="noopener">作者用の入口 ↗</a><a class="text-link" href="https://claude.ai/artifact/Q2ix1odBFhd7LuAZLH1p3s" rel="noopener">使い方（作者用）↗</a></p>
+    <p class="note">灯りは作者の Mac の店のもので、上の「自分のキーで使う」はいつでも開けます。<a class="text-link" id="enter" href="https://author.example.invalid/" rel="noopener">作者用の入口 ↗</a><a class="text-link" href="https://claude.ai/artifact/Q2ix1odBFhd7LuAZLH1p3s" rel="noopener">使い方（作者用）↗</a></p>
   </div>
   <div class="hero-visual" aria-label="カウンターに座る常連の四人" role="img">
     <div class="counter">
@@ -147,7 +147,7 @@
   function check() {
     var ctrl = ('AbortController' in window) ? new AbortController() : null;
     var timer = ctrl && setTimeout(function () { ctrl.abort(); }, 6000);
-    fetch('https://barside.tail12dfa5.ts.net/status', { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+    fetch('https://author.example.invalid/status', { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
       .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error(String(r.status))); })
       .then(function (j) { show(j && j.ok ? 'open' : 'closed', j && j.ok ? 'いま、灯りがついています。入れます。' : 'いまは灯りが消えています。'); })
       .catch(function () { show('closed', 'いまは灯りが消えています。作者の Mac が休んでいるときはこうなります。'); })

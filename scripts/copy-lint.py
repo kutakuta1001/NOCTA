@@ -102,6 +102,8 @@ class _Page(HTMLParser):
             self.counts["mock"] += 1
         if tag == "meta" and attrs.get("name") == "description":
             self.extra.append(("meta[description]", attrs.get("content", "")))
+        if attrs.get("href"):
+            self.extra.append(("%s[href]" % tag, attrs["href"]))
         if attrs.get("aria-label"):
             self.extra.append(("%s[aria-label]" % tag, attrs["aria-label"]))
         if tag in ("script", "style") and not closes:
