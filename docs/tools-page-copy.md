@@ -63,6 +63,7 @@ CEO の OK なしに印を付けて hook を回避しない。
 ## 設定（copy-lint と hook が読む）
 
 `max_sentences` は機械チェックの上限。CEO 承認済みの Barside のリード文が 3 文なので 3 にしている。目安は上の基準のとおり 1〜2 文。
+`protected_classes` は、中身（タグ・属性・文字）を元の版と丸ごと比べて守る見本の class（部分一致）。SVG はすべて同じ扱いで守る。
 Claude / ElevenLabs は禁止語にしない。API キーを自分で用意するという、使うかどうかの判断に要る情報として残っているため。
 
 ```json copy-audit-config
@@ -71,6 +72,7 @@ Claude / ElevenLabs は禁止語にしない。API キーを自分で用意す�
   "card_file": "website/apps-data.js",
   "banned_terms": ["Tailscale", "Funnel", "sql.js", "SQLite", "FSRS", "three.js", "IndexedDB", "PWA", "Gemini", "接続トークン", "作者専用", "作者の Mac", "作者用の入口", "使い方（作者用）", "灯りを確かめ"],
   "banned_heading_patterns": ["この(春|夏|秋|冬)", "増えたもの", "新しく", "アップデート", "更新履歴", "What's new"],
+  "protected_classes": ["-mock", "notebook"],
   "max_sentences": 3,
   "card_desc_max_chars": 60
 }

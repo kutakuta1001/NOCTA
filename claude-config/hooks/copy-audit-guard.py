@@ -16,8 +16,10 @@ CEO が push を頼む前の段階で、毎回自動で監査に回すための�
 ソースは project_NOCTA/claude-config/hooks/。~/.claude/hooks/ へは cp で配置する。
 """
 import datetime
+import fnmatch
 import json
 import os
+import re
 import shlex
 import subprocess
 import sys
@@ -32,8 +34,8 @@ START = time.time()
 COMMIT_VALUE_SHORT = set("mFCct")
 COMMIT_VALUE_LONG = {"--message", "--file", "--reuse-message", "--reedit-message", "--fixup", "--squash",
                      "--author", "--date", "--cleanup", "--template", "--trailer", "--pathspec-from-file"}
-COMMIT_SCOPE_SHORT = set("aoip")
-COMMIT_SCOPE_LONG = {"--all", "--only", "--include", "--patch", "--interactive"}
+COMMIT_SCOPE_SHORT = set("ap")  # 作業ツリー全体を相手にするもの（-o / -i は pathspec の扱いを変えるだけ）
+COMMIT_SCOPE_LONG = {"--all", "--patch", "--interactive"}
 GIT_GLOBAL_VALUE = {"-c", "--git-dir", "--work-tree", "--namespace", "--exec-path"}
 
 
@@ -68,8 +70,24 @@ def run(args, cwd, check=True):
 
 # ---- コマンドの解析 -------------------------------------------------------
 
+HEREDOC = re.compile(r"<<-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
+
+
+def strip_heredocs(command):
+    """ヒアドキュメントの本文を除く。本文の文字をコマンドとして読まないため。"""
+    out, waiting = [], []
+    for line in command.split("\n"):
+        if waiting:
+            if line.strip() == waiting[0]:
+                waiting.pop(0)
+            continue
+        out.append(line)
+        waiting.extend(m.group(2) for m in HEREDOC.finditer(line))
+    return "\n".join(out)
+
+
 def tokenize(command):
-    lex = shlex.shlex(command, posix=True, punctuation_chars="();<>|&\n")
+    lex = shlex.shlex(strip_heredocs(command), posix=True, punctuation_chars="();<>|&\n")
     lex.whitespace = " \t\r"
     lex.whitespace_split = True
     try:
@@ -113,7 +131,10 @@ def strip_redirects(unit):
 
 
 def resolve(cwd, path):
-    p = Path(os.path.expanduser(path))
+    path = os.path.expandvars(os.path.expanduser(path))
+    if "$" in path or "`" in path:
+        raise Unparsable("行き先に展開できない変数がある: %s" % path)
+    p = Path(path)
     return p if p.is_absolute() else (Path(cwd) / p)
 
 
@@ -216,10 +237,17 @@ def load_rules(repo):
 
 def under(path_arg, add_dir, repo, target):
     """git add の引数が target（リポジトリ相対）を含むか。"""
-    if path_arg in ("-A", "--all", ".", ":/", "-u", "--update"):
+    if path_arg in ("-A", "--all", ":/", "-u", "--update"):
         return True
     if path_arg.startswith("-"):
         return False
+    if any(c in path_arg for c in "*?["):
+        full = path_arg if os.path.isabs(path_arg) else os.path.join(str(Path(add_dir).resolve()), path_arg)
+        root = str(repo) + "/"
+        if not full.startswith(root):
+            return False
+        pat = os.path.normpath(full[len(root):])
+        return fnmatch.fnmatch(target, pat) or fnmatch.fnmatch(target, pat.rstrip("/") + "/*")
     try:
         rel = resolve(add_dir, path_arg).resolve().relative_to(repo).as_posix()
     except ValueError:
@@ -319,20 +347,29 @@ def format_findings(payload):
     return text[:2000] + ("\n…（以下略）" if len(text) > 2000 else "")
 
 
-def decide_commit(repo, adds, args):
+def decide_commit(repo, commit_dir, adds, args):
     cfg = load_rules(repo)
-    targets_all = cfg["intro_pages"] + [cfg["card_file"]]
+    changed = None  # 対象のうち、HEAD から変わっている・まだ追跡していないもの（必要になったときだけ調べる）
+
+    def changed_targets():
+        nonlocal changed
+        if changed is None:
+            changed = unstaged_or_staged_change(repo, cfg)
+        return changed
 
     for add_dir, add_args in adds:
         if toplevel(add_dir) != repo:
             continue
-        if any(under(a, add_dir, repo, t) for a in add_args for t in targets_all):
+        if any(under(a, add_dir, repo, t) for a in add_args for t in changed_targets()):
             return deny("copy-audit-guard: git add と git commit が 1 つのコマンドにつながっていて、紹介ページかカードの"
                         "ファイルが含まれています。hook はコミット前のステージ内容しか見られないので、"
                         "git add と git commit を別々の Bash で実行してください。")
 
     paths, scope = parse_commit_args(args)
-    if (paths or scope) and unstaged_or_staged_change(repo, cfg):
+    hit = scope and changed_targets()
+    if paths and not hit:
+        hit = any(under(a, commit_dir, repo, t) for a in paths for t in changed_targets())
+    if hit:
         return deny("copy-audit-guard: pathspec や -a / -o / -i / -p 付きの git commit は、ステージしていない紹介ページや"
                     "カードの変更までコミットするため監査できません。対象を個別に git add してから、"
                     "通常の git commit を別の Bash で実行してください。")
@@ -370,7 +407,7 @@ def decide(command, cwd):
         repo = toplevel(d)
         if repo is None or not (repo / RULES).exists():
             continue
-        return decide_commit(repo, adds, args)
+        return decide_commit(repo, d, adds, args)
     return None
 
 

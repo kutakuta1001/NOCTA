@@ -72,6 +72,22 @@ class LintHtmlTest(unittest.TestCase):
         cut = APPROVED.replace('class="board-mock"', 'class="board"')
         self.assertTrue(has(lint.lint_html(cut, APPROVED, CFG, PATH), "VISUAL_LOST"))
 
+    def test_sample_inner_changed_is_lost(self):
+        cuts = [
+            re.sub(r'<div class="lines">.*?</div>', '<div class="lines"></div>', APPROVED, count=1, flags=re.S),
+            re.sub(r'<div class="notebook">.*?</div>\s*</section>', "</section>", APPROVED, count=1, flags=re.S),
+            APPROVED.replace("toast</p>", "</p>", 1),
+            re.sub(r'(<path d=")([^"]{20})[^"]*"', r'\1\2"', APPROVED, count=1),
+        ]
+        for i, cut in enumerate(cuts):
+            self.assertNotEqual(cut, APPROVED, i)
+            self.assertTrue(has(lint.lint_html(cut, APPROVED, CFG, PATH), "VISUAL_LOST"), i)
+
+    def test_copy_change_outside_samples_is_not_lost(self):
+        cut = APPROVED.replace("前回の話題も、好きなビールも。", "前回の話題も。", 1)
+        self.assertNotEqual(cut, APPROVED)
+        self.assertNotIn("VISUAL_LOST", kinds(lint.lint_html(cut, APPROVED, CFG, PATH)))
+
     def test_page_removed(self):
         fs = lint.lint_html(None, APPROVED, CFG, PATH)
         self.assertEqual(kinds(fs), ["PAGE_REMOVED"])

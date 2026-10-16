@@ -68,7 +68,7 @@ class GuardTest(unittest.TestCase):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
     def hook(self, command, cwd=None):
-        env = dict(os.environ, COPY_AUDIT_LOG_DIR=str(self.logs))
+        env = dict(os.environ, COPY_AUDIT_LOG_DIR=str(self.logs), COPY_TEST_REPO=str(self.repo))
         payload = {"tool_name": "Bash", "tool_input": {"command": command},
                    "cwd": str(cwd or self.repo), "hook_event_name": "PreToolUse"}
         r = subprocess.run([sys.executable, str(GUARD)], input=json.dumps(payload),
@@ -213,6 +213,46 @@ class GuardTest(unittest.TestCase):
         out = self.hook("git commit -m x")
         self.assertFalse(self.denied(out))
         self.assertIn("監査を実行できなかった", out["additionalContext"])
+
+    # 最終レビューで見つかった経路
+    def test_env_var_cd_resolved(self):
+        self.edit_page()
+        self.assertTrue(self.denied(self.hook('cd "$COPY_TEST_REPO" && git commit -m x', cwd=self.root)))
+
+    def test_shell_var_cd_not_silent(self):
+        self.edit_page()
+        out = self.hook('R=%s; cd "$R" && git commit -m x' % self.repo, cwd=self.root)
+        self.assertFalse(self.denied(out))
+        self.assertIn("監査を実行できなかった", out["additionalContext"])
+
+    def test_glob_add_combined_denied(self):
+        self.edit_page(stage=False)
+        for arg in ("website/barside/*.html", "website/*/index.html"):
+            out = self.hook("git add %s && git commit -m x" % arg)
+            self.assertTrue(self.denied(out), arg)
+            self.assertIn("別々", out["permissionDecisionReason"])
+
+    def test_add_dir_app_only_passes(self):
+        self.edit("website/iro/index.html", "iro", "iro2", stage=False)
+        self.assertIsNone(self.hook("git add website && git commit -m x"))
+        self.assertIsNone(self.hook("cd website/iro && git add . && git commit -m x"))
+
+    def test_add_dot_in_subdir_with_intro_change_denied(self):
+        self.edit_page(stage=False)
+        self.assertTrue(self.denied(self.hook("cd website && git add . && git commit -m x")))
+
+    def test_pathspec_other_file_passes(self):
+        self.edit_page(stage=False)
+        self.edit("website/iro/index.html", "iro", "iro2", stage=False)
+        self.assertIsNone(self.hook("git commit -m x -- website/iro/index.html"))
+
+    def test_heredoc_body_not_parsed(self):
+        self.edit_page(stage=False)
+        self.edit("notes.txt", "a", "b")
+        cmd = "git commit -F - <<'EOF'\ngit add website/barside/index.html は別に実行する\ndon't\nEOF"
+        self.assertIsNone(self.hook(cmd))
+        cmd2 = 'git commit -m "$(cat <<\'EOF\'\nsay "hi\nEOF\n)"'
+        self.assertIsNone(self.hook(cmd2))
 
     def test_log_written(self):
         self.edit_page()

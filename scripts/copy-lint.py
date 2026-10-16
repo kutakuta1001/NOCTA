@@ -17,7 +17,7 @@ import os
 import re
 import subprocess
 import sys
-from collections import namedtuple
+from collections import Counter, namedtuple
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -49,8 +49,12 @@ def load_config(text):
 
 
 class _Page(HTMLParser):
-    def __init__(self):
+    def __init__(self, protected=("-mock",)):
         super().__init__(convert_charrefs=True)
+        self.protected = tuple(protected)
+        self.depth = 0
+        self.captures = []   # 記録中の SVG・見本: [kind, 開始の深さ, 部品]
+        self.prints = {"svg": [], "sample": []}  # 中身を丸ごと並べた文字列
         self.stack = []      # [tag, buffer, location]
         self.blocks = []     # (tag, location, text)
         self.extra = []      # (location, text): meta description・aria-label
@@ -66,6 +70,21 @@ class _Page(HTMLParser):
         return "%s.%s" % (tag, cls[0]) if cls else "%s#%d" % (tag, n)
 
     def _open(self, tag, attrs, closes):
+        token = "<%s%s>" % (tag, "".join(' %s="%s"' % (k, v or "") for k, v in attrs))
+        for c in self.captures:
+            c[2].append(token)
+        cls_raw = dict(attrs).get("class") or ""
+        kind = None
+        if tag == "svg" and not any(c[0] == "svg" for c in self.captures):
+            kind = "svg"
+        elif any(x in cls_raw for x in self.protected):
+            kind = "sample"
+        if not closes and tag not in VOID:
+            self.depth += 1
+            if kind:
+                self.captures.append([kind, self.depth, [token]])
+        elif kind:
+            self.prints[kind].append(token)
         attrs = dict((k, v or "") for k, v in attrs)
         if self.svg_depth:
             self.counts["svg_inner"] += 1
@@ -79,7 +98,7 @@ class _Page(HTMLParser):
             return
         if tag == "img":
             self.counts["img"] += 1
-        if "-mock" in attrs.get("class", ""):
+        if any(x in attrs.get("class", "") for x in self.protected):
             self.counts["mock"] += 1
         if tag == "meta" and attrs.get("name") == "description":
             self.extra.append(("meta[description]", attrs.get("content", "")))
@@ -98,6 +117,13 @@ class _Page(HTMLParser):
         self._open(tag, attrs, True)
 
     def handle_endtag(self, tag):
+        if tag not in VOID and self.depth > 0:
+            for c in self.captures:
+                c[2].append("</%s>" % tag)
+            for c in [c for c in self.captures if c[1] == self.depth]:
+                self.captures.remove(c)
+                self.prints[c[0]].append("".join(c[2]))
+            self.depth -= 1
         if self.svg_depth:
             if tag == "svg":
                 self.svg_depth -= 1
@@ -114,6 +140,8 @@ class _Page(HTMLParser):
                 return
 
     def handle_data(self, data):
+        for c in self.captures:
+            c[2].append(data)
         if self.svg_depth or self.skip_depth or not self.stack:
             return
         self.stack[-1][1].append(data)
@@ -131,8 +159,8 @@ class _Page(HTMLParser):
         return self
 
 
-def _parse(text):
-    p = _Page()
+def _parse(text, protected=("-mock",)):
+    p = _Page(protected)
     p.feed(text)
     return p.finish()
 
@@ -159,14 +187,21 @@ def lint_html(text, base_text, cfg, path):
     """紹介ページを検査する。text=None はファイル削除、base_text=None は新規ファイル。"""
     if text is None:
         return [Finding("PAGE_REMOVED", "break", path, "紹介ページが削除された")]
-    page = _parse(text)
+    protected = cfg.get("protected_classes", ["-mock"])
+    page = _parse(text, protected)
     findings = []
     if base_text is not None:
-        base = _parse(base_text)
+        base = _parse(base_text, protected)
         for key in ("svg", "svg_inner", "img", "mock"):
             if page.counts[key] < base.counts[key]:
                 findings.append(Finding("VISUAL_LOST", "break", path,
                                         "%s が %d から %d に減った" % (key, base.counts[key], page.counts[key])))
+        for key, label in (("svg", "SVG"), ("sample", "見本")):
+            gone = Counter(base.prints[key]) - Counter(page.prints[key])
+            for fp in gone.elements():
+                m = re.search(r'class="([^"]*)"', fp)
+                findings.append(Finding("VISUAL_LOST", "break", path,
+                                        "%s の中身が変わった・消えた: %s" % (label, m.group(1) if m else fp[:40])))
     terms = cfg["banned_terms"]
     for loc, txt in page.extra + [(loc, txt) for _, loc, txt in page.blocks]:
         hits = _banned_hits(txt, terms)
