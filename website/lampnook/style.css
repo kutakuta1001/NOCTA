@@ -37,9 +37,9 @@ figcaption{font-size:12.5px;color:var(--muted);text-align:center}
 }
 
 .intro-line{margin-bottom:36px;max-width:40em}
-.intro-line h2,.how h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.6vw,32px);line-height:1.5;letter-spacing:.04em;margin-bottom:8px}
+.intro-line h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.6vw,32px);line-height:1.5;letter-spacing:.04em;margin-bottom:8px}
 .intro-line p{color:var(--muted)}
-section+section,.places,.minutes,.keeps,.how{padding-top:96px}
+section+section,.places,.minutes,.keeps{padding-top:96px}
 .hero+section{padding-top:0}
 
 /* 場所: 開く順の一覧。絵を主役にし、枠は付けない */
@@ -64,11 +64,6 @@ section+section,.places,.minutes,.keeps,.how{padding-top:96px}
 .keep-list dt{font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.04em;margin-bottom:6px}
 .keep-list dd{font-size:14px;color:var(--muted);line-height:1.85}
 
-.how dl{display:grid;gap:0;margin-top:20px;max-width:46em}
-.how dl div{display:grid;grid-template-columns:7em minmax(0,1fr);gap:20px;padding:16px 0;border-top:1px solid var(--line)}
-.how dt{font-weight:500}
-.how dd{color:var(--muted);font-size:14px;line-height:1.9}
-.how-note{font-size:12.5px;color:var(--muted);margin-top:20px;max-width:46em}
 
 .closing{display:flex;align-items:center;justify-content:center;gap:14px;padding:120px 0 72px;font-family:var(--display);font-weight:600;font-size:18px;letter-spacing:.06em;text-align:center}
 .lamp-mark{width:24px;height:24px;color:var(--lamp);flex:none}
@@ -86,5 +81,4 @@ footer [lang=en]{font-family:var(--en);font-style:italic;font-size:14px}
   .place-list,.timeline,.keep-list{grid-template-columns:1fr}
   .place img{max-width:100%}
   .track{gap:2px}
-  .how dl div{grid-template-columns:1fr;gap:4px}
 }
