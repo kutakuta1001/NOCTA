@@ -307,7 +307,7 @@ def main(argv=None):
                           "findings": [f._asdict() for f in findings]}, ensure_ascii=False))
     else:
         for f in findings:
-            print("\t".join(f))
+            print("\t".join((f.severity, f.kind, f.location, f.excerpt)))
     return 0
 
 
