@@ -12,9 +12,10 @@
     <p class="meta">Barside — 夜のバーで、英語をひとこと。</p>
     <h1>いつもの席で、<br>今日の話をしよう。</h1>
     <p class="lead">海外のバーで、店主やとなりの客と話す練習。相手は AI の常連たち。<br>うまく言えなくても会話は止まらず、帰り道の手帳があとで教えてくれる。<br>会いに行くほど顔なじみになり、前に話したことを覚えている。</p>
-    <div class="hero-actions"><a class="primary" id="enter" href="https://barside.tail12dfa5.ts.net/" rel="noopener">作者用の入口 ↗</a><a class="text-link" href="#how">仕組みを読む</a></div>
+    <div class="hero-actions"><a class="primary" href="https://barside-app.github.io/" rel="noopener">自分のキーで使う ↗</a><a class="text-link" href="https://barside-app.github.io/guide.html" rel="noopener">はじめかた ↗</a><a class="text-link" href="#how">仕組みを読む</a></div>
+    <p class="note">Claude と ElevenLabs の API キーを自分で用意すれば、だれでも使えます。キーと記録はあなたのブラウザの中だけに置かれ、作者には届きません。API の利用料は各社からあなたに請求されます（1 回の会話で約 0.10 ドルが目安）。</p>
     <p class="lamp-status is-checking" id="lamp-status" role="status" aria-live="polite"><span class="lamp-dot" aria-hidden="true"></span><span class="lamp-text">灯りを確かめています…</span></p>
-    <p class="note">作者ひとりのための実験です。入口には接続トークンが要ります。<a class="text-link" href="https://claude.ai/artifact/Q2ix1odBFhd7LuAZLH1p3s" rel="noopener">使い方（作者用）↗</a></p>
+    <p class="note">灯りは作者の Mac の店のもので、上の「自分のキーで使う」はいつでも開けます。<a class="text-link" id="enter" href="https://barside.tail12dfa5.ts.net/" rel="noopener">作者用の入口 ↗</a><a class="text-link" href="https://claude.ai/artifact/Q2ix1odBFhd7LuAZLH1p3s" rel="noopener">使い方（作者用）↗</a></p>
   </div>
   <div class="hero-visual" aria-label="カウンターに座る常連の四人" role="img">
     <div class="counter">
@@ -123,7 +124,7 @@
     <div><dt>黒板と旅先</dt><dd>黒板の三十語は固定の文面で、毎晩 AI に書かせることはしない（語源は俗説が混ざりやすいから）。旅先のバーは Claude が一軒ずつ作り、形を確かめてから店に並べる。</dd></div>
     <div><dt>画面</dt><dd>PWA。人物はすべて手描きの SVG で、まばたきと口の動きだけを持つ。言葉と声は AI、絵は人の手。</dd></div>
   </dl>
-  <p class="how-note">サーバーは作者の Mac で動き、Tailscale Funnel で外から届くようにしている。入口は接続トークンで閉じているため、訪問者が開いても会話はできない。設計の記録は手元の仕様書にあり、コードは非公開。</p>
+  <p class="how-note">作者用の店は、サーバーが作者の Mac で動き、Tailscale Funnel で外から届くようにしている。入口は接続トークンで閉じている。だれでも使える版は、同じサーバーのコードをブラウザの中で動かし、記録はブラウザ内の SQLite（sql.js）に保存して、各社の API へブラウザから直接つなぐ。キーを預かる場所なので、作者のほかのサイトとは別のドメイン（barside-app.github.io）に置いている。設計の記録は手元の仕様書にあり、コードは非公開。</p>
 </section>
 
 <div class="cat-note"><svg class="lamp-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4v12M12 30q12-16 24 0zM14 30h20" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="24" cy="40" r="3" fill="currentColor" opacity=".6"/></svg>カウンターの最後の灯り。<br>うまく話せなくても大丈夫。ひとことから、顔なじみに。</div>
