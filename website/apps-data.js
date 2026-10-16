@@ -32,8 +32,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "夜のバーの常連と、英語でひとこと。会話中は直されず、帰り道の手帳でふりかえる。覚えた一言を言えた夜には判子が押される会話練習。自分の API キーを入れれば、だれでも使える。",
-    descEn: "A little English at the bar, with regulars who remember you. No corrections mid-conversation, a notebook for the walk home, and a stamp on the night a phrase you learned finally comes out. Bring your own API keys and anyone can use it."
+    descJa: "夜のバーの常連と、英語でひとこと。会話中は直されず、帰り道の手帳でふりかえる会話練習。自分の API キーで使える。",
+    descEn: "A little English at the bar, with regulars who remember you. No corrections mid-conversation, and a notebook for the walk home. Bring your own API keys."
   },
   {
     title: /* strategy-name:start */ "HiNa Kai" /* strategy-name:end */,
