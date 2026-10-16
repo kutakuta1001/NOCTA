@@ -1,0 +1,161 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a0906">
+<meta name="description" content="Barside。夜のバーの常連と、英語でひとこと。間違いを直されずに話し続け、帰り道の手帳でふりかえる。覚えた一言を言えた夜には判子が押される、作者専用の会話練習アプリ。">
+<title>Barside — NOCTA</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css"></head>
+<body><a href="#main" class="skip">本文へ</a>
+<div class="wrap">
+<header class="top"><a class="brand" href="./index.html">Barside<i>.</i></a><nav aria-label="共通"><a class="text-link" href="#new">新しく</a><a class="text-link" href="#how">仕組み</a><a class="text-link" href="../index.html#apps">NOCTA Tools ↗</a></nav></header>
+<main id="main">
+
+<section class="hero">
+  <div class="hero-copy">
+    <p class="meta">Barside — 夜のバーで、英語をひとこと。</p>
+    <h1>いつもの席で、<br>今日の話をしよう。</h1>
+    <p class="lead">海外のバーで、店主やとなりの客と話す練習。相手は AI の常連たち。<br>うまく言えなくても会話は止まらず、帰り道の手帳があとで教えてくれる。<br>会いに行くほど顔なじみになり、前に話したことを覚えている。</p>
+    <div class="hero-actions"><a class="primary" href="https://barside-app.github.io/" rel="noopener">自分のキーで使う ↗</a><a class="text-link" href="https://barside-app.github.io/guide.html" rel="noopener">はじめかた ↗</a><a class="text-link" href="#how">仕組みを読む</a></div>
+    <p class="note">Claude と ElevenLabs の API キーを自分で用意すれば、だれでも使えます。キーと記録はあなたのブラウザの中だけに置かれ、作者には届きません。API の利用料は各社からあなたに請求されます（1 回の会話で約 0.10 ドルが目安）。</p>
+    <p class="lamp-status is-checking" id="lamp-status" role="status" aria-live="polite"><span class="lamp-dot" aria-hidden="true"></span><span class="lamp-text">灯りを確かめています…</span></p>
+    <p class="note">灯りは作者の Mac の店のもので、上の「自分のキーで使う」はいつでも開けます。<a class="text-link" id="enter" href="https://barside.tail12dfa5.ts.net/" rel="noopener">作者用の入口 ↗</a><a class="text-link" href="https://claude.ai/artifact/Q2ix1odBFhd7LuAZLH1p3s" rel="noopener">使い方（作者用）↗</a></p>
+  </div>
+  <div class="hero-visual" aria-label="カウンターに座る常連の四人" role="img">
+    <div class="counter">
+      <span class="sign">hello, again.</span>
+      <div class="seats">
+        <div class="seat"><svg class="av" viewBox="0 0 200 210" aria-hidden="true"><ellipse cx="100" cy="192" rx="70" ry="10" fill="#211916" opacity=".15"></ellipse><g><path d="M36 197V169Q38 135 78 134H122Q162 136 164 169V197Z" fill="#6d886e"></path><path d="M80 134L100 157L121 134" fill="#f9e9cc"></path><path d="M64 145L73 139V165H127V139L136 145V198H64Z" fill="#344b42"></path><rect x="88" y="171" width="25" height="17" rx="3" fill="#e0c28c" opacity=".65"></rect><path d="M88 120V138Q100 150 112 138V120" fill="#eec09c"></path><circle cx="55" cy="88" r="11" fill="#eec09c"></circle><circle cx="145" cy="88" r="11" fill="#eec09c"></circle><rect x="56" y="37" width="88" height="97" rx="41" fill="#eec09c"></rect><path d="M57 76Q45 28 97 26Q151 25 146 78L133 54Q107 65 81 49L65 78Z" fill="#594038"></path><path d="M72 78L83 76M117 76L128 78" stroke="#594038" stroke-width="3" stroke-linecap="round"></path><g class="avatar-eyes" fill="#3c302c"><ellipse cx="78" cy="89" rx="3.3" ry="4.5"></ellipse><ellipse cx="122" cy="89" rx="3.3" ry="4.5"></ellipse></g><g fill="none" stroke="#4d463a" stroke-width="3"><rect x="63" y="80" width="29" height="22" rx="9"></rect><rect x="108" y="80" width="29" height="22" rx="9"></rect><path d="M92 88Q100 84 108 88"></path></g><ellipse cx="68" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><ellipse cx="133" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><path d="M100 93L97 103H102" fill="none" stroke="#9e6550" stroke-width="2" opacity=".45" stroke-linecap="round"></path><path class="avatar-smile" d="M90 113Q100 123 111 113" fill="none" stroke="#714436" stroke-width="3" stroke-linecap="round"></path><ellipse class="avatar-mouth" cx="100" cy="116" rx="8" ry="6" fill="#714436"></ellipse><path d="M85 108Q93 103 100 109Q108 103 117 108Q109 116 100 112Q91 116 85 108" fill="#594038"></path></g></svg><span class="plate">Mike<small>店主</small></span></div>
+        <div class="seat"><svg class="av" viewBox="0 0 200 210" aria-hidden="true"><ellipse cx="100" cy="192" rx="70" ry="10" fill="#211916" opacity=".15"></ellipse><g><path d="M36 197V169Q38 135 78 134H122Q162 136 164 169V197Z" fill="#c78968"></path><path d="M80 134L100 157L121 134" fill="#f9e9cc"></path><path d="M88 120V138Q100 150 112 138V120" fill="#bb7854"></path><circle cx="55" cy="88" r="11" fill="#bb7854"></circle><circle cx="145" cy="88" r="11" fill="#bb7854"></circle><rect x="56" y="37" width="88" height="97" rx="41" fill="#bb7854"></rect><path d="M57 76Q45 28 97 26Q151 25 146 78L133 54Q107 65 81 49L65 78Z" fill="#352c2a"></path><g fill="#352c2a"><circle cx="58" cy="42" r="19"></circle><circle cx="76" cy="36" r="19"></circle><circle cx="96" cy="42" r="19"></circle><circle cx="117" cy="36" r="19"></circle><circle cx="138" cy="42" r="19"></circle></g><path d="M72 78L83 76M117 76L128 78" stroke="#352c2a" stroke-width="3" stroke-linecap="round"></path><g class="avatar-eyes" fill="#3c302c"><ellipse cx="78" cy="89" rx="3.3" ry="4.5"></ellipse><ellipse cx="122" cy="89" rx="3.3" ry="4.5"></ellipse></g><ellipse cx="68" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><ellipse cx="133" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><path d="M100 93L97 103H102" fill="none" stroke="#9e6550" stroke-width="2" opacity=".45" stroke-linecap="round"></path><path class="avatar-smile" d="M90 113Q100 123 111 113" fill="none" stroke="#714436" stroke-width="3" stroke-linecap="round"></path><ellipse class="avatar-mouth" cx="100" cy="116" rx="8" ry="6" fill="#714436"></ellipse></g></svg><span class="plate">Sam<small>バーテンダー</small></span></div>
+        <div class="seat"><svg class="av" viewBox="0 0 200 210" aria-hidden="true"><ellipse cx="100" cy="192" rx="70" ry="10" fill="#211916" opacity=".15"></ellipse><g><path d="M36 197V169Q38 135 78 134H122Q162 136 164 169V197Z" fill="#7798b6"></path><path d="M80 134L100 157L121 134" fill="#f9e9cc"></path><path d="M88 120V138Q100 150 112 138V120" fill="#f0c8a0"></path><circle cx="55" cy="88" r="11" fill="#f0c8a0"></circle><circle cx="145" cy="88" r="11" fill="#f0c8a0"></circle><rect x="56" y="37" width="88" height="97" rx="41" fill="#f0c8a0"></rect><path d="M57 76Q45 28 97 26Q151 25 146 78L133 54Q107 65 81 49L65 78Z" fill="#795041"></path><path d="M52 58Q54 15 100 20Q145 22 148 60Z" fill="#657f9c"></path><path d="M55 55Q110 40 154 56Q169 65 146 70H57Z" fill="#465f7a"></path><path d="M98 30L94 45H104" stroke="#eee0c4" stroke-width="4" fill="none" stroke-linecap="round"></path><path d="M72 78L83 76M117 76L128 78" stroke="#795041" stroke-width="3" stroke-linecap="round"></path><g class="avatar-eyes" fill="#3c302c"><ellipse cx="78" cy="89" rx="3.3" ry="4.5"></ellipse><ellipse cx="122" cy="89" rx="3.3" ry="4.5"></ellipse></g><ellipse cx="68" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><ellipse cx="133" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><path d="M100 93L97 103H102" fill="none" stroke="#9e6550" stroke-width="2" opacity=".45" stroke-linecap="round"></path><path class="avatar-smile" d="M90 113Q100 123 111 113" fill="none" stroke="#714436" stroke-width="3" stroke-linecap="round"></path><ellipse class="avatar-mouth" cx="100" cy="116" rx="8" ry="6" fill="#714436"></ellipse></g></svg><span class="plate">Dave<small>隣の席</small></span></div>
+        <div class="seat"><svg class="av" viewBox="0 0 200 210" aria-hidden="true"><ellipse cx="100" cy="192" rx="70" ry="10" fill="#211916" opacity=".15"></ellipse><g><path d="M47 117V78Q43 22 100 22Q155 22 154 85V142H46Z" fill="#42312d"></path><path d="M36 197V169Q38 135 78 134H122Q162 136 164 169V197Z" fill="#be83a0"></path><path d="M80 134L100 157L121 134" fill="#f9e9cc"></path><path d="M88 120V138Q100 150 112 138V120" fill="#d8a078"></path><circle cx="55" cy="88" r="11" fill="#d8a078"></circle><circle cx="145" cy="88" r="11" fill="#d8a078"></circle><rect x="56" y="37" width="88" height="97" rx="41" fill="#d8a078"></rect><path d="M57 76Q45 28 97 26Q151 25 146 78L133 54Q107 65 81 49L65 78Z" fill="#42312d"></path><path d="M98 31Q45 24 50 99L63 107L67 63Q93 62 106 40Q129 55 140 89L151 92Q156 22 98 31" fill="#42312d"></path><path d="M72 78L83 76M117 76L128 78" stroke="#42312d" stroke-width="3" stroke-linecap="round"></path><g class="avatar-eyes" fill="#3c302c"><ellipse cx="78" cy="89" rx="3.3" ry="4.5"></ellipse><ellipse cx="122" cy="89" rx="3.3" ry="4.5"></ellipse></g><ellipse cx="68" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><ellipse cx="133" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><path d="M100 93L97 103H102" fill="none" stroke="#9e6550" stroke-width="2" opacity=".45" stroke-linecap="round"></path><path class="avatar-smile" d="M90 113Q100 123 111 113" fill="none" stroke="#714436" stroke-width="3" stroke-linecap="round"></path><ellipse class="avatar-mouth" cx="100" cy="116" rx="8" ry="6" fill="#714436"></ellipse></g></svg><span class="plate">Sarah<small>仕事帰り</small></span></div>
+      </div>
+    </div>
+    <p class="caption">1 日 1 回、2 往復話して会話を終えると「会った日」が増える。減ることはない。</p>
+  </div>
+</section>
+
+<div class="intro-line"><h2>三つの約束。</h2><p>受験英語では身につかなかった、止まらずに話す力のために。</p></div>
+<section class="promises" aria-label="三つの約束">
+  <div class="promise"><span class="lamp-dot" aria-hidden="true"></span><h3>会話中は、直さない</h3><p>通じればそれでいい。文法も言い回しも、途中では口を挟まない。誤りはあとで、まとめて。バーで必要なのは、止まらない力だから。</p></div>
+  <div class="promise"><span class="lamp-dot" aria-hidden="true"></span><h3>相手が、覚えている</h3><p>前回の話題、次の旅行、好きなビール。常連は会った日を数え、三日・七日で新しい会話が開く。先週ぶりなら、そう言って迎える。</p></div>
+  <div class="promise"><span class="lamp-dot" aria-hidden="true"></span><h3>帰り道の手帳</h3><p>会話が終わると、あなたの言葉と「こう言える」を並べた手帳が届く。残したい一言はフレーズ帳へ。翌日からは紙ナプキンのカードで復習。</p></div>
+</section>
+
+<section class="night" aria-labelledby="night-h">
+  <div class="night-head"><h2 id="night-h">ある夜の、一往復。</h2><p>相手の声が鳴っている間だけ、ランプの光が身を乗り出す。</p></div>
+  <div class="stage-mock">
+    <div class="stage">
+      <svg class="lamp" viewBox="0 0 80 60" aria-hidden="true"><path d="M40 0v22"/><path d="M22 40q18-22 36 0z" class="shade"/><path d="M24 40h32"/></svg>
+      <span class="pool" aria-hidden="true"></span>
+      <svg class="av-stage" viewBox="0 0 200 210" aria-hidden="true"><ellipse cx="100" cy="192" rx="70" ry="10" fill="#211916" opacity=".15"></ellipse><g><path d="M36 197V169Q38 135 78 134H122Q162 136 164 169V197Z" fill="#6d886e"></path><path d="M80 134L100 157L121 134" fill="#f9e9cc"></path><path d="M64 145L73 139V165H127V139L136 145V198H64Z" fill="#344b42"></path><rect x="88" y="171" width="25" height="17" rx="3" fill="#e0c28c" opacity=".65"></rect><path d="M88 120V138Q100 150 112 138V120" fill="#eec09c"></path><circle cx="55" cy="88" r="11" fill="#eec09c"></circle><circle cx="145" cy="88" r="11" fill="#eec09c"></circle><rect x="56" y="37" width="88" height="97" rx="41" fill="#eec09c"></rect><path d="M57 76Q45 28 97 26Q151 25 146 78L133 54Q107 65 81 49L65 78Z" fill="#594038"></path><path d="M72 78L83 76M117 76L128 78" stroke="#594038" stroke-width="3" stroke-linecap="round"></path><g class="avatar-eyes" fill="#3c302c"><ellipse cx="78" cy="89" rx="3.3" ry="4.5"></ellipse><ellipse cx="122" cy="89" rx="3.3" ry="4.5"></ellipse></g><g fill="none" stroke="#4d463a" stroke-width="3"><rect x="63" y="80" width="29" height="22" rx="9"></rect><rect x="108" y="80" width="29" height="22" rx="9"></rect><path d="M92 88Q100 84 108 88"></path></g><ellipse cx="68" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><ellipse cx="133" cy="106" rx="9" ry="5" fill="#d77e73" opacity=".42"></ellipse><path d="M100 93L97 103H102" fill="none" stroke="#9e6550" stroke-width="2" opacity=".45" stroke-linecap="round"></path><path class="avatar-smile" d="M90 113Q100 123 111 113" fill="none" stroke="#714436" stroke-width="3" stroke-linecap="round"></path><ellipse class="avatar-mouth" cx="100" cy="116" rx="8" ry="6" fill="#714436"></ellipse><path d="M85 108Q93 103 100 109Q108 103 117 108Q109 116 100 112Q91 116 85 108" fill="#594038"></path></g></svg>
+      <p class="who">Mike <span>顔なじみ</span></p>
+      <p class="status"><span class="dot" aria-hidden="true"></span>話しています</p>
+    </div>
+    <div class="lines">
+      <p class="partner">We've got six on tap, mostly local stuff. Do you like something light or something hoppy?</p>
+      <p class="you">Something light, please. Which one do you recommend?</p>
+      <p class="partner">Go with the pilsner. Crisp, easy, and it's our regulars' favorite.</p>
+    </div>
+  </div>
+  <div class="notebook">
+    <p class="nb-head">帰り道の手帳から</p>
+    <div class="pair"><span class="lbl">あなた</span><span class="said">I like not bitter.</span></div>
+    <div class="pair"><span class="lbl better">こう言える</span><span class="good">I'm not big on bitter beers.</span></div>
+    <p class="nb-note">否定の位置が不自然。「not big on ~」は「〜はあまり好きじゃない」のくだけた定番表現。</p>
+  </div>
+</section>
+
+<section id="new" class="shelf" aria-labelledby="new-h">
+  <div class="intro-line"><h2 id="new-h">この秋、店に増えたもの。</h2><p>覚えた一言を、旅先で本当に口にするために。</p></div>
+
+  <article class="item feature">
+    <div class="item-text">
+      <h3>言えたら、判子。</h3>
+      <p>フレーズ帳に入れた一言を、次の夜にちゃんと口にできたら、帰り道の手帳のいちばん上に判子が押される。はじめての一言は琥珀色で。数えているのは AI ではなく、会話の記録との突き合わせだけ。</p>
+      <p class="sub">店に入る前には、フレーズ帳から二つだけポケットに入れておける。「今夜のねらい」。常連はそれが言いやすい流れを黙って作り、自分からは口にしない。言えた夜は、判子の横に「ねらいどおり」と残る。</p>
+    </div>
+    <div class="stamp-mock" aria-label="手帳の見本: はじめて言えた一言" role="img">
+      <p class="nb-head">今夜、使えた</p>
+      <div class="stamp-row">
+        <span class="stamp">はじめて</span>
+        <span class="stamp-body"><span class="good">Have a good one!</span><span class="said">“Thanks Mike, have a good one!”</span><span class="aim">ねらいどおり</span></span>
+      </div>
+    </div>
+  </article>
+
+  <article class="item">
+    <h3>聞き返していい</h3>
+    <p>相手のセリフのすぐ下に「もう一度」と「ゆっくり」がある。押せば同じ言葉がもう一度、少しゆっくり返ってくる。自分の口で Sorry, could you say that again? と言えたら、それも手帳に一行残る。旅先でいちばん使うのは、たぶんこの一言だ。</p>
+  </article>
+
+  <article class="item feature reverse">
+    <div class="board-mock" aria-label="黒板の見本: toast" role="img">
+      <p class="board-kicker">今夜の黒板</p>
+      <p class="board-word">toast</p>
+      <p class="board-note">乾杯の toast は、焼いたパンの toast と同じ語。香りづけにパンを浮かべた、17〜18 世紀の酒場の習慣から。</p>
+    </div>
+    <div class="item-text">
+      <h3>カウンターの奥の黒板</h3>
+      <p>毎晩ひとつ、言葉の来歴が書いてある。cheers はもとは「顔」、travel は「骨の折れる仕事」。日本語の言い方と並べると、同じものを別の側から名付けているのが見えてくる。由来がはっきりしない言葉には「諸説あり」とだけ書き、有名な俗説は俗説として扱う。</p>
+      <p class="sub">気になったら常連に聞けばいい。黒板に書いてある範囲で、ひとことだけ教えてくれる。</p>
+    </div>
+  </article>
+
+  <article class="item">
+    <h3>旅先のバーを、先に一軒</h3>
+    <p>行き先を書くと、その町のバーを一軒こしらえる。ロンドンなら、カウンターで頼んでその場で払うパブ。ポートランドなら、雨の夜のクラフトビール。本番の前に、何度でも通える。</p>
+  </article>
+
+  <article class="item">
+    <h3>手帳が少し厚くなった</h3>
+    <p>直された言い方のうち、今夜いちばん大事な一つを最初に。言いたかったことは、くだけた言い方から丁寧な言い方まで三段で並ぶ。<span class="en">Can I close out?</span> から <span class="en">Whenever you have a moment, could I settle up, please?</span> まで。最後に今夜の数字。比べる相手は、先週の自分だけにしてある。</p>
+  </article>
+
+  <article class="item">
+    <h3>夜を数える</h3>
+    <p>連続記録は脇に置いて、話した夜を「通算 N 夜」で数える。休んでも減らない。最初の七夜は小さな灯りがひとつずつ点き、週の終わりには一週間ぶんを一枚にまとめる。</p>
+  </article>
+</section>
+
+<section id="how" class="how" aria-labelledby="how-h">
+  <h2 id="how-h">仕組み。</h2>
+  <dl>
+    <div><dt>相手の言葉</dt><dd>Claude が常連の人格と場面を演じ、ミッションの達成を見て会話を締める。ふりかえりの分析も同じ。</dd></div>
+    <div><dt>相手の声</dt><dd>ElevenLabs と Gemini の音声合成。人物ごとに声を変え、文ごとに生成して、話し始めたらすぐ鳴る。無料枠を使い切ると次の声に切り替わる。</dd></div>
+    <div><dt>あなたの声</dt><dd>ブラウザの音声認識（Chrome）。聞き取りを確認してから送るので、言い直せる。</dd></div>
+    <div><dt>記憶と復習</dt><dd>会った日・覚えたこと・フレーズ帳は、作者の Mac の中の SQLite に。復習は FSRS で間隔を決める。判子や今夜の数字は会話の記録から数えていて、AI には判定させない。</dd></div>
+    <div><dt>黒板と旅先</dt><dd>黒板の三十語は固定の文面で、毎晩 AI に書かせることはしない（語源は俗説が混ざりやすいから）。旅先のバーは Claude が一軒ずつ作り、形を確かめてから店に並べる。</dd></div>
+    <div><dt>画面</dt><dd>PWA。人物はすべて手描きの SVG で、まばたきと口の動きだけを持つ。言葉と声は AI、絵は人の手。</dd></div>
+  </dl>
+  <p class="how-note">作者用の店は、サーバーが作者の Mac で動き、Tailscale Funnel で外から届くようにしている。入口は接続トークンで閉じている。だれでも使える版は、同じサーバーのコードをブラウザの中で動かし、記録はブラウザ内の SQLite（sql.js）に保存して、各社の API へブラウザから直接つなぐ。キーを預かる場所なので、作者のほかのサイトとは別のドメイン（barside-app.github.io）に置いている。設計の記録は手元の仕様書にあり、コードは非公開。</p>
+</section>
+
+<div class="cat-note"><svg class="lamp-mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4v12M12 30q12-16 24 0zM14 30h20" fill="none" stroke="currentColor" stroke-width="1.2"/><circle cx="24" cy="40" r="3" fill="currentColor" opacity=".6"/></svg>カウンターの最後の灯り。<br>うまく話せなくても大丈夫。ひとことから、顔なじみに。</div>
+</main>
+<footer><span>NOCTA · Tools</span><span>Barside — a little English, a little closer.</span></footer>
+</div>
+<script>
+// 店の灯り: 作者の Mac で動くサーバーに「起きているか」だけを聞く（認証なし・返るのは ok だけ）。
+// Mac が休んでいる・電源がない・Tailscale が止まっているときは届かないので「灯りが消えている」と出す。
+(function () {
+  var el = document.getElementById('lamp-status');
+  var enter = document.getElementById('enter');
+  if (!el || !('fetch' in window)) return;
+  var text = el.querySelector('.lamp-text');
+  function show(state, msg) {
+    el.className = 'lamp-status is-' + state;
+    text.textContent = msg;
+    if (enter) enter.classList.toggle('is-dim', state === 'closed');
+  }
+  function check() {
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = ctrl && setTimeout(function () { ctrl.abort(); }, 6000);
+    fetch('https://barside.tail12dfa5.ts.net/status', { cache: 'no-store', signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(new Error(String(r.status))); })
+      .then(function (j) { show(j && j.ok ? 'open' : 'closed', j && j.ok ? 'いま、灯りがついています。入れます。' : 'いまは灯りが消えています。'); })
+      .catch(function () { show('closed', 'いまは灯りが消えています。作者の Mac が休んでいるときはこうなります。'); })
+      .then(function () { if (timer) clearTimeout(timer); });
+  }
+  check();
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') check(); });
+  setInterval(check, 60000);
+})();
+</script>
+</body></html>
