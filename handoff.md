@@ -169,3 +169,4 @@
 - 2026-10-16: Barside 紹介ページに公開版の入口を追加して公開（d030878・Deploy success）。本番で「自分のキーで使う」が https://barside-app.github.io/ に向くこと、Tools カードの説明文の更新を確認済み。次: なし。
 - 2026-10-16: lampnook の仕組み節を削除して公開済み（9a3ef4c）。あわせて Barside 紹介ページの簡素化も公開（633b183）。本番で「店に入る」の向き先・「作者用」リンク・lampnook の節とメニューの削除を確認、320px / 1280px で崩れなし。次: なし。
 - 2026-10-16: Barside 紹介ページを一般向けに簡素化して公開（6cdcfd9・000a733・Deploy success）。本番で「店に入る」「はじめかた」「作者用」の向き先、灯り表示なし、カード説明文の短縮を確認済み。次: なし。
+- 2026-10-16: Tools 紹介ページの文言監査を仕組み化（docs/tools-page-copy.md・scripts/copy-lint.py・copy-audit-guard hook・copy-auditor）。既存ページの一回目の監査はブランチ copy-audit/2026-10 の作業ツリーに反映済み・未コミット。次: CEO が drafts/copy-audit-2026-10/report.html を見て番号ごとに採否を返す。
