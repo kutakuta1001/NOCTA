@@ -299,7 +299,8 @@ def audit_reason(tree, targets, lint_out, notices):
              "",
              "手順:",
              "1. python3 scripts/copy-lint.py --export %s <一時ディレクトリ> %s で、この tree の版を書き出す" % (tree, " ".join(targets)),
-             "2. 書き出した版と上の lint 結果を copy-auditor エージェントに渡して監査する（基準は docs/tools-page-copy.md）",
+             "2. 書き出した版と上の lint 結果を copy-auditor エージェントに渡して監査する（基準は docs/tools-page-copy.md）。"
+             "copy-auditor が見つからないセッションでは、general-purpose（model: opus）に ~/.claude/agents/copy-auditor.md を読ませて同じ指示で監査する",
              "3. 「消す / 短くする / 残す」の一覧（10 行程度）と直した版を CEO に見せる。直すのは文言だけで、SVG・見本・画像に触れない",
              "4. 直して add し直したら tree が変わるので、もう一度コミットを試してこの hook に通す",
              "5. CEO が OK を出したあとにだけ python3 scripts/copy-lint.py --mark <CEO に見せた tree> を実行し、再コミットする。"

@@ -32,6 +32,11 @@ AI からの書き込みは `permissions.deny` の `Edit` ルールと `approved
 ただし hook はコマンド文字列しか見ておらず作業ディレクトリまでは判定できないため、`cd` してから相対パスで書く・
 スクリプト経由で書き込むといった手段でガードを回避することを固く禁じる。承認済みファイルの移動を求められたら、CEO 自身の操作が必要だと伝える。
 
+### R-02b: Tools 紹介ページの文言監査を回避しない
+
+紹介ページ・カード説明文を含むコミットは `copy-audit-guard` hook が止め、`copy-auditor` での監査を求める。基準は `docs/tools-page-copy.md`。
+監査済みの印（`scripts/copy-lint.py --mark <tree>`）は、CEO が監査結果と直した版を見て OK を出したあとにだけ、見せた tree に付ける。印を先に付ける・コマンドを分けずに通すといった手段で hook を回避することを禁じる。
+
 ### R-03: SNS を自動投稿しない
 
 SNS API・スケジューラへの登録を行わない。投稿文は `drafts/sns_calendar.md` に保存し「CEO確認待ち」と明記する。
