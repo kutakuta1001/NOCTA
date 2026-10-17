@@ -14,15 +14,23 @@ GUARD = REPO / "claude-config" / "hooks" / "copy-audit-guard.py"
 APPROVED = (FIX / "barside_approved.html").read_text(encoding="utf-8")
 PAGE = "website/barside/index.html"
 
-CARDS = '''const NOCTA_APPS = [
+CARDS = '''const NOCTA_APP_COLLECTIONS = [
+  { key: "nuword", title: "NuWord Collection" },
+  { key: "hina", title: "HiNa Collection" },
+  { key: "yori", title: "Yori Collection" }
+];
+
+const NOCTA_APPS = [
   {
     title: "Barside",
+    collection: "yori",
     url: "./barside/index.html",
     descJa: "夜のバーの常連と、英語でひとこと。",
     descEn: "A little English at the bar."
   },
   {
     title: "iro",
+    collection: "hina",
     url: "./iro/index.html",
     descJa: "色を選ぶ道具。",
     descEn: "Pick colors."
@@ -133,6 +141,7 @@ class GuardTest(unittest.TestCase):
     def test_new_card_with_desc_denied_with_notice(self):
         self.edit("website/apps-data.js", "];", '''  {
     title: "newtool",
+    collection: "yori",
     url: "./newtool/index.html",
     descJa: "新しい道具。",
     descEn: "A new tool."
@@ -148,6 +157,33 @@ class GuardTest(unittest.TestCase):
         out = self.hook("git commit -m x")
         self.assertFalse(self.denied(out))
         self.assertIn("newtool", out["additionalContext"])
+
+    # 分類（collection）
+    def test_card_without_collection_denied(self):
+        self.edit("website/apps-data.js", '    collection: "hina",\n', "")
+        out = self.hook("git commit -m x")
+        self.assertTrue(self.denied(out))
+        reason = out["permissionDecisionReason"]
+        for needle in ("COLLECTION_MISSING", "iro", "docs/tools-collections.md"):
+            self.assertIn(needle, reason)
+
+    def test_unknown_collection_denied_even_if_marked(self):
+        self.edit("website/apps-data.js", 'collection: "hina"', 'collection: "music"')
+        self.mark()
+        out = self.hook("git commit -m x")
+        self.assertTrue(self.denied(out))
+        self.assertIn("COLLECTION_UNKNOWN", out["permissionDecisionReason"])
+
+    def test_unreadable_cards_fail_closed(self):
+        self.edit("website/apps-data.js", "const NOCTA_APP_COLLECTIONS = [", "const OTHER = [")
+        out = self.hook("git commit -m x")
+        self.assertTrue(self.denied(out))
+        self.assertIn("分類", out["permissionDecisionReason"])
+
+    def test_other_file_skips_collection_check(self):
+        self.edit("website/apps-data.js", "const NOCTA_APP_COLLECTIONS = [", "const OTHER = [", stage=False)
+        self.edit("notes.txt", "a", "b")
+        self.assertIsNone(self.hook("git commit -m x"))
 
     # コマンドの形
     def test_combined_add_commit_denied(self):

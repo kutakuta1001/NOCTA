@@ -15,6 +15,8 @@ CEO が push を頼む前の段階で、毎回自動で監査に回すための�
   - なければ scripts/copy-lint.py の結果と手順を添えて deny する
   - git add と git commit の連結、pathspec や -a 付きの commit は、hook がステージ内容を見られないので
     分けて実行するよう deny する
+  - card_file がステージされていれば、カードの分類（collection）を copy-lint --collections で確かめる。
+    分類が抜けていれば監査済みの印があっても deny する。検査できなかったときも deny する（fail-closed）
   - 解釈できないコマンドや lint の故障は fail-open（通したうえで「監査を実行できなかった」を伝える）
 
 ソースは project_NOCTA/claude-config/hooks/。~/.claude/hooks/ へは cp で配置する。
@@ -293,6 +295,33 @@ def staged_targets(repo, cfg):
     return targets, notices
 
 
+def card_staged(repo, cfg):
+    names = run(["git", "diff", "--cached", "--name-only", "--no-renames"], repo).splitlines()
+    return cfg["card_file"] in names
+
+
+def collection_check(repo, tree):
+    """カードの分類を確かめる。問題がなければ None、あれば deny。検査できなかったときも deny する。"""
+    howto = "docs/tools-collections.md を読んで、各カードに collection を書いてから再コミットしてください。"
+    try:
+        r = subprocess.run([sys.executable, str(repo / LINT), "--collections", "--tree", tree],
+                           cwd=str(repo), capture_output=True, timeout=max(1, min(10, remaining())))
+        if r.returncode != 0:
+            raise RuntimeError("copy-lint の終了コード %d: %s" % (r.returncode, r.stderr.decode("utf-8", "replace")[:300]))
+        payload = json.loads(r.stdout.decode("utf-8"))
+        if payload.get("ok") is not True or payload.get("tree") != tree:
+            raise ValueError("copy-lint の出力が不正")
+    except Exception as e:
+        log("DENY-COLLECTION-ERROR\t%s\t%r" % (repo, e))
+        return deny("copy-audit-guard: Tools カードの分類（collection）を検査できませんでした（%s）。"
+                    "apps-data.js の NOCTA_APP_COLLECTIONS と NOCTA_APPS の配列の書き方を確かめてください。%s" % (e, howto))
+    if not payload["findings"]:
+        return None
+    log("DENY-COLLECTION\t%s\t%s" % (repo, tree))
+    return deny("copy-audit-guard: Tools カードの分類（collection）に問題があります。\n%s\n%s"
+                % (format_findings(payload), howto))
+
+
 def unstaged_or_staged_change(repo, cfg):
     tracked = cfg["intro_pages"] + [cfg["card_file"]]
     out = run(["git", "diff", "--name-only", "HEAD", "--"] + tracked, repo, check=False)
@@ -382,6 +411,11 @@ def decide_commit(repo, commit_dir, adds, args):
 
     if paths and not includes_index(args):
         return None  # 指定したパスだけをコミットし、それが対象を含まないことは上で確かめた
+
+    if card_staged(repo, cfg):
+        out = collection_check(repo, run(["git", "write-tree"], repo).strip())
+        if out:
+            return out
 
     targets, notices = staged_targets(repo, cfg)
     if not targets:
