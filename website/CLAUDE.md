@@ -60,7 +60,7 @@ website/
 ## git 操作（HP作業時）
 
 - `git add` は `website/` 以下のファイルのみ個別指定する。`git add -A` / `git add .` は使わない
-- 実画像・動画ファイル（png / jpg / mp4 等）は git に追加しない
+- ページが表示する画像・動画は `website/` に置いて git に追加する（制作素材は入れない。正本の git 運用を参照）。Visual 作品の画像は IPFS に置き、git には入れない
 - `main` への push は本番デプロイを起動する。**CEO の明示的な指示がある場合のみ push する**（バックグラウンドセッション・ワークフローからは commit までにとどめる）
 - Tools の紹介ページとカード説明文の書き方は `docs/tools-page-copy.md`。コミット時に `copy-audit-guard` が監査を求める（正本 R-02b）。新しい紹介ページを作ったら、同ファイルの `intro_pages` に足す
 
