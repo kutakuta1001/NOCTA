@@ -14,6 +14,17 @@
  */
 const NOCTA_APPS = [
   {
+    title: "HiNa Mado",
+    cat: "app",
+    url: "./mado/index.html",
+    imgUrl: "./images/hina-mado-cap.jpg",
+    thumbClass: "thumb-4",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "知らない国の窓をひとつ開けて、日本にない言葉や考え方、風習に出会う。",
+    descEn: "Open a window onto a country you don't know, and meet words, ways of thinking and customs Japan doesn't have."
+  },
+  {
     title: "lampnook",
     cat: "app",
     url: "./lampnook/index.html",

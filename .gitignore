@@ -1,6 +1,7 @@
 .DS_Store
 sample/
 *.mp4
+!website/mado/media/*.mp4
 outputs/audio/**/*.mp3
 outputs/audio/**/*.wav
 

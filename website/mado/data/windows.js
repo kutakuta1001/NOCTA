@@ -1,0 +1,33 @@
+// 生成ファイル。tools/index-windows.mjs で作り直す
+import bo_ from './w/bo.js';
+import br_ from './w/br.js';
+import bt_ from './w/bt.js';
+import ca_ from './w/ca.js';
+import cu_ from './w/cu.js';
+import de_ from './w/de.js';
+import et_ from './w/et.js';
+import fi_ from './w/fi.js';
+import fj_ from './w/fj.js';
+import ge_ from './w/ge.js';
+import gr_ from './w/gr.js';
+import ht_ from './w/ht.js';
+import id_ from './w/id.js';
+import ir_ from './w/ir.js';
+import is_ from './w/is.js';
+import it_ from './w/it.js';
+import lk_ from './w/lk.js';
+import mg_ from './w/mg.js';
+import mn_ from './w/mn.js';
+import mx_ from './w/mx.js';
+import nl_ from './w/nl.js';
+import np_ from './w/np.js';
+import nz_ from './w/nz.js';
+import ph_ from './w/ph.js';
+import pt_ from './w/pt.js';
+import sn_ from './w/sn.js';
+import tr_ from './w/tr.js';
+import tz_ from './w/tz.js';
+import ws_ from './w/ws.js';
+import za_ from './w/za.js';
+
+export const WINDOWS = [bo_, br_, bt_, ca_, cu_, de_, et_, fi_, fj_, ge_, gr_, ht_, id_, ir_, is_, it_, lk_, mg_, mn_, mx_, nl_, np_, nz_, ph_, pt_, sn_, tr_, tz_, ws_, za_];
