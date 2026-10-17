@@ -249,7 +249,9 @@ def lint_cards(text, cfg):
     return findings
 
 
-COLLECTION_RE = re.compile(r'collection\s*:\s*"([^"]*)"')
+COLLECTION_RE = re.compile(r'\bcollection\s*:\s*"([^"]*)"')
+# カードの始まり。単引用符のタイトルも数え、subtitle などは数えない
+CARD_TITLE_RE = re.compile(r'\btitle\s*:[^\n]*?["\']([^"\'\n]+)["\']')
 KEY_RE = re.compile(r'key\s*:\s*"([a-z]+)"')
 
 
@@ -273,7 +275,9 @@ def lint_collections(text):
         raise LintError("NOCTA_APP_COLLECTIONS に key が 1 つもない")
     found = []  # [title, collection]
     for line in cards:
-        t = TITLE_RE.search(line)
+        if line.strip().startswith("//"):
+            continue
+        t = CARD_TITLE_RE.search(line)
         if t:
             found.append([t.group(1), None])
         c = COLLECTION_RE.search(line)

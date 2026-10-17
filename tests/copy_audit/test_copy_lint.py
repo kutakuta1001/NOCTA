@@ -169,6 +169,19 @@ class LintCollectionsTest(unittest.TestCase):
     def test_collection_titles_not_cards(self):
         self.assertEqual(lint.lint_collections(apps(("A", "yori"))), [])
 
+    def test_single_quoted_title_counted(self):
+        text = apps(("A", "nuword")).replace('title: "A"', "title: 'A'")
+        f = lint.lint_collections(text.replace('    collection: "nuword",\n', ""))
+        self.assertEqual([(x.kind, x.location) for x in f], [("COLLECTION_MISSING", "A")])
+
+    def test_commented_collection_ignored(self):
+        text = apps(("A", "yori")).replace('    collection: "yori"', '    // collection: "yori"')
+        self.assertEqual([x.kind for x in lint.lint_collections(text)], ["COLLECTION_MISSING"])
+
+    def test_subtitle_not_new_card(self):
+        text = apps(("A", "yori")).replace('    collection: "yori",\n', '    collection: "yori",\n    subtitle: "sub",\n')
+        self.assertEqual(lint.lint_collections(text), [])
+
     def test_unreadable(self):
         with self.assertRaises(lint.LintError):
             lint.lint_collections('const NOCTA_APPS = [\n  {\n    title: "A",\n  }\n];\n')
