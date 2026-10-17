@@ -21,8 +21,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "ドット絵の小さな部屋で、ランプの灯りのそばで二十五分。集中を重ねるほど部屋に物が増え、カフェ・公園・キャンプ場・縁側・雪の山小屋へと行ける場所が開いていく集中タイマー。記録は自分のブラウザの中にだけ残る。",
-    descEn: "Twenty-five minutes by lamplight in a small pixel-art room. The more you focus, the more the room fills and the more places open up: a book cafe, a park, a mountain camp, a veranda, a snowy cabin. A focus timer whose records stay in your own browser."
+    descJa: "ドット絵の小さな部屋で、ランプの灯りのそばで二十五分。集中を重ねるほど行ける場所が開いていく集中タイマー。",
+    descEn: "Twenty-five minutes by lamplight in a small pixel-art room. A focus timer that opens up more places the more you focus."
   },
   {
     title: "Barside",
@@ -33,7 +33,7 @@ const NOCTA_APPS = [
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
     descJa: "夜のバーの常連と、英語でひとこと。会話中は直されず、帰り道の手帳でふりかえる会話練習。自分の API キーで使える。",
-    descEn: "A little English at the bar, with regulars who remember you. No corrections mid-conversation, and a notebook for the walk home. Bring your own API keys."
+    descEn: "A little English with the regulars at a night bar. No corrections mid-conversation, and a notebook to look back on during the walk home. Bring your own API keys."
   },
   {
     title: /* strategy-name:start */ "HiNa Kai" /* strategy-name:end */,
@@ -43,8 +43,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "銀猫が古い書斎で見つけた、十八の思考の地図。歴史の判断を図でたどり、言葉を拾い、今日の仕事へ映す。",
-    descEn: "Eighteen maps of thought, found in an old study by a silver cat. Trace historical decisions, collect words, and reflect on your work."
+    descJa: "歴史の判断を図でたどる、十八の思考の地図。拾った言葉を今日の仕事へ映す。",
+    descEn: "Eighteen maps of thought that trace historical decisions. Carry the words you collect into today's work."
   },
   {
     title: "HiNa Kihi",
@@ -54,8 +54,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "銀猫が見つけた三十の家紋。かたちを眺め、色と余白をしつらえて、一枚の絵に。",
-    descEn: "Thirty Japanese family crests found by a silver cat. Contemplate their forms and compose a keepsake with color and space."
+    descJa: "三十の家紋を眺め、色と余白をしつらえて、一枚の絵に。",
+    descEn: "Thirty Japanese family crests. Contemplate their forms and compose a single picture with color and space."
   },
   {
     title: "HiNa Hare",
@@ -65,8 +65,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "色の物語とかさね配色に加え、選んだ色のインクで文字を書き遊べる小さな書斎",
-    descEn: "Beyond their stories and layered pairings, a little writing room where you play with ink in the color you choose."
+    descJa: "日本の伝統色の図鑑。色の物語とかさね配色を眺め、選んだ色のインクで文字も書ける。",
+    descEn: "A field guide to traditional Japanese colors. Read their stories and layered pairings, and write in ink of the color you choose."
   },
   {
     title: "HiNa Ichi",
@@ -76,8 +76,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-6",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "花言葉と誕生花に加え、指でなぞると花が咲いて散り、手を止めると庭が画面いっぱいの草花に自生して仕上がる",
-    descEn: "Beyond flower meanings and birth flowers, trace to make flowers bloom and scatter; rest, and the garden grows itself into a field of blossoms."
+    descJa: "季節の花を眺める図鑑。花言葉と誕生花を添え、指でなぞると花が咲く。",
+    descEn: "A field guide to seasonal flowers, with flower meanings and birth flowers. Trace with your finger and flowers bloom."
   },
   {
     title: "HiNa Gyu",
@@ -87,8 +87,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-5",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "石言葉と誕生石に加え、手のひらで光にかざすと面がきらめき、手を止めると内部の反射までゆっくり現れる",
-    descEn: "Beyond stone meanings and birthstones, hold each to the light and its facets catch fire; pause, and the inner reflections slowly emerge."
+    descJa: "世界の宝石と原石を眺める図鑑。石言葉と誕生石を添え、光にかざすと面がきらめく。",
+    descEn: "A field guide to the world's gems and rough stones, with stone meanings and birthstones. Hold one to the light and its facets sparkle."
   },
   {
     title: "NuWord still",
@@ -109,8 +109,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-3",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
-    descJa: "思考の種を蒔く、カード型メモアプリ。アイデアをカードに書き、リンクでつなぎ、育てる。",
-    descEn: "A card-based note app to plant and grow ideas. Write, link, and cultivate your thoughts."
+    descJa: "思考の種を蒔く、カード型メモアプリ。アイデアをリンクでつなぎ、育てる。",
+    descEn: "A card-based note app for planting ideas. Link them and let them grow."
   },
   {
     title: "NuWord Verse",
@@ -120,8 +120,8 @@ const NOCTA_APPS = [
     thumbClass: "thumb-2",
     badge: "App",
     badgeColorClass: "bg-brand-secondary/20 text-brand-secondary",
-    descJa: "詩節のように言葉を手もとに置く。読書中に出会った印象的な一文をストックするウェブアプリ。",
-    descEn: "Keep words close, like verses. A web app to collect and revisit memorable lines from your reading."
+    descJa: "読書中に出会った印象的な一文をストックするウェブアプリ。",
+    descEn: "A web app for collecting memorable lines from your reading."
   },
   {
     title: "NuWord Inner Canvas",
