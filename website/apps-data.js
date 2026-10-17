@@ -17,7 +17,7 @@ const NOCTA_APPS = [
     title: "HiNa Mado",
     cat: "app",
     url: "./mado/index.html",
-    imgUrl: "./images/hina-mado-cap.jpg",
+    imgUrl: "./mado/cover.jpg",
     thumbClass: "thumb-4",
     badge: "App",
     badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
