@@ -67,10 +67,12 @@ class GuardTest(unittest.TestCase):
     def tearDown(self):
         shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def hook(self, command, cwd=None):
+    def hook(self, command, cwd=None, session=None):
         env = dict(os.environ, COPY_AUDIT_LOG_DIR=str(self.logs), COPY_TEST_REPO=str(self.repo))
         payload = {"tool_name": "Bash", "tool_input": {"command": command},
                    "cwd": str(cwd or self.repo), "hook_event_name": "PreToolUse"}
+        if session:
+            payload["session_id"] = session
         r = subprocess.run([sys.executable, str(GUARD)], input=json.dumps(payload),
                            capture_output=True, text=True, env=env, timeout=60)
         self.assertEqual(r.returncode, 0, r.stderr)
@@ -253,6 +255,57 @@ class GuardTest(unittest.TestCase):
         self.assertIsNone(self.hook(cmd))
         cmd2 = 'git commit -m "$(cat <<\'EOF\'\nsay "hi\nEOF\n)"'
         self.assertIsNone(self.hook(cmd2))
+
+    # ステージの持ち主
+    def test_foreign_staged_denied(self):
+        self.edit("notes.txt", "a", "b")
+        out = self.hook("git commit -m x", session="s1")
+        self.assertTrue(self.denied(out))
+        self.assertIn("notes.txt", out["permissionDecisionReason"])
+        self.assertIn("restore --staged", out["permissionDecisionReason"])
+
+    def test_own_add_passes(self):
+        self.assertIsNone(self.hook("git add notes.txt", session="s1"))
+        self.edit("notes.txt", "a", "b")
+        self.assertIsNone(self.hook("git commit -m x", session="s1"))
+
+    def test_other_session_add_denied(self):
+        self.hook("git add notes.txt", session="s2")
+        self.edit("notes.txt", "a", "b")
+        self.assertTrue(self.denied(self.hook("git commit -m x", session="s1")))
+
+    def test_add_in_same_command_owns(self):
+        self.edit("notes.txt", "a", "b")
+        self.assertIsNone(self.hook("git add notes.txt && git commit -m x", session="s1"))
+
+    def test_directory_add_owns_files(self):
+        self.hook("cd %s && git add website/iro" % self.repo, cwd=self.root, session="s1")
+        self.edit("website/iro/index.html", "iro", "iro2")
+        self.assertIsNone(self.hook("git commit -m x", session="s1"))
+
+    def test_rm_owns_deletion(self):
+        self.hook("git rm -q notes.txt", session="s1")
+        git(self.repo, "rm", "-q", "notes.txt")
+        self.assertIsNone(self.hook("git commit -m x", session="s1"))
+
+    def test_pathspec_commit_ignores_other_staged(self):
+        self.edit("notes.txt", "a", "b")                      # 別のセッションのステージ
+        self.edit("website/iro/index.html", "iro", "iro2", stage=False)
+        self.assertIsNone(self.hook("git commit -m x -- website/iro/index.html", session="s1"))
+        out = self.hook("git commit -i -m x -- website/iro/index.html", session="s1")
+        self.assertTrue(self.denied(out))
+        self.assertIn("notes.txt", out["permissionDecisionReason"])
+
+    def test_pathspec_commit_ignores_staged_intro(self):
+        self.edit_page()                                      # 別のセッションが紹介ページをステージ
+        self.edit("notes.txt", "a", "b", stage=False)
+        self.assertIsNone(self.hook("git commit -m x -- notes.txt"))
+
+    def test_foreign_check_only_in_rules_repo(self):
+        plain = init_repo(self.root / "plain", with_rules=False)
+        (plain / "notes.txt").write_text("z", encoding="utf-8")
+        git(plain, "add", "notes.txt")
+        self.assertIsNone(self.hook("git commit -m x", cwd=plain, session="s1"))
 
     def test_log_written(self):
         self.edit_page()

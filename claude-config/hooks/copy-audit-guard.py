@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""copy-audit-guard — NOCTA の紹介ページ・カード説明文を含む git commit の前に文言監査を求める PreToolUse hook
+"""copy-audit-guard — NOCTA の git commit の前に、文言監査とステージの持ち主を確かめる PreToolUse hook
+
+文言監査: 紹介ページ・カード説明文を含むコミットに監査を求める。
+ステージの持ち主: このセッションが add / rm / mv していないファイルがステージにあれば止める
+（同じ作業フォルダを複数のセッションが触るため。セッション ID がない入力では確かめない）。
 
 背景: 2026-10-16、Barside の紹介ページが「説明ページ」になって公開直前まで残った。
 CEO が push を頼む前の段階で、毎回自動で監査に回すための仕掛け。
@@ -192,7 +196,7 @@ def parse_commit_args(args):
 def collect(command, cwd):
     units, has_or = split_units(tokenize(command))
     cur = Path(cwd)
-    adds, commits, saw_cd = [], [], False
+    adds, commits, stagers, saw_cd = [], [], [], False
     for unit in units:
         unit = strip_redirects(unit)
         if not unit:
@@ -205,13 +209,15 @@ def collect(command, cwd):
         if not g:
             continue
         d, sub, args = g
+        if sub in ("add", "rm", "mv"):
+            stagers.append((d, args))
         if sub == "add":
             adds.append((d, args))
         elif sub == "commit":
             commits.append((d, args))
     if commits and has_or and saw_cd:
         raise Unparsable("|| と cd の組み合わせ")
-    return adds, commits
+    return adds, commits, stagers
 
 
 # ---- リポジトリの照会 ------------------------------------------------------
@@ -374,6 +380,9 @@ def decide_commit(repo, commit_dir, adds, args):
                     "カードの変更までコミットするため監査できません。対象を個別に git add してから、"
                     "通常の git commit を別の Bash で実行してください。")
 
+    if paths and not includes_index(args):
+        return None  # 指定したパスだけをコミットし、それが対象を含まないことは上で確かめた
+
     targets, notices = staged_targets(repo, cfg)
     if not targets:
         return context(notice_text(notices)) if notices else None
@@ -394,19 +403,87 @@ def decide_commit(repo, commit_dir, adds, args):
     return deny(audit_reason(tree, targets, format_findings(payload), notices))
 
 
-def decide(command, cwd):
-    if "commit" not in command or "git" not in command:
+def stage_record_path(repo, session):
+    safe = "".join(c for c in session if c.isalnum() or c in "-_")[:80]
+    return common_dir(repo) / "copy-audit" / ("stage-%s.json" % safe)
+
+
+def load_stage_records(repo, session):
+    try:
+        return [tuple(x) for x in json.loads(stage_record_path(repo, session).read_text(encoding="utf-8"))]
+    except (OSError, ValueError):
+        return []
+
+
+def record_stagers(repo, session, stagers):
+    """このセッションが add / rm / mv したパスを記録する。古い記録（3 日超）は消す。"""
+    path = stage_record_path(repo, session)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    rows = load_stage_records(repo, session)
+    for d, args in stagers:
+        for a in args:
+            if a == "--":
+                continue
+            if a.startswith("-") and a not in ("-A", "--all", "-u", "--update"):
+                continue
+            rows.append((str(Path(d).resolve()), a))
+    path.write_text(json.dumps(sorted(set(rows)), ensure_ascii=False), encoding="utf-8")
+    for old in path.parent.glob("stage-*.json"):
+        try:
+            if time.time() - old.stat().st_mtime > 3 * 86400:
+                old.unlink()
+        except OSError:
+            pass
+
+
+def includes_index(args):
+    """pathspec 付きでもステージ全体を含める -i / --include があるか。"""
+    for a in args:
+        if a == "--":
+            break
+        if a == "--include" or (a.startswith("-") and not a.startswith("--") and "i" in a[1:].split("m")[0]):
+            return True
+    return False
+
+
+def foreign_staged(repo, session, stagers, commit_dir, commit_args):
+    """コミットに入るステージのうち、このセッションが add / rm / mv した覚えのないファイル。
+    pathspec 付きのコミット（-i なし）はそのパスだけをコミットするので、ほかのステージは見ない。"""
+    staged = [l for l in run(["git", "diff", "--cached", "--name-only", "--no-renames"], repo).splitlines() if l.strip()]
+    paths, _ = parse_commit_args(commit_args)
+    if paths and not includes_index(commit_args):
+        staged = [n for n in staged if any(under(a, commit_dir, repo, n) for a in paths)]
+    rows = load_stage_records(repo, session) + [(str(Path(d).resolve()), a) for d, args in stagers for a in args]
+    return [n for n in staged if not any(under(a, d, repo, n) for d, a in rows)]
+
+
+def decide(command, cwd, session=None):
+    if "git" not in command:
         return None
     try:
-        adds, commits = collect(command, cwd)
+        adds, commits, stagers = collect(command, cwd)
     except Unparsable as e:
         log("UNPARSABLE\t%s\t%s" % (e, command))
         return context("copy-audit-guard: コマンドを解釈できず、文言の監査を実行できなかった（%s）。"
                        "紹介ページやカード説明文を含むコミットなら、コマンドを単純な形に分けてやり直してください。" % e)
+    if session:
+        for d, args in stagers:
+            repo = toplevel(d)
+            if repo is not None and (repo / RULES).exists():
+                record_stagers(repo, session, [(d, args)])
     for d, args in commits:
         repo = toplevel(d)
         if repo is None or not (repo / RULES).exists():
             continue
+        if session:
+            foreign = foreign_staged(repo, session, stagers, d, args)
+            if foreign:
+                log("DENY-FOREIGN\t%s\t%s" % (repo, ",".join(foreign)))
+                return deny("copy-audit-guard: このセッションが git add していないファイルがステージにあります: %s。"
+                            "別のセッションか CEO の操作でステージされたものが、このコミットに混ざる可能性があります。"
+                            "混ぜたくなければ git restore --staged <ファイル> で外してください（作業ツリーの変更は残ります）。"
+                            "このコミットに含めるつもりなら、自分で git add し直してから git commit を別の Bash で実行してください。"
+                            % "、".join(foreign[:20]))
         return decide_commit(repo, d, adds, args)
     return None
 
@@ -416,7 +493,7 @@ def main():
         data = json.loads(sys.stdin.read() or "{}")
         command = (data.get("tool_input") or {}).get("command") or ""
         cwd = data.get("cwd") or os.getcwd()
-        out = decide(command, cwd)
+        out = decide(command, cwd, data.get("session_id"))
     except Exception as e:  # fail-open
         log("ERROR\t%r" % e)
         out = context("copy-audit-guard: 文言の監査を実行できなかった（%s）。紹介ページやカード説明文を含むコミットなら、"

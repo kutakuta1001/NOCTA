@@ -154,6 +154,8 @@ CEO が作れない部分（ドラム・ベース）は Suno のパーツをそ�
 - `git add` は対象ファイルを個別指定する。`git add -A` / `git add .` は使わない
 - 実画像・動画ファイル（png / jpg / mp4 等）は git に追加しない
 - **git push は CEO が対話セッションで明示的に指示した場合のみ実行する。バックグラウンドセッション・自動処理・ワークフローからは push しない（commit までにとどめる）。** `main` への push は GitHub Actions を起動して本番サイトを更新するため
+- push の直前に `git fetch` と `git log --oneline origin/main..main` で送るコミットを一覧にして CEO に見せる。CEO が頼んだ作業以外のコミット（別のセッション・別ディレクトリの作業）が混ざっていれば、push する前にその中身を CEO に確かめる。この作業フォルダは複数のセッションが触るため
+- コミット前のステージは `copy-audit-guard` hook が確かめる。このセッションが add していないファイルがステージにあると止まるので、外す（`git restore --staged`）か、自分で add し直して引き受けるかを決める
 - `~/.claude/settings.json` は API キーを平文で含む。リポジトリにコピーしない
 - 実行不可（deny 済み）: `git push --force` / `git push -f` / `git reset --hard` / `git clean -f` / `git rebase` / `rm -rf`
 - コミットメッセージ例: `feat(blog): [タイトル] を追加` / `feat(works): [曲名] を Works に追加` / `fix(visual): [作品名] の IPFS ハッシュを修正`
