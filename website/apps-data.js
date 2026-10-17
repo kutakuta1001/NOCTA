@@ -14,6 +14,17 @@
  */
 const NOCTA_APPS = [
   {
+    title: "NuWord before",
+    cat: "app",
+    url: "https://nuword-nu.vercel.app/before",
+    imgUrl: "./images/before.jpg",
+    thumbClass: "thumb-4",
+    badge: "App",
+    badgeColorClass: "bg-brand-highlight/20 text-brand-highlight",
+    descJa: "瞑想や制作をはじめる前の数十秒。問いがひとつ灯り、場面になる。",
+    descEn: "A few dozen seconds before you meditate or create. A question lights up and becomes a scene."
+  },
+  {
     title: "HiNa Mado",
     cat: "app",
     url: "./mado/index.html",
