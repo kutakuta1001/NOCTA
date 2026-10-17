@@ -131,6 +131,51 @@ class LintCardsTest(unittest.TestCase):
         self.assertTrue(has(lint.lint_cards(self.card('a\\"b'), CFG), "CARD_UNSAFE"))
 
 
+COLLECTIONS = """const NOCTA_APP_COLLECTIONS = [
+  { key: "nuword", title: "NuWord Collection", descJa: "内省。", descEn: "Reflect." },
+  { key: "hina", title: "HiNa Collection", descJa: "収集。", descEn: "Collect." },
+  { key: "yori", title: "Yori Collection", descJa: "学び。", descEn: "Learn." }
+];
+"""
+
+
+def apps(*cards):
+    body = ",\n".join("  {\n    title: %s,\n%s    descJa: \"説明。\"\n  }" % (
+        t if t.startswith("/*") else '"%s"' % t,
+        "" if c is None else '    collection: "%s",\n' % c) for t, c in cards)
+    return COLLECTIONS + "const NOCTA_APPS = [\n" + body + "\n];\n"
+
+
+class LintCollectionsTest(unittest.TestCase):
+    def test_all_classified(self):
+        self.assertEqual(lint.lint_collections(apps(("A", "nuword"), ("B", "hina"), ("C", "yori"))), [])
+
+    def test_missing(self):
+        f = lint.lint_collections(apps(("A", "nuword"), ("X", None)))
+        self.assertEqual([(x.kind, x.location) for x in f], [("COLLECTION_MISSING", "X")])
+
+    def test_unknown(self):
+        f = lint.lint_collections(apps(("A", "music")))
+        self.assertEqual([x.kind for x in f], ["COLLECTION_UNKNOWN"])
+        for key in ("nuword", "hina", "yori"):
+            self.assertIn(key, f[0].excerpt)
+
+    def test_strategy_marker(self):
+        t = '/* strategy-name:start */ "HiNa Kai" /* strategy-name:end */'
+        self.assertEqual(lint.lint_collections(apps((t, "hina"))), [])
+        f = lint.lint_collections(apps((t, None)))
+        self.assertEqual([(x.kind, x.location) for x in f], [("COLLECTION_MISSING", "HiNa Kai")])
+
+    def test_collection_titles_not_cards(self):
+        self.assertEqual(lint.lint_collections(apps(("A", "yori"))), [])
+
+    def test_unreadable(self):
+        with self.assertRaises(lint.LintError):
+            lint.lint_collections('const NOCTA_APPS = [\n  {\n    title: "A",\n  }\n];\n')
+        with self.assertRaises(lint.LintError):
+            lint.lint_collections(COLLECTIONS)
+
+
 def git(cwd, *args):
     return subprocess.run(["git", "-C", str(cwd)] + list(args), check=True,
                           capture_output=True, text=True).stdout.strip()
@@ -188,6 +233,25 @@ class CliTest(unittest.TestCase):
             self.assertEqual(r.returncode, 4)
 
             r = self.run_lint(repo, "--bogus")
+            self.assertEqual(r.returncode, 3)
+
+    def test_cli_collections(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = make_repo(tmp)
+            cards = repo / "website" / "apps-data.js"
+            cards.write_text(apps(("A", "nuword"), ("X", None)), encoding="utf-8")
+            git(repo, "add", "website/apps-data.js")
+            tree = git(repo, "write-tree")
+            r = self.run_lint(repo, "--collections", "--tree", tree)
+            self.assertEqual(r.returncode, 0, r.stderr)
+            payload = json.loads(r.stdout)
+            self.assertTrue(payload["ok"])
+            self.assertEqual(payload["tree"], tree)
+            self.assertEqual([f["kind"] for f in payload["findings"]], ["COLLECTION_MISSING"])
+
+            cards.write_text('const NOCTA_APPS = [\n  {\n    title: "A",\n  }\n];\n', encoding="utf-8")
+            git(repo, "add", "website/apps-data.js")
+            r = self.run_lint(repo, "--collections", "--tree", git(repo, "write-tree"))
             self.assertEqual(r.returncode, 3)
 
     def test_cli_deleted_page(self):

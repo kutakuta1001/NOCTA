@@ -8,6 +8,7 @@
   copy-lint.py --tree TREE [--base REV] [--json] FILE...   TREE の版を REV と比べて検査する
   copy-lint.py --export TREE OUTDIR FILE...                 TREE の版を OUTDIR に書き出す
   copy-lint.py --mark TREE                                  ステージ内容が TREE のときだけ監査済みの印を付ける
+  copy-lint.py --collections --tree TREE                    TREE のカードがすべてコレクションに分類されているか検査する
 
 終了コード: 0 = 正常（指摘の有無は出力で示す）/ 3 = 引数・実行の誤り / 4 = 印の対象がステージ内容と違う
 """
@@ -248,6 +249,45 @@ def lint_cards(text, cfg):
     return findings
 
 
+COLLECTION_RE = re.compile(r'collection\s*:\s*"([^"]*)"')
+KEY_RE = re.compile(r'key\s*:\s*"([a-z]+)"')
+
+
+def _block(lines, name):
+    """`const NAME = [` から次の `];` までの行。見つからなければ None。"""
+    start = next((i for i, l in enumerate(lines) if l.strip().startswith("const %s = [" % name)), None)
+    if start is None:
+        return None
+    end = next((i for i in range(start, len(lines)) if lines[i].strip().startswith("];")), None)
+    return None if end is None else lines[start + 1:end]
+
+
+def lint_collections(text):
+    """apps-data.js のカードがすべて NOCTA_APP_COLLECTIONS のどれかに分類されているかを検査する。"""
+    lines = text.splitlines()
+    defs, cards = _block(lines, "NOCTA_APP_COLLECTIONS"), _block(lines, "NOCTA_APPS")
+    if defs is None or cards is None:
+        raise LintError("NOCTA_APP_COLLECTIONS か NOCTA_APPS の配列が読み取れない")
+    keys = [m.group(1) for l in defs for m in KEY_RE.finditer(l)]
+    if not keys:
+        raise LintError("NOCTA_APP_COLLECTIONS に key が 1 つもない")
+    found = []  # [title, collection]
+    for line in cards:
+        t = TITLE_RE.search(line)
+        if t:
+            found.append([t.group(1), None])
+        c = COLLECTION_RE.search(line)
+        if c and found:
+            found[-1][1] = c.group(1)
+    findings = []
+    for title, value in found:
+        if value is None:
+            findings.append(Finding("COLLECTION_MISSING", "collection", title, "collection がない（使える値: %s）" % " / ".join(keys)))
+        elif value not in keys:
+            findings.append(Finding("COLLECTION_UNKNOWN", "collection", title, "%s は定義にない（使える値: %s）" % (value, " / ".join(keys))))
+    return findings
+
+
 def _git(*args):
     r = subprocess.run(["git"] + list(args), capture_output=True)
     if r.returncode != 0:
@@ -310,6 +350,19 @@ def export(tree, outdir, paths):
     return 0
 
 
+def collections_check(tree):
+    cfg_text = _show(tree, CONFIG_PATH)
+    if cfg_text is None:
+        raise LintError("%s が tree %s にない" % (CONFIG_PATH, tree))
+    card_file = load_config(cfg_text)["card_file"]
+    text = _show(tree, card_file)
+    if text is None:
+        raise LintError("%s が tree %s にない" % (card_file, tree))
+    findings = lint_collections(text)
+    print(json.dumps({"ok": True, "tree": tree, "findings": [f._asdict() for f in findings]}, ensure_ascii=False))
+    return 0
+
+
 class _Parser(argparse.ArgumentParser):
     def error(self, message):
         print("copy-lint: " + message, file=sys.stderr)
@@ -323,6 +376,7 @@ def main(argv=None):
     ap.add_argument("--json", action="store_true")
     ap.add_argument("--export", nargs=2, metavar=("TREE", "OUTDIR"))
     ap.add_argument("--mark", metavar="TREE")
+    ap.add_argument("--collections", action="store_true")
     ap.add_argument("files", nargs="*")
     a = ap.parse_args(argv)
     try:
@@ -330,6 +384,10 @@ def main(argv=None):
             return mark(a.mark)
         if a.export:
             return export(a.export[0], a.export[1], a.files)
+        if a.collections:
+            if not a.tree:
+                ap.error("--collections には --tree が必要")
+            return collections_check(a.tree)
         if not a.tree or not a.files:
             ap.error("--tree と FILE が必要")
         base = a.base
