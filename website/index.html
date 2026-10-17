@@ -1677,6 +1677,11 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             allBtn.hidden = !current;
             pageLink.hidden = !(c && c.pageUrl);
             if (c && c.pageUrl) {
+                // 行き先がコレクションのコンセプトを説明するページだと分かるよう、名前入りの文言にする
+                var label = pageLink.firstChild;
+                label.dataset.descJa = c.title + ' のコンセプトを読む →';
+                label.dataset.descEn = 'Read about the ' + c.title + ' →';
+                label.textContent = (typeof currentLang !== 'undefined' && currentLang === 'en') ? label.dataset.descEn : label.dataset.descJa;
                 pageLink.href = c.pageUrl;
                 if (/^https?:/.test(c.pageUrl)) { pageLink.target = '_blank'; pageLink.rel = 'noopener noreferrer'; }
                 else { pageLink.removeAttribute('target'); pageLink.removeAttribute('rel'); }
