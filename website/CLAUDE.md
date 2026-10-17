@@ -19,7 +19,7 @@ website/
 ├── visual-data.js      ← Visual セクション（3配列）
 ├── blog-data.js        ← Blog セクション
 ├── works-data.js       ← Works セクション
-├── apps-data.js        ← Apps セクション（専用スキルなし・手動編集）
+├── apps-data.js        ← Tools セクション（専用スキルなし・手動編集。コレクション定義とカード）
 ├── brandkit.html       ← ブランドガイド
 ├── success.html        ← フォーム送信完了ページ
 ├── blog/               ← ブログ記事ページ（静的HTML）
@@ -51,6 +51,11 @@ website/
 - **CIDv1 は59文字。60文字以上は末尾が余分で422エラーの原因になる**
 - `zoraUrl` が不明な場合は `https://zora.co/@kutakuta1001` を使う
 - 追加は `/visual-add [作品名]`（IPFSハッシュの自動バリデーション付き）
+
+### apps-data.js
+
+Tools のカードを足すときは、先に `docs/tools-collections.md` を読む。各カードに `collection`（`nuword` / `hina` / `yori`）を必ず書き、`badge` は書かない（コレクションから決まる）。
+分類が抜けたコミットは `copy-audit-guard` が止める。どのコレクションか迷ったら CEO に聞く。
 
 ### blog-data.js / works-data.js
 
