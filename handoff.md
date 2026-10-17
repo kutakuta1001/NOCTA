@@ -171,3 +171,7 @@
 - 2026-10-16: Barside 紹介ページを一般向けに簡素化して公開（6cdcfd9・000a733・Deploy success）。本番で「店に入る」「はじめかた」「作者用」の向き先、灯り表示なし、カード説明文の短縮を確認済み。次: なし。
 - 2026-10-16: Tools 紹介ページの文言監査を仕組み化（docs/tools-page-copy.md・scripts/copy-lint.py・copy-audit-guard hook・copy-auditor）。既存ページの一回目の監査はブランチ copy-audit/2026-10 の作業ツリーに反映済み・未コミット。次: CEO が drafts/copy-audit-2026-10/report.html を見て番号ごとに採否を返す。
 - 2026-10-17: 一回目の文言監査の採否を反映してコミット（881e7ca）。Barside・lampnook・カード 9 件を更新、作者用リンクを撤去、採否は docs/tools-page-copy.md の事例に記録。push 未。次: CEO が push を指示。
+- 2026-10-17: 文言監査の反映を公開（0a62404）。push 前の一覧確認（CLAUDE.md）とステージの持ち主の検査（copy-audit-guard）を追加して公開（59075c6）。画像ルールを「制作素材は入れない・公開アセットは website/ に入れる・1MB 超は相談」に書き直し（グローバル CLAUDE.md と 305cbf1、push 未）。次: mado のセッションで mp4 2 本の扱いを決めて公開（おすすめは .gitignore に !website/mado/media/*.mp4）、305cbf1 の push。
+- 2026-10-17: Tools 欄を NuWord / HiNa / Yori の 3 コレクションに分け、表紙で絞り込めるようにした（d949de3、未 push）。今後のカード追加は docs/tools-collections.md に従い、collection が抜けると copy-audit-guard が止める。次: CEO が push を指示。
+- 2026-10-17: 3 コレクションの表紙を公開（d949de3）。表紙のリンクを「NuWord / HiNa Collection のコンセプトを読む →」に変えて公開（cc13f76、デプロイ success）。次: なし（完結）。新しいカードは docs/tools-collections.md に従って collection を付ける。
+- 2026-10-17: NuWord before のカード説明文を「はじめる前の数十秒。問いをひとつ拾い、気づきを持って始める。」に揃え（copy-auditor は残す、nocta-16 のコミットに同梱して公開）、カード画像を本番の新しい画面で撮り直して差し替え（915716b、Pages で確認）。次: なし（完結）。
