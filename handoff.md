@@ -185,3 +185,4 @@
 - 2026-10-18: TFF の Self Portrait を瓶覗の札が主役の形に（水彩の円は外す）、フッター上に問い返しと NOCTA の名乗りを追加。次: なし（友人公開の判断は CEO）
 - 2026-10-18: TFF の案内を 2 か所に（— NOCTA と末尾の重複を外し問いで終える）、NOCTA の Statement 下に鏡の一文「昼は The First Flower…」、強みの図とストレングス 10、トップ写真に粒。6回目レビューは drafts/design-review/the-first-flower-6.md。次: 友人公開の判断は CEO
 - 2026-10-18: NOCTA トップの ABOUT を凛の「跳ぶ点」に差し替え（4 枚のカードを外す・点が去って銀の足跡を残し Statement の銀猫へつなぐ）、Statement の昼の一文を目立たせた。競作は drafts/design-team/nocta-about-play/。次: なし
+- 2026-10-18: NOCTA の ABOUT 本文を文の切れ目で折り返すように、Statement の「余白に、ひと足。」を枠のボタンにして昼の一文（下線リンク）と区別。8回目レビューは drafts/design-review/kutakuta1001-github-io-compare-8.md。次: なし

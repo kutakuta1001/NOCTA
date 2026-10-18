@@ -206,12 +206,14 @@
         }
         @keyframes inkSettle { from { opacity: 0; transform: scale(0.82); } to { opacity: var(--print-opacity, 0.5); transform: scale(1); } }
 
-        .play-controls { position: relative; z-index: 3; max-width: 370px; margin-top: 40px; }
+        .play-controls { position: relative; z-index: 3; max-width: 370px; margin-top: 44px; }
         #one-step {
             font-family: var(--font-jp, 'Noto Sans JP'), sans-serif; font-size: 14px; letter-spacing: 0.12em;
-            color: #E8E0D0; padding: 10px 0; background: none; border: 0;
-            border-bottom: 1px solid #726e64; cursor: pointer;
+            color: #E8E0D0; padding: 10px 20px; background: none;
+            border: 1px solid #726e64; border-radius: 9999px; cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
         }
+        #one-step:hover { border-color: #B8B4AE; background: rgba(232,224,208,0.05); }
         #one-step span { margin-left: 16px; color: #B8B4AE; }
         #play-instruction { font-size: 11px; color: #9A8A7A; letter-spacing: 0.03em; margin: 12px 0 0; }
         .paint-tools { display: flex; align-items: center; gap: 12px; margin-top: 10px; font-size: 10px; letter-spacing: 0.06em; color: #9A8A7A; }
@@ -855,8 +857,7 @@
                     遊ぶように、作る。
                 </h2>
                 <p class="font-jp text-brand-sub text-[15px] leading-[2.1]" data-i18n-html="about.body">
-                    AIが多くの仕事や消費を担う時代、人間には新しい営みが必要になります。<br><br>
-                    NOCTAは、その問いに「創作」で答えます。音楽、映像、画像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。
+                    <span class="inline-block">AIが多くの仕事や消費を担う時代、</span><span class="inline-block">人間には新しい営みが必要になります。</span><br><br><span class="inline-block">NOCTAは、その問いに「創作」で答えます。</span><span class="inline-block">音楽、映像、画像、言葉——</span><span class="inline-block">すべてを一人で手がけることで、</span><span class="inline-block">「遊び」と「創造」の境界を探しています。</span>
                 </p>
             </div>
 
@@ -2042,7 +2043,7 @@ const I18N = {
     'stats.blog': 'ブログ数',
     'stats.apps': 'アプリ数',
     'about.h2': '遊ぶように、作る。',
-    'about.body': 'AIが多くの仕事や消費を担う時代、人間には新しい営みが必要になります。<br><br>NOCTAは、その問いに「創作」で答えます。音楽、映像、画像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。',
+    'about.body': '<span class="inline-block">AIが多くの仕事や消費を担う時代、</span><span class="inline-block">人間には新しい営みが必要になります。</span><br><br><span class="inline-block">NOCTAは、その問いに「創作」で答えます。</span><span class="inline-block">音楽、映像、画像、言葉——</span><span class="inline-block">すべてを一人で手がけることで、</span><span class="inline-block">「遊び」と「創造」の境界を探しています。</span>',
     'visual.headline': 'やりたかったことを、<br><em>やりなさい。</em>',
     'visual.all': '作品一覧を見る',
     'visual.allClose': '作品一覧を閉じる',
