@@ -44,6 +44,8 @@
         html { scroll-behavior: smooth; }
         @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
+        /* スマホで装飾がはみ出しても横スクロールを出さない（保険） */
+        html { overflow-x: hidden; }
         body {
             background: #FCFBF5;
             color: #3D2E52;
@@ -252,6 +254,7 @@
         /* ── Infinite scroll marquee ── */
         .marquee-track {
             display: flex;
+            align-items: center;  /* 一番長いカードに高さをそろえず、段の中央に並べる */
             width: max-content;
             gap: 0;
         }
@@ -271,30 +274,44 @@
             from { transform: translateX(-50%); }
             to   { transform: translateX(0); }
         }
-        .marquee-track:hover { animation-play-state: paused; }
+        .marquee-track:hover,
+        .marquee-inner.is-paused .marquee-track { animation-play-state: paused; }
+        /* 動きを減らす設定の人には流さず、指で横にたどれるようにする */
+        @media (prefers-reduced-motion: reduce) {
+            .marquee-left, .marquee-right { animation: none; }
+            .marquee-inner { overflow-x: auto; mask-image: none; -webkit-mask-image: none; }
+        }
 
         .quote-card {
             flex-shrink: 0;
-            width: 380px;
-            padding: 24px 32px;
+            width: min(var(--qw, 380px), 86vw);  /* --qw は文字数から JS で決める */
+            padding: 22px 26px;
             margin-right: 16px;
-            background: rgba(238, 164, 192, 0.08);
-            border: 1px solid rgba(238, 164, 192, 0.2);
+            background: rgba(30, 22, 42, 0.62);
+            border: 1px solid rgba(238, 164, 192, 0.22);
             border-radius: 4px;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
         }
         .quote-card .q-text {
             font-family: 'Noto Serif JP', serif;
-            font-size: 0.9rem;
-            font-weight: 300;
-            color: rgba(255,255,255,0.88);
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.95);
             line-height: 1.9;
             margin-bottom: 12px;
+            /* 流れている間は 6 行まで。触れて止めたら（PC はホバーで）全文を出す */
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 6;
+            overflow: hidden;
         }
+        .marquee-track:hover .q-text,
+        .marquee-inner.is-paused .q-text { -webkit-line-clamp: unset; display: block; }
         .quote-card .q-source {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.8rem;
-            color: rgba(238,164,192,0.9);
+            font-family: 'Noto Sans JP', 'Cormorant Garamond', sans-serif;
+            font-size: 0.75rem;
+            color: #F6C9DA;
             letter-spacing: 0.06em;
         }
 
@@ -720,7 +737,8 @@
                 <p class="font-serif italic text-white/40 text-[13px] tracking-[4px] mb-3">words that move me</p>
                 <h2 class="font-serif text-white text-[42px] lg:text-[56px] leading-none tracking-wide">Text Overlays</h2>
                 <div class="tff-divider" style="margin: 16px auto;"></div>
-                <p class="font-jp text-white/50 text-[13px]">感動した言葉を、流れるように。</p>
+                <p class="font-jp text-white/60 text-[13px]">感動した言葉を、流れるように。</p>
+                <p class="font-jp text-white/45 text-[11px] mt-2 tracking-[1px]">触れると止まります</p>
             </div>
 
             <!-- Stream row 1: left -->
@@ -782,7 +800,7 @@
     <!-- ═══════════════════════════════════
          BLOG
     ═══════════════════════════════════ -->
-    <section id="blog" class="photo-section blog-bg py-24 px-6">
+    <section id="blog" class="photo-section blog-bg py-24 px-6 overflow-hidden">
         <div class="photo-overlay" style="background: linear-gradient(180deg, rgba(30,22,42,0.15) 0%, rgba(30,22,42,0.45) 100%);"></div>
         <div class="photo-content max-w-5xl mx-auto">
 
@@ -820,18 +838,18 @@
             <div class="tff-divider tff-reveal"></div>
             <div class="grid grid-cols-3 gap-4 sm:gap-10 mt-12 tff-reveal">
                 <a href="https://www.flickr.com/photos/kutakuta1001/" target="_blank" rel="noopener" class="tff-conn">
-                    <img src="img/icon-flickr.png" alt="" width="120" height="120">
+                    <img src="img/icon-flickr.jpg" alt="" width="120" height="120">
                     <span class="tff-conn-name">Flickr</span>
                     <span class="tff-conn-sub">66枚のフォトアーカイブ</span>
                 </a>
                 <a href="https://ameblo.jp/kutakuta-1001/" target="_blank" rel="noopener" class="tff-conn">
-                    <img src="img/icon-old-blog.png" alt="" width="120" height="120">
+                    <img src="img/icon-old-blog.jpg" alt="" width="120" height="120">
                     <span class="tff-conn-name">Old Blog</span>
                     <span class="tff-conn-sub">Ameblo の過去ブログ</span>
                 </a>
                 <a href="https://booklog.jp/users/nrc56424" target="_blank" rel="noopener" class="tff-conn">
-                    <img src="img/icon-booklog.png" alt="" width="120" height="120">
-                    <span class="tff-conn-name">ブクログ 読書所感</span>
+                    <img src="img/icon-booklog.jpg" alt="" width="120" height="120">
+                    <span class="tff-conn-name"><span class="inline-block">ブクログ</span> <span class="inline-block">読書所感</span></span>
                     <span class="tff-conn-sub">277冊 · 149レビュー</span>
                 </a>
             </div>
@@ -911,6 +929,9 @@
             function makeCard(q) {
                 var div = document.createElement('div');
                 div.className = 'quote-card';
+                // 長い言葉ほど横に広げ、おおむね 4〜5 行に収める（段の高さが極端に伸びないように）
+                var w = Math.max(280, Math.min(600, 52 + 15 * Math.ceil(q.text.length / 4.5)));
+                div.style.setProperty('--qw', w + 'px');
                 div.innerHTML =
                     '<p class="q-text">' + q.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</p>' +
                     '<p class="q-source">— ' + q.source.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</p>';
@@ -927,6 +948,11 @@
 
             fillRow('stream-row1', row1q);
             fillRow('stream-row2', row2q);
+
+            // スマホにはホバーがないので、触れたら止め、もう一度触れたら流す
+            document.querySelectorAll('.marquee-inner').forEach(function (row) {
+                row.addEventListener('click', function () { row.classList.toggle('is-paused'); });
+            });
         }
 
         /* ── Blog cards ── */

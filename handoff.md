@@ -179,3 +179,4 @@
 - 2026-10-18: The First Flower を元サイト（Strikingly）の写真構成に寄せて改修（写真背景・Flickr Gallery＋拡大表示・Connection フッター・左の現在地ドット）。次: Flickr API キー発行後に Gallery を全件表示へ
 - 2026-10-18: TFF Gallery を全66枚表示に（保存済み一覧 tff-gallery-data.js ＋ 公開フィードの新しい20枚。Flickr 無料アカウントは API キー不可のため）。次: Flickr で写真を消したら一覧を作り直す
 - 2026-10-18: HP トップを友人公開前に調整（準備中の X・note・Music・フォームを折りたたみ、スマホのヒーロー空白、Blog の縦書き表紙、before/Kai/Kihi のサムネイル、Visual（AI））。レビューは drafts/design-review/。次: TFF のスマホ横はみ出しと言葉カードの可読性
+- 2026-10-18: TFF のスマホ横はみ出し・言葉カードを修正、Connection アイコンを本人の Flickr 写真に差し替え。トップの TOOLS をスマホではコレクション別タブに（並びも帯の順に）。2回目レビューは drafts/design-review/。次: 表示の重さ（トップの 5.6MB 作品画像・TFF のフォント）

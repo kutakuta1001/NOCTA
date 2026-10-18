@@ -1677,7 +1677,16 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             return null;
         }
 
-        grid.innerHTML = NOCTA_APPS.map(function (a, i) {
+        // 表紙の帯と同じ順（NuWord → HiNa → Yori）に並べる。同じコレクションの中はデータの順のまま
+        function colIndex(a) {
+            for (var k = 0; k < COLS.length; k++) if (COLS[k].key === a.collection) return k;
+            return COLS.length;
+        }
+        var ordered = NOCTA_APPS.map(function (a, i) { return { a: a, i: i }; })
+            .sort(function (x, y) { return (colIndex(x.a) - colIndex(y.a)) || (x.i - y.i); })
+            .map(function (x) { return x.a; });
+
+        grid.innerHTML = ordered.map(function (a, i) {
             var c      = collectionOf(a);
             var badge  = c ? c.label : 'App';
             var bclass = c ? c.badgeClass : 'bg-brand-highlight/20 text-brand-highlight';
@@ -1752,7 +1761,11 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         var allBtn = wrap.querySelector('.ac-all');
         var current = '';
 
-        function select(key) {
+        // スマホでは表紙の帯をタブとして使い、いつもどれか 1 つのコレクションだけを出す（縦に長くなりすぎないように）
+        var mobileQuery = window.matchMedia('(max-width: 767px)');
+        var autoSelected = false;
+
+        function select(key, silent) {
             var c = null;
             for (var k = 0; k < COLS.length; k++) if (COLS[k].key === key) c = COLS[k];
             current = c ? key : '';
@@ -1773,18 +1786,31 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                 if (/^https?:/.test(c.pageUrl)) { pageLink.target = '_blank'; pageLink.rel = 'noopener noreferrer'; }
                 else { pageLink.removeAttribute('target'); pageLink.removeAttribute('rel'); }
             }
-            if (history.replaceState) history.replaceState(null, '', current ? '#apps-' + current : '#apps');
+            if (!silent && history.replaceState) history.replaceState(null, '', current ? '#apps-' + current : '#apps');
         }
         items.forEach(function (b) {
-            b.addEventListener('click', function () { select(b.dataset.collection === current ? '' : b.dataset.collection); });
+            b.addEventListener('click', function () {
+                autoSelected = false;
+                // スマホのタブは、選んでいるものをもう一度押しても外さない
+                if (mobileQuery.matches && b.dataset.collection === current) return;
+                select(b.dataset.collection === current ? '' : b.dataset.collection);
+            });
         });
-        allBtn.addEventListener('click', function () { select(''); });
+        allBtn.addEventListener('click', function () { autoSelected = false; select(''); });
+
+        function applyLayout() {
+            if (mobileQuery.matches && !current) { select(COLS[0].key, true); autoSelected = true; }
+            else if (!mobileQuery.matches && autoSelected) { select('', true); autoSelected = false; }
+        }
+        if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', applyLayout);
+        else if (mobileQuery.addListener) mobileQuery.addListener(applyLayout);
 
         var m = /^#apps-([a-z]+)$/.exec(location.hash);
         if (m && COLS.some(function (c) { return c.key === m[1]; })) {
             select(m[1]);
             section.scrollIntoView();
         }
+        applyLayout();
     })();
 
     /* ---- Blog: データ配列からカードをレンダリング ---- */
