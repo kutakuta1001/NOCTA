@@ -63,6 +63,14 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 | connection | 写真 `img/connection-bg.jpg`（Flickr 25628706764・Victoria harbor） | 丸いアイコン6つ（3 列 2 段）。上段は元サイトと同じ Flickr / Old Blog=Ameblo / ブクログ 読書所感。下段は作者の別の顔の X ポケカ（@pokeasako）/ X トレード（@hanata19086）/ 7Witches Trade（FX トレードのサイト）（2026-10-18 追加） |
 | footer | `tff-dark` | 冒頭の問いを返す「あなたにとっての『いい人生』は？」（Klee One）で終える。下に小さく鏡の一文「夜は NOCTA という名前で、…つくっています。→」（NOCTA の Statement 直下の「昼は The First Flower という名前で…」と対）。題字の繰り返しと BACK TO NOCTA は外した。TFF → NOCTA の案内は上部の「← NOCTA」とこの一文の 2 か所だけ（2026-10-18）。桜の花びら（`sakura-foot-a/b`） |
 
+### journey（旅の一枚・行った場所のベストショット）
+
+- 場所: `journey/index.html`。TFF の Profile 節からのリンクは、実データで 1 地域以上公開できるようになってから付ける（それまで誰からも辿れない）。設計書 `docs/superpowers/specs/2026-10-18-tff-journey-map-design.md`。
+- 左に都道府県のタイル地図（`journey-map.js`・12 列 × 14 行・ID は JP-01〜JP-47）と行った場所の一覧、右に大きな写真と 2〜3 枚の送り。スマホは地図が上・写真が下で、押すと写真まで流れる。「日本 / 世界」で国の一覧に切り替える。
+- 色: 行った地域 `tff-rose`、選択中 `tff-accent`、まだの地域 `#E6E0EC`。
+- データ: `tff-journey-data.js` の `TFF_JOURNEY = { schemaVersion: 1, regions: [{ id, kind: pref|country|place, parentId, name, photoIds }], photos: { <16桁16進>: { src, thumb, w, h, taken, caption, alt } } }`。公開するのは写真 2〜3 枚の地域だけ。写真の項目はこの 7 つだけで、位置情報を入れる場所はない（`journey-core.js` の検証で弾く。弾かれたらページは「準備中」になる）。ひとことは `textContent` で出す。
+- テスト: `node --test "tests/journey/test_*.mjs"`（データ・地図）と `tests/journey/check_page.cjs`（ブラウザ。実行方法はファイル冒頭）。
+
 - Connection の背景は元サイトの写真（Strikingly 備え付けのビルバオの街並み）を**使っていない**。素材の権利が不明なため、CEO 自身の Flickr 写真に替えた。
 - アイコン `img/icon-*.jpg`（264px・CSS で円形）は本人の Flickr 写真から切り抜いたもの。Flickr＝桜（28095409850「the first flower」）、Old Blog＝万年筆（51007397898「pen」）、ブクログ＝本棚（5470813410）。下段の 3 つは各アカウントのアイコン（X ポケカ＝カヲルさん @kwr_pkc の絵・クレジットは Self の「もうひとつの顔」に記載 / X トレード＝作者のアイコン絵 / 7Witches＝ピンクのうさぎ）。2026-10-18 まで使っていた AI 生成の水彩アイコンは、レビューで「本人の写真の中で浮く・断りがない」と指摘され差し替えた。
 
@@ -91,6 +99,7 @@ the-first-flower/
 ├── tff-profile-data.js   ← プロフィール内容・写真パス
 ├── tff-quotes.js         ← 引用集（マーキー用）
 ├── tff-gallery-data.js   ← Gallery の写真一覧（66枚・新しい順）
+├── journey/              ← 旅の一枚（地図ページ・公開データ・img/）
 └── img/                  ← 背景写真6枚・プロフィール写真2枚・アイコン3枚（各 175KB 以下）
 ```
 
