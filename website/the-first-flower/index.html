@@ -342,16 +342,35 @@
         @media (max-width: 767px) { .tff-credo-scroll { padding-left: 34px; } }
         .tff-credo-poem .end { display: block; margin-right: 1.2em; font-size: clamp(18px, 2vw, 22px); color: #B168A8; }
         .tff-credo-poem .end a { color: inherit; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.7em; letter-spacing: 0.2em; margin-top: 1em; display: inline-block; text-orientation: sideways; border-left: 1px solid rgba(177,104,168,0.4); padding-left: 2px; }
-        .tff-credo-hint { display: none; position: relative; text-align: center; font-size: 11px; color: #9A86B0; margin-top: 12px; letter-spacing: 0.1em; }
-        @media (max-width: 767px) { .tff-credo-hint { display: block; } }
+        .tff-credo-hint { display: none; position: relative; text-align: center; font-size: 12px; color: #705E92; margin-top: 12px; letter-spacing: 0.1em; }
+        /* スマホ: 結びの一行は縦書きの列の外に出し、横書きで下に置く（横にたどらなくても目に入るように） */
+        .tff-credo-coda-sp { display: none; position: relative; text-align: center; margin: 22px 24px 0; font-family: 'Klee One', 'Noto Serif JP', serif; font-size: 19px; letter-spacing: 0.18em; color: #B168A8; }
+        .tff-credo-coda-sp a { display: block; margin-top: 6px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.2em; color: #B168A8; }
+        @media (max-width: 767px) {
+            .tff-credo-hint, .tff-credo-coda-sp { display: block; }
+            .tff-credo-poem .end { display: none; }
+        }
 
         /* ── Self Portrait（色・強み・性格） ── */
-        .tff-self { background: linear-gradient(180deg, #F3FAF9 0%, #EAF5F6 100%); color: #3D2E52; }
+        .tff-self { background: linear-gradient(180deg, #DDF0F3 0%, #C9E7EC 100%); color: #3D2E52; }  /* 瓶覗（#A2D7DD）に寄せた地。Profile の淡い地と境目を付ける */
         .tff-self-card { background: rgba(255,255,255,0.72); border: 1px solid rgba(162,215,221,0.55); border-radius: 6px; padding: 28px 28px 30px; }
         .tff-self-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.25em; color: #6FA8B0; text-transform: uppercase; }
         .tff-self-title { font-family: 'Noto Serif JP', serif; font-size: 20px; letter-spacing: 0.08em; margin-top: 6px; color: #3D2E52; }
         .tff-kame-swatch { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; color: #5a6f74; }
-        .tff-kame-swatch i { width: 26px; height: 26px; border-radius: 50%; background: #A2D7DD; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+        .tff-kame-swatch i { width: 26px; height: 26px; border-radius: 50%; background: #A2D7DD; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); flex-shrink: 0; }
+        .tff-kame-swatch span { color: #9aaaae; font-size: 11px; letter-spacing: 0.08em; margin-left: 6px; }
+        .tff-kame-swatch { flex-wrap: wrap; }
+        @media (max-width: 640px) { .tff-kame-swatch span { flex-basis: 100%; margin-left: 36px; margin-top: -6px; } }
+        /* 色の札（色面＋縦書きの色名＋澄んだ水） */
+        .tff-kame-plate { margin: 20px 0 0; border-radius: 4px; overflow: hidden; box-shadow: 0 8px 24px rgba(111,168,176,0.18); }
+        .tff-kame-field { background: #A2D7DD; height: 190px; display: flex; align-items: center; justify-content: center; }
+        /* 縦書き: 右の列に色名、左の列に読み仮名 */
+        .tff-kame-name { writing-mode: vertical-rl; color: #fff; margin: 0; }
+        .tff-kame-name .k { display: block; font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 38px; letter-spacing: 0.18em; line-height: 1.3; }
+        .tff-kame-name .r { display: block; font-family: 'Noto Serif JP', serif; font-size: 12px; letter-spacing: 0.3em; line-height: 1.6; margin-top: 10px; opacity: 0.95; }
+        .tff-kame-water { display: block; width: 100%; height: 120px; object-fit: cover; }
+        .tff-kame-body { margin-top: 22px; }
+        .tff-kame-wc { float: right; width: 44%; max-width: 220px; margin: 0 0 8px 14px; mix-blend-mode: multiply; }
         .tff-strengths { list-style: none; margin: 16px 0 0; padding: 0; counter-reset: s; }
         .tff-strengths li { display: grid; grid-template-columns: 34px 1fr; align-items: baseline; padding: 9px 0; border-top: 1px dashed rgba(111,168,176,0.4); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; }
         .tff-strengths li:first-child { border-top: 0; }
@@ -694,6 +713,7 @@
             <p class="tff-credo-poem tff-reveal"><span class="t">いい人生とは</span><span class="l"><span class="p">自由であること</span></span><span class="l"><span class="p">妻や子どもたちとたくさん笑い、</span><span class="p">話し、</span><span class="p">過ごす時間があること</span></span><span class="l"><span class="p">自身の感情や行動が他者の態度や行動に左右されないこと</span></span><span class="l"><span class="p">異なる見え方や描き方に魅了され、</span><span class="p">自身の変化を楽しむこと</span></span><span class="l"><span class="p">時間に縛られず回り道をすること</span></span><span class="l"><span class="p">富や名声は目的ではなく、</span><span class="p">手段であること</span></span><span class="l"><span class="p">自身の答えに振り回されず、</span><span class="p">敬意を持って人の話を聞き、</span><span class="p">相手を理解すること</span></span><span class="l"><span class="p">見栄を張らず、</span><span class="p">良心を体現すること</span></span><span class="l"><span class="p">人生を義務と考えず、</span><span class="p">笑って目を輝かせて歩むこと</span></span><span class="l"><span class="p">いいものを見つけたとき、</span><span class="p">出会った人に分けてあげて、</span><span class="p">一緒に喜ぶこと</span></span><span class="end">遊ぶことで　人生を彩ろう<br><a href="../index.html">— NOCTA</a></span></p>
         </div>
         <p class="tff-credo-hint font-jp">← 右から左へ、指でたどれます</p>
+        <p class="tff-credo-coda-sp">遊ぶことで　人生を彩ろう<a href="../index.html">— NOCTA</a></p>
     </section>
 
     <!-- ═══════════════════════════════════
@@ -786,10 +806,20 @@
                 <div class="tff-self-card tff-reveal">
                     <p class="tff-self-label">Color</p>
                     <p class="tff-self-title">色の自己表現</p>
-                    <img src="img/kamenozoki.jpg" alt="瓶覗色の水彩の円" class="w-full mt-5 rounded" width="567" height="288" loading="lazy">
-                    <p class="tff-kame-swatch"><i aria-hidden="true"></i>好きな色：瓶覗（かめのぞき）色</p>
-                    <p class="font-jpserif text-[16px] mt-5 tracking-[2px]">私は瓶覗色です。</p>
+                    <!-- 色の札: 上に瓶覗の色面と縦書きの色名、下に澄んだ水（写真は本人の Flickr 5488599948 の一部） -->
+                    <figure class="tff-kame-plate mt-5" aria-label="瓶覗（かめのぞき）色">
+                        <div class="tff-kame-field">
+                            <p class="tff-kame-name"><span class="k">瓶覗</span><span class="r">かめのぞき</span></p>
+                        </div>
+                        <img src="img/kamenozoki-water.jpg" alt="" class="tff-kame-water" width="1008" height="318" loading="lazy">
+                    </figure>
+                    <p class="tff-kame-swatch"><i aria-hidden="true"></i>好きな色：瓶覗（かめのぞき）色<span>#A2D7DD ・ Pale aqua</span></p>
+                    <p class="font-jp text-[12px] leading-[1.9] mt-2" style="color:#7a8a8e;">藍染のなかで、いちばん淡い色。藍瓶にほんの少し浸すだけで染まる、空を映した水のような青。</p>
+                    <div class="tff-kame-body">
+                        <img src="img/kamenozoki.jpg" alt="" class="tff-kame-wc" width="567" height="288" loading="lazy">
+                        <p class="font-jpserif text-[16px] tracking-[2px]">私は瓶覗色です。</p>
                     <p class="font-jp text-[14px] leading-[2.1] mt-3" style="color:#4d5d61;">瓶に水が張ってあり、そこに映る空の色を覗き見るように、私と関わる物や人すべてを覗き見ては儚く消えていく、その見た時の一瞬の喜びを、ふと見つけた何か捉えどころのないふんわりした印象を感じさせます。</p>
+                    </div>
                 </div>
 
                 <div class="flex flex-col gap-6">
@@ -798,17 +828,18 @@
                         <p class="tff-self-label">Strengths</p>
                         <p class="tff-self-title">ストレングスファインダー 上位 5 つ</p>
                         <ol class="tff-strengths">
-                            <li><p><b>WOO</b><span>社交性（Winning Others Over）</span></p></li>
-                            <li><p><b>インプット</b><span>収集心</span></p></li>
-                            <li><p><b>ラーナー</b><span>学習欲</span></p></li>
-                            <li><p><b>ストラテジック</b><span>戦略性</span></p></li>
-                            <li><p><b>ポジティビティ</b><span>ポジティブ</span></p></li>
+                            <li><p><b>Woo</b><span>社交性（Winning Others Over）</span></p></li>
+                            <li><p><b>Input</b><span>収集心</span></p></li>
+                            <li><p><b>Learner</b><span>学習欲</span></p></li>
+                            <li><p><b>Strategic</b><span>戦略性</span></p></li>
+                            <li><p><b>Positivity</b><span>ポジティブ</span></p></li>
                         </ol>
                     </div>
                     <!-- 16Personalities -->
                     <a href="https://www.16personalities.com/ja/enfp%E5%9E%8B%E3%81%AE%E6%80%A7%E6%A0%BC" target="_blank" rel="noopener" class="tff-self-card tff-reveal block hover:bg-white transition-colors duration-300 group">
                         <p class="tff-self-label">16 Personalities</p>
                         <p class="tff-self-title">ENFP <span class="text-[15px] tracking-[2px]">運動家</span></p>
+                        <p class="font-jp text-[13px] leading-[1.9] mt-3" style="color:#4d5d61;">好奇心と情熱で、人や新しいことに飛び込んでいくタイプ。可能性を見つけると、わくわくして周りも巻き込みます。</p>
                         <p class="font-jp text-[12px] mt-3 group-hover:underline" style="color:#6FA8B0;">16Personalities で ENFP 型を読む ↗</p>
                     </a>
                 </div>

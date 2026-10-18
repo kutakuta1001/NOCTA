@@ -181,3 +181,4 @@
 - 2026-10-18: HP トップを友人公開前に調整（準備中の X・note・Music・フォームを折りたたみ、スマホのヒーロー空白、Blog の縦書き表紙、before/Kai/Kihi のサムネイル、Visual（AI））。レビューは drafts/design-review/。次: TFF のスマホ横はみ出しと言葉カードの可読性
 - 2026-10-18: TFF のスマホ横はみ出し・言葉カードを修正、Connection アイコンを本人の Flickr 写真に差し替え。トップの TOOLS をスマホではコレクション別タブに（並びも帯の順に）。2回目レビューは drafts/design-review/。次: 表示の重さ（トップの 5.6MB 作品画像・TFF のフォント）
 - 2026-10-18: TFF に「いい人生とは」の答え（縦書き・Klee One）と Self Portrait（瓶覗色・ストレングス上位5・ENFP）を追加、Gallery を 15 枚＋「すべて見る」に、Кто это?（これはなに?）に修正。次: 瓶覗の水彩画像（833736-2.jpg）の利用規約を CEO が確認
+- 2026-10-18: TFF の瓶覗の札を色面＋縦書き色名＋水面に、ストレングスを英語名に、ENFP に説明、Self Portrait の地を瓶覗寄りに、スマホで縦書きの結びを下に横書きで表示。4回目レビューは drafts/design-review/the-first-flower-4.md。次: 水彩の円の扱いを CEO が判断
