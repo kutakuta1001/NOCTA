@@ -185,7 +185,7 @@
         .statement-copy  { position: relative; z-index: 2; }
         /* 「彩ろう。」は語中で改行させない（CEO確定コピーの読みを守る） */
         .statement-accent { font-style: italic; color: #B8B4AE; white-space: nowrap; }
-        .statement-day { position: relative; z-index: 2; display: inline-block; margin-top: 18px; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; line-height: 1.9; letter-spacing: 0.06em; color: #B8B4AE; border-bottom: 1px solid transparent; transition: color 0.3s ease, border-color 0.3s ease; }
+        .statement-day { position: relative; z-index: 2; display: inline-block; margin: 22px 0 16px; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; line-height: 1.9; letter-spacing: 0.06em; color: #DCD6CC; border-bottom: 1px solid rgba(220,214,204,0.35); transition: color 0.3s ease, border-color 0.3s ease; }
         .statement-day:hover { color: #E8E0D0; border-color: rgba(232,224,208,0.5); }
         /* 元素材の右端に図解が写り込んでいるため、CSS で隠して猫だけを見せる */
         .paint-cat-img { clip-path: polygon(0 0, 89% 0, 89% 70%, 94% 70%, 94% 100%, 0 100%); }
@@ -672,6 +672,21 @@
             transition: all 0.22s; align-self: flex-start;
         }
 
+        /* ABOUT: 跳ぶ点（凛・2026-10-18。drafts/design-team/nocta-about-play/full.html） */
+  .about-play svg{display:block;overflow:visible;}
+  .about-play .ap-label{font-family:'Bebas Neue',sans-serif;letter-spacing:.2em;fill:#B8B4AE;font-size:22px;}
+  .about-play .ap-edge{stroke:#B8B4AE;stroke-opacity:.3;stroke-width:1;}
+  @media (prefers-reduced-motion:reduce){
+    .about-play .ap-active{display:none;}
+  }
+  /* 跳び去った点の行き先に付く銀の足跡（Statement の銀猫への伏線） */
+  .about-paws{position:absolute;inset:auto 0 0 0;height:130px;pointer-events:none;z-index:1;}
+  .about-paws .paw{position:absolute;display:block;}
+  .about-paw-svg{width:100%;height:auto;display:block;color:#B8B4AE;opacity:0;transform-origin:center;}
+  .about-paws.stepped .about-paw-svg{animation:aboutPaw .55s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+  @keyframes aboutPaw{0%{opacity:0;transform:scale(.4) translateY(-6px);}60%{opacity:.75;transform:scale(1.12);}100%{opacity:.6;transform:scale(1);}}
+  @media (max-width:767px){ .about-paws .paw{width:18px !important;} }
+  @media (prefers-reduced-motion:reduce){ .about-paws .about-paw-svg{opacity:.6;animation:none;} }
     </style>
 </head>
 
@@ -839,91 +854,46 @@
                 <h2 class="font-jp text-[clamp(28px,3.8vw,44px)] font-bold text-white leading-tight mb-8 reveal reveal-delay-1" data-i18n-html="about.h2">
                     遊ぶように、作る。
                 </h2>
-                <p class="font-jp text-brand-sub text-[15px] leading-[2.1] mb-10 reveal reveal-delay-2" data-i18n-html="about.body">
+                <p class="font-jp text-brand-sub text-[15px] leading-[2.1]" data-i18n-html="about.body">
                     AIが多くの仕事や消費を担う時代、人間には新しい営みが必要になります。<br><br>
                     NOCTAは、その問いに「創作」で答えます。音楽、映像、画像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。
                 </p>
-
-                <div class="flex flex-col gap-4 reveal reveal-delay-3">
-                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
-                        <div class="w-px h-12 bg-gradient-to-b from-[#B8B4AE] to-transparent flex-shrink-0 mt-1"></div>
-                        <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v1.title">革新（Innovation）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v1.desc">テクノロジーの力で、創作とエンタメの常識を更新し続ける。</div>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
-                        <div class="w-px h-12 bg-gradient-to-b from-[#B8B4AE] to-transparent flex-shrink-0 mt-1"></div>
-                        <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v2.title">創造（Creation）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v2.desc">人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。</div>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group" style="border-color:rgba(184,180,174,0.15);">
-                        <div class="w-px h-12 bg-gradient-to-b from-[#B8B4AE] to-transparent flex-shrink-0 mt-1"></div>
-                        <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-[#B8B4AE] transition-colors duration-300" data-i18n="about.v3.title">越境（Crossing）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v3.desc">音楽・映像・画像・言葉——領域を越えて、ひとつの世界観を形にする。</div>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-4 glass rounded-2xl p-5 glass-hover transition-all duration-300 cursor-default group">
-                        <div class="w-px h-12 bg-gradient-to-b from-[#B8B4AE] to-transparent flex-shrink-0 mt-1"></div>
-                        <div>
-                            <div class="font-heading font-bold text-[14px] text-white mb-1 group-hover:text-brand-secondary transition-colors duration-300" data-i18n="about.v4.title">解放（Freedom）</div>
-                            <div class="font-jp text-[13px] text-brand-sub leading-relaxed" data-i18n="about.v4.desc">規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。</div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Visual -->
-            <div class="order-1 lg:order-2 flex items-center justify-center reveal reveal-delay-2">
-                <div class="relative w-full max-w-[420px] aspect-square">
-                    <!-- Glow center -->
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div class="w-32 h-32 rounded-full"
-                             style="background: radial-gradient(circle, rgba(184,180,174,0.22), rgba(184,180,174,0.10) 50%, transparent 70%); filter: blur(30px);"></div>
-                    </div>
-
-                    <!-- Orbit rings (rotating) -->
-                    <div class="absolute inset-0 rounded-full border border-white/5 orbit-1"></div>
-                    <div class="absolute inset-10 rounded-full border border-brand-primary/15 orbit-2"></div>
-
-                    <!-- SVG: 4 pillars converging to center -->
-                    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100">
-                        <!-- static dashed orbit -->
-                        <circle cx="50" cy="50" r="34" fill="none" stroke="rgba(255,255,255,0.06)" stroke-dasharray="1.5 4"/>
-                        <!-- lines: center -> 4 pillars -->
-                        <line x1="50" y1="50" x2="50" y2="20" stroke="#CC5B4A" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="80" y2="50" stroke="#D9A441" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="50" y2="80" stroke="#5586BE" stroke-width="0.4" opacity="0.6"/>
-                        <line x1="50" y1="50" x2="20" y2="50" stroke="#9472B8" stroke-width="0.4" opacity="0.6"/>
-                        <!-- pillar nodes (Music=red / Visual=yellow / Words=blue / Tools=purple)
-                             ラベルはページ下部のセクション名（TOOLS）に合わせている -->
-                        <circle cx="50" cy="20" r="2.6" fill="#CC5B4A"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.4s" repeatCount="indefinite"/></circle>
-                        <circle cx="80" cy="50" r="2.6" fill="#D9A441"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.0s" repeatCount="indefinite"/></circle>
-                        <circle cx="50" cy="80" r="2.6" fill="#5586BE"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.6s" repeatCount="indefinite"/></circle>
-                        <circle cx="20" cy="50" r="2.6" fill="#9472B8"><animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite"/></circle>
+            <!-- Visual: 跳ぶ点。点は 1 つ、4 領域のどこへでも直接跳ぶ -->
+            <div class="about-play order-1 lg:order-2 flex items-center justify-center reveal reveal-delay-2">
+                <div class="w-full max-w-[420px]">
+                    <!-- 点は読み手が下へ進むと図を抜けて跳び去る（次の Statement の銀猫への伏線） -->
+                    <svg id="ap-fig" viewBox="0 0 400 380" width="100%" fill="none" role="img"
+                         aria-label="MUSIC VISUAL WORDS TOOLS の四点を、一つの点が順不同に行き来する図">
+                        <defs>
+                            <radialGradient id="ap-glow">
+                                <stop offset="0" stop-color="#E8E0D0" stop-opacity=".55"/>
+                                <stop offset=".45" stop-color="#E8E0D0" stop-opacity=".16"/>
+                                <stop offset="1" stop-color="#E8E0D0" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <g id="ap-edges"></g>
+                        <line id="ap-active" class="ap-active" x1="0" y1="0" x2="0" y2="0" stroke-width="2.5" stroke-linecap="round" opacity="0"/>
+                        <g id="ap-halos"></g>
+                        <g id="ap-nodes"></g>
+                        <g id="ap-labels"></g>
+                        <!-- 主役の点: 光暈 + 本体(r=9) + 墨の縁取りで、静止でも背景から浮く -->
+                        <g id="ap-dot">
+                            <circle r="30" fill="url(#ap-glow)"/>
+                            <circle r="9" fill="#F4EEE0" stroke="#0A0906" stroke-width="2.5"/>
+                        </g>
                     </svg>
-
-                    <!-- Pillar labels -->
-                    <div class="absolute top-[5%] left-1/2 -translate-x-1/2 font-heading text-[10px] tracking-[3px] uppercase text-brand-sub">Music</div>
-                    <div class="absolute top-1/2 right-[2%] -translate-y-1/2 font-heading text-[10px] tracking-[3px] uppercase text-brand-sub">Visual</div>
-                    <div class="absolute bottom-[5%] left-1/2 -translate-x-1/2 font-heading text-[10px] tracking-[3px] uppercase text-brand-sub">Words</div>
-                    <div class="absolute top-1/2 left-[2%] -translate-y-1/2 font-heading text-[10px] tracking-[3px] uppercase text-brand-sub">Tools</div>
-
-                    <!-- Center: living silver orb -->
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                        <div class="relative w-24 h-24 rounded-full nocta-orb"></div>
-                    </div>
-
-                    <!-- Floating accent dots -->
-                    <div class="absolute top-1/4 left-1/4 w-1 h-1 rounded-full bg-brand-highlight animate-ping" style="animation-duration:2.4s;"></div>
-                    <div class="absolute top-3/4 left-2/3 w-1 h-1 rounded-full bg-brand-primary animate-ping" style="animation-duration:2.0s; animation-delay:0.5s;"></div>
                 </div>
             </div>
 
         </div>
+    </div>
+    <!-- 伏線: 跳び去った銀の点の行き先に、銀の足跡が 3 つ。点が消えた直後に順に付き、そのまま残る（動きを止める設定では最初から付いている） -->
+    <div class="about-paws" id="about-paws" aria-hidden="true">
+        <span class="paw" style="right:23%; bottom:92px; width:22px; transform:rotate(168deg);"><svg class="about-paw-svg" viewBox="0 0 100 100" style="animation-delay:0s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+        <span class="paw" style="right:19%; bottom:52px; width:22px; transform:rotate(192deg);"><svg class="about-paw-svg" viewBox="0 0 100 100" style="animation-delay:.35s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+        <span class="paw" style="right:22%; bottom:12px; width:22px; transform:rotate(170deg);"><svg class="about-paw-svg" viewBox="0 0 100 100" style="animation-delay:.7s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
     </div>
 </section>
 
@@ -2073,14 +2043,6 @@ const I18N = {
     'stats.apps': 'アプリ数',
     'about.h2': '遊ぶように、作る。',
     'about.body': 'AIが多くの仕事や消費を担う時代、人間には新しい営みが必要になります。<br><br>NOCTAは、その問いに「創作」で答えます。音楽、映像、画像、言葉——すべてを一人で手がけることで、「遊び」と「創造」の境界を探しています。',
-    'about.v1.title': '革新（Innovation）',
-    'about.v1.desc': 'テクノロジーの力で、創作とエンタメの常識を更新し続ける。',
-    'about.v2.title': '創造（Creation）',
-    'about.v2.desc': '人間の感性とテクノロジーが融合した、唯一無二の表現を追求する。',
-    'about.v3.title': '越境（Crossing）',
-    'about.v3.desc': '音楽・映像・画像・言葉——領域を越えて、ひとつの世界観を形にする。',
-    'about.v4.title': '解放（Freedom）',
-    'about.v4.desc': '規模の制約から解放し、純粋な表現とビジョンに集中できる環境を作る。',
     'visual.headline': 'やりたかったことを、<br><em>やりなさい。</em>',
     'visual.all': '作品一覧を見る',
     'visual.allClose': '作品一覧を閉じる',
@@ -2127,14 +2089,6 @@ const I18N = {
     'stats.apps': 'Apps',
     'about.h2': '遊ぶように、作る。',
     'about.body': 'In an era where AI handles much of our work and consumption, people need new ways to live. NOCTA answers that question through creation — music, video, images, and words. Crafting every medium single-handedly, we explore the boundary between play and creativity.',
-    'about.v1.title': 'Innovation',
-    'about.v1.desc': 'Continuously redefining the norms of creation and entertainment through the power of technology.',
-    'about.v2.title': 'Creation',
-    'about.v2.desc': 'Pursuing one-of-a-kind expression born from the fusion of human sensibility and technology.',
-    'about.v3.title': 'Crossing',
-    'about.v3.desc': 'Music, video, images, words — crossing boundaries to shape one unified world.',
-    'about.v4.title': 'Freedom',
-    'about.v4.desc': 'Breaking free from scale constraints to create space for pure expression and vision.',
     'visual.headline': 'Do what you&rsquo;ve<br><em>always wanted to do.</em>',
     'visual.all': 'See all works',
     'visual.allClose': 'Close the list',
@@ -2424,6 +2378,107 @@ document.addEventListener('DOMContentLoaded', () => setLang(currentLang));
         }, { threshold: 0.25 });
         trails.forEach(function (t) { io.observe(t); });
     })();
+</script>
+<script>
+(function(){
+  var fig = document.getElementById('ap-fig');
+  if (!fig) return;
+  var NS = 'http://www.w3.org/2000/svg';
+  var N = [
+    {x:96,  y:116, c:'#CC5B4A', l:'MUSIC',  lx:96,  ly:86},
+    {x:300, y:84,  c:'#D9A441', l:'VISUAL', lx:300, ly:54},
+    {x:316, y:296, c:'#5586BE', l:'WORDS',  lx:316, ly:340},
+    {x:112, y:316, c:'#9472B8', l:'TOOLS',  lx:112, ly:360}
+  ];
+  function mk(t, a, p){ var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; }
+  var gE = document.getElementById('ap-edges'), gH = document.getElementById('ap-halos'),
+      gN = document.getElementById('ap-nodes'), gL = document.getElementById('ap-labels');
+  for (var i = 0; i < 4; i++) for (var j = i + 1; j < 4; j++) mk('line', {x1:N[i].x, y1:N[i].y, x2:N[j].x, y2:N[j].y, 'class':'ap-edge'}, gE);
+  /* 現在地の輪(常時) と 到着の波紋 を領域ごとに 1 組 */
+  var rings  = N.map(function(n){ return mk('circle', {cx:n.x, cy:n.y, r:15, stroke:n.c, 'stroke-width':2.5, opacity:0}, gH); });
+  var pulses = N.map(function(n){ return mk('circle', {cx:n.x, cy:n.y, r:9, stroke:n.c, 'stroke-width':1.5, opacity:0}, gH); });
+  N.forEach(function(n){
+    mk('circle', {cx:n.x, cy:n.y, r:8, fill:n.c}, gN);
+    var t = mk('text', {x:n.lx, y:n.ly, 'text-anchor':'middle', 'class':'ap-label'}, gL); t.textContent = n.l;
+  });
+  var dot = document.getElementById('ap-dot'), act = document.getElementById('ap-active');
+  var seq = [0,2,1,3,2,0,3,1], MOVE = 1.5, DWELL = 1.1, LEG = MOVE + DWELL;
+  function ease(p){ return p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2; }
+
+  function frame(t){
+    var i = Math.floor(t / LEG) % seq.length, lt = t % LEG;
+    var ai = seq[i], bi = seq[(i + 1) % seq.length], a = N[ai], b = N[bi];
+    var p = lt < MOVE ? ease(lt / MOVE) : 1;
+    var x = a.x + (b.x - a.x) * p, y = a.y + (b.y - a.y) * p;
+    dot.setAttribute('transform', 'translate(' + x.toFixed(2) + ' ' + y.toFixed(2) + ')');
+    var fade = lt < MOVE ? 1 : 1 - (lt - MOVE) / DWELL;
+    act.setAttribute('x1', a.x); act.setAttribute('y1', a.y); act.setAttribute('x2', x); act.setAttribute('y2', y);
+    act.setAttribute('stroke', a.c); act.setAttribute('opacity', (.9 * Math.max(fade, 0)).toFixed(3));
+    for (var k = 0; k < 4; k++){ rings[k].setAttribute('opacity', 0); pulses[k].setAttribute('opacity', 0); }
+    if (lt < MOVE) {            /* 出発側の輪が消えていく */
+      rings[ai].setAttribute('opacity', Math.max(0, 1 - lt / .4).toFixed(3));
+    } else {                    /* 到着側の輪が点き、波紋が広がる */
+      var d = (lt - MOVE) / DWELL;
+      rings[bi].setAttribute('opacity', 1);
+      pulses[bi].setAttribute('r', 9 + 22 * d); pulses[bi].setAttribute('opacity', (.8 * (1 - d)).toFixed(3));
+    }
+  }
+  function still(){            /* 静止: 点は MUSIC 上、その輪が点いている。尾・波紋なし */
+    frame(0);
+    dot.setAttribute('transform', 'translate(' + N[0].x + ' ' + N[0].y + ')');
+    act.setAttribute('opacity', 0);
+    for (var k = 0; k < 4; k++) pulses[k].setAttribute('opacity', 0);
+    rings[0].setAttribute('opacity', 1);
+  }
+
+  var rm = matchMedia('(prefers-reduced-motion: reduce)');
+  var raf = 0, last = 0, clock = 0, visible = true;
+  /* 伏線: 読み手が ABOUT を下へ抜けるとき、点は図を抜けて下（Statement の銀猫の方）へ跳び去る。
+     スクロールで戻ると、MUSIC にふっと戻って跳び回りを再開する */
+  var mode = 'play', leaveT = 0, from = null;
+  function leaveFrame(dt){
+    leaveT += dt;
+    var p = Math.min(leaveT / .9, 1);
+    var x0 = from.x, y0 = from.y, cx = x0 + 30, cy = y0 - 70, x1 = x0 + 60, y1 = 380 + 160;
+    var q = 1 - p, x = q*q*x0 + 2*q*p*cx + p*p*x1, y = q*q*y0 + 2*q*p*cy + p*p*y1;
+    dot.setAttribute('transform', 'translate(' + x.toFixed(2) + ' ' + y.toFixed(2) + ')');
+    dot.setAttribute('opacity', (1 - Math.max(0, (p - .55) / .45)).toFixed(3));
+    act.setAttribute('opacity', 0);
+    for (var k = 0; k < 4; k++){ rings[k].setAttribute('opacity', 0); pulses[k].setAttribute('opacity', 0); }
+    if (p >= 1) { mode = 'gone'; var pw = document.getElementById('about-paws'); if (pw) pw.classList.add('stepped'); }
+  }
+  function checkScroll(){
+    if (rm.matches) return;
+    var r = fig.getBoundingClientRect(), vh = window.innerHeight;
+    if (mode === 'play' && r.bottom < vh * .25) {
+      var m = /translate\(([-\d.]+) ([-\d.]+)\)/.exec(dot.getAttribute('transform') || '');
+      from = m ? {x: +m[1], y: +m[2]} : {x: N[0].x, y: N[0].y};
+      mode = 'leave'; leaveT = 0;
+    } else if ((mode === 'gone' || mode === 'leave') && r.bottom > vh * .35) {
+      mode = 'play'; clock = 0; dot.setAttribute('opacity', 1);
+    }
+  }
+  window.addEventListener('scroll', checkScroll, {passive: true});
+
+  function loop(ts){
+    if (!last) last = ts;
+    var dt = Math.min((ts - last) / 1000, .1); last = ts;   /* タブ復帰時の飛びを防ぐ */
+    if (mode === 'play') { clock += dt; frame(clock); }
+    else if (mode === 'leave') leaveFrame(dt);
+    raf = requestAnimationFrame(loop);
+  }
+  function update(){
+    cancelAnimationFrame(raf); raf = 0; last = 0;
+    if (rm.matches) { mode = 'play'; dot.setAttribute('opacity', 1); still(); return; }
+    if (visible && !document.hidden) raf = requestAnimationFrame(loop);   /* 画面外・タブ裏は止める */
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){ visible = es[0].isIntersecting; update(); }, {threshold:0}).observe(fig);
+  }
+  document.addEventListener('visibilitychange', update);
+  if (rm.addEventListener) rm.addEventListener('change', update); else if (rm.addListener) rm.addListener(update);
+  update();
+})();
 </script>
 </body>
 </html>
