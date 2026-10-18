@@ -357,6 +357,16 @@
         .tff-closing-mirror { display: inline-block; margin-top: 56px; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; line-height: 2; letter-spacing: 0.06em; color: rgba(255,255,255,0.72); border-bottom: 1px solid transparent; transition: color 0.3s ease, border-color 0.3s ease; }
         .tff-closing-mirror:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
 
+        /* ── Self Portrait: もうひとつの顔 ── */
+        .tff-another { display: grid; grid-template-columns: 96px 1fr; gap: 18px; align-items: start; }
+        .tff-another img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; box-shadow: 0 6px 18px rgba(76,140,150,0.25); }
+        .tff-another-title { font-family: 'Noto Serif JP', serif; font-size: 17px; letter-spacing: 0.06em; color: #3D2E52; margin-top: 4px; }
+        .tff-another-body { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; line-height: 1.95; color: #4d5d61; margin-top: 8px; }
+        .tff-another-link { font-family: 'Noto Sans JP', sans-serif; font-size: 12px; color: #4E8A93; margin-top: 10px; }
+        .group:hover .tff-another-link { text-decoration: underline; }
+        .tff-another-credit { font-family: 'Noto Sans JP', sans-serif; font-size: 11px; color: #7a8a8e; margin-top: 4px; }
+        @media (max-width: 480px) { .tff-another { grid-template-columns: 72px 1fr; gap: 14px; } .tff-another img { width: 72px; height: 72px; } }
+
         /* ── Self Portrait（色・強み・性格） ── */
         .tff-self { background: linear-gradient(180deg, #DDF0F3 0%, #C9E7EC 100%); color: #3D2E52; }  /* 瓶覗（#A2D7DD）に寄せた地。Profile の淡い地と境目を付ける */
         .tff-self-card { background: rgba(255,255,255,0.72); border: 1px solid rgba(162,215,221,0.55); border-radius: 6px; padding: 28px 28px 30px; }
@@ -878,6 +888,33 @@
                     </a>
                 </div>
             </div>
+
+            <!-- もうひとつの顔: ポケカと仮想通貨 FX（文言は各 X の自己紹介から。叩き台） -->
+            <div class="mt-16 tff-reveal">
+                <p class="tff-self-label text-center">Another side</p>
+                <p class="tff-self-title text-center">もうひとつの顔</p>
+                <div class="grid md:grid-cols-2 gap-6 mt-8">
+                    <a href="https://x.com/pokeasako" target="_blank" rel="noopener" class="tff-self-card tff-another hover:bg-white transition-colors duration-300 group">
+                        <img src="img/another-pokeca.jpg" alt="ポケモンカードのイラスト（X のアイコン）" width="400" height="400" loading="lazy">
+                        <div>
+                            <p class="tff-self-label">Pokémon Card</p>
+                            <p class="tff-another-title">ポケカで遊ぶ</p>
+                            <p class="tff-another-body">ポケモンカードにはまった<span class="inline-block">30代。</span>友だちと都内のあちこちで対戦し、子どもと遊び、可愛いイラストを集めています。好きなポケモンはエーフィ、テールナー、ロコン。</p>
+                            <p class="tff-another-link">X @pokeasako ↗</p>
+                            <p class="tff-another-credit">アイコン: カヲルさん（@kwr_pkc）</p>
+                        </div>
+                    </a>
+                    <a href="https://x.com/hanata19086" target="_blank" rel="noopener" class="tff-self-card tff-another hover:bg-white transition-colors duration-300 group">
+                        <img src="img/another-fx.jpg" alt="土地神様のイラスト（X のアイコン）" width="560" height="560" loading="lazy">
+                        <div>
+                            <p class="tff-self-label">Crypto FX</p>
+                            <p class="tff-another-title">仮想通貨 FX をトレードする</p>
+                            <p class="tff-another-body"><span class="inline-block">トレード歴4年目。</span>インジケーターとアラートを生かした、時間をかけないトレード。半裁量の bot 通知サービスを細々と続け、FX トレードのサイト「7Witches Trade」もつくっています。</p>
+                            <p class="tff-another-link">X @hanata19086 ↗</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -1010,7 +1047,7 @@
             <p class="font-serif italic text-white/55 text-[13px] tracking-[4px] mb-3 tff-reveal">elsewhere</p>
             <h2 class="font-serif text-white text-[42px] lg:text-[56px] leading-none tracking-wide tff-reveal">Connection</h2>
             <div class="tff-divider tff-reveal"></div>
-            <div class="grid grid-cols-3 gap-4 sm:gap-10 mt-12 tff-reveal">
+            <div class="grid grid-cols-3 gap-x-4 gap-y-10 sm:gap-x-10 sm:gap-y-12 mt-12 tff-reveal">
                 <a href="https://www.flickr.com/photos/kutakuta1001/" target="_blank" rel="noopener" class="tff-conn">
                     <img src="img/icon-flickr.jpg" alt="" width="120" height="120">
                     <span class="tff-conn-name">Flickr</span>
@@ -1025,6 +1062,21 @@
                     <img src="img/icon-booklog.jpg" alt="" width="120" height="120">
                     <span class="tff-conn-name"><span class="inline-block">ブクログ</span> <span class="inline-block">読書所感</span></span>
                     <span class="tff-conn-sub">277冊 · 149レビュー</span>
+                </a>
+                <a href="https://x.com/pokeasako" target="_blank" rel="noopener" class="tff-conn">
+                    <img src="img/icon-x-pokeca.jpg" alt="" width="120" height="120">
+                    <span class="tff-conn-name"><span class="inline-block">X</span> <span class="inline-block">ポケカ</span></span>
+                    <span class="tff-conn-sub">@pokeasako</span>
+                </a>
+                <a href="https://x.com/hanata19086" target="_blank" rel="noopener" class="tff-conn">
+                    <img src="img/icon-x-fx.jpg" alt="" width="120" height="120">
+                    <span class="tff-conn-name"><span class="inline-block">X</span> <span class="inline-block">トレード</span></span>
+                    <span class="tff-conn-sub">@hanata19086</span>
+                </a>
+                <a href="https://7witches.wraptas.site/" target="_blank" rel="noopener" class="tff-conn">
+                    <img src="img/icon-7witches.jpg" alt="" width="120" height="120">
+                    <span class="tff-conn-name">7Witches Trade</span>
+                    <span class="tff-conn-sub">FX トレードのサイト</span>
                 </a>
             </div>
         </div>

@@ -1,6 +1,6 @@
 # The First Flower — 設計引き継ぎ書（DESIGN-NOTES）
 
-最終更新: 2026-10-18（元サイトの写真構成に寄せて改修。be2a6bb / 5ce470d）
+最終更新: 2026-10-18（Connection を 6 つに・Self に「もうひとつの顔」を追加）
 
 楽曲専用ランディングページ **「The First Flower 〜いい人生とは〜」** の構成と意図を残す引き継ぎ書。
 
@@ -56,15 +56,15 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 | top | 写真 `img/hero.jpg`（Flickr 25831760540・青いカーネーション）＋中央だけ薄い紫 | 題字＋**桜の花びら**（`tff-sk-sm/md/lg`・`sakura-a/b/c`） |
 | credo | 生成りの紙＋紙の目 | 作者の「いい人生とは」への答え 10 行を、右から左への縦書き・手書き風の書体（Klee One。使う字だけを `text=` で読み込む）で。番号は付けない。各行は「、」の切れ目で折り返す。結びは NOCTA と同じ一文「遊ぶことで人生を彩ろう」。署名の「— NOCTA」は答えの余韻を閉じるので外した（2026-10-18）。スマホは横にたどって読む |
 | profile | 淡いメッシュグラデ（38s で揺れる）＋粒子 canvas・浮遊シンボル | 写真2枚（`img/profile-photo1/2.jpg`・風車と Budweiser。元サイトと同じ）。内容は `tff-profile-data.js` |
-| self | 瓶覗（#A2D7DD）寄りの水色のグラデ（Profile の淡い地と境目を付ける） | 主役は画面幅の瓶覗の札（色面に縦書きの色名と読み仮名＋本人写真の水面 `img/kamenozoki-water.jpg`）。その下に作者の文「私は瓶覗色です。」。脇役としてストレングスファインダー上位 5（英語の正式名）と 16Personalities（ENFP 運動家）。水彩の円の画像は凛の指摘で外した（2026-10-18）。ストレングスは 10 位まで（最初は 5 位）。その右に「強みの全体像」（作者のメモを ChatGPT で清書した図 `img/strengths-map.jpg`・全体を 4:3 で見せ、押すと拡大・AI 使用を注記）と ENFP |
+| self | 瓶覗（#A2D7DD）寄りの水色のグラデ（Profile の淡い地と境目を付ける） | 主役は画面幅の瓶覗の札（色面に縦書きの色名と読み仮名＋本人写真の水面 `img/kamenozoki-water.jpg`）。その下に作者の文「私は瓶覗色です。」。脇役としてストレングスファインダー上位 5（英語の正式名）と 16Personalities（ENFP 運動家）。水彩の円の画像は凛の指摘で外した（2026-10-18）。ストレングスは 10 位まで（最初は 5 位）。その右に「強みの全体像」（作者のメモを ChatGPT で清書した図 `img/strengths-map.jpg`・全体を 4:3 で見せ、押すと拡大・AI 使用を注記）と ENFP。最後に「もうひとつの顔」（`.tff-another`・丸い絵＋短文の 2 枚: ポケカで遊ぶ / 仮想通貨 FX をトレードする。文は各 X の自己紹介から。2026-10-18 追加） |
 | quotes | 紫グラデの下に写真 `img/quotes-bg.jpg`（Flickr 25914083501）を透かす | **引用カードの無限マーキー**（`tff-quotes.js`・左 360s / 右 440s・hover で停止） |
 | gallery | 写真 `img/gallery-bg.jpg`（Flickr 9414005395・ぼかし済み） | Flickr の写真タイル（下記 5 章）。最初は 15 枚（PC 5 列・スマホ 3 列で端数なし）、「すべて見る」で全件。`tff-veil` の囲み |
 | blog | 写真 `img/blog-bg.jpg`（Flickr 9413369311・小樽運河・ぼかし済み） | 箱なしの記事カード（上に細線・`blog-data.js` の新しい3件） |
-| connection | 写真 `img/connection-bg.jpg`（Flickr 25628706764・Victoria harbor） | 丸いアイコン3つ（Flickr / Old Blog=Ameblo / ブクログ 読書所感）。元サイトの Connection と同じ並び |
+| connection | 写真 `img/connection-bg.jpg`（Flickr 25628706764・Victoria harbor） | 丸いアイコン6つ（3 列 2 段）。上段は元サイトと同じ Flickr / Old Blog=Ameblo / ブクログ 読書所感。下段は作者の別の顔の X ポケカ（@pokeasako）/ X トレード（@hanata19086）/ 7Witches Trade（FX トレードのサイト）（2026-10-18 追加） |
 | footer | `tff-dark` | 冒頭の問いを返す「あなたにとっての『いい人生』は？」（Klee One）で終える。下に小さく鏡の一文「夜は NOCTA という名前で、…つくっています。→」（NOCTA の Statement 直下の「昼は The First Flower という名前で…」と対）。題字の繰り返しと BACK TO NOCTA は外した。TFF → NOCTA の案内は上部の「← NOCTA」とこの一文の 2 か所だけ（2026-10-18）。桜の花びら（`sakura-foot-a/b`） |
 
 - Connection の背景は元サイトの写真（Strikingly 備え付けのビルバオの街並み）を**使っていない**。素材の権利が不明なため、CEO 自身の Flickr 写真に替えた。
-- アイコン `img/icon-*.jpg`（264px・CSS で円形）は本人の Flickr 写真から切り抜いたもの。Flickr＝桜（28095409850「the first flower」）、Old Blog＝万年筆（51007397898「pen」）、ブクログ＝本棚（5470813410）。2026-10-18 まで使っていた AI 生成の水彩アイコンは、レビューで「本人の写真の中で浮く・断りがない」と指摘され差し替えた。
+- アイコン `img/icon-*.jpg`（264px・CSS で円形）は本人の Flickr 写真から切り抜いたもの。Flickr＝桜（28095409850「the first flower」）、Old Blog＝万年筆（51007397898「pen」）、ブクログ＝本棚（5470813410）。下段の 3 つは各アカウントのアイコン（X ポケカ＝カヲルさん @kwr_pkc の絵・クレジットは Self の「もうひとつの顔」に記載 / X トレード＝作者のアイコン絵 / 7Witches＝ピンクのうさぎ）。2026-10-18 まで使っていた AI 生成の水彩アイコンは、レビューで「本人の写真の中で浮く・断りがない」と指摘され差し替えた。
 
 ---
 
