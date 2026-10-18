@@ -24,6 +24,7 @@
 
         Object.keys(photos).forEach(function (pid) {
             var p = photos[pid];
+            if (!p || typeof p !== "object") { errors.push("写真 " + pid + " が不正"); return; }
             if (!/^[a-f0-9]{16}$/.test(pid)) errors.push("写真 ID が不正: " + pid);
             Object.keys(p).forEach(function (k) {
                 if (PHOTO_FIELDS.indexOf(k) < 0) errors.push("写真 " + pid + " に許可されない項目: " + k);
@@ -37,6 +38,11 @@
         });
 
         var seen = {};
+        regions = regions.filter(function (r) {
+            if (r && typeof r === "object") return true;
+            errors.push("地域に不正な項目がある");
+            return false;
+        });
         regions.forEach(function (r) {
             Object.keys(r).forEach(function (k) {
                 if (REGION_FIELDS.indexOf(k) < 0) errors.push("地域 " + r.id + " に許可されない項目: " + k);

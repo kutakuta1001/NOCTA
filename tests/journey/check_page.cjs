@@ -109,6 +109,15 @@ const text = (page, sel) => page.$eval(sel, (el) => el.textContent.trim());
             && (await text(page, "#jr-status")) === "", rapidSrc);
         await page.close();
 
+        ({ page, errors } = await openPage(browser, { slowId: "a000000000000006" }));
+        allErrors.push(...errors);
+        await page.click('.jr-tile[data-region="JP-26"]');
+        await page.waitForTimeout(450);
+        const during = await text(page, "#jr-status");
+        await page.waitForTimeout(700);
+        check("loading-text", during === "読み込み中" && (await text(page, "#jr-status")) === "", during);
+        await page.close();
+
         ({ page, errors } = await openPage(browser, { empty: true }));
         check("empty-data", (await text(page, "#jr-status")) === "旅の写真は準備中です。" && errors.length === 0, errors.join(" | "));
         await page.close();

@@ -79,3 +79,19 @@ test("empty-data", () => {
     assert.deepEqual(core.publishedRegions(empty), []);
     assert.equal(core.validateJourney(empty).ok, true);
 });
+
+test("validate-null-photo-no-throw", () => {
+    const d = clone();
+    d.photos.a000000000000001 = null;
+    let r;
+    assert.doesNotThrow(() => { r = core.validateJourney(d); });
+    assert.equal(r.ok, false);
+});
+
+test("validate-null-region-no-throw", () => {
+    const d = clone();
+    d.regions.push(null);
+    let r;
+    assert.doesNotThrow(() => { r = core.validateJourney(d); });
+    assert.equal(r.ok, false);
+});

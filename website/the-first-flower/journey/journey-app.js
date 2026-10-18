@@ -6,12 +6,19 @@
 (function () {
     var core = window.JourneyCore;
     var raw = typeof TFF_JOURNEY !== "undefined" ? TFF_JOURNEY : null;
-    var check = raw ? core.validateJourney(raw) : { ok: false, errors: ["TFF_JOURNEY がない"] };
+    var check;
+    try {
+        check = raw ? core.validateJourney(raw) : { ok: false, errors: ["TFF_JOURNEY がない"] };
+    } catch (e) {
+        check = { ok: false, errors: [String(e)] };
+    }
     if (!check.ok) console.warn("旅の地図: 公開データを使えません", check.errors);
     var data = check.ok ? raw : { schemaVersion: 1, regions: [], photos: {} };
 
     var EMPTY_TEXT = "旅の写真は準備中です。";
     var ERROR_TEXT = "写真を読み込めませんでした";
+    var LOADING_TEXT = "読み込み中";
+    var LOADING_DELAY_MS = 300; // 手元にある写真で一瞬だけ出ないように待つ
     var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     var $ = function (sel) { return document.querySelector(sel); };
@@ -136,9 +143,13 @@
         status.textContent = "";
         main.hidden = false;
         main.classList.add("is-loading");
+        setTimeout(function () {
+            if (token === state.token && main.classList.contains("is-loading") && !main.hidden) status.textContent = LOADING_TEXT;
+        }, LOADING_DELAY_MS);
         main.onload = function () {
             if (token !== state.token) return;
             main.classList.remove("is-loading");
+            status.textContent = "";
         };
         main.onerror = function () {
             if (token !== state.token) return;
