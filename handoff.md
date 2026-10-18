@@ -183,3 +183,4 @@
 - 2026-10-18: TFF に「いい人生とは」の答え（縦書き・Klee One）と Self Portrait（瓶覗色・ストレングス上位5・ENFP）を追加、Gallery を 15 枚＋「すべて見る」に、Кто это?（これはなに?）に修正。次: 瓶覗の水彩画像（833736-2.jpg）の利用規約を CEO が確認
 - 2026-10-18: TFF の瓶覗の札を色面＋縦書き色名＋水面に、ストレングスを英語名に、ENFP に説明、Self Portrait の地を瓶覗寄りに、スマホで縦書きの結びを下に横書きで表示。4回目レビューは drafts/design-review/the-first-flower-4.md。次: 水彩の円の扱いを CEO が判断
 - 2026-10-18: TFF の Self Portrait を瓶覗の札が主役の形に（水彩の円は外す）、フッター上に問い返しと NOCTA の名乗りを追加。次: なし（友人公開の判断は CEO）
+- 2026-10-18: TFF の案内を 2 か所に（— NOCTA と末尾の重複を外し問いで終える）、NOCTA の Statement 下に鏡の一文「昼は The First Flower…」、強みの図とストレングス 10、トップ写真に粒。6回目レビューは drafts/design-review/the-first-flower-6.md。次: 友人公開の判断は CEO

@@ -157,6 +157,8 @@
             transition: opacity 0.3s ease, visibility 0.3s;
         }
         #tff-lightbox.open { opacity: 1; visibility: visible; }
+        /* hidden 属性を inline-block などのクラスより優先する（強みの図では Flickr への案内を出さない） */
+        #tff-lightbox [hidden] { display: none !important; }
         #tff-lightbox figure { margin: 0; max-width: min(1024px, 100%); text-align: center; }
         #tff-lightbox img {
             max-width: 100%; max-height: calc(100vh - 180px);
@@ -341,22 +343,19 @@
         .tff-credo-poem .p { display: inline-block; }
         @media (max-width: 767px) { .tff-credo-scroll { padding-left: 34px; } }
         .tff-credo-poem .end { display: block; margin-right: 1.2em; font-size: clamp(18px, 2vw, 22px); color: #B168A8; }
-        .tff-credo-poem .end a { color: inherit; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.7em; letter-spacing: 0.2em; margin-top: 1em; display: inline-block; text-orientation: sideways; border-left: 1px solid rgba(177,104,168,0.4); padding-left: 2px; }
         .tff-credo-hint { display: none; position: relative; text-align: center; font-size: 12px; color: #705E92; margin-top: 12px; letter-spacing: 0.1em; }
         /* スマホ: 結びの一行は縦書きの列の外に出し、横書きで下に置く（横にたどらなくても目に入るように） */
         .tff-credo-coda-sp { display: none; position: relative; text-align: center; margin: 22px 24px 0; font-family: 'Klee One', 'Noto Serif JP', serif; font-size: 19px; letter-spacing: 0.18em; color: #B168A8; }
-        .tff-credo-coda-sp a { display: block; margin-top: 6px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.2em; color: #B168A8; }
         @media (max-width: 767px) {
             .tff-credo-hint, .tff-credo-coda-sp { display: block; }
             .tff-credo-poem .end { display: none; }
         }
 
-        /* ── 結び（フッターの上） ── */
-        .tff-closing { position: relative; z-index: 1; max-width: 640px; margin: 8px auto 56px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.12); }
-        .tff-closing-q { font-family: 'Klee One', 'Noto Serif JP', serif; font-weight: 600; font-size: clamp(22px, 3.2vw, 30px); letter-spacing: 0.12em; color: #fff; }
-        .tff-closing-nocta { font-family: 'Noto Sans JP', sans-serif; font-size: 14px; line-height: 2; letter-spacing: 0.06em; color: rgba(255,255,255,0.72); margin-top: 22px; }
-        .tff-closing-link { display: inline-block; margin-top: 18px; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; letter-spacing: 0.12em; color: #F6C9DA; border-bottom: 1px solid rgba(246,201,218,0.5); padding-bottom: 2px; }
-        .tff-closing-link:hover { color: #fff; border-color: #fff; }
+        /* ── 結び（フッター）: 問いが主役。NOCTA への一文は小さく静かに ── */
+        .tff-closing { position: relative; z-index: 1; max-width: 640px; margin: 24px auto 64px; }
+        .tff-closing-q { font-family: 'Klee One', 'Noto Serif JP', serif; font-weight: 600; font-size: clamp(24px, 3.4vw, 32px); letter-spacing: 0.12em; color: #fff; }
+        .tff-closing-mirror { display: inline-block; margin-top: 56px; font-family: 'Noto Sans JP', sans-serif; font-size: 13px; line-height: 2; letter-spacing: 0.06em; color: rgba(255,255,255,0.72); border-bottom: 1px solid transparent; transition: color 0.3s ease, border-color 0.3s ease; }
+        .tff-closing-mirror:hover { color: #fff; border-color: rgba(255,255,255,0.5); }
 
         /* ── Self Portrait（色・強み・性格） ── */
         .tff-self { background: linear-gradient(180deg, #DDF0F3 0%, #C9E7EC 100%); color: #3D2E52; }  /* 瓶覗（#A2D7DD）に寄せた地。Profile の淡い地と境目を付ける */
@@ -381,7 +380,26 @@
         .tff-strengths li:first-child { border-top: 0; }
         .tff-strengths li::before { counter-increment: s; content: counter(s); font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #6FA8B0; }
         .tff-strengths b { font-weight: 500; letter-spacing: 0.04em; }
+        .tff-strengths:not(.is-open) li.is-more { display: none; }
+        .tff-self-more { margin-top: 14px; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; letter-spacing: 0.08em; color: #4E8A93; border-bottom: 1px solid rgba(78,138,147,0.45); padding: 6px 0 2px; }
+        .tff-self-more:hover { color: #3D2E52; border-color: #3D2E52; }
+        /* 強みの全体像（ChatGPT で清書した図）。押すと拡大 */
+        .tff-map-thumb { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; margin-top: 12px; border: 1px solid rgba(111,168,176,0.35); background: #FBFAF6; cursor: zoom-in; }
+        .tff-map-thumb img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s ease; }
+        .tff-map-zoom { position: absolute; right: 8px; bottom: 8px; z-index: 1; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; line-height: 1; color: #fff; background: rgba(61,46,82,0.7); }
+        .tff-map-thumb:hover img { transform: scale(1.04); }
+        .tff-map-credit { font-family: 'Noto Sans JP', sans-serif; font-size: 11px; color: #6f8a8f; margin-top: 8px; letter-spacing: 0.04em; }
         .tff-strengths span { color: #7a8a8e; font-size: 12px; margin-left: 6px; }
+
+        /* トップ写真の上に重ねるフィルムの粒と、四隅をわずかに落とす周辺減光 */
+        .tff-film-grain {
+            position: absolute; inset: 0; pointer-events: none; z-index: 0;
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+                radial-gradient(ellipse 85% 75% at 50% 50%, transparent 50%, rgba(61,46,82,0.6) 100%);
+            background-size: 180px 180px, 100% 100%;
+            mix-blend-mode: overlay; opacity: 0.55;
+        }
 
         /* ── Profile photo placeholders ── */
         .profile-photo-placeholder {
@@ -675,6 +693,8 @@
     ═══════════════════════════════════ -->
     <section id="top" class="photo-section hero-bg min-h-screen flex items-center justify-center text-center">
         <div class="photo-overlay" style="background: radial-gradient(ellipse 60% 45% at 50% 50%, rgba(61,46,82,0.55) 0%, rgba(61,46,82,0.18) 70%, rgba(61,46,82,0.30) 100%);"></div>
+        <!-- 写真の荒さを、フィルムの粒の質感として見せる -->
+        <div class="tff-film-grain" aria-hidden="true"></div>
         <!-- Falling sakura petals (slow sway) -->
         <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
             <!-- small -->
@@ -715,10 +735,10 @@
     ═══════════════════════════════════ -->
     <section id="credo" class="tff-credo" aria-label="いい人生とは">
         <div class="tff-credo-scroll" id="tff-credo-scroll">
-            <p class="tff-credo-poem tff-reveal"><span class="t">いい人生とは</span><span class="l"><span class="p">自由であること</span></span><span class="l"><span class="p">妻や子どもたちとたくさん笑い、</span><span class="p">話し、</span><span class="p">過ごす時間があること</span></span><span class="l"><span class="p">自身の感情や行動が他者の態度や行動に左右されないこと</span></span><span class="l"><span class="p">異なる見え方や描き方に魅了され、</span><span class="p">自身の変化を楽しむこと</span></span><span class="l"><span class="p">時間に縛られず回り道をすること</span></span><span class="l"><span class="p">富や名声は目的ではなく、</span><span class="p">手段であること</span></span><span class="l"><span class="p">自身の答えに振り回されず、</span><span class="p">敬意を持って人の話を聞き、</span><span class="p">相手を理解すること</span></span><span class="l"><span class="p">見栄を張らず、</span><span class="p">良心を体現すること</span></span><span class="l"><span class="p">人生を義務と考えず、</span><span class="p">笑って目を輝かせて歩むこと</span></span><span class="l"><span class="p">いいものを見つけたとき、</span><span class="p">出会った人に分けてあげて、</span><span class="p">一緒に喜ぶこと</span></span><span class="end">遊ぶことで　人生を彩ろう<br><a href="../index.html">— NOCTA</a></span></p>
+            <p class="tff-credo-poem tff-reveal"><span class="t">いい人生とは</span><span class="l"><span class="p">自由であること</span></span><span class="l"><span class="p">妻や子どもたちとたくさん笑い、</span><span class="p">話し、</span><span class="p">過ごす時間があること</span></span><span class="l"><span class="p">自身の感情や行動が他者の態度や行動に左右されないこと</span></span><span class="l"><span class="p">異なる見え方や描き方に魅了され、</span><span class="p">自身の変化を楽しむこと</span></span><span class="l"><span class="p">時間に縛られず回り道をすること</span></span><span class="l"><span class="p">富や名声は目的ではなく、</span><span class="p">手段であること</span></span><span class="l"><span class="p">自身の答えに振り回されず、</span><span class="p">敬意を持って人の話を聞き、</span><span class="p">相手を理解すること</span></span><span class="l"><span class="p">見栄を張らず、</span><span class="p">良心を体現すること</span></span><span class="l"><span class="p">人生を義務と考えず、</span><span class="p">笑って目を輝かせて歩むこと</span></span><span class="l"><span class="p">いいものを見つけたとき、</span><span class="p">出会った人に分けてあげて、</span><span class="p">一緒に喜ぶこと</span></span><span class="end">遊ぶことで　人生を彩ろう</span></p>
         </div>
         <p class="tff-credo-hint font-jp">← 右から左へ、指でたどれます</p>
-        <p class="tff-credo-coda-sp">遊ぶことで　人生を彩ろう<a href="../index.html">— NOCTA</a></p>
+        <p class="tff-credo-coda-sp">遊ぶことで　人生を彩ろう</p>
     </section>
 
     <!-- ═══════════════════════════════════
@@ -820,26 +840,43 @@
                 <p class="tff-kame-body">瓶に水が張ってあり、そこに映る空の色を覗き見るように、私と関わる物や人すべてを覗き見ては儚く消えていく、その見た時の一瞬の喜びを、ふと見つけた何か捉えどころのないふんわりした印象を感じさせます。</p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-6 mt-14 items-stretch">
+            <div class="grid md:grid-cols-2 gap-6 mt-14 items-start">
                 <!-- ストレングスファインダー -->
                 <div class="tff-self-card tff-reveal">
                     <p class="tff-self-label">Strengths</p>
-                    <p class="tff-self-title">ストレングスファインダー 上位 5 つ</p>
-                    <ol class="tff-strengths">
+                    <p class="tff-self-title">ストレングスファインダー 上位の資質</p>
+                    <ol class="tff-strengths" id="tff-strengths">
                         <li><p><b>Woo</b><span>社交性（Winning Others Over）</span></p></li>
                         <li><p><b>Input</b><span>収集心</span></p></li>
                         <li><p><b>Learner</b><span>学習欲</span></p></li>
                         <li><p><b>Strategic</b><span>戦略性</span></p></li>
                         <li><p><b>Positivity</b><span>ポジティブ</span></p></li>
+                        <li class="is-more"><p><b>Empathy</b><span>共感性</span></p></li>
+                        <li class="is-more"><p><b>Ideation</b><span>着想</span></p></li>
+                        <li class="is-more"><p><b>Significance</b><span>自我</span></p></li>
+                        <li class="is-more"><p><b>Command</b><span>指令性</span></p></li>
+                        <li class="is-more"><p><b>Includer</b><span>包含</span></p></li>
                     </ol>
+                    <button type="button" id="tff-strengths-more" class="tff-self-more" aria-expanded="false" aria-controls="tff-strengths">6〜10 位も見る ↓</button>
                 </div>
-                <!-- 16Personalities -->
-                <a href="https://www.16personalities.com/ja/enfp%E5%9E%8B%E3%81%AE%E6%80%A7%E6%A0%BC" target="_blank" rel="noopener" class="tff-self-card tff-reveal block hover:bg-white transition-colors duration-300 group">
-                    <p class="tff-self-label">16 Personalities</p>
-                    <p class="tff-self-title">ENFP <span class="text-[15px] tracking-[2px]">運動家</span></p>
-                    <p class="font-jp text-[13px] leading-[1.9] mt-3" style="color:#4d5d61;">好奇心と情熱で、人や新しいことに飛び込んでいくタイプ。可能性を見つけると、わくわくして周りも巻き込みます。</p>
-                    <p class="font-jp text-[12px] mt-3 group-hover:underline" style="color:#5E97A0;">16Personalities で ENFP 型を読む ↗</p>
-                </a>
+                <div class="flex flex-col gap-6 tff-reveal">
+                    <!-- 強みの全体像（作者のメモを ChatGPT で清書した図） -->
+                    <div class="tff-self-card tff-map-card flex-1">
+                        <p class="tff-self-label">Strengths Map</p>
+                        <button type="button" id="tff-map-open" class="tff-map-thumb" aria-label="強みの全体像の図を大きく見る">
+                            <span class="tff-map-zoom" aria-hidden="true">＋</span>
+                            <img src="img/strengths-map.jpg" alt="ストレングスファインダー上位 10 の資質と、それらがどうつながって自分を動かしているかを描いた図" width="1448" height="1086" loading="lazy">
+                        </button>
+                        <p class="tff-map-credit">自分のメモを ChatGPT で清書した図です。</p>
+                    </div>
+                    <!-- 16Personalities -->
+                    <a href="https://www.16personalities.com/ja/enfp%E5%9E%8B%E3%81%AE%E6%80%A7%E6%A0%BC" target="_blank" rel="noopener" class="tff-self-card block hover:bg-white transition-colors duration-300 group">
+                        <p class="tff-self-label">16 Personalities</p>
+                        <p class="tff-self-title">ENFP <span class="text-[15px] tracking-[2px]">運動家</span></p>
+                        <p class="font-jp text-[13px] leading-[1.9] mt-3" style="color:#4d5d61;">好奇心と情熱で、人や新しいことに飛び込んでいくタイプ。可能性を見つけると、わくわくして周りも巻き込みます。</p>
+                        <p class="font-jp text-[12px] mt-3 group-hover:underline" style="color:#5E97A0;">16Personalities で ENFP 型を読む ↗</p>
+                    </a>
+                </div>
             </div>
         </div>
     </section>
@@ -1005,20 +1042,12 @@
             <span class="tff-sk-md" style="left:81%;animation:sakura-a 11s ease-in-out -3s infinite;color:rgba(253,217,217,0.50);">❀</span>
             <span class="tff-sk-sm" style="left:93%;animation:sakura-b 10s ease-in-out -8s infinite;color:rgba(238,164,192,0.55);">✿</span>
         </div>
-        <!-- 結び: 冒頭の問いを読み手に返し、NOCTA を名乗る（同じ人の昼と夜） -->
+        <!-- 結び: 冒頭の問いを読み手に返して終える。NOCTA は鏡の一文だけ（NOCTA 側の「昼は The First Flower…」と対） -->
         <div class="tff-closing">
             <p class="tff-closing-q"><span class="inline-block">あなたにとっての</span><span class="inline-block">「いい人生」は？</span></p>
-            <p class="tff-closing-nocta"><span class="inline-block">夜は NOCTA という名前で、</span><span class="inline-block">音楽や映像、言葉や道具をつくっています。</span></p>
-            <a href="../index.html" class="tff-closing-link">NOCTA を見にいく →</a>
+            <a href="../index.html" class="tff-closing-mirror"><span class="inline-block">夜は NOCTA という名前で、</span><span class="inline-block">音楽や映像、言葉や道具をつくっています。<span aria-hidden="true"> →</span></span></a>
         </div>
-        <p class="font-serif italic text-white/30 text-[12px] tracking-[3px] mb-4">— what is a good life —</p>
-        <p class="font-serif text-white/80 text-[22px] tracking-[4px] mb-6">The First Flower</p>
-        <div class="tff-divider" style="opacity: 0.5;"></div>
-        <a href="../index.html"
-           class="inline-block mt-8 font-display text-[12px] tracking-[4px] text-white/40 hover:text-white/80 transition-colors duration-200 uppercase">
-            ← Back to NOCTA
-        </a>
-        <p class="font-jp text-white/20 text-[11px] mt-8">© The First Flower</p>
+        <p class="font-jp text-white/55 text-[11px] tracking-[1px]">© The First Flower</p>
     </footer>
 
     <!-- ═══════════════════════════════════
@@ -1248,18 +1277,24 @@
         var lb = document.getElementById('tff-lightbox');
         var lbLastFocus = null;
 
+        var lbList = galleryPhotos;  // いま拡大している並び（Gallery の写真か、強みの図 1 枚）
         function showLightbox(i) {
-            var n = galleryPhotos.length;
+            var n = lbList.length;
             lbIndex = (i + n) % n;
-            var ph = galleryPhotos[lbIndex];
+            var ph = lbList[lbIndex];
             var img = document.getElementById('tff-lb-img');
             img.src = ph.src;
-            img.alt = ph.title || 'Flickr photo';
+            img.alt = ph.alt || ph.title || 'Flickr photo';
             document.getElementById('tff-lb-title').textContent = ph.title;
-            document.getElementById('tff-lb-link').href = ph.link;
+            var link = document.getElementById('tff-lb-link');
+            link.hidden = !ph.link;
+            if (ph.link) link.href = ph.link;
+            lb.querySelector('.tff-lb-prev').hidden = n < 2;
+            lb.querySelector('.tff-lb-next').hidden = n < 2;
         }
-        function openLightbox(i) {
+        function openLightbox(i, list) {
             lbLastFocus = document.activeElement;
+            lbList = list || galleryPhotos;
             showLightbox(i);
             lb.classList.add('open');
             lb.setAttribute('aria-hidden', 'false');
@@ -1279,6 +1314,7 @@
         document.addEventListener('keydown', function (e) {
             if (!lb.classList.contains('open')) return;
             if (e.key === 'Escape') closeLightbox();
+            else if (lbList.length < 2) return;
             else if (e.key === 'ArrowLeft') showLightbox(lbIndex - 1);
             else if (e.key === 'ArrowRight') showLightbox(lbIndex + 1);
         });
@@ -1288,7 +1324,7 @@
         lb.addEventListener('touchend', function (e) {
             if (lbTouchX === null) return;
             var dx = e.changedTouches[0].clientX - lbTouchX;
-            if (Math.abs(dx) > 50) showLightbox(lbIndex + (dx < 0 ? 1 : -1));
+            if (Math.abs(dx) > 50 && lbList.length > 1) showLightbox(lbIndex + (dx < 0 ? 1 : -1));
             lbTouchX = null;
         });
 
@@ -1326,6 +1362,20 @@
         /* ── 縦書きの答え: 横にはみ出すときは右端（書き出し）を見せる ── */
         var credoScroll = document.getElementById('tff-credo-scroll');
         if (credoScroll) credoScroll.scrollLeft = credoScroll.scrollWidth;
+
+        /* ── Self Portrait: ストレングスの 6〜10 位、強みの図の拡大 ── */
+        var stMore = document.getElementById('tff-strengths-more');
+        if (stMore) stMore.addEventListener('click', function () {
+            var list = document.getElementById('tff-strengths');
+            var open = !list.classList.contains('is-open');
+            list.classList.toggle('is-open', open);
+            stMore.setAttribute('aria-expanded', String(open));
+            stMore.textContent = open ? '5 位までにする ↑' : '6〜10 位も見る ↓';
+        });
+        var mapOpen = document.getElementById('tff-map-open');
+        if (mapOpen) mapOpen.addEventListener('click', function () {
+            openLightbox(0, [{ src: 'img/strengths-map.jpg', title: '強みの全体像（自分のメモを ChatGPT で清書した図）', alt: mapOpen.querySelector('img').alt, link: '' }]);
+        });
 
         /* ── Init ── */
         initDots();
