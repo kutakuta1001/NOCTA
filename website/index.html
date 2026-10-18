@@ -562,6 +562,28 @@
             font-size: 11px; color: #9A8A7A; margin-top: 1px;
         }
 
+        /* 準備中の連絡先（リンクにしない・ホバーで動かさない） */
+        .social-link.is-soon:hover {
+            background: rgba(255,255,255,0.03);
+            transform: none;
+            border-color: inherit;
+        }
+        .social-link.is-soon svg { opacity: 0.55; }
+        .soon-pill {
+            display: inline-block; margin-left: 8px; padding: 2px 8px;
+            border: 1px solid rgba(184,180,174,0.35); border-radius: 9999px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 10px; font-weight: 500; letter-spacing: 0.5px;
+            color: #B8B4AE; vertical-align: 1px;
+        }
+        .form-soon fieldset { opacity: 0.45; border: 0; padding: 0; margin: 0; min-width: 0; }
+        .form-soon .btn-submit,
+        .form-soon .btn-submit:hover {
+            cursor: default; transform: none; box-shadow: none;
+            background: transparent; color: #B8B4AE;
+            border: 1px solid rgba(184,180,174,0.35);
+        }
+
         /* Footer */
         footer a:hover { color: #E8E0D0; }
 
@@ -1122,35 +1144,37 @@
                 </p>
 
                 <div class="flex flex-col gap-3 reveal reveal-delay-3">
-                    <!-- TODO: href に X アカウント URL を設定 例: https://x.com/nocta_music -->
-                    <a href="#" class="social-link">
+                    <!-- TODO: アカウント公開後に <a href="https://x.com/..." class="social-link"> へ戻し、is-soon と準備中ラベルを外す -->
+                    <div class="social-link is-soon" aria-disabled="true">
                         <div class="w-8 flex-shrink-0 flex items-center justify-center">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8E0D0">
                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                             </svg>
                         </div>
                         <div>
-                            <div class="social-platform">X (Twitter)</div>
+                            <div class="social-platform">X (Twitter)<span class="soon-pill" data-i18n="contact.soon">準備中</span></div>
                             <div class="social-desc" data-i18n="contact.social.x">最新情報をいち早く</div>
                         </div>
-                    </a>
-                    <!-- TODO: href に note アカウント URL を設定 例: https://note.com/nocta_music -->
-                    <a href="#" class="social-link">
+                    </div>
+                    <!-- TODO: アカウント公開後に <a href="https://note.com/..." class="social-link"> へ戻し、is-soon と準備中ラベルを外す -->
+                    <div class="social-link is-soon" aria-disabled="true">
                         <div class="w-8 flex-shrink-0 flex items-center justify-center">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8E0D0">
                                 <path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 5v2h12V7H6zm0 4v2h12v-2H6zm0 4v2h8v-2H6z"/>
                             </svg>
                         </div>
                         <div>
-                            <div class="social-platform">note</div>
+                            <div class="social-platform">note<span class="soon-pill" data-i18n="contact.soon">準備中</span></div>
                             <div class="social-desc" data-i18n="contact.social.note">制作ブログ・ライナーノーツ</div>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
 
             <!-- Form -->
-            <div class="glass rounded-2xl p-9 border border-white/8 reveal reveal-delay-2">
+            <!-- TODO: フォーム公開時は form-soon・案内文・fieldset の disabled を外し、contact.submit を「送信する」に戻す -->
+            <div class="glass rounded-2xl p-9 border border-white/8 reveal reveal-delay-2 form-soon">
+                <p class="font-jp text-[13px] leading-[2] text-brand-sub mb-6" data-i18n-html="contact.form.soon"><span class="inline-block">お問い合わせフォームは、ただいま準備中です。</span><span class="inline-block">受付開始まで、もう少しだけお待ちください。</span></p>
                 <form
                     id="nocta-contact-form"
                     name="contact"
@@ -1164,6 +1188,8 @@
                     <p class="hidden" style="display:none;">
                         <input name="bot-field"/>
                     </p>
+
+                    <fieldset disabled>
 
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
@@ -1200,7 +1226,8 @@
                                   data-i18n-ph="contact.ph.message"
                                   required></textarea>
                     </div>
-                    <button class="btn-submit" type="submit" id="submitBtn" data-i18n="contact.submit">送信する</button>
+                    </fieldset>
+                    <button class="btn-submit" type="submit" id="submitBtn" data-i18n="contact.submit" disabled>準備中</button>
                 </form>
             </div>
 
@@ -1971,7 +1998,9 @@ const I18N = {
     'contact.opt.other': 'その他',
     'contact.lbl.message': 'メッセージ *',
     'contact.ph.message': 'プロジェクトの内容・ご要望をお気軽にご記入ください',
-    'contact.submit': '送信する',
+    'contact.submit': '準備中',
+    'contact.soon': '準備中',
+    'contact.form.soon': '<span class="inline-block">お問い合わせフォームは、ただいま準備中です。</span><span class="inline-block">受付開始まで、もう少しだけお待ちください。</span>',
     'footer.tagline': 'AIと人間が、遊ぶように創る。<br>音楽・映像・言葉・コードを越境して、<br>遊びが、人生を彩るまで。',
     'footer.s1': '音楽（Coming Soon）', 'footer.s2': '映像・ビジュアル', 'footer.s3': '言葉・ブログ', 'footer.s4': 'アプリ・ツール',
     'footer.tff.link': '✦ いい人生とは',
@@ -2020,7 +2049,9 @@ const I18N = {
     'contact.opt.other': 'Other',
     'contact.lbl.message': 'Message *',
     'contact.ph.message': "Tell us about your project and what you're looking for.",
-    'contact.submit': 'Send',
+    'contact.submit': 'Coming soon',
+    'contact.soon': 'Coming soon',
+    'contact.form.soon': "Our contact form is still being prepared. It'll open soon — thank you for your patience.",
     'footer.tagline': 'AI and humans, creating as if at play.<br>Across music, visuals, words and code —<br>until play colors life itself.',
     'footer.s1': 'Music (Coming Soon)', 'footer.s2': 'Visual', 'footer.s3': 'Words', 'footer.s4': 'Tools',
     'footer.tff.link': '✦ What is a good life?',
