@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@300;400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap&text=%E3%80%81%E3%80%82%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8B%E3%81%8C%E3%81%8D%E3%81%8F%E3%81%91%E3%81%92%E3%81%93%E3%81%94%E3%81%95%E3%81%97%E3%81%99%E3%81%9A%E3%81%9B%E3%81%9F%E3%81%A1%E3%81%A3%E3%81%A4%E3%81%A6%E3%81%A7%E3%81%A8%E3%81%A9%E3%81%AA%E3%81%AB%E3%81%AE%E3%81%AF%E3%81%B6%E3%82%80%E3%82%82%E3%82%84%E3%82%89%E3%82%8A%E3%82%8B%E3%82%8C%E3%82%8D%E3%82%92%E3%82%93%E4%B8%80%E4%BA%86%E4%BA%BA%E4%BB%96%E4%BC%9A%E4%BD%93%E5%87%BA%E5%88%86%E5%8B%95%E5%8B%99%E5%8C%96%E5%8F%B3%E5%90%8D%E5%96%9C%E5%9B%9E%E5%A3%B0%E5%A4%89%E5%A6%BB%E5%AD%90%E5%AF%8C%E5%B7%A6%E5%BA%A6%E5%BC%B5%E5%BD%A9%E5%BF%83%E6%83%85%E6%84%8F%E6%84%9F%E6%85%8B%E6%89%8B%E6%8C%81%E6%8C%AF%E6%8F%8F%E6%95%AC%E6%96%B9%E6%99%82%E6%A0%84%E6%A5%BD%E6%AD%A9%E6%AE%B5%E7%8F%BE%E7%90%86%E7%94%9F%E7%94%B1%E7%95%B0%E7%9A%84%E7%9B%AE%E7%9B%B8%E7%AC%91%E7%AD%94%E7%B7%92%E7%B8%9B%E7%BE%A9%E8%80%83%E8%80%85%E8%81%9E%E8%87%AA%E8%89%AF%E8%A1%8C%E8%A6%8B%E8%A7%A3%E8%A9%B1%E8%BA%AB%E8%BC%9D%E9%81%8A%E9%81%8E%E9%81%93%E9%96%93%E9%AD%85" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -130,6 +131,8 @@
             border-radius: 4px;
             background: rgba(61,46,82,0.35);
         }
+        /* 最初に見せる枚数を超えた写真（ボタンで開く） */
+        .tff-gallery-grid:not(.is-open) .tff-gallery-item.is-extra { display: none; }
         .tff-gallery-item img {
             width: 100%; height: 100%; object-fit: cover; display: block;
             transition: transform 0.6s ease;
@@ -314,6 +317,47 @@
             color: #F6C9DA;
             letter-spacing: 0.06em;
         }
+
+
+        /* ── いい人生とは（答え）: 生成りの紙に、手書き風の縦書き ── */
+        .tff-credo {
+            position: relative; background: #F7F2E9; color: #3D2E52;
+            padding: 96px 0 88px; overflow: hidden;
+        }
+        .tff-credo::before {
+            /* 紙の目 */
+            content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.38 0 0 0 0 0.30 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+        }
+        .tff-credo-scroll { position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 24px 10px; }
+        .tff-credo-poem {
+            writing-mode: vertical-rl; text-orientation: mixed;
+            height: min(600px, 72vh); margin: 0 auto; display: block;
+            font-family: 'Klee One', 'Noto Serif JP', serif; font-weight: 400;
+            font-size: clamp(16px, 1.75vw, 19px); line-height: 2.35; letter-spacing: 0.16em; color: #3D2E52;
+        }
+        .tff-credo-poem .t { display: block; font-weight: 600; font-size: clamp(28px, 3.4vw, 36px); letter-spacing: 0.22em; margin-left: 1.4em; }
+        .tff-credo-poem .l { display: block; margin-left: 0.5em; }
+        .tff-credo-poem .p { display: inline-block; }
+        @media (max-width: 767px) { .tff-credo-scroll { padding-left: 34px; } }
+        .tff-credo-poem .end { display: block; margin-right: 1.2em; font-size: clamp(18px, 2vw, 22px); color: #B168A8; }
+        .tff-credo-poem .end a { color: inherit; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.7em; letter-spacing: 0.2em; margin-top: 1em; display: inline-block; text-orientation: sideways; border-left: 1px solid rgba(177,104,168,0.4); padding-left: 2px; }
+        .tff-credo-hint { display: none; position: relative; text-align: center; font-size: 11px; color: #9A86B0; margin-top: 12px; letter-spacing: 0.1em; }
+        @media (max-width: 767px) { .tff-credo-hint { display: block; } }
+
+        /* ── Self Portrait（色・強み・性格） ── */
+        .tff-self { background: linear-gradient(180deg, #F3FAF9 0%, #EAF5F6 100%); color: #3D2E52; }
+        .tff-self-card { background: rgba(255,255,255,0.72); border: 1px solid rgba(162,215,221,0.55); border-radius: 6px; padding: 28px 28px 30px; }
+        .tff-self-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.25em; color: #6FA8B0; text-transform: uppercase; }
+        .tff-self-title { font-family: 'Noto Serif JP', serif; font-size: 20px; letter-spacing: 0.08em; margin-top: 6px; color: #3D2E52; }
+        .tff-kame-swatch { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; color: #5a6f74; }
+        .tff-kame-swatch i { width: 26px; height: 26px; border-radius: 50%; background: #A2D7DD; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+        .tff-strengths { list-style: none; margin: 16px 0 0; padding: 0; counter-reset: s; }
+        .tff-strengths li { display: grid; grid-template-columns: 34px 1fr; align-items: baseline; padding: 9px 0; border-top: 1px dashed rgba(111,168,176,0.4); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; }
+        .tff-strengths li:first-child { border-top: 0; }
+        .tff-strengths li::before { counter-increment: s; content: counter(s); font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #6FA8B0; }
+        .tff-strengths b { font-weight: 500; letter-spacing: 0.04em; }
+        .tff-strengths span { color: #7a8a8e; font-size: 12px; margin-left: 6px; }
 
         /* ── Profile photo placeholders ── */
         .profile-photo-placeholder {
@@ -593,7 +637,9 @@
     <!-- 左の現在地ドット -->
     <nav id="tff-dots" aria-label="ページ内の位置">
         <a href="#top"><span>Top</span></a>
+        <a href="#credo"><span>いい人生とは</span></a>
         <a href="#profile"><span>Profile</span></a>
+        <a href="#self"><span>Self Portrait</span></a>
         <a href="#quotes"><span>Text Overlays</span></a>
         <a href="#gallery"><span>Gallery</span></a>
         <a href="#blog"><span>Blog</span></a>
@@ -641,6 +687,16 @@
     </section>
 
     <!-- ═══════════════════════════════════
+         いい人生とは（作者の答え）— 縦書き・右から左へ
+    ═══════════════════════════════════ -->
+    <section id="credo" class="tff-credo" aria-label="いい人生とは">
+        <div class="tff-credo-scroll" id="tff-credo-scroll">
+            <p class="tff-credo-poem tff-reveal"><span class="t">いい人生とは</span><span class="l"><span class="p">自由であること</span></span><span class="l"><span class="p">妻や子どもたちとたくさん笑い、</span><span class="p">話し、</span><span class="p">過ごす時間があること</span></span><span class="l"><span class="p">自身の感情や行動が他者の態度や行動に左右されないこと</span></span><span class="l"><span class="p">異なる見え方や描き方に魅了され、</span><span class="p">自身の変化を楽しむこと</span></span><span class="l"><span class="p">時間に縛られず回り道をすること</span></span><span class="l"><span class="p">富や名声は目的ではなく、</span><span class="p">手段であること</span></span><span class="l"><span class="p">自身の答えに振り回されず、</span><span class="p">敬意を持って人の話を聞き、</span><span class="p">相手を理解すること</span></span><span class="l"><span class="p">見栄を張らず、</span><span class="p">良心を体現すること</span></span><span class="l"><span class="p">人生を義務と考えず、</span><span class="p">笑って目を輝かせて歩むこと</span></span><span class="l"><span class="p">いいものを見つけたとき、</span><span class="p">出会った人に分けてあげて、</span><span class="p">一緒に喜ぶこと</span></span><span class="end">遊ぶことで　人生を彩ろう<br><a href="../index.html">— NOCTA</a></span></p>
+        </div>
+        <p class="tff-credo-hint font-jp">← 右から左へ、指でたどれます</p>
+    </section>
+
+    <!-- ═══════════════════════════════════
          PROFILE
     ═══════════════════════════════════ -->
     <section id="profile" class="photo-section profile-bg py-24 px-6 overflow-hidden">
@@ -667,7 +723,7 @@
 
             <!-- Title -->
             <div class="text-center mb-16 tff-reveal">
-                <p class="font-serif italic text-tff-sub text-[13px] tracking-[4px] mb-3">Кто это?</p>
+                <p class="font-serif text-tff-sub text-[13px] tracking-[4px] mb-3"><span lang="ru">Кто это?</span><span class="font-jp tracking-[2px] text-[11px] ml-1">（これはなに?）</span></p>
                 <h2 class="font-serif text-tff-dark text-[42px] lg:text-[56px] leading-none tracking-wide">Profile</h2>
                 <div class="tff-divider" style="background: #B168A8;"></div>
             </div>
@@ -707,6 +763,54 @@
                             SFや児童小説、自己啓発の本が好きです。自己啓発の本の中では、NVCとThe Artist's Wayにはまっています。が、興味がころころ変わるので、次に書くときは別のものになっているかも。アニメは深夜アニメを、漫画も何でも読みます。旅行が好きで、気が付くと日本一周していました。海外旅行も年に一度は行っていました。子供ができたことで人生のZ軸ができ、より人生が彩られました。
                         </p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         SELF PORTRAIT — 色・強み・性格
+         画像 img/kamenozoki.jpg は CEO 提供（833736-2.jpg）
+    ═══════════════════════════════════ -->
+    <section id="self" class="tff-self py-24 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-14 tff-reveal">
+                <p class="font-serif italic text-[13px] tracking-[4px] mb-3" style="color:#6FA8B0;">— colors &amp; strengths —</p>
+                <h2 class="font-serif text-tff-dark text-[42px] lg:text-[56px] leading-none tracking-wide">Self Portrait</h2>
+                <div class="tff-divider" style="background:#A2D7DD;"></div>
+                <p class="font-jp text-[13px] mt-4" style="color:#6f8a8f;">色と、強みと、性格と。</p>
+            </div>
+
+            <div class="grid md:grid-cols-[1.25fr_1fr] gap-6 items-start">
+                <!-- 色の自己表現 -->
+                <div class="tff-self-card tff-reveal">
+                    <p class="tff-self-label">Color</p>
+                    <p class="tff-self-title">色の自己表現</p>
+                    <img src="img/kamenozoki.jpg" alt="瓶覗色の水彩の円" class="w-full mt-5 rounded" width="567" height="288" loading="lazy">
+                    <p class="tff-kame-swatch"><i aria-hidden="true"></i>好きな色：瓶覗（かめのぞき）色</p>
+                    <p class="font-jpserif text-[16px] mt-5 tracking-[2px]">私は瓶覗色です。</p>
+                    <p class="font-jp text-[14px] leading-[2.1] mt-3" style="color:#4d5d61;">瓶に水が張ってあり、そこに映る空の色を覗き見るように、私と関わる物や人すべてを覗き見ては儚く消えていく、その見た時の一瞬の喜びを、ふと見つけた何か捉えどころのないふんわりした印象を感じさせます。</p>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <!-- ストレングスファインダー -->
+                    <div class="tff-self-card tff-reveal">
+                        <p class="tff-self-label">Strengths</p>
+                        <p class="tff-self-title">ストレングスファインダー 上位 5 つ</p>
+                        <ol class="tff-strengths">
+                            <li><p><b>WOO</b><span>社交性（Winning Others Over）</span></p></li>
+                            <li><p><b>インプット</b><span>収集心</span></p></li>
+                            <li><p><b>ラーナー</b><span>学習欲</span></p></li>
+                            <li><p><b>ストラテジック</b><span>戦略性</span></p></li>
+                            <li><p><b>ポジティビティ</b><span>ポジティブ</span></p></li>
+                        </ol>
+                    </div>
+                    <!-- 16Personalities -->
+                    <a href="https://www.16personalities.com/ja/enfp%E5%9E%8B%E3%81%AE%E6%80%A7%E6%A0%BC" target="_blank" rel="noopener" class="tff-self-card tff-reveal block hover:bg-white transition-colors duration-300 group">
+                        <p class="tff-self-label">16 Personalities</p>
+                        <p class="tff-self-title">ENFP <span class="text-[15px] tracking-[2px]">運動家</span></p>
+                        <p class="font-jp text-[12px] mt-3 group-hover:underline" style="color:#6FA8B0;">16Personalities で ENFP 型を読む ↗</p>
+                    </a>
                 </div>
             </div>
         </div>
@@ -771,6 +875,11 @@
 
                 <div class="tff-gallery-grid" id="tff-gallery-grid" aria-live="polite"></div>
                 <p id="tff-gallery-status" class="font-jp text-white/45 text-[12px] text-center mt-6 hidden"></p>
+
+                <div class="text-center mt-8">
+                    <button type="button" id="tff-gallery-more" class="hidden font-jp text-[13px] tracking-[2px] text-white/85 border-b border-white/40 pb-1 hover:text-white hover:border-white transition-colors duration-300"
+                            aria-expanded="false" aria-controls="tff-gallery-grid"></button>
+                </div>
 
                 <div class="text-center mt-10">
                     <a href="https://www.flickr.com/photos/kutakuta1001/" target="_blank" rel="noopener"
@@ -1026,6 +1135,7 @@
         var FLICKR_NSID = '59201489@N03';
         var FLICKR_HOME = 'https://www.flickr.com/photos/kutakuta1001/';
         var galleryDone = false;
+        var GALLERY_FIRST = 15;  // 最初に見せる枚数。残りは「すべて見る」で開く
 
         function galleryStatus(msg) {
             var el = document.getElementById('tff-gallery-status');
@@ -1055,9 +1165,9 @@
                 list.push(ph);
             });
             if (list.length === 0) { galleryStatus('写真を読み込めませんでした。Flickr で直接ご覧ください。'); return; }
-            list.forEach(function (ph) {
+            list.forEach(function (ph, n) {
                 var a = document.createElement('a');
-                a.className = 'tff-gallery-item';
+                a.className = 'tff-gallery-item' + (n >= GALLERY_FIRST ? ' is-extra' : '');
                 a.href = FLICKR_HOME + ph.id + '/';
                 a.target = '_blank';
                 a.rel = 'noopener';
@@ -1077,6 +1187,20 @@
                 });
                 grid.appendChild(a);
             });
+
+            var more = document.getElementById('tff-gallery-more');
+            if (more && list.length > GALLERY_FIRST) {
+                var label = function (open) { return open ? '閉じる ↑' : 'すべて見る（' + list.length + '枚）↓'; };
+                more.textContent = label(false);
+                more.classList.remove('hidden');
+                more.addEventListener('click', function () {
+                    var open = !grid.classList.contains('is-open');
+                    grid.classList.toggle('is-open', open);
+                    more.setAttribute('aria-expanded', String(open));
+                    more.textContent = label(open);
+                    if (!open) document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
         }
 
         window.tffFlickrFeed = function (data) {
@@ -1164,6 +1288,10 @@
             window.addEventListener('resize', update);
             update();
         }
+
+        /* ── 縦書きの答え: 横にはみ出すときは右端（書き出し）を見せる ── */
+        var credoScroll = document.getElementById('tff-credo-scroll');
+        if (credoScroll) credoScroll.scrollLeft = credoScroll.scrollWidth;
 
         /* ── Init ── */
         initDots();

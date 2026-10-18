@@ -49,14 +49,16 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 
 ## 4. セクション構成
 
-`top (hero) → profile → quotes (Text Overlays) → gallery → blog → connection → footer`
+`top (hero) → credo（いい人生とは） → profile → self（Self Portrait） → quotes (Text Overlays) → gallery → blog → connection → footer`
 
 | 節 | 背景 | 中身 |
 |---|---|---|
 | top | 写真 `img/hero.jpg`（Flickr 25831760540・青いカーネーション）＋中央だけ薄い紫 | 題字＋**桜の花びら**（`tff-sk-sm/md/lg`・`sakura-a/b/c`） |
+| credo | 生成りの紙＋紙の目 | 作者の「いい人生とは」への答え 10 行を、右から左への縦書き・手書き風の書体（Klee One。使う字だけを `text=` で読み込む）で。番号は付けない。各行は「、」の切れ目で折り返す。結びに NOCTA の「遊ぶことで人生を彩ろう」と NOCTA へのリンク（同じ人の昼と夜としてつなぐ・2026-10-18 CEO 採用）。スマホは横にたどって読む |
 | profile | 淡いメッシュグラデ（38s で揺れる）＋粒子 canvas・浮遊シンボル | 写真2枚（`img/profile-photo1/2.jpg`・風車と Budweiser。元サイトと同じ）。内容は `tff-profile-data.js` |
+| self | 淡い瓶覗色のグラデ | 色の自己表現（瓶覗色・画像 `img/kamenozoki.jpg` は CEO 提供）、ストレングスファインダー上位 5、16Personalities（ENFP 運動家・外部リンク） |
 | quotes | 紫グラデの下に写真 `img/quotes-bg.jpg`（Flickr 25914083501）を透かす | **引用カードの無限マーキー**（`tff-quotes.js`・左 360s / 右 440s・hover で停止） |
-| gallery | 写真 `img/gallery-bg.jpg`（Flickr 9414005395・ぼかし済み） | Flickr の写真タイル（下記 5 章）。`tff-veil` の囲み |
+| gallery | 写真 `img/gallery-bg.jpg`（Flickr 9414005395・ぼかし済み） | Flickr の写真タイル（下記 5 章）。最初は 15 枚（PC 5 列・スマホ 3 列で端数なし）、「すべて見る」で全件。`tff-veil` の囲み |
 | blog | 写真 `img/blog-bg.jpg`（Flickr 9413369311・小樽運河・ぼかし済み） | 箱なしの記事カード（上に細線・`blog-data.js` の新しい3件） |
 | connection | 写真 `img/connection-bg.jpg`（Flickr 25628706764・Victoria harbor） | 丸いアイコン3つ（Flickr / Old Blog=Ameblo / ブクログ 読書所感）。元サイトの Connection と同じ並び |
 | footer | `tff-dark` | 題字＋**桜の花びら**（フッターの高さで落ちる `sakura-foot-a/b`） |

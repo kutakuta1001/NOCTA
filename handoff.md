@@ -180,3 +180,4 @@
 - 2026-10-18: TFF Gallery を全66枚表示に（保存済み一覧 tff-gallery-data.js ＋ 公開フィードの新しい20枚。Flickr 無料アカウントは API キー不可のため）。次: Flickr で写真を消したら一覧を作り直す
 - 2026-10-18: HP トップを友人公開前に調整（準備中の X・note・Music・フォームを折りたたみ、スマホのヒーロー空白、Blog の縦書き表紙、before/Kai/Kihi のサムネイル、Visual（AI））。レビューは drafts/design-review/。次: TFF のスマホ横はみ出しと言葉カードの可読性
 - 2026-10-18: TFF のスマホ横はみ出し・言葉カードを修正、Connection アイコンを本人の Flickr 写真に差し替え。トップの TOOLS をスマホではコレクション別タブに（並びも帯の順に）。2回目レビューは drafts/design-review/。次: 表示の重さ（トップの 5.6MB 作品画像・TFF のフォント）
+- 2026-10-18: TFF に「いい人生とは」の答え（縦書き・Klee One）と Self Portrait（瓶覗色・ストレングス上位5・ENFP）を追加、Gallery を 15 枚＋「すべて見る」に、Кто это?（これはなに?）に修正。次: 瓶覗の水彩画像（833736-2.jpg）の利用規約を CEO が確認
