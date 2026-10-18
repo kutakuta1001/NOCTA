@@ -1,6 +1,6 @@
 # NOCTA Website — 設計引き継ぎ書（DESIGN-NOTES）
 
-最終更新: 2026-09-11
+最終更新: 2026-10-18
 
 このドキュメントは NOCTA ホームページ（`website/`）の**デザインの意図・考え方・経緯**を、後から見ても理解できるように残すための引き継ぎ書です。
 
@@ -384,3 +384,20 @@ headless でも headed（実 GPU・実ブラウザ）でも同じで、curl に 
 プレビューの仮展示画像・新作猫 `silver-reach-v1.png`・右下の試作メニュー（`.preview-dock`）・
 `before.html` / `cat-studies.html`・比較セレクター・手動の色選択パレット・検証画像。
 フォームの送信処理は本番のものを維持している。
+
+---
+
+## 11. Contact の「準備中」表示（2026-10-18・commit `2621df8`）
+
+X・note のアカウントとメールフォームがまだ公開できないため、Contact 欄に「準備中」を入れた。
+
+- X / note: 名前の横に銀の細枠の札（`.soon-pill`・i18n `contact.soon`）。`<a href="#">` だとページ先頭へ飛ぶので、
+  `<div class="social-link is-soon" aria-disabled="true">` に替え、ホバーの横移動も止めた（`.is-soon`）
+- フォーム: カード上部に案内文（`contact.form.soon`）。入力欄は `<fieldset disabled>` で薄く残し、レイアウトは崩さない。
+  送信ボタンは `disabled` で「準備中 / Coming soon」（`contact.submit`）、枠だけの控えめな見た目（`.form-soon`）
+- 公開時の戻し方は、各所の `TODO` コメントに書いてある（`is-soon` と札を外して `<a>` に戻す、`form-soon`・案内文・`disabled` を外し `contact.submit` を「送信する」に戻す）
+
+## 関連: The First Flower の改修（2026-10-18）
+
+`the-first-flower/` を元の Strikingly サイトの写真構成に寄せて改修した（写真背景・Flickr Gallery・Connection・左の現在地ドット）。
+内容は `the-first-flower/DESIGN-NOTES.md` に書いてある。継承度「低」の独立ページという位置づけは変わらない。

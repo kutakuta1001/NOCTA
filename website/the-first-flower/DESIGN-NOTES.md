@@ -1,17 +1,18 @@
 # The First Flower — 設計引き継ぎ書（DESIGN-NOTES）
 
-最終更新: 2026-06-15（レイアウト確認のみ。デザイン変更なし）
+最終更新: 2026-10-18（元サイトの写真構成に寄せて改修。be2a6bb / 5ce470d）
 
 楽曲専用ランディングページ **「The First Flower 〜いい人生とは〜」** の構成と意図を残す引き継ぎ書。
 
-> **重要**: このページは NOCTA 本体（ダーク／シルバーの editorial）とは**意図的に別系統**のデザイン。NOCTA DESIGN.md の「Brand Inheritance Guide」でいう**継承度「低」**にあたり、独自のカラー・フォントを持つ。NOCTA 本体の廃止カラー整理・シルバー統一の対象外（＝このページの色はそのままで正しい）。2026-06-15 のサイト改修では一切変更していない。
+> **重要**: このページは NOCTA 本体（ダーク／シルバーの editorial）とは**意図的に別系統**のデザイン。NOCTA DESIGN.md の「Brand Inheritance Guide」でいう**継承度「低」**にあたり、独自のカラー・フォントを持つ。NOCTA 本体の廃止カラー整理・シルバー統一の対象外（＝このページの色はそのままで正しい）。
 
 ---
 
-## 1. コンセプト
+## 1. コンセプトと元サイト
 
 - 人生観・詩・思い・感動をつづる**パーソナル/哲学サイト**（「いい人生とは」）。
-- トーンは **ソフト・フローラル・夜明け**。桜と淡い光のグラデーションで、NOCTA本体の硬質なダークとは対照的な、やわらかく内省的な世界観。
+- 元サイトは Strikingly 版 `https://site-933552-7410-5224.mystrikingly.com/`。**背景写真・節の並び・スクロールの動きは元サイトに寄せる**のが方針（2026-10-18 CEO 指示）。
+- 紫基調・Text Overlays の言葉が流れる表現・桜の花びらは**こちら独自の表現として残す**。紫は「文字の周りと Words の節」に置き、写真の主役を奪わない。
 
 ---
 
@@ -21,17 +22,17 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 
 | トークン | 値 | 役割 |
 |---|---|---|
-| `tff-base` | `#FCFBF5` | 背景（ライトクリーム） |
-| `tff-text` / `tff-deep` | `#3D2E52` | 本文（ディープパープル） |
-| `tff-dark` | `#705E92` | |
+| `tff-base` | `#FCFBF5` | 背景（ライトクリーム。Profile） |
+| `tff-text` / `tff-deep` | `#3D2E52` | 本文・写真の上に重ねる紫 |
+| `tff-dark` | `#705E92` | フッター |
 | `tff-sub` | `#9A86B0` | サブテキスト |
-| `tff-accent` | `#B168A8` | アクセント（マゼンタ寄り紫） |
-| `tff-rose` | `#EEA4C0` | 桜ピンク（ディバイダ・引用カード） |
+| `tff-accent` | `#B168A8` | アクセント（マゼンタ寄り紫・現在地ドット） |
+| `tff-rose` | `#EEA4C0` | 桜ピンク（ディバイダ・引用カード・ホバー枠） |
 | `tff-pink` | `#FDD9D9` | 淡いピンク |
-| `tff-mint` / `tff-teal` | `#B8E3B7` / `#A6DDD6` | 差し色（symbols） |
+| `tff-mint` / `tff-teal` | `#B8E3B7` / `#A6DDD6` | 差し色 |
 
-- `body`: 背景 `#FCFBF5`、文字 `#3D2E52`（＝ライトモード基調。NOCTA本体はダーク専用なので真逆）。
-- ヒーロー背景は `deep purple → 紫 → 桜ピンク → 淡ピンク` のグラデーション（`hero-bg`）。写真差込前のプレースホルダ。
+- 写真の上の文字は、紫の箱で囲まず `tff-text-glow`（紫の text-shadow）で読ませる。**Blog に紫の半透明パネルを敷いたら「野暮ったい」と差し戻された**（2026-10-18）。
+- `tff-veil`（紫の半透明パネル）は Gallery の囲みとライトボックスのボタンにだけ残っている。
 
 ---
 
@@ -44,29 +45,38 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 | `font-jp` | Noto Sans JP | 日本語サンセリフ本文 |
 | `font-display` | Bebas Neue | ナビ・ラベル |
 
-NOCTA本体（EB Garamond/Syne）とは別フォント。セリフ主体で柔らかい印象。
-
 ---
 
 ## 4. セクション構成
 
-`top (hero) → profile → quotes (WORDS) → blog`
+`top (hero) → profile → quotes (Text Overlays) → gallery → blog → connection → footer`
 
-- **top / hero**: フルスクリーン。`hero-bg` グラデ＋**桜の花びら**（`tff-sk-sm/md/lg` の3サイズ、`sakura-a/b/c` アニメで舞う）。見出し「The First Flower」（Cormorant Garamond 大）＋「〜 いい人生とは 〜」。
-- **profile**: `profile-bg` 写真セクション。装飾シンボル（✿✦❀✧）が浮遊。プロフィール内容は `tff-profile-data.js` から。
-- **quotes (WORDS)**: **引用カードの無限マーキー**。`tff-quotes.js`（約32KB の引用集）を左流れ（360s）と右流れ（440s）の2列で流す。hover で一時停止（`animation-play-state: paused`）。各カードは桜ピンクの半透明（`.quote-card`）。
-- **blog**: `tff-blog-card`（半透明・hoverで浮上）。
+| 節 | 背景 | 中身 |
+|---|---|---|
+| top | 写真 `img/hero.jpg`（Flickr 25831760540・青いカーネーション）＋中央だけ薄い紫 | 題字＋**桜の花びら**（`tff-sk-sm/md/lg`・`sakura-a/b/c`） |
+| profile | 淡いメッシュグラデ（38s で揺れる）＋粒子 canvas・浮遊シンボル | 写真2枚（`img/profile-photo1/2.jpg`・風車と Budweiser。元サイトと同じ）。内容は `tff-profile-data.js` |
+| quotes | 紫グラデの下に写真 `img/quotes-bg.jpg`（Flickr 25914083501）を透かす | **引用カードの無限マーキー**（`tff-quotes.js`・左 360s / 右 440s・hover で停止） |
+| gallery | 写真 `img/gallery-bg.jpg`（Flickr 9414005395・ぼかし済み） | Flickr の写真タイル（下記 5 章）。`tff-veil` の囲み |
+| blog | 写真 `img/blog-bg.jpg`（Flickr 9413369311・小樽運河・ぼかし済み） | 箱なしの記事カード（上に細線・`blog-data.js` の新しい3件） |
+| connection | 写真 `img/connection-bg.jpg`（Flickr 25628706764・Victoria harbor） | 丸いアイコン3つ（Flickr / Old Blog=Ameblo / ブクログ 読書所感）。元サイトの Connection と同じ並び |
+| footer | `tff-dark` | 題字＋**桜の花びら**（フッターの高さで落ちる `sakura-foot-a/b`） |
+
+- Connection の背景は元サイトの写真（Strikingly 備え付けのビルバオの街並み）を**使っていない**。素材の権利が不明なため、CEO 自身の Flickr 写真に替えた。
+- アイコン `img/icon-*.png`（240px・円形透過）は Codex CLI の画像生成で作った水彩画。版画風の案（映写機になった）は不採用。
 
 ---
 
 ## 5. 効果・仕掛け
 
-- **桜パーティクル**: 3サイズ×複数、`sakura-a/b/c` キーフレームでランダムに舞う。
-- **引用マーキー**: 左右2方向に超低速スクロール。左右端は `mask-image` でフェード。
-- **ヘッダーの色切り替え**: `.tff-header.on-photo`（写真/濃色セクション上）では半透明パープル＋白系リンク、通常はライトクリーム＋ディープパープルリンク。スクロール位置で切替。
-- **グレインノイズ**: 全面に `opacity: 0.25` の薄ノイズ（NOCTA本体と同思想だが薄め）。
+- **スクロールの動き（元サイトに合わせた）**: 背景が止まって見えるのは **Gallery だけ**。ほかの節の背景は普通に流れる。`background-attachment: fixed` は iOS で効かないので、Gallery は `clip-path: inset(0)` の節に `position: fixed` の層（`.gallery-bg-layer`）を入れて再現している。
+- **左の現在地ドット**（`#tff-dots`）: 元サイトのセクションナビを再現。画面中央にある節のドットが白く光る。hover で節名、押すとなめらかにスクロール。
+- **Gallery**: 保存済みの一覧 `tff-gallery-data.js`（2026-10-18 時点の 66 枚）＋ Flickr 公開フィード（JSONP・鍵なし・新しい20枚）を重複なしで並べる。フィードが失敗・6 秒以上遅れても一覧だけで表示する。
+  - Flickr の無料アカウントでは API キーを発行できないため、この形にした。
+  - タイルを押すと**ページ内で拡大**（`#tff-lightbox`・`_b` サイズ）。← → キー・スワイプで送る、Esc・外側クリックで閉じる。Cmd/Ctrl+クリックは Flickr を新しいタブで開く。
+- **桜パーティクル**: hero（写真の上で埋もれないよう縁取り）とフッター。
+- **ヘッダーの色切り替え**: `.tff-header.on-photo`（hero 上）は半透明パープル、hero を過ぎるとライトクリーム。
+- **グレインノイズ**: 全面に `opacity: 0.25` の薄ノイズ。
 - **reveal**: スクロールインで `tff-reveal`（24px下→フェードイン）。
-- **写真差込**: `.photo-section` は `background-attachment: fixed`。`hero-bg` / `profile-bg` はグラデのプレースホルダで、コード内コメントに「写真を追加するときは `background-image: url('img/xxx.jpg')` に変更」と明記。`img/` ディレクトリあり。
 
 ---
 
@@ -74,13 +84,16 @@ NOCTA本体（EB Garamond/Syne）とは別フォント。セリフ主体で柔�
 
 ```
 the-first-flower/
-├── index.html            ← 917行。スタイル・構成・スクリプトを内包
-├── tff-profile-data.js   ← プロフィール内容（約1.8KB）
-├── tff-quotes.js         ← 引用集（約32KB・マーキー用）
-└── img/                  ← 写真素材（hero/profile 差込用）
+├── index.html            ← スタイル・構成・スクリプトを内包
+├── tff-profile-data.js   ← プロフィール内容・写真パス
+├── tff-quotes.js         ← 引用集（マーキー用）
+├── tff-gallery-data.js   ← Gallery の写真一覧（66枚・新しい順）
+└── img/                  ← 背景写真6枚・プロフィール写真2枚・アイコン3枚（各 175KB 以下）
 ```
 
+- **背景写真を替える**: Flickr の元画像（`_o`）を幅 1920px に縮め、Blog・Gallery は元サイトに合わせてぼかしてから `img/` に置く。1 枚 1MB を超えない。
+- **Flickr で写真を消した・非公開にした**ときは、`tff-gallery-data.js` から消すか一覧を作り直す（新しく上げた写真はフィードから自動で足される）。
 - **引用を追加**するときは `tff-quotes.js` に追記（マーキーへ自動反映）。
-- **写真を入れる**ときは `hero-bg` / `profile-bg` の `background` を `url('img/...')` に差し替え（該当箇所にコメントあり）。
-- NOCTA本体のデザイン変更（パレット・フォント統一）を**このページに波及させないこと**。独自世界観を保つのが正。
+- NOCTA本体のデザイン変更（パレット・フォント統一）を**このページに波及させないこと**。
 - NOCTA本体トップからの導線: footer の「✦ いい人生とは」リンク（`footer.tff.link`）。
+- 既知の小さな問題: Profile の光の玉（`tff-orb-2`）が画面右へはみ出している（`body { overflow-x: hidden }` で隠れて実害なし）。
