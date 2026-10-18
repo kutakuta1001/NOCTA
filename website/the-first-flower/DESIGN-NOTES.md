@@ -56,12 +56,12 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 | top | 写真 `img/hero.jpg`（Flickr 25831760540・青いカーネーション）＋中央だけ薄い紫 | 題字＋**桜の花びら**（`tff-sk-sm/md/lg`・`sakura-a/b/c`） |
 | credo | 生成りの紙＋紙の目 | 作者の「いい人生とは」への答え 10 行を、右から左への縦書き・手書き風の書体（Klee One。使う字だけを `text=` で読み込む）で。番号は付けない。各行は「、」の切れ目で折り返す。結びに NOCTA の「遊ぶことで人生を彩ろう」と NOCTA へのリンク（同じ人の昼と夜としてつなぐ・2026-10-18 CEO 採用）。スマホは横にたどって読む |
 | profile | 淡いメッシュグラデ（38s で揺れる）＋粒子 canvas・浮遊シンボル | 写真2枚（`img/profile-photo1/2.jpg`・風車と Budweiser。元サイトと同じ）。内容は `tff-profile-data.js` |
-| self | 淡い瓶覗色のグラデ | 色の自己表現（瓶覗色・画像 `img/kamenozoki.jpg` は CEO 提供）、ストレングスファインダー上位 5、16Personalities（ENFP 運動家・外部リンク） |
+| self | 瓶覗（#A2D7DD）寄りの水色のグラデ（Profile の淡い地と境目を付ける） | 主役は画面幅の瓶覗の札（色面に縦書きの色名と読み仮名＋本人写真の水面 `img/kamenozoki-water.jpg`）。その下に作者の文「私は瓶覗色です。」。脇役としてストレングスファインダー上位 5（英語の正式名）と 16Personalities（ENFP 運動家）。水彩の円の画像は凛の指摘で外した（2026-10-18） |
 | quotes | 紫グラデの下に写真 `img/quotes-bg.jpg`（Flickr 25914083501）を透かす | **引用カードの無限マーキー**（`tff-quotes.js`・左 360s / 右 440s・hover で停止） |
 | gallery | 写真 `img/gallery-bg.jpg`（Flickr 9414005395・ぼかし済み） | Flickr の写真タイル（下記 5 章）。最初は 15 枚（PC 5 列・スマホ 3 列で端数なし）、「すべて見る」で全件。`tff-veil` の囲み |
 | blog | 写真 `img/blog-bg.jpg`（Flickr 9413369311・小樽運河・ぼかし済み） | 箱なしの記事カード（上に細線・`blog-data.js` の新しい3件） |
 | connection | 写真 `img/connection-bg.jpg`（Flickr 25628706764・Victoria harbor） | 丸いアイコン3つ（Flickr / Old Blog=Ameblo / ブクログ 読書所感）。元サイトの Connection と同じ並び |
-| footer | `tff-dark` | 題字＋**桜の花びら**（フッターの高さで落ちる `sakura-foot-a/b`） |
+| footer | `tff-dark` | 結びに冒頭の問いを読み手へ返す「あなたにとっての『いい人生』は？」（Klee One）と、NOCTA を名乗る一文・リンク（紡の提案・2026-10-18）。その下に題字＋**桜の花びら**（フッターの高さで落ちる `sakura-foot-a/b`） |
 
 - Connection の背景は元サイトの写真（Strikingly 備え付けのビルバオの街並み）を**使っていない**。素材の権利が不明なため、CEO 自身の Flickr 写真に替えた。
 - アイコン `img/icon-*.jpg`（264px・CSS で円形）は本人の Flickr 写真から切り抜いたもの。Flickr＝桜（28095409850「the first flower」）、Old Blog＝万年筆（51007397898「pen」）、ブクログ＝本棚（5470813410）。2026-10-18 まで使っていた AI 生成の水彩アイコンは、レビューで「本人の写真の中で浮く・断りがない」と指摘され差し替えた。
