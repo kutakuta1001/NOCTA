@@ -175,3 +175,5 @@
 - 2026-10-17: Tools 欄を NuWord / HiNa / Yori の 3 コレクションに分け、表紙で絞り込めるようにした（d949de3、未 push）。今後のカード追加は docs/tools-collections.md に従い、collection が抜けると copy-audit-guard が止める。次: CEO が push を指示。
 - 2026-10-17: 3 コレクションの表紙を公開（d949de3）。表紙のリンクを「NuWord / HiNa Collection のコンセプトを読む →」に変えて公開（cc13f76、デプロイ success）。次: なし（完結）。新しいカードは docs/tools-collections.md に従って collection を付ける。
 - 2026-10-17: NuWord before のカード説明文を「はじめる前の数十秒。問いをひとつ拾い、気づきを持って始める。」に揃え（copy-auditor は残す、nocta-16 のコミットに同梱して公開）、カード画像を本番の新しい画面で撮り直して差し替え（915716b、Pages で確認）。次: なし（完結）。
+- 2026-10-18: HP Contact の X・note・メールフォームに準備中表示を追加し push（2621df8）。次: アカウント・フォーム公開時に index.html の TODO に沿って戻す
+- 2026-10-18: The First Flower を元サイト（Strikingly）の写真構成に寄せて改修（写真背景・Flickr Gallery＋拡大表示・Connection フッター・左の現在地ドット）。次: Flickr API キー発行後に Gallery を全件表示へ

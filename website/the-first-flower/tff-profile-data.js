@@ -20,7 +20,7 @@ const TFF_PROFILE = {
     // src に画像パスを設定すると表示されます（例: "img/profile-photo1.jpg"）
     // src が空文字のままにしておくとプレースホルダーが表示されます
     photos: [
-        { src: "", alt: "photo 01" },
-        { src: "", alt: "photo 02" },
+        { src: "img/profile-photo1.jpg", alt: "photo 01" },
+        { src: "img/profile-photo2.jpg", alt: "photo 02" },
     ]
 };
