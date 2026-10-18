@@ -106,6 +106,10 @@
             pointer-events: none;
         }
         .hero-geo svg { width: 100%; height: 100%; overflow: visible; }
+        /* スマホ: 見出しが下に寄るぶん上が空くので、図を上の空白へ大きく置く */
+        @media (max-width: 767px) {
+            .hero-geo { top: 72px; bottom: auto; right: -18vw; width: 96vw; opacity: 0.9; }
+        }
         .geo-el      { transform-box: fill-box; transform-origin: center; }
         .geo-breathe { transform-box: fill-box; transform-origin: center; animation: geoBreathe 30s ease-in-out infinite; }
         .geo-cw-10   { animation: geoSpinCW  30s linear infinite; }
@@ -532,6 +536,44 @@
         }
 
         /* Thumb gradients — 単一シルバーシステム準拠（warm-black の面差のみで変化） */
+        /* Blog: 題名を縦書きにした表紙。細い枠と栞の紐で、本の表紙に見立てる */
+        .blog-cover { position: relative; overflow: hidden; }
+        .blog-cover::before {
+            content: ""; position: absolute; inset: 14px;
+            border: 1px solid rgba(184,180,174,0.16); pointer-events: none;
+        }
+        .blog-cover::after {
+            /* 紙の目 */
+            content: ""; position: absolute; inset: 0; opacity: 0.35; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.72 0 0 0 0 0.70 0 0 0 0 0.68 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+        }
+        .blog-cover-title {
+            position: absolute; top: 30px; right: 13%;
+            writing-mode: vertical-rl; text-orientation: upright;
+            font-family: 'Shippori Mincho', 'EB Garamond', serif; font-weight: 600;
+            font-size: clamp(18px, 2vw, 22px); letter-spacing: 0.22em; line-height: 1.5;
+            color: #E8E0D0; max-height: calc(100% - 60px);
+        }
+        .blog-cover-kind {
+            position: absolute; left: 30px; top: 30px;
+            font-family: 'Syne', sans-serif; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
+            color: #B8B4AE;
+        }
+        .blog-cover-date {
+            position: absolute; left: 30px; bottom: 28px;
+            font-family: 'EB Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.08em;
+            color: rgba(232,224,208,0.55);
+        }
+        .blog-cover-ribbon {
+            position: absolute; top: 0; left: 40%; width: 3px; height: 34%;
+            background: #CC5B4A; opacity: 0.7;
+        }
+        .blog-cover-ribbon::after {
+            content: ""; position: absolute; left: 0; bottom: -5px; width: 3px; height: 6px;
+            background: inherit; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 40%, 0 100%);
+        }
+        .work-card:hover .blog-cover-title { color: #fff; }
+
         .thumb-1 { background: linear-gradient(135deg, #14110C, #262119); }
         .thumb-2 { background: linear-gradient(160deg, #0F0D0A, #221E17); }
         .thumb-3 { background: linear-gradient(120deg, #17130D, #2B251B); }
@@ -576,6 +618,12 @@
             font-size: 10px; font-weight: 500; letter-spacing: 0.5px;
             color: #B8B4AE; vertical-align: 1px;
         }
+        /* 準備中のもの: 閉じている間はフォーム列を取らず、1 列にする */
+        .contact-grid.is-closed { grid-template-columns: minmax(0, 1fr); }
+        /* hidden 属性を .flex などのクラスより優先する */
+        #contact-soon-social[hidden], #contact-soon-form[hidden] { display: none !important; }
+        .contact-soon-arrow { display: inline-block; transition: transform 0.3s ease; }
+        #contact-soon-toggle[aria-expanded="true"] .contact-soon-arrow { transform: rotate(180deg); }
         .form-soon fieldset { opacity: 0.45; border: 0; padding: 0; margin: 0; min-width: 0; }
         .form-soon .btn-submit,
         .form-soon .btn-submit:hover {
@@ -739,12 +787,13 @@
 
         <!-- Tagline + CTA -->
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 reveal reveal-delay-4">
-            <p style="font-family:'Noto Sans JP',sans-serif; font-size:14px; font-weight:300; letter-spacing:0.25em; color:#9A8A7A; line-height:1.9;" data-i18n="hero.tagline">
-                消費するだけでも、生産するだけでもなく。
+            <p style="font-family:'Noto Sans JP',sans-serif; font-size:14px; font-weight:300; letter-spacing:0.25em; color:#9A8A7A; line-height:1.9;" data-i18n-html="hero.tagline">
+                <span class="inline-block">消費するだけでも、</span><span class="inline-block">生産するだけでもなく。</span>
             </p>
             <div class="flex gap-4 flex-shrink-0">
                 <a href="#portfolio" class="btn-primary-cta" data-i18n="hero.cta.works">作品を見る</a>
-                <a href="#contact" class="btn-glass-cta"   data-i18n="hero.cta.contact">お問い合わせ</a>
+                <!-- お問い合わせは準備中で折りたたんでいるため、公開時にこのボタンを戻す -->
+                <!-- <a href="#contact" class="btn-glass-cta"   data-i18n="hero.cta.contact">お問い合わせ</a> -->
             </div>
         </div>
     </div>
@@ -966,12 +1015,10 @@
                 </a>
                 <a href="#visual"
                    class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-heading text-[11px] tracking-[3px] uppercase text-brand-sub hover:text-white">
-                    Visual
+                    Visual（AI）
                     <svg class="w-3 h-3 opacity-50" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2v8M2.5 6.5L6 10l3.5-3.5"/></svg>
                 </a>
-                <span class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/8 bg-white/[0.02] font-heading text-[11px] tracking-[3px] uppercase text-brand-sub/40 cursor-default">
-                    Music — Coming Soon
-                </span>
+                <!-- Music は準備中のため Contact の「準備中のもの」に折りたたんでいる。楽曲公開時にピルを戻す -->
             </div>
         </div>
     </div>
@@ -1007,7 +1054,7 @@
         <!-- ギャラリー: 1作品を大きく見てから一覧へ。見出しは Visual 固有の確定コピー（CEO指定） -->
         <div class="gallery-grid mb-16">
             <div class="gallery-side">
-                <p class="section-tag reveal">Visual</p>
+                <p class="section-tag reveal">Visual（AI）</p>
                 <h2 id="gallery-title" class="reveal reveal-delay-1" data-i18n-html="visual.headline">やりたかったことを、<br><em>やりなさい。</em></h2>
                 <p class="font-jp text-brand-sub text-[13px] tracking-wider reveal reveal-delay-2">Art &amp; NFT Collection</p>
 
@@ -1076,8 +1123,8 @@
             </div>
         </div>
 
-        <!-- Music セクション -->
-        <div class="mb-10">
+        <!-- Music セクション（作品が入るまで JS で隠す） -->
+        <div class="mb-10" id="visual-music-block">
             <div class="flex items-center gap-4 mb-8 reveal">
                 <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Music</h3>
                 <div class="flex-1 h-px bg-white/10"></div>
@@ -1130,7 +1177,7 @@
          style="background:radial-gradient(circle, rgba(184,180,174,0.07) 0%, transparent 70%); filter:blur(60px);"></div>
 
     <div class="max-w-[1200px] mx-auto px-6 lg:px-8 relative z-10">
-        <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-20 items-start">
+        <div id="contact-grid" class="contact-grid is-closed grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-20 items-start">
 
             <!-- Info -->
             <div>
@@ -1143,7 +1190,13 @@
                     <span class="inline-block">効率でも、消費でもなく。</span><br><span class="inline-block">音楽・映像・言葉・コードを越えて、</span><span class="inline-block">遊ぶように創る。</span><br><span class="inline-block">その問いを面白がれる人を、</span><span class="inline-block">いつでも歓迎します。</span>
                 </p>
 
-                <div class="flex flex-col gap-3 reveal reveal-delay-3">
+                <!-- 準備中のもの: 普段は閉じておく。公開できたものから外へ出す -->
+                <button type="button" id="contact-soon-toggle" class="gallery-all-btn reveal reveal-delay-3"
+                        aria-expanded="false" aria-controls="contact-soon-social contact-soon-form">
+                    <span data-i18n="contact.soon.toggle">準備中のもの（X・note・Music・お問い合わせ）</span><span class="contact-soon-arrow" aria-hidden="true"> ↓</span>
+                </button>
+
+                <div id="contact-soon-social" class="flex flex-col gap-3 mt-6" hidden>
                     <!-- TODO: アカウント公開後に <a href="https://x.com/..." class="social-link"> へ戻し、is-soon と準備中ラベルを外す -->
                     <div class="social-link is-soon" aria-disabled="true">
                         <div class="w-8 flex-shrink-0 flex items-center justify-center">
@@ -1168,12 +1221,23 @@
                             <div class="social-desc" data-i18n="contact.social.note">制作ブログ・ライナーノーツ</div>
                         </div>
                     </div>
+                    <div class="social-link is-soon" aria-disabled="true">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8E0D0" aria-hidden="true">
+                                <path d="M9 18V5l11-2v13" fill="none" stroke="#E8E0D0" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform">Music<span class="soon-pill" data-i18n="contact.soon">準備中</span></div>
+                            <div class="social-desc" data-i18n="contact.social.music">楽曲のリリース</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Form -->
             <!-- TODO: フォーム公開時は form-soon・案内文・fieldset の disabled を外し、contact.submit を「送信する」に戻す -->
-            <div class="glass rounded-2xl p-9 border border-white/8 reveal reveal-delay-2 form-soon">
+            <div id="contact-soon-form" class="glass rounded-2xl p-9 border border-white/8 form-soon" hidden>
                 <p class="font-jp text-[13px] leading-[2] text-brand-sub mb-6" data-i18n-html="contact.form.soon"><span class="inline-block">お問い合わせフォームは、ただいま準備中です。</span><span class="inline-block">受付開始まで、もう少しだけお待ちください。</span></p>
                 <form
                     id="nocta-contact-form"
@@ -1266,7 +1330,6 @@
             <div>
                 <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Creative</div>
                 <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
-                    <span class="text-brand-sub/60" data-i18n="footer.s1">音楽（Coming Soon）</span>
                     <a href="#visual" class="hover:text-white transition-colors duration-200" data-i18n="footer.s2">映像・ビジュアル</a>
                     <a href="#blog"   class="hover:text-white transition-colors duration-200" data-i18n="footer.s3">言葉・ブログ</a>
                     <a href="#apps"   class="hover:text-white transition-colors duration-200" data-i18n="footer.s4">アプリ・ツール</a>
@@ -1582,11 +1645,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
             gridM.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7';
             gridM.innerHTML = NOCTA_VISUALS_MUSIC.map(makeCard).join('\n');
         } else {
-            gridM.innerHTML =
-                '<div class="py-16 text-center reveal">' +
-                '  <p class="font-heading text-[11px] tracking-[3px] uppercase text-white/20">Coming Soon</p>' +
-                '  <p class="font-jp text-[13px] text-white/15 mt-2">楽曲リリース後に追加されます</p>' +
-                '</div>';
+            var musicBlock = document.getElementById('visual-music-block');
+            if (musicBlock) musicBlock.style.display = 'none';
         }
     }
 
@@ -1761,8 +1821,12 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                 '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"',
                 '     data-bcat="' + b.cat + '"' + dstyle + onclick + '>',
                 '  <div class="relative aspect-video overflow-hidden">',
-                '    <div class="thumb-' + thumbNum + ' w-full h-full flex items-end p-4">',
-                '      <span class="font-heading text-[11px] tracking-[2px] uppercase text-white/50">' + esc(b.date) + '</span>',
+                // 画像を使わず、題名を縦書きにした本の表紙のような面を組む
+                '    <div class="thumb-' + thumbNum + ' blog-cover w-full h-full" aria-hidden="true">',
+                '      <span class="blog-cover-ribbon"></span>',
+                '      <p class="blog-cover-kind">' + (b.cat === 'book' ? 'Book Note' : badge) + '</p>',
+                '      <p class="blog-cover-title">' + esc(b.title) + '</p>',
+                '      <p class="blog-cover-date">' + esc(b.date.replace(/-/g, '.')) + '</p>',
                 '    </div>',
                 '    <div class="thumb-overlay"></div>',
                 '  </div>',
@@ -1891,6 +1955,20 @@ document.addEventListener('keydown', function (e) {
 });
 
 
+/* ---- Contact: 準備中のものを開閉 ---- */
+(function () {
+    var btn = document.getElementById('contact-soon-toggle');
+    if (!btn) return;
+    var grid = document.getElementById('contact-grid');
+    var parts = ['contact-soon-social', 'contact-soon-form'].map(function (id) { return document.getElementById(id); });
+    btn.addEventListener('click', function () {
+        var open = btn.getAttribute('aria-expanded') !== 'true';
+        btn.setAttribute('aria-expanded', String(open));
+        parts.forEach(function (el) { if (el) el.hidden = !open; });
+        if (grid) grid.classList.toggle('is-closed', !open);
+    });
+})();
+
 /* ---- Netlify Form submit ---- */
 const noctaForm = document.getElementById('nocta-contact-form');
 if (noctaForm) {
@@ -1956,7 +2034,7 @@ if (noctaForm) {
 <script>
 const I18N = {
   ja: {
-    'hero.tagline': '消費するだけでも、生産するだけでもなく。',
+    'hero.tagline': '<span class="inline-block">消費するだけでも、</span><span class="inline-block">生産するだけでもなく。</span>',
     'hero.cta.works': '作品を見る',
     'hero.cta.contact': 'お問い合わせ',
     'portfolio.subtitle': 'AIと感性が生んだ、作品たち',
@@ -2000,6 +2078,8 @@ const I18N = {
     'contact.ph.message': 'プロジェクトの内容・ご要望をお気軽にご記入ください',
     'contact.submit': '準備中',
     'contact.soon': '準備中',
+    'contact.soon.toggle': '準備中のもの（X・note・Music・お問い合わせ）',
+    'contact.social.music': '楽曲のリリース',
     'contact.form.soon': '<span class="inline-block">お問い合わせフォームは、ただいま準備中です。</span><span class="inline-block">受付開始まで、もう少しだけお待ちください。</span>',
     'footer.tagline': 'AIと人間が、遊ぶように創る。<br>音楽・映像・言葉・コードを越境して、<br>遊びが、人生を彩るまで。',
     'footer.s1': '音楽（Coming Soon）', 'footer.s2': '映像・ビジュアル', 'footer.s3': '言葉・ブログ', 'footer.s4': 'アプリ・ツール',
@@ -2007,7 +2087,7 @@ const I18N = {
     'footer.tff.desc': '人生観・詩・思い・感動を<br>つづるパーソナルサイト',
   },
   en: {
-    'hero.tagline': '消費するだけでも、生産するだけでもなく。',
+    'hero.tagline': '<span class="inline-block">消費するだけでも、</span><span class="inline-block">生産するだけでもなく。</span>',
     'hero.cta.works': 'View Works',
     'hero.cta.contact': 'Contact Us',
     'portfolio.subtitle': 'Works born from AI and human creativity.',
@@ -2051,6 +2131,8 @@ const I18N = {
     'contact.ph.message': "Tell us about your project and what you're looking for.",
     'contact.submit': 'Coming soon',
     'contact.soon': 'Coming soon',
+    'contact.soon.toggle': 'Coming soon (X, note, Music, Contact form)',
+    'contact.social.music': 'Music releases',
     'contact.form.soon': "Our contact form is still being prepared. It'll open soon — thank you for your patience.",
     'footer.tagline': 'AI and humans, creating as if at play.<br>Across music, visuals, words and code —<br>until play colors life itself.',
     'footer.s1': 'Music (Coming Soon)', 'footer.s2': 'Visual', 'footer.s3': 'Words', 'footer.s4': 'Tools',

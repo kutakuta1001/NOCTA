@@ -109,7 +109,7 @@ const NOCTA_APPS = [
     collection: "hina",
     cat: "app",
     url: "./strategy/index.html",
-    imgUrl: "./strategy/cover.svg",
+    imgUrl: "./images/kai.jpg",
     thumbClass: "thumb-4",
     descJa: "歴史の判断を図でたどる、十八の思考の地図。拾った言葉を今日の仕事へ映す。",
     descEn: "Eighteen maps of thought that trace historical decisions. Carry the words you collect into today's work."
@@ -119,7 +119,7 @@ const NOCTA_APPS = [
     collection: "hina",
     cat: "app",
     url: "./kihi/index.html",
-    imgUrl: "./kihi/cover.svg",
+    imgUrl: "./images/kihi.jpg",
     thumbClass: "thumb-4",
     descJa: "三十の家紋を眺め、色と余白をしつらえて、一枚の絵に。",
     descEn: "Thirty Japanese family crests. Contemplate their forms and compose a single picture with color and space."
