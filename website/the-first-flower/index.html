@@ -737,8 +737,7 @@
     </section>
 
     <!-- ═══════════════════════════════════
-         GALLERY — Flickr 公開フィード（鍵なし・新しい順に最大20枚）
-         TODO: API キー発行後は flickr.people.getPublicPhotos に切り替えて全件表示する
+         GALLERY — 保存済みの一覧（tff-gallery-data.js）＋ Flickr 公開フィードの新しい20枚
     ═══════════════════════════════════ -->
     <section id="gallery" class="photo-section gallery-bg py-24 px-6">
         <div class="gallery-bg-layer" aria-hidden="true"></div>
@@ -866,6 +865,7 @@
     ═══════════════════════════════════ -->
     <script src="tff-profile-data.js"></script>
     <script src="tff-quotes.js"></script>
+    <script src="tff-gallery-data.js"></script>
     <script src="../blog-data.js"></script>
     <script>
     (function () {
@@ -993,8 +993,10 @@
             }
         }
 
-        /* ── Gallery: Flickr 公開フィード（JSONP） ── */
+        /* ── Gallery: 保存済みの一覧（tff-gallery-data.js）＋ Flickr 公開フィード（JSONP・新しい20枚） ── */
         var FLICKR_NSID = '59201489@N03';
+        var FLICKR_HOME = 'https://www.flickr.com/photos/kutakuta1001/';
+        var galleryDone = false;
 
         function galleryStatus(msg) {
             var el = document.getElementById('tff-gallery-status');
@@ -1003,29 +1005,42 @@
             el.classList.remove('hidden');
         }
 
-        window.tffFlickrFeed = function (data) {
+        // フィードの写真を一覧と同じ形にそろえる
+        function fromFeed(it) {
+            var m = it.media && it.media.m;
+            var hit = m && m.match(/^(https:\/\/live\.staticflickr\.com\/\d+\/(\d+)_[0-9a-f]+)_m\.jpg$/);
+            if (!hit) return null;
+            return { id: hit[2], base: hit[1], title: it.title || '' };
+        }
+
+        // フィード（新しい写真）を先に並べ、保存済みの一覧から重複を除いて後ろに続ける
+        function renderGallery(feedItems) {
+            if (galleryDone) return;
+            galleryDone = true;
             var grid = document.getElementById('tff-gallery-grid');
             if (!grid) return;
-            var items = (data && data.items) || [];
-            if (items.length === 0) { galleryStatus('写真を読み込めませんでした。'); return; }
-            items.forEach(function (it, i) {
-                var m = it.media && it.media.m;
-                if (!m || !/^https:\/\/live\.staticflickr\.com\//.test(m)) return;
-                // _m(240px) を _q(150px 正方形) / _n(320px) に差し替え
+            var seen = {}, list = [];
+            feedItems.concat(typeof TFF_GALLERY !== 'undefined' ? TFF_GALLERY : []).forEach(function (ph) {
+                if (!ph || seen[ph.id]) return;
+                seen[ph.id] = true;
+                list.push(ph);
+            });
+            if (list.length === 0) { galleryStatus('写真を読み込めませんでした。Flickr で直接ご覧ください。'); return; }
+            list.forEach(function (ph) {
                 var a = document.createElement('a');
                 a.className = 'tff-gallery-item';
-                a.href = /^https:\/\/www\.flickr\.com\//.test(it.link) ? it.link : 'https://www.flickr.com/photos/kutakuta1001/';
+                a.href = FLICKR_HOME + ph.id + '/';
                 a.target = '_blank';
                 a.rel = 'noopener';
                 var img = document.createElement('img');
-                img.src = m.replace(/_m\.jpg$/, '_n.jpg');
-                img.alt = it.title || 'Flickr photo';
+                img.src = ph.base + '_n.jpg';
+                img.alt = ph.title || 'Flickr photo';
                 img.loading = 'lazy';
                 img.decoding = 'async';
                 a.appendChild(img);
                 // 押したらページ内で拡大。新しいタブで開く操作（Cmd/Ctrl+クリック）はそのまま通す
                 var idx = galleryPhotos.length;
-                galleryPhotos.push({ src: m.replace(/_m\.jpg$/, '_b.jpg'), title: it.title || '', link: a.href });
+                galleryPhotos.push({ src: ph.base + '_b.jpg', title: ph.title, link: a.href });
                 a.addEventListener('click', function (e) {
                     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
                     e.preventDefault();
@@ -1033,6 +1048,11 @@
                 });
                 grid.appendChild(a);
             });
+        }
+
+        window.tffFlickrFeed = function (data) {
+            var items = ((data && data.items) || []).map(fromFeed).filter(Boolean);
+            renderGallery(items);
         };
 
         /* ── Gallery lightbox ── */
@@ -1090,7 +1110,9 @@
             s.src = 'https://www.flickr.com/services/feeds/photos_public.gne?id=' +
                 encodeURIComponent(FLICKR_NSID) + '&format=json&jsoncallback=tffFlickrFeed';
             s.async = true;
-            s.onerror = function () { galleryStatus('写真を読み込めませんでした。Flickr で直接ご覧ください。'); };
+            // フィードが失敗・遅延しても、保存済みの一覧だけで並べる
+            s.onerror = function () { renderGallery([]); };
+            setTimeout(function () { renderGallery([]); }, 6000);
             document.body.appendChild(s);
         }
 
