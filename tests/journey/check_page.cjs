@@ -109,6 +109,17 @@ const text = (page, sel) => page.$eval(sel, (el) => el.textContent.trim());
             && (await text(page, "#jr-status")) === "", rapidSrc);
         await page.close();
 
+        ({ page, errors } = await openPage(browser));
+        allErrors.push(...errors);
+        await page.click('.jr-tile[data-region="JP-26"]');
+        const wide = await page.$eval(".jr-frame", (f) => { const b = f.getBoundingClientRect(); return b.width / b.height; });
+        await page.click("#jr-thumbs button:nth-child(2)");
+        await page.waitForTimeout(300);
+        const tall = await page.$eval(".jr-frame", (f) => { const b = f.getBoundingClientRect(); return { r: b.width / b.height, h: b.height }; });
+        check("frame-follows-photo", Math.abs(wide - 1600 / 1067) < 0.02 && Math.abs(tall.r - 1067 / 1600) < 0.02 && tall.h <= 900 * 0.78 + 1,
+            wide.toFixed(3) + " / " + tall.r.toFixed(3) + " / h " + Math.round(tall.h));
+        await page.close();
+
         ({ page, errors } = await openPage(browser, { slowId: "a000000000000006" }));
         allErrors.push(...errors);
         await page.click('.jr-tile[data-region="JP-26"]');

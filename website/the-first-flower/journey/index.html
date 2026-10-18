@@ -48,7 +48,9 @@
         .jr-chip[aria-pressed="true"] { background: var(--jr-current); border-color: var(--jr-current); color: #fff; }
 
         /* 写真 */
-        .jr-frame { position: relative; aspect-ratio: 3 / 2; background: #EFEAF1; border-radius: 6px; overflow: hidden; }
+        /* 枠は写真の縦横比に合わせる（--jr-ar を journey-app.js が写真ごとに入れる）。縦長でも画面の 78% までの高さに収める */
+        .jr-frame { --jr-ar: 1.5; position: relative; aspect-ratio: var(--jr-ar); width: min(100%, calc(78vh * var(--jr-ar)));
+                    background: #EFEAF1; border-radius: 6px; overflow: hidden; }
         .jr-main { width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity .45s ease; }
         .jr-main.is-loading { opacity: 0; }
         #jr-status { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px;

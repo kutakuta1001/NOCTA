@@ -67,7 +67,7 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 
 - 場所: `journey/index.html`。TFF の Profile 節からのリンクは、実データで 1 地域以上公開できるようになってから付ける（それまで誰からも辿れない）。設計書 `docs/superpowers/specs/2026-10-18-tff-journey-map-design.md`。
 - 左に都道府県のタイル地図（`journey-map.js`・12 列 × 14 行・ID は JP-01〜JP-47）と行った場所の一覧、右に大きな写真と 2〜3 枚の送り。スマホは地図が上・写真が下で、押すと写真まで流れる。「日本 / 世界」で国の一覧に切り替える。
-- 色: 行った地域 `tff-rose`、選択中 `tff-accent`、まだの地域 `#E6E0EC`。
+- 色: 行った地域 `tff-rose`、選択中 `tff-accent`、まだの地域 `#E6E0EC`。写真の枠は写真ごとの縦横比（データの `w` / `h`）に合わせ、縦長でも画面の高さの 78% までに収める（2026-10-18 CEO 決定。切らずに見せる）。
 - データ: `tff-journey-data.js` の `TFF_JOURNEY = { schemaVersion: 1, regions: [{ id, kind: pref|country|place, parentId, name, photoIds }], photos: { <16桁16進>: { src, thumb, w, h, taken, caption, alt } } }`。公開するのは写真 2〜3 枚の地域だけ。写真の項目はこの 7 つだけで、位置情報を入れる場所はない（`journey-core.js` の検証で弾く。弾かれたらページは「準備中」になる）。ひとことは `textContent` で出す。
 - テスト: `node --test "tests/journey/test_*.mjs"`（データ・地図）と `tests/journey/check_page.cjs`（ブラウザ。実行方法はファイル冒頭）。
 
