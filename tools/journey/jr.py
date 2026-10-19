@@ -43,7 +43,21 @@ def cmd_suggest(cfg, args):
     print(f"確認グループ: {s['groups']}（同じ日の推定あり {s['with_day']} / アルバム名の候補あり {s['with_album']}）")
 
 
-COMMANDS = {"ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest}
+def cmd_assess(cfg, args):
+    from jr import assess
+
+    conn = store.connect(cfg.db_path)
+    t = time.time()
+
+    def progress(done, total):
+        if done % 640 < assess.BATCH or done == total:
+            print(f"  {done}/{total}（{time.time() - t:.0f} 秒）", flush=True)
+
+    s = assess.run(conn, cfg.home, assess.ClipScorer(), assess.ASSESS_VERSION, progress=progress)
+    print(f"判定: ok {s['ok']} / 失敗 {s['failed']} / 済み {s['skipped']}（{time.time() - t:.0f} 秒）")
+
+
+COMMANDS = {"ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest, "assess": cmd_assess}
 
 
 def main(argv=None):

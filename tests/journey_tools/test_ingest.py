@@ -146,6 +146,18 @@ class IngestTest(unittest.TestCase):
         status = sorted(r[0] for r in self.conn.execute("SELECT status FROM source_files WHERE path NOT LIKE '%.json'"))
         self.assertEqual(status, ["pending", "photo", "video"])
 
+    def test_ingest_split_archive(self):
+        # 書き出しが 2 つに分かれ、写真と情報ファイルが別の書き出しに入った
+        root2 = tmpdir()
+        a = make_jpeg(self.root / "Google フォト" / "2006 年の写真" / "IMG_0031.jpg")
+        side = make_sidecar(a, lat=43.2, lng=141.0)
+        moved = root2 / "Google フォト" / "2006 年の写真" / side.name
+        moved.parent.mkdir(parents=True)
+        side.rename(moved)
+        ingest.run(self.conn, [("takeout", self.root), ("takeout", root2)])
+        self.assertEqual(self.count("photos"), 1)
+        self.assertEqual(self.count("pending_files"), 0)
+
     def test_ingest_short_id_collision(self):
         a = make_jpeg(self.root / "x" / "a.jpg")
         make_sidecar(a, ts=1)

@@ -152,22 +152,44 @@ def _is_album(folder_name):
     return not YEAR_FOLDER_RE.match(folder_name)
 
 
+def _folders(root):
+    return sorted(p for p in [root, *root.rglob("*")] if p.is_dir())
+
+
+def _sidecar_index(roots):
+    """Takeout は書き出しが分かれると、写真と情報ファイルが別の書き出しに入る。
+    すべての takeout の入力について「入力からの相対フォルダ → {情報ファイル名: パス}」をまとめる。"""
+    index = {}
+    for kind, root in roots:
+        if kind != "takeout":
+            continue
+        root = Path(root)
+        for folder in _folders(root):
+            rel = str(folder.relative_to(root))
+            for f in folder.iterdir():
+                if f.is_file() and SIDECAR_RE.search(f.name):
+                    index.setdefault(rel, {}).setdefault(f.name, f)
+    return index
+
+
 def run(conn, roots, hasher=sha256_file):
     report = IngestReport()
+    index = _sidecar_index(roots)
     for kind, root in roots:
         root = Path(root)
-        for folder in sorted(p for p in [root, *root.rglob("*")] if p.is_dir()):
+        for folder in _folders(root):
             files = sorted(f for f in folder.iterdir() if f.is_file())
-            json_names = [f.name for f in files if SIDECAR_RE.search(f.name)]
+            json_names = index.get(str(folder.relative_to(root)), {})
             # 元の写真を先に、編集版をあとに処理する（編集版を元にまとめるため）
             media = [f for f in files if f.suffix.lower() in IMAGE_EXT | VIDEO_EXT]
             media.sort(key=lambda f: (EDITED_RE.match(f.name) is not None, f.name))
             for f in media:
                 _ingest_one(conn, kind, root, folder, f, json_names, hasher, report)
-            for j in json_names:
-                conn.execute(
-                    "INSERT OR IGNORE INTO source_files(path, root, kind, role, status) VALUES (?,?,?,?,?)",
-                    (str(folder / j), str(root), kind, "sidecar", "sidecar"))
+            for f in files:
+                if SIDECAR_RE.search(f.name):
+                    conn.execute(
+                        "INSERT OR IGNORE INTO source_files(path, root, kind, role, status) VALUES (?,?,?,?,?)",
+                        (str(f), str(root), kind, "sidecar", "sidecar"))
     return report
 
 
@@ -185,12 +207,12 @@ def _ingest_one(conn, kind, root, folder, f, json_names, hasher, report):
     sha = hasher(f)
     meta, sidecar = None, None
     if kind == "takeout":
-        cands = match_sidecar(f.name, json_names)
+        cands = match_sidecar(f.name, list(json_names))
         if len(cands) > 1:
             return _pending(conn, kind, root, f, sha, "ambiguous_sidecar", report)
         if not cands:
             return _pending(conn, kind, root, f, sha, "no_sidecar", report)
-        sidecar = folder / cands[0]
+        sidecar = json_names[cands[0]]
         try:
             meta = _read_sidecar(sidecar)
         except (ValueError, json.JSONDecodeError, OSError):

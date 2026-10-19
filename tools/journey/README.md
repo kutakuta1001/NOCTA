@@ -30,6 +30,7 @@ VENV=~/Pictures/nocta-journey/venv
 $VENV/bin/python tools/journey/jr.py ingest    # 取り込み（重複を除く・保留を数える）
 $VENV/bin/python tools/journey/jr.py geo       # 地域の判定（初回は境界データを取得）
 $VENV/bin/python tools/journey/jr.py suggest   # 撮影場所のない写真を日ごとにまとめ、地域の候補を付ける
+$VENV/bin/python tools/journey/jr.py assess    # 景色らしさ・人・ブレ・暗さの判定（初回はモデルを取得。止めても続きから）
 ```
 
 ## テスト
