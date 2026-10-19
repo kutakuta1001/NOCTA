@@ -1,0 +1,7 @@
+pillow==11.3.0
+pillow-heif==1.1.0
+numpy==2.3.3
+shapely==2.1.2
+timezonefinder==7.0.2
+open_clip_torch==3.2.0
+torch==2.8.0
