@@ -28,6 +28,8 @@ VENV=~/Pictures/nocta-journey/venv
 
 ```bash
 $VENV/bin/python tools/journey/jr.py ingest    # 取り込み（重複を除く・保留を数える）
+$VENV/bin/python tools/journey/jr.py geo       # 地域の判定（初回は境界データを取得）
+$VENV/bin/python tools/journey/jr.py suggest   # 撮影場所のない写真を日ごとにまとめ、地域の候補を付ける
 ```
 
 ## テスト

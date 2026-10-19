@@ -24,7 +24,26 @@ def cmd_ingest(cfg, args):
         print(f"  保留 {reason}: {n}")
 
 
-COMMANDS = {"ingest": cmd_ingest}
+def cmd_geo(cfg, args):
+    from jr import geo
+
+    conn = store.connect(cfg.db_path)
+    counts = geo.run(conn, geo.Boundaries.load(cfg.home))
+    print("地域の判定:", counts)
+    print("写真の多い地域（上位 15）:")
+    for rid, n in conn.execute("SELECT region_id, COUNT(*) FROM regions WHERE status='resolved' GROUP BY 1 ORDER BY 2 DESC LIMIT 15"):
+        print(f"  {rid}: {n}")
+
+
+def cmd_suggest(cfg, args):
+    from jr import suggest
+
+    conn = store.connect(cfg.db_path)
+    s = suggest.run(conn)
+    print(f"確認グループ: {s['groups']}（同じ日の推定あり {s['with_day']} / アルバム名の候補あり {s['with_album']}）")
+
+
+COMMANDS = {"ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest}
 
 
 def main(argv=None):
