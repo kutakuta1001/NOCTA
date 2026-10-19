@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅の一枚を選ぶ</title>
+    <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+    <header class="bar">
+        <h1>旅の一枚を選ぶ</h1>
+        <nav id="tabs" role="tablist">
+            <button type="button" role="tab" data-tab="pick" aria-selected="true">地域ごとに選ぶ</button>
+            <button type="button" role="tab" data-tab="days" aria-selected="false">日ごとの確認</button>
+            <button type="button" role="tab" data-tab="review" aria-selected="false">場所の要確認</button>
+            <button type="button" role="tab" data-tab="excluded" aria-selected="false">外した写真</button>
+            <button type="button" role="tab" data-tab="places" aria-selected="false">地点</button>
+        </nav>
+        <div class="bar-actions">
+            <button type="button" id="reassess" class="quiet">候補を作り直す</button>
+            <button type="button" id="export" class="primary">公開データを書き出す</button>
+        </div>
+    </header>
+    <p id="notice" role="status" aria-live="polite"></p>
+
+    <main>
+        <section id="tab-pick" class="tab">
+            <aside class="regions">
+                <label class="filter">地域を探す <input id="region-filter" type="search" autocomplete="off"></label>
+                <ul id="region-list"></ul>
+            </aside>
+            <div class="table">
+                <div class="table-head">
+                    <h2 id="region-title">地域を選んでください</h2>
+                    <p id="region-count" class="sub"></p>
+                </div>
+                <ol id="chosen" class="chosen" aria-label="選んだ写真"></ol>
+                <p class="hint">写真を押すと選びます。もう一度押すと外れます。1 つの地域で 3 枚まで。</p>
+                <ul id="grid" class="grid"></ul>
+            </div>
+        </section>
+
+        <section id="tab-days" class="tab" hidden>
+            <p class="lead">撮影場所のない写真を、撮った日ごとにまとめています。合っていれば地域を押してください。</p>
+            <div class="toggle">
+                <label><input type="radio" name="days-kind" value="1" checked> 地域の候補がある日</label>
+                <label><input type="radio" name="days-kind" value="0"> 候補がない日</label>
+            </div>
+            <ul id="day-list" class="cards"></ul>
+            <div class="pager"><button type="button" id="days-prev">前の 30 日</button><button type="button" id="days-next">次の 30 日</button></div>
+        </section>
+
+        <section id="tab-review" class="tab" hidden>
+            <p class="lead">県境や海の上で撮った写真です。どの地域の写真かを押してください。</p>
+            <p id="review-total" class="sub"></p>
+            <ul id="review-list" class="cards"></ul>
+            <div class="pager"><button type="button" id="review-prev">前へ</button><button type="button" id="review-next">次へ</button></div>
+        </section>
+
+        <section id="tab-excluded" class="tab" hidden>
+            <p class="lead">人が写っている・ブレているなどの理由で、候補から外した写真です。戻したい写真は「候補に戻す」を押してください。</p>
+            <label class="filter">地域 <select id="excluded-region"></select></label>
+            <ul id="excluded-list" class="grid"></ul>
+        </section>
+
+        <section id="tab-places" class="tab" hidden>
+            <h2>地点の提案</h2>
+            <p class="lead">写真がたくさん集まっている場所です。名前を付けると「北海道 › 小樽」のような地点になります。</p>
+            <ul id="proposal-list" class="cards"></ul>
+            <h2>地域の代表</h2>
+            <p class="lead">地点のある地域では、地図で地域を押したときに出す 2〜3 枚を、地点で選んだ写真から選びます。</p>
+            <div id="rep-area"></div>
+        </section>
+    </main>
+
+    <datalist id="region-names"></datalist>
+    <script src="/app.js"></script>
+</body>
+</html>

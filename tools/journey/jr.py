@@ -57,7 +57,38 @@ def cmd_assess(cfg, args):
     print(f"判定: ok {s['ok']} / 失敗 {s['failed']} / 済み {s['skipped']}（{time.time() - t:.0f} 秒）")
 
 
-COMMANDS = {"ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest, "assess": cmd_assess}
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+def cmd_serve(cfg, args):
+    from jr import server
+
+    url, httpd = server.serve(cfg.db_path, cfg.home, port=int(args[0]) if args else 0, repo_root=REPO_ROOT)
+    print("選ぶ画面を開きました。開かないときはこの URL をブラウザで開いてください（この Mac の中だけで開けます）:")
+    print(url)
+    print("終わるときは Ctrl+C")
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+
+
+def cmd_export(cfg, args):
+    from jr import export
+
+    r = export.run(store.connect(cfg.db_path), cfg.home, REPO_ROOT)
+    if r.ok:
+        print(f"書き出しました: {r.regions} 地域・{r.photos} 枚")
+    else:
+        print("書き出せませんでした（公開ファイルは前のまま）:")
+        for x in r.reasons:
+            print("  " + x)
+    for x in r.cleanup_failed:
+        print("  掃除できなかった画像: " + x)
+
+
+COMMANDS = {"ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest, "assess": cmd_assess,
+            "serve": cmd_serve, "export": cmd_export}
 
 
 def main(argv=None):
