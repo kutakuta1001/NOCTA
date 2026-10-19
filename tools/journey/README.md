@@ -31,6 +31,9 @@ $VENV/bin/python tools/journey/jr.py ingest    # 取り込み（重複を除く�
 $VENV/bin/python tools/journey/jr.py geo       # 地域の判定（初回は境界データを取得）
 $VENV/bin/python tools/journey/jr.py suggest   # 撮影場所のない写真を日ごとにまとめ、地域の候補を付ける
 $VENV/bin/python tools/journey/jr.py assess    # 景色らしさ・人・ブレ・暗さの判定（初回はモデルを取得。止めても続きから）
+$VENV/bin/python tools/journey/jr.py serve     # 選ぶ画面を開く（127.0.0.1 だけ。Ctrl+C で終わる）
+$VENV/bin/python tools/journey/jr.py export    # 選んだ写真を公開ファイルに書き出す（画面の「公開データを書き出す」と同じ）
+$VENV/bin/python tools/journey/jr.py backup    # バックアップ用に重複なしで並べる（~/Pictures/nocta-journey/library）
 ```
 
 ## テスト

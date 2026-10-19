@@ -87,7 +87,16 @@ def cmd_export(cfg, args):
         print("  掃除できなかった画像: " + x)
 
 
-COMMANDS = {"ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest, "assess": cmd_assess,
+def cmd_backup(cfg, args):
+    from jr import backup
+
+    dest = Path(args[0]).expanduser() if args else cfg.home / "library"
+    c = backup.run(store.connect(cfg.db_path), dest)
+    print(f"整理しました: 写真 {c['photos']} 枚（編集版を含め {c['variants']} ファイル）・動画 {c['videos']} 本・未整理 {c['unsorted']} 件")
+    print(f"このフォルダを丸ごと HDD にコピーすれば OK です: {dest}")
+
+
+COMMANDS = {"backup": cmd_backup, "ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest, "assess": cmd_assess,
             "serve": cmd_serve, "export": cmd_export}
 
 
