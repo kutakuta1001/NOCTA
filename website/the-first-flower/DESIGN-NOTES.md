@@ -70,6 +70,7 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 - 色: 行った地域 `tff-rose`、選択中 `tff-accent`、まだの地域 `#E6E0EC`。写真の枠は写真ごとの縦横比（データの `w` / `h`）に合わせ、縦長でも画面の高さの 78% までに収める（2026-10-18 CEO 決定。切らずに見せる）。
 - データ: `tff-journey-data.js` の `TFF_JOURNEY = { schemaVersion: 1, regions: [{ id, kind: pref|country|place, parentId, name, photoIds }], photos: { <16桁16進>: { src, thumb, w, h, taken, caption, alt } } }`。公開するのは写真 2〜3 枚の地域だけ。写真の項目はこの 7 つだけで、位置情報を入れる場所はない（`journey-core.js` の検証で弾く。弾かれたらページは「準備中」になる）。ひとことは `textContent` で出す。
 - テスト: `node --test "tests/journey/test_*.mjs"`（データ・地図）と `tests/journey/check_page.cjs`（ブラウザ。実行方法はファイル冒頭）。
+- 公開データと `img/` は `tools/journey` の export が書く（手で写真を置かない）。写真の選び方は `tools/journey/README.md`。
 
 - Connection の背景は元サイトの写真（Strikingly 備え付けのビルバオの街並み）を**使っていない**。素材の権利が不明なため、CEO 自身の Flickr 写真に替えた。
 - アイコン `img/icon-*.jpg`（264px・CSS で円形）は本人の Flickr 写真から切り抜いたもの。Flickr＝桜（28095409850「the first flower」）、Old Blog＝万年筆（51007397898「pen」）、ブクログ＝本棚（5470813410）。下段の 3 つは各アカウントのアイコン（X ポケカ＝カヲルさん @kwr_pkc の絵・クレジットは Self の「もうひとつの顔」に記載 / X トレード＝作者のアイコン絵 / 7Witches＝ピンクのうさぎ）。2026-10-18 まで使っていた AI 生成の水彩アイコンは、レビューで「本人の写真の中で浮く・断りがない」と指摘され差し替えた。

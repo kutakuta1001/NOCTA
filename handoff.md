@@ -188,3 +188,4 @@
 - 2026-10-18: NOCTA の ABOUT 本文を文の切れ目で折り返すように、Statement の「余白に、ひと足。」を枠のボタンにして昼の一文（下線リンク）と区別。8回目レビューは drafts/design-review/kutakuta1001-github-io-compare-8.md。次: なし
 - 2026-10-18: TFF の Connection を 6 つに（X ポケカ / X トレード / 7Witches Trade）、Self に「もうひとつの顔」（ポケカ・仮想通貨 FX）を追加。次: 友人へ公開
 - 2026-10-18: TFF 旅の地図ページ（the-first-flower/journey/）を準備中の状態で作成（ブランチ feat/tff-journey・未取り込み）。次: Takeout の書き出しを受け取り、計画 2（候補作り・選ぶ画面）へ。
+- 2026-10-19: 旅の地図の道具（tools/journey: 取り込み・地域判定・候補作り・選ぶ画面・書き出し・バックアップ）を作成。写真 43,830 枚を取り込み、バックアップ用の整理は ~/Pictures/nocta-journey/library（HDD へコピーするだけ）。次: jr.py serve で写真を選ぶ。
