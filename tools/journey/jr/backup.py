@@ -29,14 +29,21 @@ def _link(src, dst):
     os.link(src, dst)
 
 
-def _place(dst, sha, used):
-    """名前がぶつかったら _<SHA の先頭 6 桁> を足す。"""
-    if str(dst) not in used:
-        used.add(str(dst))
-        return dst
-    alt = dst.with_name(dst.stem + "_" + sha[:6] + dst.suffix)
-    used.add(str(alt))
-    return alt
+def _free(dst, src, used):
+    """その名前に置いてよいか: 今回まだ使っておらず、既にあるなら同じ実体（前回の backup で置いたもの）。"""
+    if str(dst) in used:
+        return False
+    return not dst.exists() or os.path.samefile(src, dst)
+
+
+def _place(dst, src, sha, used):
+    """名前がぶつかったら _<SHA の先頭 6 桁>（さらにぶつかれば連番）を足す。"""
+    cand, n = dst, 0
+    while not _free(cand, src, used):
+        n += 1
+        cand = dst.with_name(dst.stem + "_" + sha[:6] + ("" if n == 1 else f"_{n}") + dst.suffix)
+    used.add(str(cand))
+    return cand
 
 
 def run(conn, dest):
@@ -54,7 +61,7 @@ def run(conn, dest):
     sidecars = dict(conn.execute("SELECT sha256, sidecar_path FROM source_files WHERE sidecar_path IS NOT NULL"))
 
     def put(src, folder, name, sha):
-        dst = _place(dest / folder / name, sha, used)
+        dst = _place(dest / folder / name, src, sha, used)
         if not dst.exists():
             _link(src, dst)
         side = sidecars.get(sha)
@@ -74,7 +81,7 @@ def run(conn, dest):
 
     seen = set()
     for path, root, sha, ts, status in conn.execute(
-            "SELECT path, root, sha256, taken_utc, status FROM source_files WHERE status IN ('video', 'pending') ORDER BY path").fetchall():
+            "SELECT path, root, sha256, taken_utc, status FROM source_files WHERE status IN ('video', 'pending', 'other') ORDER BY path").fetchall():
         if sha in seen:
             continue
         seen.add(sha)

@@ -156,6 +156,13 @@ class AssessTest(Base):
         self.assertEqual(self.conn.execute("SELECT selected FROM region_choices").fetchone()[0], 1)
         self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM overrides").fetchone()[0], 1)
 
+    def test_reject_unselects_everywhere(self):
+        self.add_file_photo("a")
+        candidates.set_choice(self.conn, "a", "JP-01", selected=True)
+        candidates.set_choice(self.conn, "a", "place-01-1", selected=True)
+        candidates.set_rejected(self.conn, "a", True)
+        self.assertEqual(self.conn.execute("SELECT SUM(selected) FROM region_choices WHERE photo_id='a'").fetchone()[0], 0)
+
     def test_unselect_keeps_caption(self):
         self.add_file_photo("a")
         candidates.set_choice(self.conn, "a", "JP-01", selected=True)

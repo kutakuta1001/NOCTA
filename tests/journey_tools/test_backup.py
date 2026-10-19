@@ -90,6 +90,27 @@ class BackupTest(unittest.TestCase):
         self.assertIn("HDD", (self.dest / "README.txt").read_text(encoding="utf-8"))
         self.assertEqual(r["photos"], 1)
 
+    def test_backup_rerun_new_same_name(self):
+        a = make_jpeg(self.root / "x" / "IMG_1.jpg", color=(1, 1, 1))
+        make_sidecar(a, ts=TS + 3600)
+        self.ingest()
+        backup.run(self.conn, self.dest)
+        b = make_jpeg(self.root / "y" / "IMG_1.jpg", color=(2, 2, 2))
+        make_sidecar(b, ts=TS)  # 同じ日・同じ名前で、時刻が早い別の写真があとから来た
+        self.ingest()
+        backup.run(self.conn, self.dest)
+        jpgs = [self.dest / f for f in self.files() if f.endswith(".jpg")]
+        self.assertEqual(len(jpgs), 2)
+        self.assertEqual({os.stat(p).st_ino for p in jpgs}, {os.stat(a).st_ino, os.stat(b).st_ino})
+
+    def test_backup_unknown_extension(self):
+        raw = self.root / "2014" / "DSC_1.NEF"
+        raw.parent.mkdir(parents=True)
+        raw.write_bytes(b"raw-bytes")
+        self.ingest()
+        backup.run(self.conn, self.dest)
+        self.assertIn("_未整理/Takeout/2014/DSC_1.NEF", self.files())
+
     def test_backup_input_untouched(self):
         a = make_jpeg(self.root / "2012" / "IMG_1.jpg")
         make_sidecar(a, ts=TS)

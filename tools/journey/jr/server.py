@@ -88,11 +88,14 @@ def api_groups(conn, q):
     status = q.get("status", ["open"])[0]
     if status not in ("open", "confirmed", "not_trip"):
         raise BadRequest("status")
-    has = q.get("has_suggestion", ["1"])[0] == "1"
+    has = q.get("has_suggestion", ["1"])[0]
+    if has not in ("1", "0", "any"):
+        raise BadRequest("has_suggestion")
+    cond = "" if has == "any" else (" AND " + ("" if has == "1" else "NOT ") +
+                                    "EXISTS (SELECT 1 FROM region_suggestions s WHERE s.group_id = g.group_id)")
     page = _page(q)
     sql = ("SELECT g.group_id, g.local_day, g.region_id, (SELECT COUNT(*) FROM review_group_members m WHERE m.group_id = g.group_id) "
-           "FROM review_groups g WHERE g.status = ? AND " + ("" if has else "NOT ") +
-           "EXISTS (SELECT 1 FROM region_suggestions s WHERE s.group_id = g.group_id) ORDER BY g.local_day DESC LIMIT ? OFFSET ?")
+           "FROM review_groups g WHERE g.status = ?" + cond + " ORDER BY g.local_day DESC LIMIT ? OFFSET ?")
     out = []
     for gid, day, rid, n in conn.execute(sql, (status, PAGE, page * PAGE)).fetchall():
         sample = [r[0] for r in conn.execute("SELECT photo_id FROM review_group_members WHERE group_id = ? ORDER BY photo_id LIMIT 6", (gid,))]
@@ -102,15 +105,26 @@ def api_groups(conn, q):
     return {"groups": out}
 
 
+# 要確認: 県境・海上（needs_review）と、撮影場所はあるのにどの地域からも遠い写真（unknown）
+REVIEW_WHERE = ("JOIN photos p ON p.id = r.photo_id WHERE (r.status = 'needs_review' OR (r.status = 'unknown' AND p.lat IS NOT NULL)) "
+                "AND r.photo_id NOT IN (SELECT photo_id FROM overrides)")
+
+
 def api_review(conn, q):
     page = _page(q)
     out = []
-    for pid, cands in conn.execute("SELECT photo_id, candidates FROM regions WHERE status = 'needs_review' "
-                                   "AND photo_id NOT IN (SELECT photo_id FROM overrides) ORDER BY photo_id LIMIT ? OFFSET ?",
-                                   (PAGE, page * PAGE)).fetchall():
+    for pid, cands in conn.execute("SELECT r.photo_id, r.candidates FROM regions r " + REVIEW_WHERE +
+                                   " ORDER BY r.photo_id LIMIT ? OFFSET ?", (PAGE, page * PAGE)).fetchall():
         out.append({"id": pid, "candidates": [{"id": c, "name": _region_name(conn, c)} for c in json.loads(cands or "[]")]})
-    total = conn.execute("SELECT COUNT(*) FROM regions WHERE status = 'needs_review' AND photo_id NOT IN (SELECT photo_id FROM overrides)").fetchone()[0]
+    total = conn.execute("SELECT COUNT(*) FROM regions r " + REVIEW_WHERE).fetchone()[0]
     return {"total": total, "photos": out}
+
+
+def api_rejected(conn, q):
+    page = _page(q)
+    rows = conn.execute("SELECT photo_id FROM photo_editorial WHERE rejected = 1 ORDER BY photo_id LIMIT ? OFFSET ?", (PAGE, page * PAGE)).fetchall()
+    total = conn.execute("SELECT COUNT(*) FROM photo_editorial WHERE rejected = 1").fetchone()[0]
+    return {"total": total, "photos": [{"id": r[0]} for r in rows]}
 
 
 def api_proposals(conn, q):
@@ -233,7 +247,7 @@ def _photo(conn, v):
 
 
 GET_API = {"/api/regions": api_regions, "/api/candidates": api_candidates, "/api/excluded": api_excluded,
-           "/api/groups": api_groups, "/api/region_names": api_region_names, "/api/review": api_review, "/api/places/proposals": api_proposals}
+           "/api/groups": api_groups, "/api/region_names": api_region_names, "/api/rejected": api_rejected, "/api/review": api_review, "/api/places/proposals": api_proposals}
 POST_API = {"/api/decision": post_decision, "/api/group": post_group, "/api/override": post_override,
             "/api/place": post_place, "/api/representatives": post_representatives}
 
@@ -365,6 +379,8 @@ def make_handler(db_path, home, repo_root, token, port_ref, job):
                 return self._json(409, {"error": str(e)})
             except sqlite3.OperationalError as e:
                 return self._json(503, {"error": "ほかの処理が使用中です。少し待ってからもう一度押してください: " + str(e)[:80]})
+            except Exception as e:  # 想定外でも理由を画面に返す
+                return self._json(500, {"error": "処理できませんでした: " + str(e)[:120]})
             finally:
                 conn.close()
 

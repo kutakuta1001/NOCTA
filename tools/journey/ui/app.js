@@ -2,7 +2,7 @@
 (function () {
     "use strict";
     var $ = function (s) { return document.querySelector(s); };
-    var state = { region: null, regions: [], names: {}, daysPage: 0, reviewPage: 0 };
+    var state = { region: null, regions: [], names: {}, daysPage: 0, reviewPage: 0, excludedPage: 0, rejectedPage: 0 };
 
     function el(tag, cls, text) {
         var n = document.createElement(tag);
@@ -118,7 +118,9 @@
             var rej = el("button", "", "却下");
             rej.type = "button";
             rej.title = "この写真をもう候補に出さない";
-            rej.addEventListener("click", function () { decide(p.id, { rejected: true }); });
+            rej.addEventListener("click", function () {
+                if (window.confirm("この写真をどの地域の候補にも出さないようにします。「外した写真」のページから取り消せます。")) decide(p.id, { rejected: true });
+            });
             meta.appendChild(rej);
             li.appendChild(meta);
             grid.appendChild(li);
@@ -136,14 +138,16 @@
 
     /* ── 日ごとの確認 ── */
     function loadDays() {
-        var has = document.querySelector('input[name="days-kind"]:checked').value;
-        api("/api/groups?status=open&has_suggestion=" + has + "&page=" + state.daysPage).then(function (j) {
+        var kind = document.querySelector('input[name="days-kind"]:checked').value;
+        var q = (kind === "1" || kind === "0") ? "status=open&has_suggestion=" + kind : "status=" + kind + "&has_suggestion=any";
+        api("/api/groups?" + q + "&page=" + state.daysPage).then(function (j) {
             var ul = $("#day-list");
             ul.textContent = "";
             if (!j.groups.length) ul.appendChild(el("li", "hint", "確認する日はありません。"));
             j.groups.forEach(function (g) {
                 var li = el("li", "card");
-                li.appendChild(el("h3", "", g.day.replace(/-/g, ".") + "（" + g.count + " 枚）"));
+                var now = g.region_id ? "：いまは " + (Object.keys(state.names).filter(function (n) { return state.names[n] === g.region_id; })[0] || g.region_id) : "";
+                li.appendChild(el("h3", "", g.day.replace(/-/g, ".") + "（" + g.count + " 枚）" + now));
                 var strip = el("div", "strip");
                 g.sample.forEach(function (pid) { strip.appendChild(img(pid, "")); });
                 li.appendChild(strip);
@@ -157,7 +161,9 @@
                 ch.appendChild(regionPicker("違う地域", function (rid) { confirmGroup(g.group_id, rid); }));
                 var no = el("button", "quiet", "旅ではない");
                 no.type = "button";
-                no.addEventListener("click", function () { confirmGroup(g.group_id, null); });
+                no.addEventListener("click", function () {
+                    if (window.confirm(g.day.replace(/-/g, ".") + " を旅ではない日にします。「旅ではない日」の一覧から直せます。")) confirmGroup(g.group_id, null);
+                });
                 ch.appendChild(no);
                 li.appendChild(ch);
                 ul.appendChild(li);
@@ -233,7 +239,8 @@
     function loadExcluded() {
         var rid = $("#excluded-region").value;
         if (!rid) return;
-        api("/api/excluded?region=" + encodeURIComponent(rid)).then(function (j) {
+        api("/api/excluded?region=" + encodeURIComponent(rid) + "&page=" + state.excludedPage).then(function (j) {
+            $("#excluded-total").textContent = "外した写真 " + j.total + " 枚（" + (state.excludedPage * 30 + 1) + "〜）";
             var ul = $("#excluded-list");
             ul.textContent = "";
             j.photos.forEach(function (p) {
@@ -249,6 +256,27 @@
                 ul.appendChild(li);
             });
             if (!j.photos.length) ul.appendChild(el("li", "hint", "この地域で外した写真はありません。"));
+        }).catch(fail);
+    }
+
+    function loadRejected() {
+        api("/api/rejected?page=" + state.rejectedPage).then(function (j) {
+            $("#rejected-total").textContent = "却下した写真 " + j.total + " 枚";
+            var ul = $("#rejected-list");
+            ul.textContent = "";
+            j.photos.forEach(function (p) {
+                var li = el("li", "tile");
+                li.appendChild(img(p.id, ""));
+                var b = el("button", "", "却下を取り消す");
+                b.type = "button";
+                b.addEventListener("click", function () {
+                    var rid = $("#excluded-region").value || (state.regions[0] && state.regions[0].id);
+                    api("/api/decision", { photo_id: p.id, region_id: rid, rejected: false }).then(loadRejected).catch(fail);
+                });
+                li.appendChild(b);
+                ul.appendChild(li);
+            });
+            if (!j.photos.length) ul.appendChild(el("li", "hint", "却下した写真はありません。"));
         }).catch(fail);
     }
 
@@ -343,7 +371,7 @@
         notice("");
         if (name === "days") loadDays();
         if (name === "review") loadReview();
-        if (name === "excluded") loadExcludedRegions();
+        if (name === "excluded") { loadExcludedRegions(); loadRejected(); }
         if (name === "places") loadPlaces();
         if (name === "pick") loadRegions();
     }
@@ -353,7 +381,11 @@
     $("#days-next").addEventListener("click", function () { state.daysPage += 1; loadDays(); });
     $("#review-prev").addEventListener("click", function () { state.reviewPage = Math.max(0, state.reviewPage - 1); loadReview(); });
     $("#review-next").addEventListener("click", function () { state.reviewPage += 1; loadReview(); });
-    $("#excluded-region").addEventListener("change", loadExcluded);
+    $("#excluded-region").addEventListener("change", function () { state.excludedPage = 0; loadExcluded(); });
+    $("#excluded-prev").addEventListener("click", function () { state.excludedPage = Math.max(0, state.excludedPage - 1); loadExcluded(); });
+    $("#excluded-next").addEventListener("click", function () { state.excludedPage += 1; loadExcluded(); });
+    $("#rejected-prev").addEventListener("click", function () { state.rejectedPage = Math.max(0, state.rejectedPage - 1); loadRejected(); });
+    $("#rejected-next").addEventListener("click", function () { state.rejectedPage += 1; loadRejected(); });
     $("#region-filter").addEventListener("input", renderRegions);
     $("#export").addEventListener("click", function () {
         notice("書き出しています…");

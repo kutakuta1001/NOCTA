@@ -40,6 +40,16 @@ class MatchSidecarTest(unittest.TestCase):
         self.assertEqual(ingest.match_sidecar("upload_-1(104).jpg", ["upload_-1.supplemental-metadata(104).json", "upload_-1.supplemental-metadata(10).json"]),
                          ["upload_-1.supplemental-metadata(104).json"])
 
+    def test_match_name_with_number_in_original(self):
+        self.assertEqual(ingest.match_sidecar("photo(1).jpg", ["photo(1).jpg.supplemental-metadata.json"]),
+                         ["photo(1).jpg.supplemental-metadata.json"])
+
+    def test_match_truncated_inside_media_name(self):
+        media = "Screenshot_20200101-123456_com.android.chrome.png"
+        js = media[:46] + ".json"
+        self.assertEqual(ingest.match_sidecar(media, [js], media_names=[media]), [js])
+        self.assertEqual(ingest.match_sidecar(media, [js], media_names=[media, media[:46] + "X.png"]), [])
+
     def test_match_truncated(self):
         media = "5674541_576945877_1large_very_long_name.jpg"
         js = media + ".supplemental-me.json"
@@ -165,6 +175,27 @@ class IngestTest(unittest.TestCase):
         ingest.run(self.conn, [("takeout", self.root), ("takeout", root2)])
         self.assertEqual(self.count("photos"), 1)
         self.assertEqual(self.count("pending_files"), 0)
+
+    def test_ingest_same_title_same_second_stay_separate(self):
+        a = make_jpeg(self.root / "一花" / "upload_-1.jpg", color=(1, 1, 1))
+        make_sidecar(a, ts=1400000000)
+        b = make_jpeg(self.root / "大地" / "upload_-1.jpg", color=(2, 2, 2))
+        make_sidecar(b, ts=1400000000)
+        self.run_ingest()
+        self.assertEqual(self.count("photos"), 2)
+
+    def test_ingest_photos_app_overseas_time(self):
+        # ニューヨークで現地 2016-03-01 21:00（オフセットの記録なし）→ UTC 2016-03-02 02:00
+        make_jpeg(self.root / "trip" / "a.jpg", exif=gps_exif(40.71, -74.0, when="2016:03:01 21:00:00"))
+        self.run_ingest(kind="photos_app")
+        self.assertEqual(self.conn.execute("SELECT taken_utc FROM photos").fetchone()[0], 1456884000)
+
+    def test_ingest_unknown_extension_recorded(self):
+        raw = self.root / "x" / "DSC_1.NEF"
+        raw.parent.mkdir(parents=True)
+        raw.write_bytes(b"raw")
+        self.run_ingest()
+        self.assertEqual(self.conn.execute("SELECT status FROM source_files WHERE path LIKE '%.NEF'").fetchone()[0], "other")
 
     def test_ingest_short_id_collision(self):
         a = make_jpeg(self.root / "x" / "a.jpg")

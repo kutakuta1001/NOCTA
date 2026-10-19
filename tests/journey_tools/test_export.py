@@ -179,6 +179,22 @@ class ExportTest(unittest.TestCase):
         self.assertEqual((self.journey / "tff-journey-data.js").read_text(encoding="utf-8"), before)
         self.assertTrue(before_imgs <= set(self.images()))
 
+    def test_export_skips_rejected(self):
+        a = self.photo("JP-01")
+        self.photo("JP-01")
+        self.photo("JP-01")
+        self.conn.execute("INSERT INTO photo_editorial(photo_id, rejected) VALUES (?, 1)", (a,))
+        self.assertTrue(self.run_export().ok)
+        self.assertNotIn(a, self.data()["photos"])
+
+    def test_export_missing_source_reports(self):
+        a = self.photo("JP-01")
+        self.photo("JP-01")
+        (self.home / "in" / f"{a}.jpg").unlink()
+        r = self.run_export()
+        self.assertFalse(r.ok)
+        self.assertTrue(any(a in x for x in r.reasons), r.reasons)
+
     def test_export_lock(self):
         (self.home / "export.lock").write_text("busy")
         r = self.run_export()

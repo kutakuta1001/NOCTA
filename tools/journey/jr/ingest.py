@@ -55,9 +55,17 @@ def _original_name(media_name):
     return m.group("stem") + m.group("ext") if m else media_name
 
 
-def match_sidecar(media_name, json_names):
-    """メディアのファイル名に対応する情報ファイル名の候補を返す（0・1・2 件以上）。"""
+def match_sidecar(media_name, json_names, media_names=None):
+    """メディアのファイル名に対応する情報ファイル名の候補を返す（0・1・2 件以上）。
+
+    media_names（同じフォルダのメディア名）を渡すと、メディア名の途中で切れた情報ファイル名も、
+    そのフォルダで一意に決まるときだけ拾う。
+    """
     base = _original_name(media_name)
+    whole = [base + ".supplemental-metadata.json", base + ".json"]  # 元の名前に (1) を含む写真
+    hits = [j for j in whole if j in json_names]
+    if hits:
+        return hits[:1]
     num = ""
     m = NUMBERED_RE.match(base)
     if m:
@@ -81,6 +89,10 @@ def match_sidecar(media_name, json_names):
             continue
         if target.startswith(stem) and len(stem) > len(base):
             found.append(j)
+        elif media_names is not None and len(stem) <= len(base) and base.startswith(stem):
+            owners = [m for m in media_names if _original_name(m).startswith(stem)]
+            if len({_original_name(m) for m in owners}) == 1:
+                found.append(j)
     return found
 
 
@@ -133,6 +145,12 @@ def _read_exif(path):
             return _ratio(v[0]) + _ratio(v[1]) / 60 + _ratio(v[2]) / 3600
         lat = deg(gps[2]) * (-1 if gps.get(1) == "S" else 1)
         lng = deg(gps[4]) * (-1 if gps.get(3) == "W" else 1)
+        if not off:  # オフセットの記録がなければ、撮影場所のタイムゾーンで読む
+            from jr import timeutil
+
+            zone = timeutil._zone_at(round(lat, 2), round(lng, 2))
+            if zone is not None:
+                tz = zone
     return {
         "title": Path(path).name,
         "taken_utc": int(local.replace(tzinfo=tz).timestamp()),
@@ -185,8 +203,15 @@ def run(conn, roots, hasher=sha256_file):
             # 元の写真を先に、編集版をあとに処理する（編集版を元にまとめるため）
             media = [f for f in files if f.suffix.lower() in IMAGE_EXT | VIDEO_EXT]
             media.sort(key=lambda f: (EDITED_RE.match(f.name) is not None, f.name))
+            names = [f.name for f in media]
             for f in media:
-                _ingest_one(conn, kind, root, folder, f, json_names, hasher, report)
+                _ingest_one(conn, kind, root, folder, f, json_names, hasher, report, media_names=names)
+            # 写真・動画・情報ファイル以外も台帳に載せる（バックアップで漏らさない）
+            for f in files:
+                if f.suffix.lower() not in IMAGE_EXT | VIDEO_EXT and not SIDECAR_RE.search(f.name):
+                    conn.execute(
+                        "INSERT OR REPLACE INTO source_files(path, root, kind, sha256, role, status) VALUES (?,?,?,?,?,?)",
+                        (str(f), str(root), kind, hasher(f), "other", "other"))
             for f in files:
                 if SIDECAR_RE.search(f.name):
                     conn.execute(
@@ -203,13 +228,13 @@ def _pending(conn, kind, root, path, sha, reason, report):
     report.pending += 1
 
 
-def _ingest_one(conn, kind, root, folder, f, json_names, hasher, report):
+def _ingest_one(conn, kind, root, folder, f, json_names, hasher, report, media_names=()):
     is_video = f.suffix.lower() in VIDEO_EXT
     role = "edited" if EDITED_RE.match(f.name) else "original"
     sha = hasher(f)
     meta, sidecar = None, None
     if kind == "takeout":
-        cands = match_sidecar(f.name, list(json_names))
+        cands = match_sidecar(f.name, list(json_names), media_names=media_names)
         if len(cands) > 1:
             return _pending(conn, kind, root, f, sha, "ambiguous_sidecar", report)
         if not cands:
@@ -250,6 +275,11 @@ def _ingest_one(conn, kind, root, folder, f, json_names, hasher, report):
             report.duplicates += 1
     else:
         row = conn.execute("SELECT id FROM photos WHERE lkey = ?", (lkey,)).fetchone()
+        if row and role == "original" and conn.execute(
+                "SELECT 1 FROM photo_variants WHERE photo_id = ? AND role = 'original'", (row[0],)).fetchone():
+            # 名前と撮影時刻が同じでも中身の違う別の写真（一括アップロードなど）は別の写真にする
+            lkey = lkey + "#" + sha[:16]
+            row = None
         if row:
             photo_id = row[0]
         else:

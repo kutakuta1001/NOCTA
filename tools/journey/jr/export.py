@@ -48,7 +48,10 @@ class ExportReport:
 def _snapshot(conn):
     """公開する地域と写真を決める。地点は親が公開されるときだけ出す。"""
     sel = {}
-    for pid, rid, sha in conn.execute("SELECT photo_id, region_id, variant_sha256 FROM region_choices WHERE selected = 1 ORDER BY updated_at, photo_id"):
+    for pid, rid, sha in conn.execute(
+            "SELECT c.photo_id, c.region_id, c.variant_sha256 FROM region_choices c "
+            "LEFT JOIN photo_editorial e ON e.photo_id = c.photo_id "
+            "WHERE c.selected = 1 AND COALESCE(e.rejected, 0) = 0 ORDER BY c.updated_at, c.photo_id"):
         sel.setdefault(rid, []).append((pid, sha))
     place_rows = {r[0]: r for r in conn.execute("SELECT id, parent_id, name FROM places")}
     reps = {}
@@ -171,7 +174,12 @@ def run(conn, home, repo_root, validate=None):
     try:
         os.write(fd, str(os.getpid()).encode())
         os.close(fd)
-        return _run(conn, home, repo_root, validate, report)
+        try:
+            return _run(conn, home, repo_root, validate, report)
+        except Exception as e:  # 元ファイルが消えた・コピーに失敗したなど。公開ファイルは前のまま（K1）
+            report.ok = False
+            report.reasons.append(f"書き出しの途中で止まった: {e}")
+            return report
     finally:
         lock.unlink(missing_ok=True)
 
@@ -192,6 +200,9 @@ def _run(conn, home, repo_root, validate, report):
             row = conn.execute("SELECT path FROM photo_variants WHERE sha256 = ?", (sha,)).fetchone()
             if not row:
                 report.reasons.append(f"{pid}: 採用したときの版が見つからない")
+                return report
+            if not Path(row[0]).exists():
+                report.reasons.append(f"{pid}: 元の写真が見つからない（{row[0]}）。Takeout のフォルダを消していないか確かめてください")
                 return report
             w, h = _encode(row[0], staging / f"{pid}.jpg", LARGE_EDGE)
             _encode(row[0], staging / f"{pid}-s.jpg", THUMB_EDGE)

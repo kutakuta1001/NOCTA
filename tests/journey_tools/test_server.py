@@ -141,6 +141,37 @@ class ServerTest(unittest.TestCase):
         self.assertEqual(names["HK"], "香港")
         self.assertEqual(len([k for k in names if k.startswith("JP-")]), 47)
 
+    def test_server_review_includes_unknown_with_gps(self):
+        conn = store.connect(self.db)
+        conn.execute("UPDATE regions SET status = 'unknown', region_id = NULL WHERE photo_id = '0000000000000001'")
+        conn.close()
+        ids = [p["id"] for p in json.loads(self.req("GET", "/api/review")[2])["photos"]]
+        self.assertIn("0000000000000001", ids)
+
+    def test_server_unexpected_error_is_json(self):
+        from unittest import mock
+        with mock.patch.dict(server.GET_API, {"/api/regions": lambda conn, q: 1 / 0}):
+            status, _, body = self.req("GET", "/api/regions")
+        self.assertEqual(status, 500)
+        self.assertIn("error", json.loads(body))
+
+    def test_server_rejected_list_and_undo(self):
+        self.req("POST", "/api/decision", {"photo_id": "0000000000000002", "region_id": "JP-01", "rejected": True})
+        ids = [p["id"] for p in json.loads(self.req("GET", "/api/rejected")[2])["photos"]]
+        self.assertEqual(ids, ["0000000000000002"])
+        self.req("POST", "/api/decision", {"photo_id": "0000000000000002", "region_id": "JP-01", "rejected": False})
+        self.assertEqual(json.loads(self.req("GET", "/api/rejected")[2])["photos"], [])
+
+    def test_server_groups_confirmed_listed(self):
+        conn = store.connect(self.db)
+        conn.execute("INSERT INTO region_suggestions(group_id, region_id, source, votes) VALUES ('day-2016-03-01', 'JP-26', 'day', 2)")
+        conn.close()
+        self.req("POST", "/api/group", {"group_id": "day-2016-03-01", "region_id": "JP-26"})
+        self.assertEqual(json.loads(self.req("GET", "/api/groups?status=confirmed&has_suggestion=0")[2])["groups"], [])
+        g = json.loads(self.req("GET", "/api/groups?status=confirmed&has_suggestion=any")[2])["groups"]
+        self.assertEqual([x["group_id"] for x in g], ["day-2016-03-01"])
+        self.assertEqual(g[0]["region_id"], "JP-26")
+
     def test_server_regions_list(self):
         status, _, body = self.req("GET", "/api/regions")
         self.assertEqual(status, 200)

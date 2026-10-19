@@ -117,5 +117,8 @@ def set_caption(conn, photo_id, caption):
 
 
 def set_rejected(conn, photo_id, rejected=True):
+    """却下は全地域に効かせる（どの地域でも選んだ状態を外す）。"""
     _ensure_editorial(conn, photo_id)
     conn.execute("UPDATE photo_editorial SET rejected = ? WHERE photo_id = ?", (1 if rejected else 0, photo_id))
+    if rejected:
+        conn.execute("UPDATE region_choices SET selected = 0, updated_at = ? WHERE photo_id = ?", (int(time.time()), photo_id))

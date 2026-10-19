@@ -45,6 +45,8 @@
             <div class="toggle">
                 <label><input type="radio" name="days-kind" value="1" checked> 地域の候補がある日</label>
                 <label><input type="radio" name="days-kind" value="0"> 候補がない日</label>
+                <label><input type="radio" name="days-kind" value="confirmed"> 地域を付けた日</label>
+                <label><input type="radio" name="days-kind" value="not_trip"> 旅ではない日</label>
             </div>
             <ul id="day-list" class="cards"></ul>
             <div class="pager"><button type="button" id="days-prev">前の 30 日</button><button type="button" id="days-next">次の 30 日</button></div>
@@ -60,7 +62,14 @@
         <section id="tab-excluded" class="tab" hidden>
             <p class="lead">人が写っている・ブレているなどの理由で、候補から外した写真です。戻したい写真は「候補に戻す」を押してください。</p>
             <label class="filter">地域 <select id="excluded-region"></select></label>
+            <p id="excluded-total" class="sub"></p>
             <ul id="excluded-list" class="grid"></ul>
+            <div class="pager"><button type="button" id="excluded-prev">前の 30 枚</button><button type="button" id="excluded-next">次の 30 枚</button></div>
+            <h2>却下した写真</h2>
+            <p class="lead">「却下」した写真は、どの地域の候補にも出ません。取り消すと候補に戻ります。</p>
+            <p id="rejected-total" class="sub"></p>
+            <ul id="rejected-list" class="grid"></ul>
+            <div class="pager"><button type="button" id="rejected-prev">前の 30 枚</button><button type="button" id="rejected-next">次の 30 枚</button></div>
         </section>
 
         <section id="tab-places" class="tab" hidden>
