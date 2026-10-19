@@ -27,7 +27,7 @@ class FakeScorer:
 
     def score(self, images):
         self.calls += len(images)
-        return [{"landscape": 0.8, "person": 0.1, "embedding": vec(0)} for _ in images]
+        return [{"landscape": 0.8, "person": 0.1, "crowd": 0.2, "embedding": vec(0)} for _ in images]
 
 
 class Base(unittest.TestCase):
@@ -35,15 +35,15 @@ class Base(unittest.TestCase):
         self.home = tmpdir()
         self.conn = store.connect(self.home / "s.db")
 
-    def photo(self, pid, landscape=0.5, person=0.1, flags=(), emb=None, ts=T, people=0, region="JP-01"):
+    def photo(self, pid, landscape=0.5, person=0.1, flags=(), emb=None, ts=T, people=0, region="JP-01", crowd=0.0):
         sha = (pid * 64)[:64]
         self.conn.execute("INSERT INTO photos(id, sha256, lkey, taken_utc, lat, lng, people) VALUES (?,?,?,?,?,?,?)",
                           (pid, sha, pid, ts, 43.2, 141.0, people))
         self.conn.execute("INSERT INTO photo_variants(photo_id, sha256, path, role) VALUES (?,?,?, 'original')", (pid, sha, "/x/" + pid))
         self.conn.execute("INSERT INTO regions(photo_id, region_id, status) VALUES (?,?, 'resolved')", (pid, region))
         e = (emb if emb is not None else vec(hash(pid))).astype(np.float32).tobytes()
-        self.conn.execute("INSERT INTO assessments(sha256, version, status, flags, landscape, person, blur, embedding) VALUES (?,?,?,?,?,?,?,?)",
-                          (sha, "v1", "ok", json.dumps(list(flags)), landscape, person, 100.0, e))
+        self.conn.execute("INSERT INTO assessments(sha256, version, status, flags, landscape, person, blur, embedding, crowd) VALUES (?,?,?,?,?,?,?,?,?)",
+                          (sha, "v1", "ok", json.dumps(list(flags)), landscape, person, 100.0, e, crowd))
         return pid
 
 
@@ -78,6 +78,29 @@ class CandidatesTest(Base):
         for i in range(30):
             self.photo(f"p{i:02d}", emb=vec(i, 32), ts=T + i * DAY)
         self.assertEqual(len(candidates.for_region(self.conn, "JP-01")), 20)
+
+    def test_crowd_only_when_short(self):
+        for i in range(15):
+            self.photo(f"q{i:02d}", landscape=0.5, emb=vec(i, 64), ts=T + i * DAY)
+        for i in range(10):
+            self.photo(f"c{i:02d}", landscape=0.99, crowd=0.9, emb=vec(20 + i, 64), ts=T + (30 + i) * DAY)
+        got = candidates.for_region(self.conn, "JP-01")
+        self.assertEqual(len(got), 20)
+        self.assertTrue(all(p.startswith("q") for p in got[:15]))
+        self.assertEqual(sum(p.startswith("c") for p in got), 5)
+
+    def test_no_crowd_when_enough(self):
+        for i in range(25):
+            self.photo(f"q{i:02d}", landscape=0.5, emb=vec(i, 64), ts=T + i * DAY)
+        self.photo("crowd", landscape=0.99, crowd=0.9, emb=vec(40, 64), ts=T + 50 * DAY)
+        self.assertNotIn("crowd", candidates.for_region(self.conn, "JP-01"))
+
+    def test_similar_090_dropped(self):
+        a = np.zeros(8, dtype=np.float32); a[0] = 1.0
+        b = np.zeros(8, dtype=np.float32); b[0] = 0.9; b[1] = 0.4359  # コサイン 0.90
+        self.photo("a", landscape=0.9, emb=a)
+        self.photo("b", landscape=0.8, emb=b, ts=T + 9 * DAY)
+        self.assertEqual(candidates.for_region(self.conn, "JP-01"), ["a"])
 
     def test_rejected_never_again(self):
         self.photo("a")
@@ -144,6 +167,18 @@ class AssessTest(Base):
         assess.run(self.conn, self.home, FakeScorer(), "v1")
         flags = json.loads(self.conn.execute("SELECT flags FROM assessments").fetchone()[0])
         self.assertIn("dark", flags)
+
+    def test_assess_writes_crowd(self):
+        self.add_file_photo("a")
+        assess.run(self.conn, self.home, FakeScorer(), "v1")
+        self.assertEqual(self.conn.execute("SELECT crowd FROM assessments").fetchone()[0], 0.2)
+
+    def test_rescore_fills_crowd_from_embedding(self):
+        self.photo("z")
+        self.conn.execute("UPDATE assessments SET crowd = NULL")
+        n = assess.rescore_crowd(self.conn, lambda embs: [0.7 for _ in embs])
+        self.assertEqual(n, 1)
+        self.assertEqual(self.conn.execute("SELECT crowd FROM assessments").fetchone()[0], 0.7)
 
     def test_rerun_keeps_decisions(self):
         self.add_file_photo("a")

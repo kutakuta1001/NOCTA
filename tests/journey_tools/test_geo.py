@@ -68,6 +68,22 @@ class RunTest(unittest.TestCase):
         self.assertEqual(self.conn.execute("SELECT region_id, status FROM regions WHERE photo_id='p1'").fetchone(), ("JP-13", "resolved"))
 
 
+class SubregionTest(unittest.TestCase):
+    def test_us_states_to_places(self):
+        us = ("US", box(-125.0, 25.0, -66.0, 49.0))
+        states = [("US-CA", box(-125.0, 32.0, -114.0, 42.0)), ("US-NY", box(-80.0, 40.0, -72.0, 45.0))]
+        b = geo.Boundaries([A, B, us], subdivisions={"US": states})
+        conn = store.connect(tmpdir() / "s.db")
+        for pid, lat, lng in [("la", 34.05, -118.24), ("ny", 40.71, -74.0)]:
+            conn.execute("INSERT INTO photos(id, sha256, lkey, taken_utc, lat, lng) VALUES (?,?,?,?,?,?)", (pid, pid + "s", pid, 1456794000, lat, lng))
+        geo.run(conn, b)
+        members = dict(conn.execute("SELECT photo_id, place_id FROM place_members"))
+        self.assertEqual(members, {"la": "place-us-west", "ny": "place-us-east"})
+        self.assertEqual(dict(conn.execute("SELECT id, name FROM places")), {"place-us-west": "西部", "place-us-east": "東部"})
+        geo.run(conn, b)  # 再実行しても重複しない
+        self.assertEqual(conn.execute("SELECT COUNT(*) FROM place_members").fetchone()[0], 2)
+
+
 class TimeTest(unittest.TestCase):
     def test_local_day_overseas(self):
         # ニューヨーク、UTC 2016-03-02 03:00 → 現地 2016-03-01 22:00

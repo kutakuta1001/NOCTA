@@ -96,7 +96,14 @@ def cmd_backup(cfg, args):
     print(f"このフォルダを丸ごと HDD にコピーすれば OK です: {dest}")
 
 
-COMMANDS = {"backup": cmd_backup, "ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest, "assess": cmd_assess,
+def cmd_rescore(cfg, args):
+    from jr import assess
+
+    n = assess.rescore_crowd(store.connect(cfg.db_path), assess.ClipScorer().crowd)
+    print(f"人の写り具合を {n} 枚分つけ直しました（画像は読み直していません）")
+
+
+COMMANDS = {"backup": cmd_backup, "rescore": cmd_rescore, "ingest": cmd_ingest, "geo": cmd_geo, "suggest": cmd_suggest, "assess": cmd_assess,
             "serve": cmd_serve, "export": cmd_export}
 
 

@@ -15,6 +15,8 @@ LANDSCAPE_PROMPTS = ["a scenic landscape photo", "a photo of a city street", "a 
 PERSON_PROMPTS = ["a photo of a person", "a group photo of people"]
 OTHER_PROMPTS = ["a photo of food", "a screenshot", "a photo of a document"]
 PROMPTS = LANDSCAPE_PROMPTS + PERSON_PROMPTS + OTHER_PROMPTS
+# 人が写っているか（人混みの街を含む）。最初の 2 文の合計を crowd とする。埋め込みから出すので画像は読み直さない
+CROWD_PROMPTS = ["a photo with people in it", "a photo of a crowd on a street", "a photo of a scene with no people"]
 ASSESS_VERSION = f"{MODEL}/{PRETRAINED}|" + "|".join(PROMPTS) + f"|preview{previews.PREVIEW_EDGE}|lap|dark45"
 
 PERSON_T = 0.5      # これを超えたら人が主役とみなして候補から外す
@@ -39,6 +41,17 @@ class ClipScorer:
         with torch.no_grad():
             t = self.model.encode_text(tok(PROMPTS).to(self.device))
             self.text = t / t.norm(dim=-1, keepdim=True)
+            c = self.model.encode_text(tok(CROWD_PROMPTS).to(self.device))
+            self.crowd_text = (c / c.norm(dim=-1, keepdim=True)).cpu().numpy().astype(np.float32)
+
+    def crowd(self, embeddings):
+        out = []
+        for e in embeddings:
+            logits = 100.0 * (self.crowd_text @ np.asarray(e, dtype=np.float32))
+            p = np.exp(logits - logits.max())
+            p = p / p.sum()
+            out.append(float(p[0] + p[1]))
+        return out
 
     def score(self, images):
         torch = self.torch
@@ -49,8 +62,9 @@ class ClipScorer:
             probs = (100.0 * f @ self.text.T).softmax(dim=-1).cpu().numpy()
             emb = f.cpu().numpy().astype(np.float32)
         nl, npn = len(LANDSCAPE_PROMPTS), len(PERSON_PROMPTS)
-        return [{"landscape": float(p[:nl].sum()), "person": float(p[nl:nl + npn].sum()), "embedding": e}
-                for p, e in zip(probs, emb)]
+        crowd = self.crowd(emb)
+        return [{"landscape": float(p[:nl].sum()), "person": float(p[nl:nl + npn].sum()), "crowd": c, "embedding": e}
+                for p, e, c in zip(probs, emb, crowd)]
 
 
 def blur_and_brightness(im):
@@ -118,12 +132,25 @@ def run(conn, home, scorer, version, photo_ids=None, progress=None):
         for (pid, sha), im, s in zip(batch, images, scores):
             blur, bright = blur_and_brightness(im)
             conn.execute(
-                "INSERT OR REPLACE INTO assessments(sha256, version, status, error, flags, landscape, person, blur, embedding) "
-                "VALUES (?,?, 'ok', NULL, ?,?,?,?,?)",
+                "INSERT OR REPLACE INTO assessments(sha256, version, status, error, flags, landscape, person, blur, embedding, crowd) "
+                "VALUES (?,?, 'ok', NULL, ?,?,?,?,?,?)",
                 (sha, version, json.dumps(_flags(people.get(pid), s, blur, bright)), s["landscape"], s["person"], blur,
-                 np.asarray(s["embedding"], dtype=np.float32).tobytes()))
+                 np.asarray(s["embedding"], dtype=np.float32).tobytes(), s.get("crowd")))
             stats["ok"] += 1
         conn.execute("COMMIT")
         if progress:
             progress(start + len(batch), len(todo))
     return stats
+
+
+def rescore_crowd(conn, crowd_fn):
+    """crowd が空の判定を、保存した埋め込みから埋める（画像は読み直さない）。crowd_fn: 埋め込みの list → 値の list。"""
+    rows = conn.execute("SELECT sha256, embedding FROM assessments WHERE status = 'ok' AND crowd IS NULL AND embedding IS NOT NULL").fetchall()
+    if not rows:
+        return 0
+    values = crowd_fn([np.frombuffer(r[1], dtype=np.float32) for r in rows])
+    conn.execute("BEGIN")
+    for (sha, _), v in zip(rows, values):
+        conn.execute("UPDATE assessments SET crowd = ? WHERE sha256 = ?", (float(v), sha))
+    conn.execute("COMMIT")
+    return len(rows)

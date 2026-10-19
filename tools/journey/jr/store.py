@@ -85,7 +85,8 @@ CREATE TABLE IF NOT EXISTS assessments (
     error TEXT,
     flags TEXT,                     -- JSON 配列
     landscape REAL, person REAL, blur REAL,
-    embedding BLOB
+    embedding BLOB,
+    crowd REAL                      -- 人が写っている度合い（0〜1）。埋め込みから出す
 );
 CREATE TABLE IF NOT EXISTS photo_editorial (
     photo_id TEXT PRIMARY KEY REFERENCES photos(id),
@@ -115,4 +116,7 @@ def connect(db_path):
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute("PRAGMA journal_mode = WAL")
     conn.executescript(SCHEMA)
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(assessments)")}
+    if "crowd" not in cols:  # 2026-10-19 に足した列。古い DB にも足す
+        conn.execute("ALTER TABLE assessments ADD COLUMN crowd REAL")
     return conn

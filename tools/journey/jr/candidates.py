@@ -8,7 +8,8 @@ from jr import geo, previews, timeutil
 
 LIMIT = 20
 PER_DAY = 4         # 同じ現地日から取る上限
-SIMILAR = 0.93      # 埋め込みのコサイン類似度がこれ以上なら似た写真として飛ばす
+SIMILAR = 0.88      # 埋め込みのコサイン類似度がこれ以上なら似た写真として飛ばす（場所や構図の違う写真を並べる）
+CROWD_T = 0.5       # 人が写っている度合いがこれ以上の写真は、人のいない写真で 20 枚に足りないときだけ出す
 EXCLUDE_FLAGS = {"people_tag", "person", "blurry"}  # 暗い写真（dark）は外さない（夜景を落とさない）
 
 
@@ -40,7 +41,7 @@ def _rows(conn, region_id):
     out = []
     for pid in members(conn, region_id):
         sha, _ = previews.current_variant(conn, pid)
-        a = conn.execute("SELECT landscape, flags, embedding FROM assessments WHERE sha256 = ? AND status = 'ok'", (sha,)).fetchone()
+        a = conn.execute("SELECT landscape, flags, embedding, crowd FROM assessments WHERE sha256 = ? AND status = 'ok'", (sha,)).fetchone()
         if not a:
             continue
         ed = conn.execute("SELECT rejected FROM photo_editorial WHERE photo_id = ?", (pid,)).fetchone()
@@ -51,22 +52,23 @@ def _rows(conn, region_id):
         ts, lat, lng = conn.execute("SELECT taken_utc, lat, lng FROM photos WHERE id = ?", (pid,)).fetchone()
         day = timeutil.local(ts, lat, lng)[0].strftime("%Y-%m-%d") if ts is not None else "?"
         emb = np.frombuffer(a[2], dtype=np.float32) if a[2] else None
-        out.append((pid, a[0] or 0.0, set(json.loads(a[1] or "[]")), emb, day, ch[0], ch[1]))
+        out.append((pid, a[0] or 0.0, set(json.loads(a[1] or "[]")), emb, day, ch[0], ch[1], a[3] or 0.0))
     return out
 
 
 def for_region(conn, region_id, limit=LIMIT, per_day=PER_DAY, similar=SIMILAR):
     rows = _rows(conn, region_id)
     picked, embs, per = [], [], {}
-    for pid, _, _, emb, day, sel, _ in rows:
+    for pid, _, _, emb, day, sel, _, _ in rows:
         if sel:
             picked.append(pid)
             per[day] = per.get(day, 0) + 1
             if emb is not None:
                 embs.append(emb / (np.linalg.norm(emb) or 1))
     pool = [r for r in rows if not r[5] and (r[6] or not (r[2] & EXCLUDE_FLAGS))]
-    pool.sort(key=lambda r: (-r[1], r[0]))
-    for pid, _, _, emb, day, _, _ in pool:
+    # 人のいない写真を先に、景色らしい順。人混みの写真はそのあと（足りないときだけ入る）
+    pool.sort(key=lambda r: (r[7] >= CROWD_T, -r[1], r[0]))
+    for pid, _, _, emb, day, _, _, _ in pool:
         if len(picked) >= limit:
             break
         if per.get(day, 0) >= per_day:

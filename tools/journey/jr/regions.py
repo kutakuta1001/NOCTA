@@ -36,6 +36,17 @@ ALBUM_HINTS = {
 }
 
 
+# 国の中をさらに分ける（地点として自動で作る）。州・県の ISO 3166-2 コードで振り分ける
+US_WEST = ["US-WA", "US-OR", "US-CA", "US-NV", "US-ID", "US-MT", "US-WY", "US-UT", "US-CO", "US-AZ", "US-NM", "US-AK"]
+SUBREGIONS = {
+    "US": [
+        ("place-us-west", "西部", US_WEST),
+        ("place-us-hawaii", "ハワイ", ["US-HI"]),
+        ("place-us-east", "東部", None),  # None = 上のどれにも入らない州
+    ],
+}
+
+
 def name(region_id, fallback=None):
     return PREFS.get(region_id) or COUNTRIES.get(region_id) or fallback or region_id
 

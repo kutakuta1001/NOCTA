@@ -31,6 +31,7 @@ $VENV/bin/python tools/journey/jr.py ingest    # 取り込み（重複を除く�
 $VENV/bin/python tools/journey/jr.py geo       # 地域の判定（初回は境界データを取得）
 $VENV/bin/python tools/journey/jr.py suggest   # 撮影場所のない写真を日ごとにまとめ、地域の候補を付ける
 $VENV/bin/python tools/journey/jr.py assess    # 景色らしさ・人・ブレ・暗さの判定（初回はモデルを取得。止めても続きから）
+$VENV/bin/python tools/journey/jr.py rescore   # 人の写り具合を保存済みの埋め込みから付け直す（判定の加減を変えたとき）
 $VENV/bin/python tools/journey/jr.py serve     # 選ぶ画面を開く（127.0.0.1 だけ。Ctrl+C で終わる）
 $VENV/bin/python tools/journey/jr.py export    # 選んだ写真を公開ファイルに書き出す（画面の「公開データを書き出す」と同じ）
 $VENV/bin/python tools/journey/jr.py backup    # バックアップ用に重複なしで並べる（~/Pictures/nocta-journey/library）
@@ -54,6 +55,12 @@ $VENV/bin/python tools/journey/jr.py backup    # バックアップ用に重複�
 ## バックアップ
 
 `backup` で `~/Pictures/nocta-journey/library/` に重複なしで並ぶ（ハードリンクなので Mac の容量はほぼ増えない）。このフォルダを丸ごと HDD にコピーすればよい。Takeout のフォルダを消しても、library の中身は残る。
+
+## 候補の並び方（2026-10-19 CEO 決定）
+
+- 人のいない写真を先に並べる。人が写っている写真（人混みの街を含む）は、人のいない写真で 20 枚に足りないときだけ出る（`candidates.CROWD_T`）
+- 似た写真は 1 枚にする（`candidates.SIMILAR` = 0.88）。同じ日からは 4 枚まで（`PER_DAY`）
+- アメリカは州で 西部 / 東部 / ハワイ の地点に分ける（`regions.SUBREGIONS`。分け方を変えたら `geo` を回し直す）
 
 ## テスト
 
