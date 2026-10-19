@@ -84,6 +84,31 @@ class SubregionTest(unittest.TestCase):
         self.assertEqual(conn.execute("SELECT COUNT(*) FROM place_members").fetchone()[0], 2)
 
 
+class HokkaidoTest(unittest.TestCase):
+    def test_hokkaido_areas(self):
+        from jr import regions
+        points = {
+            "札幌": (43.062, 141.354, "doo"), "小樽": (43.19, 140.99, "doo"), "室蘭": (42.315, 140.974, "doo"),
+            "登別": (42.41, 141.10, "doo"), "滝川": (43.557, 141.91, "doo"),
+            "函館": (41.769, 140.729, "donan"), "江差": (41.869, 140.127, "donan"), "長万部": (42.51, 140.37, "donan"),
+            "旭川": (43.771, 142.365, "dohoku"), "美瑛": (43.588, 142.467, "dohoku"), "富良野": (43.342, 142.383, "dohoku"),
+            "稚内": (45.415, 141.673, "dohoku"), "留萌": (43.94, 141.637, "dohoku"),
+            "帯広": (42.924, 143.196, "doto"), "釧路": (42.985, 144.381, "doto"), "北見": (43.807, 143.894, "doto"),
+            "知床": (44.07, 145.0, "doto"),
+        }
+        for name, (lat, lng, area) in points.items():
+            self.assertEqual(regions.hokkaido_area(lat, lng), area, name)
+
+    def test_hokkaido_places_created(self):
+        hok = ("JP-01", box(139.0, 41.0, 146.0, 46.0))
+        b = geo.Boundaries([hok])
+        conn = store.connect(tmpdir() / "s.db")
+        conn.execute("INSERT INTO photos(id, sha256, lkey, taken_utc, lat, lng) VALUES ('hk', 'hks', 'hk', 0, 41.769, 140.729)")
+        geo.run(conn, b)
+        self.assertEqual(conn.execute("SELECT place_id FROM place_members").fetchone()[0], "place-hokkaido-donan")
+        self.assertEqual(conn.execute("SELECT name, parent_id FROM places").fetchone(), ("道南", "JP-01"))
+
+
 class TimeTest(unittest.TestCase):
     def test_local_day_overseas(self):
         # ニューヨーク、UTC 2016-03-02 03:00 → 現地 2016-03-01 22:00

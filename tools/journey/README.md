@@ -60,7 +60,7 @@ $VENV/bin/python tools/journey/jr.py backup    # バックアップ用に重複�
 
 - 人のいない写真を先に並べる。人が写っている写真（人混みの街を含む）は、人のいない写真で 20 枚に足りないときだけ出る（`candidates.CROWD_T`）
 - 似た写真は 1 枚にする（`candidates.SIMILAR` = 0.88）。同じ日からは 4 枚まで（`PER_DAY`）
-- アメリカは州で 西部 / 東部 / ハワイ の地点に分ける（`regions.SUBREGIONS`。分け方を変えたら `geo` を回し直す）
+- アメリカは州で 西部 / 東部 / ハワイ、北海道は 道央 / 道南 / 道北 / 道東 の地点に分ける（`regions.SUBREGIONS`。北海道は振興局に近づけた緯度経度の線 `regions.hokkaido_area`。分け方を変えたら `geo` を回し直す）
 
 ## テスト
 

@@ -145,10 +145,13 @@ def run(conn, b):
 
 def _assign_subregion(conn, b, country, pid, lat, lng):
     """アメリカなど、国の中を地点に分ける（regions.SUBREGIONS）。地点がなければ作る。"""
-    from jr.regions import SUBREGIONS
+    from jr.regions import SUBDIVISION_RULES, SUBREGIONS
 
     groups = SUBREGIONS.get(country)
-    code = b.subdivision(country, lat, lng) if groups else None
+    if not groups or lat is None:
+        return
+    rule = SUBDIVISION_RULES.get(country)
+    code = rule(lat, lng) if rule else b.subdivision(country, lat, lng)
     if not code:
         return
     for place_id, name, codes in groups:

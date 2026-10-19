@@ -38,7 +38,29 @@ ALBUM_HINTS = {
 
 # 国の中をさらに分ける（地点として自動で作る）。州・県の ISO 3166-2 コードで振り分ける
 US_WEST = ["US-WA", "US-OR", "US-CA", "US-NV", "US-ID", "US-MT", "US-WY", "US-UT", "US-CO", "US-AZ", "US-NM", "US-AK"]
+def hokkaido_area(lat, lng):
+    """北海道を 4 つに分ける（2026-10-19 CEO 決定: 道央・道南・道北・道東）。
+    手元の境界データに振興局がないため、振興局の区分に近づけた緯度経度の線で分ける。境目の町はずれることがある。
+      道南 = 渡島・檜山、道東 = 十勝・釧路・根室・オホーツク、道北 = 上川・留萌・宗谷、道央 = それ以外（石狩・後志・空知・胆振・日高）"""
+    if lat < 42.6 and lng < 140.75:
+        return "donan"
+    if lng >= 142.9:
+        return "doto"
+    if lat >= 43.75 or (lat >= 43.2 and lng >= 142.1):
+        return "dohoku"
+    return "doo"
+
+
+# 地域の中の区分を、境界データではなく決まりで出すもの
+SUBDIVISION_RULES = {"JP-01": hokkaido_area}
+
 SUBREGIONS = {
+    "JP-01": [
+        ("place-hokkaido-doo", "道央", ["doo"]),
+        ("place-hokkaido-donan", "道南", ["donan"]),
+        ("place-hokkaido-dohoku", "道北", ["dohoku"]),
+        ("place-hokkaido-doto", "道東", ["doto"]),
+    ],
     "US": [
         ("place-us-west", "西部", US_WEST),
         ("place-us-hawaii", "ハワイ", ["US-HI"]),
