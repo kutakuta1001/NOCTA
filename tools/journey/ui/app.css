@@ -75,6 +75,7 @@ main { padding: 16px 20px 60px; }
 .choices { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .choices input { padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; width: 12em; }
 .toggle { display: flex; gap: 16px; margin-bottom: 12px; }
+.filter.month input { display: inline-block; width: auto; }
 .pager { display: flex; gap: 8px; margin-top: 16px; }
 h2 { font-family: var(--serif); font-weight: 600; font-size: 20px; margin: 24px 0 4px; }
 

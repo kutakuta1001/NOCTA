@@ -27,6 +27,8 @@ MAX_CAPTION = 200
 MAX_PLACE_NAME = 40
 PAGE = 30
 MAX_SELECTED = 3
+MONTH_RE = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$")
+SCENIC_T = 0.5  # 日ごとの確認で「景色の写真」と数える景色らしさ
 
 
 class BadRequest(Exception):
@@ -71,9 +73,12 @@ def _photo_info(conn, pid, rid):
 
 
 def api_candidates(conn, q):
+    """候補。page=N で (N+1)×20 枚まで出す（「もっと見る」）。"""
     rid = _region_param(q)
+    limit = candidates.LIMIT * (_page(q) + 1)
+    ids = candidates.for_region(conn, rid, limit=limit + 1)
     return {"region": rid, "name": _region_name(conn, rid), "selected": _selected_count(conn, rid),
-            "photos": [_photo_info(conn, pid, rid) for pid in candidates.for_region(conn, rid)]}
+            "has_more": len(ids) > limit, "photos": [_photo_info(conn, pid, rid) for pid in ids[:limit]]}
 
 
 def api_excluded(conn, q):
@@ -93,15 +98,29 @@ def api_groups(conn, q):
         raise BadRequest("has_suggestion")
     cond = "" if has == "any" else (" AND " + ("" if has == "1" else "NOT ") +
                                     "EXISTS (SELECT 1 FROM region_suggestions s WHERE s.group_id = g.group_id)")
+    args = [status]
+    month = q.get("month", [""])[0]
+    if month:
+        if not MONTH_RE.match(month):
+            raise BadRequest("month は YYYY-MM")
+        cond += " AND g.local_day LIKE ?"
+        args.append(month + "-%")
     page = _page(q)
-    sql = ("SELECT g.group_id, g.local_day, g.region_id, (SELECT COUNT(*) FROM review_group_members m WHERE m.group_id = g.group_id) "
-           "FROM review_groups g WHERE g.status = ?" + cond + " ORDER BY g.local_day DESC LIMIT ? OFFSET ?")
+    # 景色の写真（景色らしく、人が写っていない）が多い日を上に並べる
+    sql = ("SELECT g.group_id, g.local_day, g.region_id, (SELECT COUNT(*) FROM review_group_members m WHERE m.group_id = g.group_id), "
+           "(SELECT COUNT(DISTINCT m.photo_id) FROM review_group_members m JOIN photo_variants v ON v.photo_id = m.photo_id "
+           " JOIN assessments a ON a.sha256 = v.sha256 WHERE m.group_id = g.group_id AND a.status = 'ok' "
+           " AND a.landscape >= ? AND COALESCE(a.crowd, 0) < ?) AS scenic "
+           "FROM review_groups g WHERE g.status = ?" + cond + " ORDER BY scenic DESC, g.local_day DESC LIMIT ? OFFSET ?")
     out = []
-    for gid, day, rid, n in conn.execute(sql, (status, PAGE, page * PAGE)).fetchall():
-        sample = [r[0] for r in conn.execute("SELECT photo_id FROM review_group_members WHERE group_id = ? ORDER BY photo_id LIMIT 6", (gid,))]
+    for gid, day, rid, n, scenic in conn.execute(sql, (SCENIC_T, candidates.CROWD_T, *args, PAGE, page * PAGE)).fetchall():
+        sample = [r[0] for r in conn.execute(
+            "SELECT m.photo_id FROM review_group_members m LEFT JOIN photo_variants v ON v.photo_id = m.photo_id "
+            "LEFT JOIN assessments a ON a.sha256 = v.sha256 WHERE m.group_id = ? "
+            "GROUP BY m.photo_id ORDER BY MAX(COALESCE(a.landscape, 0)) DESC, m.photo_id LIMIT 6", (gid,))]
         sugg = [{"region_id": r, "name": _region_name(conn, r), "source": s, "votes": v} for r, s, v in conn.execute(
             "SELECT region_id, source, votes FROM region_suggestions WHERE group_id = ? ORDER BY votes DESC", (gid,))]
-        out.append({"group_id": gid, "day": day, "count": n, "region_id": rid, "sample": sample, "suggestions": sugg})
+        out.append({"group_id": gid, "day": day, "count": n, "scenic": scenic, "region_id": rid, "sample": sample, "suggestions": sugg})
     return {"groups": out}
 
 

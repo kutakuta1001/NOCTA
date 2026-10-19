@@ -168,6 +168,13 @@ class AssessTest(Base):
         flags = json.loads(self.conn.execute("SELECT flags FROM assessments").fetchone()[0])
         self.assertIn("dark", flags)
 
+    def test_targets_include_days_without_suggestion(self):
+        sha = "g" * 64
+        self.conn.execute("INSERT INTO photos(id, sha256, lkey, taken_utc) VALUES ('g', ?, 'g', ?)", (sha, T))
+        self.conn.execute("INSERT INTO review_groups(group_id, local_day) VALUES ('day-2009-03-05', '2009-03-05')")
+        self.conn.execute("INSERT INTO review_group_members(group_id, photo_id) VALUES ('day-2009-03-05', 'g')")
+        self.assertIn("g", assess.default_targets(self.conn))
+
     def test_assess_writes_crowd(self):
         self.add_file_photo("a")
         assess.run(self.conn, self.home, FakeScorer(), "v1")

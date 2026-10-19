@@ -74,12 +74,13 @@ def blur_and_brightness(im):
 
 
 def default_targets(conn):
-    """判定する写真: 地域が決まったもの・作者が地域を付けたもの・候補のある/確認した日のグループの写真。"""
+    """判定する写真: 地域が決まったもの・作者が地域を付けたもの・旅ではないと決めた日以外の確認グループの写真
+    （日ごとの確認を景色の多い順に並べるため、候補のない日も判定する）。"""
     rows = conn.execute(
         "SELECT photo_id FROM regions WHERE status = 'resolved' "
         "UNION SELECT photo_id FROM overrides "
         "UNION SELECT m.photo_id FROM review_group_members m JOIN review_groups g ON g.group_id = m.group_id "
-        "  WHERE g.status = 'confirmed' OR (g.status = 'open' AND EXISTS (SELECT 1 FROM region_suggestions s WHERE s.group_id = g.group_id)) "
+        "  WHERE g.status != 'not_trip' "
         "UNION SELECT photo_id FROM place_members").fetchall()
     return [r[0] for r in rows]
 

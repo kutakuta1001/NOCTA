@@ -2,7 +2,7 @@
 (function () {
     "use strict";
     var $ = function (s) { return document.querySelector(s); };
-    var state = { region: null, regions: [], names: {}, daysPage: 0, reviewPage: 0, excludedPage: 0, rejectedPage: 0 };
+    var state = { region: null, regions: [], names: {}, daysPage: 0, reviewPage: 0, excludedPage: 0, rejectedPage: 0, page: 0 };
 
     function el(tag, cls, text) {
         var n = document.createElement(tag);
@@ -64,14 +64,16 @@
             });
         });
     }
-    function openRegion(rid) {
+    function openRegion(rid, keepPage) {
+        if (rid !== state.region || !keepPage) state.page = keepPage ? state.page : 0;
         state.region = rid;
         renderRegions();
-        return api("/api/candidates?region=" + encodeURIComponent(rid)).then(renderCandidates).catch(fail);
+        return api("/api/candidates?region=" + encodeURIComponent(rid) + "&page=" + state.page).then(renderCandidates).catch(fail);
     }
     function renderCandidates(j) {
         $("#region-title").textContent = j.name;
         $("#region-count").textContent = "候補 " + j.photos.length + " 枚・選んだ " + j.selected + " / 3";
+        $("#more").hidden = !j.has_more;
         var chosen = j.photos.filter(function (p) { return p.selected; });
         var ol = $("#chosen");
         ol.textContent = "";
@@ -132,7 +134,7 @@
         body.region_id = state.region;
         return api("/api/decision", body).then(function () {
             notice("");
-            return Promise.all([openRegion(state.region), loadRegions()]);
+            return Promise.all([openRegion(state.region, true), loadRegions()]);
         }).catch(fail);
     }
 
@@ -140,6 +142,8 @@
     function loadDays() {
         var kind = document.querySelector('input[name="days-kind"]:checked').value;
         var q = (kind === "1" || kind === "0") ? "status=open&has_suggestion=" + kind : "status=" + kind + "&has_suggestion=any";
+        var month = $("#days-month").value;
+        if (month) q += "&month=" + encodeURIComponent(month);
         api("/api/groups?" + q + "&page=" + state.daysPage).then(function (j) {
             var ul = $("#day-list");
             ul.textContent = "";
@@ -147,7 +151,7 @@
             j.groups.forEach(function (g) {
                 var li = el("li", "card");
                 var now = g.region_id ? "：いまは " + (Object.keys(state.names).filter(function (n) { return state.names[n] === g.region_id; })[0] || g.region_id) : "";
-                li.appendChild(el("h3", "", g.day.replace(/-/g, ".") + "（" + g.count + " 枚）" + now));
+                li.appendChild(el("h3", "", g.day.replace(/-/g, ".") + "（" + g.count + " 枚・景色 " + g.scenic + " 枚）" + now));
                 var strip = el("div", "strip");
                 g.sample.forEach(function (pid) { strip.appendChild(img(pid, "")); });
                 li.appendChild(strip);
@@ -377,6 +381,9 @@
     }
     document.querySelectorAll("#tabs button").forEach(function (b) { b.addEventListener("click", function () { showTab(b.dataset.tab); }); });
     document.querySelectorAll('input[name="days-kind"]').forEach(function (r) { r.addEventListener("change", function () { state.daysPage = 0; loadDays(); }); });
+    $("#more").addEventListener("click", function () { state.page += 1; openRegion(state.region, true); });
+    $("#days-month").addEventListener("change", function () { state.daysPage = 0; loadDays(); });
+    $("#days-month-clear").addEventListener("click", function () { $("#days-month").value = ""; state.daysPage = 0; loadDays(); });
     $("#days-prev").addEventListener("click", function () { state.daysPage = Math.max(0, state.daysPage - 1); loadDays(); });
     $("#days-next").addEventListener("click", function () { state.daysPage += 1; loadDays(); });
     $("#review-prev").addEventListener("click", function () { state.reviewPage = Math.max(0, state.reviewPage - 1); loadReview(); });

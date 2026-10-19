@@ -172,6 +172,50 @@ class ServerTest(unittest.TestCase):
         self.assertEqual([x["group_id"] for x in g], ["day-2016-03-01"])
         self.assertEqual(g[0]["region_id"], "JP-26")
 
+    def _group(self, gid, day, scores):
+        conn = store.connect(self.db)
+        conn.execute("INSERT INTO review_groups(group_id, local_day) VALUES (?, ?)", (gid, day))
+        for i, ls in enumerate(scores):
+            pid = f"{int(day.replace('-', '')):010x}{i:06x}"
+            conn.execute("INSERT INTO photos(id, sha256, lkey, taken_utc) VALUES (?,?,?,?)", (pid, pid * 4, pid, T))
+            conn.execute("INSERT INTO photo_variants(photo_id, sha256, path, role) VALUES (?,?, '/x', 'original')", (pid, pid * 4))
+            conn.execute("INSERT INTO assessments(sha256, version, status, flags, landscape, person, blur, crowd) VALUES (?, 'v', 'ok', '[]', ?, 0, 99, 0)", (pid * 4, ls))
+            conn.execute("INSERT INTO review_group_members(group_id, photo_id) VALUES (?,?)", (gid, pid))
+        conn.close()
+
+    def test_server_groups_sorted_by_landscape(self):
+        self._group("day-2020-01-01", "2020-01-01", [0.9, 0.9, 0.9])
+        self._group("day-2021-01-01", "2021-01-01", [0.1, 0.1, 0.9])
+        g = json.loads(self.req("GET", "/api/groups?status=open&has_suggestion=0")[2])["groups"]
+        self.assertEqual([x["group_id"] for x in g][:2], ["day-2020-01-01", "day-2021-01-01"])
+        self.assertEqual(g[0]["scenic"], 3)
+
+    def test_server_groups_month_filter(self):
+        self._group("day-2009-03-05", "2009-03-05", [0.5])
+        self._group("day-2014-01-02", "2014-01-02", [0.5])
+        g = json.loads(self.req("GET", "/api/groups?status=open&has_suggestion=any&month=2009-03")[2])["groups"]
+        self.assertEqual([x["group_id"] for x in g], ["day-2009-03-05"])
+        self.assertEqual(self.req("GET", "/api/groups?status=open&month=2009-3x")[0], 400)
+
+    def test_server_candidates_more(self):
+        conn = store.connect(self.db)
+        import numpy as np
+        for i in range(30):
+            pid = f"{0xa00 + i:016x}"
+            v = np.zeros(64, dtype=np.float32); v[i] = 1.0
+            conn.execute("INSERT INTO photos(id, sha256, lkey, taken_utc, lat, lng) VALUES (?,?,?,?,?,?)", (pid, pid * 4, pid, T + (10 + i) * 86400, 43.2, 141.0))
+            conn.execute("INSERT INTO photo_variants(photo_id, sha256, path, role) VALUES (?,?, '/x', 'original')", (pid, pid * 4))
+            conn.execute("INSERT INTO regions(photo_id, region_id, status) VALUES (?, 'JP-01', 'resolved')", (pid,))
+            conn.execute("INSERT INTO assessments(sha256, version, status, flags, landscape, person, blur, embedding, crowd) VALUES (?, 'v', 'ok', '[]', 0.7, 0, 99, ?, 0)", (pid * 4, v.tobytes()))
+        conn.close()
+        first = json.loads(self.req("GET", "/api/candidates?region=JP-01")[2])
+        more = json.loads(self.req("GET", "/api/candidates?region=JP-01&page=1")[2])
+        self.assertEqual(len(first["photos"]), 20)
+        self.assertTrue(first["has_more"])
+        self.assertEqual(len(more["photos"]), 35)
+        self.assertFalse(more["has_more"])
+        self.assertEqual([p["id"] for p in more["photos"][:20]], [p["id"] for p in first["photos"]])
+
     def test_server_regions_list(self):
         status, _, body = self.req("GET", "/api/regions")
         self.assertEqual(status, 200)

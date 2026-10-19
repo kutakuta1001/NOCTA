@@ -37,11 +37,13 @@
                 <ol id="chosen" class="chosen" aria-label="選んだ写真"></ol>
                 <p class="hint">写真を押すと選びます。もう一度押すと外れます。1 つの地域で 3 枚まで。</p>
                 <ul id="grid" class="grid"></ul>
+                <div class="pager"><button type="button" id="more" hidden>もっと見る（次の 20 枚）</button></div>
             </div>
         </section>
 
         <section id="tab-days" class="tab" hidden>
-            <p class="lead">撮影場所のない写真を、撮った日ごとにまとめています。合っていれば地域を押してください。</p>
+            <p class="lead">撮影場所のない写真を、撮った日ごとにまとめています。景色の写真が多い日から並べています。合っていれば地域を押してください。</p>
+            <label class="filter month">年月で絞る <input id="days-month" type="month"> <button type="button" id="days-month-clear">絞り込みを外す</button></label>
             <div class="toggle">
                 <label><input type="radio" name="days-kind" value="1" checked> 地域の候補がある日</label>
                 <label><input type="radio" name="days-kind" value="0"> 候補がない日</label>
