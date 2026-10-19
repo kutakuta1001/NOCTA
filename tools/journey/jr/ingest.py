@@ -63,7 +63,9 @@ def match_sidecar(media_name, json_names):
     if m:
         base = m.group("stem") + m.group("ext")
         num = "(" + m.group("n") + ")"
-    exact = [base + ".supplemental-metadata" + num + ".json", base + num + ".json"]
+    stem_only = base.rsplit(".", 1)[0] if "." in base else base
+    exact = [base + ".supplemental-metadata" + num + ".json", base + num + ".json",
+             stem_only + ".supplemental-metadata" + num + ".json"]  # 拡張子のない情報ファイル名もある
     hits = [j for j in exact if j in json_names]
     if hits:
         return hits[:1]

@@ -32,6 +32,14 @@ class MatchSidecarTest(unittest.TestCase):
         self.assertEqual(ingest.match_sidecar("IMG_1-編集済み.jpg", ["IMG_1.jpg.supplemental-metadata.json"]),
                          ["IMG_1.jpg.supplemental-metadata.json"])
 
+    def test_match_without_extension(self):
+        self.assertEqual(ingest.match_sidecar("DSC_1269.jpg", ["DSC_1269.supplemental-metadata.json"]),
+                         ["DSC_1269.supplemental-metadata.json"])
+        self.assertEqual(ingest.match_sidecar("DSC_1269-編集済み.jpg", ["DSC_1269.supplemental-metadata.json"]),
+                         ["DSC_1269.supplemental-metadata.json"])
+        self.assertEqual(ingest.match_sidecar("upload_-1(104).jpg", ["upload_-1.supplemental-metadata(104).json", "upload_-1.supplemental-metadata(10).json"]),
+                         ["upload_-1.supplemental-metadata(104).json"])
+
     def test_match_truncated(self):
         media = "5674541_576945877_1large_very_long_name.jpg"
         js = media + ".supplemental-me.json"
