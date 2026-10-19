@@ -24,3 +24,6 @@ website/sankou/
 *.pfx
 secrets/
 credentials/
+
+# Python の一時ファイル（tools/journey ほか）
+__pycache__/
