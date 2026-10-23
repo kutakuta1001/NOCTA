@@ -1,5 +1,21 @@
 # ベストプラクティス 処理済みアーカイブ
 
+## 2026-10-24 アーカイブ分
+
+- [platform.claude.com] モデル一覧 — Opus 5 が Legacy へ移動（利用継続可）。現行ラインナップは Fable 5.1 / Opus 5.5 / Sonnet 5 / Haiku 4.5 の4本。R-09・model-lineup.md・エージェント定義の `opus` 参照先が変わる （2026-09-27 処理）
+- [platform.claude.com] モデル一覧 — Opus 5.5 の既定 effort は medium（Fable 5.1 / Sonnet 5 は high）。批評用途で従来品質を保つには `/effort high` かエージェント frontmatter の `effort:` を明示する必要 （2026-09-27 処理）
+- [platform.claude.com] モデル一覧 — キャッシュ読取は Opus 5.5 が基本入力の5%（$0.20/MTok）、Fable 5.1 / Mythos 5.1 は2.5%、他は10%。前回エントリ「他モデルは10%」を訂正。Batch API の300k出力ベータに Opus 5.5 も対応 （2026-09-27 処理）
+- [code.claude.com] 概要 — `/desktop` でターミナルセッションをデスクトップアプリへ引き継ぎ（差分を視覚確認・claude.ai サブスク必要）、`claude --teleport` で Web / モバイルの長時間タスクをターミナルへ、Dispatch で電話からタスク送信 （2026-09-27 処理）
+- [code.claude.com] 概要 — `claude agents`（エージェントビュー・研究プレビュー）: バックグラウンドで動く複数セッションをディスパッチして1画面で監視。並列作業の選択肢が worktree / クロスセッションメッセージング / Agent Teams と並列に整理された （2026-09-27 処理）
+- [code.claude.com] ベストプラクティス — auto mode が Pro / Max / Team の対話ターミナル・VS Code の組み込み開始権限モードに（他プランは Manual）。分類器がスコープ逸脱・未知インフラ・敵対的コンテンツ由来の操作だけをブロック。NOCTA の bypassPermissions 運用との比較材料 （-p 時の制約は 2026-09-06 に収集） （2026-09-27 処理）
+- [code.claude.com] ベストプラクティス — 「Claude にインタビューさせる」: 最小プロンプト + AskUserQuestion で技術・UX・エッジケースを深掘りさせ SPEC.md に書かせてから新セッションで実装。R-14 `/brainstorm` の公式版に相当 （2026-09-27 処理）
+- [code.claude.com] ベストプラクティス — `/batch <instruction>` で変更を5〜30サブエージェントに分割し各自の worktree で実行（`claude -p` ループの代替）。COST POLICY「動的ワークフロー」との棲み分け材料 （2026-09-27 処理）
+- [code.claude.com] 動的ワークフロー — サイズ目安が変更: 既定 medium = 10エージェント未満（旧15）、Pro は small（5未満）が既定。`/config workflowSizeGuideline=small` か settings の同キーで固定可 （2026-08-05 に旧値 unrestricted / 15 で収集） （2026-09-27 処理）
+- [code.claude.com] 動的ワークフロー — 使用制限到達時にランが一時停止しリセット後に自動再開（v2.1.271）。条件: 対話セッション・`autoContinueAtUsageLimit` オン・24h以内リセット・待機2回まで。-p / バックグラウンド / Agent Teams では失敗扱い （2026-09-27 処理）
+- [code.claude.com] 動的ワークフロー — ファンアウトのプロンプトキャッシュ: 同一構成のエージェントは先頭のキャッシュを共有（既定 TTL 5分、`subagentPromptCacheTtl: 1h` で延長・書込は割高）。`CLAUDE_CODE_WORKFLOW_PREFIX_STAGGER_MS`（既定5000）が待機上限 （2026-09-27 処理）
+- [changelog v2.1.257] 【新モデル】Claude Fable 5.1（`claude-fable-5-1`）追加。既定の Fable モデルに昇格。1M コンテキスト・$10/$50・キャッシュ読取 $0.25/MTok （2026-09-06 処理）
+- [changelog v2.1.257] `.claude/settings.json` / `settings.local.json` の `defaultMode: "bypassPermissions"` が無視されるようになった（`"auto"` と同様）。user / managed settings に置くか `--permission-mode` で渡す （2026-09-06 処理）
+
 ## 2026-09-27 アーカイブ分
 
 - [changelog v2.1.251] `CLAUDE_CODE_SUBAGENT_MODEL` が「既定値」に降格。エージェント定義の `model:` と per-spawn 指定が優先される（v2.1.238 時点の「両方を上書きする」記述は失効・処理済み #47 の訂正） （2026-09-06 処理）
