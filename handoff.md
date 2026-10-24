@@ -190,3 +190,5 @@
 - 2026-10-18: TFF 旅の地図ページ（the-first-flower/journey/）を準備中の状態で作成（ブランチ feat/tff-journey・未取り込み）。次: Takeout の書き出しを受け取り、計画 2（候補作り・選ぶ画面）へ。
 - 2026-10-19: 旅の地図の道具（tools/journey: 取り込み・地域判定・候補作り・選ぶ画面・書き出し・バックアップ）を作成。写真 43,830 枚を取り込み、バックアップ用の整理は ~/Pictures/nocta-journey/library（HDD へコピーするだけ）。次: jr.py serve で写真を選ぶ。
 - 2026-10-19: 旅の地図の候補を CEO の講評で調整（人のいない写真を優先・似た写真は 1 枚・アメリカを西部/東部/ハワイに分割）。次: 空いた時間に jr.py serve で写真を選ぶ。
+- 2026-10-24: 週次フルルーティン完了（X 9件・公式 13件・Web レポート・22件一括レビューをコミット。push はしていない）。新モデル Sonnet 5.5 / Haiku 5.5 を検出。次: /model-review の棲み分けを CEO が判断（R-09・G-01 の表記揃え、Codex フォールバック鎖の末尾 gpt-5.5 が廃止済み）
+- 2026-10-24: 起案を Sonnet 5.5 に交代し G-01・R-09・model-lineup.md rev.11 に反映、Codex の予備を gpt-6-astra → gpt-6-sol → gpt-5.6-sol に変更。次: Haiku 5.5 の採否・深い推論の第一候補・svp-generator の effort を CEO が判断

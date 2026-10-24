@@ -77,17 +77,17 @@ SynthV が誤読みしやすい箇所に【要確認】を付ける（対象: �
 | 用途 | モデル |
 |---|---|
 | 調査・短いファイル生成・handoff 更新 | Haiku 4.5 |
-| 起案（楽曲仕様書・歌詞草稿・SNS文案・コード生成）— 既定 | Sonnet 5 |
-| 批評・承認ゲート直前レビュー・SVP生成・重要設計クリティーク | Opus 5 |
+| 起案（楽曲仕様書・歌詞草稿・SNS文案・コード生成）— 既定 | Sonnet 5.5 |
+| 批評・承認ゲート直前レビュー・SVP生成・重要設計クリティーク | Opus 5.5 |
 | 深い推論が必要な超重要案件 | Fable 5.1 |
 
-起案→批評フロー: Sonnet 5 が草稿 → Opus 5 が批評・代替案提示 → CEO が最終選択。
+起案→批評フロー: Sonnet 5.5 が草稿 → Opus 5.5 が批評・代替案提示 → CEO が最終選択。
 判断が割れる超重要案件は Fable 5.1 にエスカレーションする。適用場面は③歌詞選択前・⑥PVコンセプト承認前・重要設計変更時。
 
-Fable 5.1 は知識カットオフ 2026年6月・SWE-bench Pro 81.2% で Opus 5（2026年5月・79.2%）を上回る。
-それでも Opus 5 を既定に置く根拠は、価格が半額（$5/$25 対 $10/$50）でトークン消費が約30%少ないこと。
+Opus 5.5 を既定に置く根拠は、価格が Fable 5.1 の4割（$4/$20 対 $10/$50）でレイテンシが短いこと。知識カットオフは両者とも2026年6月。
+Opus 5.5 の既定 effort は medium のため、批評用途では effort high 以上を明示する。
 
-Opus 5 への切替通知が必要な場面（作業前に「Opus 5 への切り替えを推奨します」と通知し CEO の確認を待つ）:
+Opus 5.5 への切替通知が必要な場面（作業前に「Opus 5.5 への切り替えを推奨します」と通知し CEO の確認を待つ）:
 superpowers: プレフィックスのスキル使用前・③歌詞レビュー・⑥PVコンセプトレビュー・SVP生成前・
 CLAUDE.md 等重要設計変更のクリティーク前・Agent Teams のレビューフェーズ・出力が64k tokens超見込みのタスク。
 
@@ -238,8 +238,8 @@ CEO が作れない部分（ドラム・ベース）は Suno のパーツをそ�
 → concept-director ∥ visual-prompter → concept-critic → sns-batch-agent ∥ press-release-writer ∥ analytics-agent ∥ copyright-agent
 
 エージェント定義の実体は `~/.claude/agents/`（版管理コピーは `claude-config/agents/`）。
-モデル割当は R-09 に従う。批評系（lyric-critic / concept-critic）と svp-generator は Opus 5、
-explorer 系（analytics-agent）は Haiku、他は Sonnet 5。詳細な割当表は `~/.claude/references/model-lineup.md`。
+モデル割当は R-09 に従う。批評系（lyric-critic / concept-critic）と svp-generator は Opus 5.5、
+explorer 系（analytics-agent）は Haiku、他は Sonnet 5.5。詳細な割当表は `~/.claude/references/model-lineup.md`。
 
 ---
 

@@ -48,12 +48,13 @@ FALLBACK_KEY_FILE="${CODEX_FALLBACK_KEY_FILE:-$HOME/.codex/fallback-api-key}"
 # gpt-6-astra（GPT-6 世代のフラッグシップ・モデル一覧の priority 1）は
 # CLI 0.153.4 以降で ChatGPT Plus 利用可（検証済み 2026-09-06）。
 # 0.144.6 では同じモデル名が 400（requires a newer version of Codex）で拒否された。
-# 古い CLI では gpt-5.6-sol / gpt-5.5 にフォールバックすること。
+# 古い CLI では gpt-6-sol / gpt-5.6-sol にフォールバックすること。
 CODEX_CHATGPT_MODEL="${CODEX_CHATGPT_MODEL:-gpt-6-astra}"
 # astra がモデル未対応で拒否されたときに、同じ ChatGPT Plus 定額枠のまま順に試すモデル。
 # **従量課金でしか使えないモデルを絶対にここへ入れない**（定額のみの方針）。
-# gpt-5.6-sol は CLI 0.144.0 以降・gpt-5.5 は旧既定で古い CLI でも動く。
-CODEX_CHATGPT_MODEL_FALLBACKS="${CODEX_CHATGPT_MODEL_FALLBACKS:-gpt-5.6-sol gpt-5.5}"
+# gpt-6-sol は CLI 0.157.0 以降で ChatGPT Plus 利用可（検証済み 2026-10-24）。
+# gpt-5.6-sol は CLI 0.144.0 以降。gpt-5.5 は 2026-10-14 に Codex で廃止されたため外した。
+CODEX_CHATGPT_MODEL_FALLBACKS="${CODEX_CHATGPT_MODEL_FALLBACKS:-gpt-6-sol gpt-5.6-sol}"
 
 # 推論の深さ。GPT-6 世代は low/medium/high/xhigh/max/ultra の6段階。
 # astra の既定は low だが、レビューは欠陥発見の網羅性が最優先なので high を明示する。
@@ -546,7 +547,7 @@ Env overrides:
                              ※ codex 既定 gpt-5.3-codex は API 一覧から消滅（2026-09-12）
                              ※ 単体 "gpt-5.6" は非対応。sol/terra/luna の階層名が必須
   CODEX_CHATGPT_MODEL_FALLBACKS
-                             定額枠での段階フォールバック（既定: "gpt-5.6-sol gpt-5.5"）
+                             定額枠での段階フォールバック（既定: "gpt-6-sol gpt-5.6-sol"）
                              ※ 従量課金でしか使えないモデルを入れてはならない
   CODEX_APIKEY_MODEL         apikey モードのモデル（既定: gpt-5.6-luna を最安で固定）
                              ※ 省略すると CLI 既定の高額モデルが使われるため必ず指定する

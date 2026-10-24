@@ -20,7 +20,7 @@ OpenAI の Codex CLI を第三者レビュアーとして呼び出す仕組み�
 | 系統 | 認証 | モデル | 課金 | いつ使うか |
 |---|---|---|---|---|
 | **主** | ChatGPT Plus 連携 | gpt-6-astra（effort **high**） | 定額（Plus料金内） | 既定。通常はこれで走る |
-| 主の定額フォールバック | ChatGPT Plus 連携 | gpt-5.6-sol → gpt-5.5 | 定額（Plus料金内） | astra がモデル未対応で拒否されたとき自動で順に試す |
+| 主の定額フォールバック | ChatGPT Plus 連携 | gpt-6-sol → gpt-5.6-sol | 定額（Plus料金内） | astra がモデル未対応で拒否されたとき自動で順に試す |
 | ~~副~~ | OpenAI API キー | gpt-5.6-luna（固定） | 従量課金 | **既定で無効。`CODEX_ALLOW_METERED=1` がない限り実行を拒否** |
 
 **課金方針: 定額のみ。従量課金へは自動でも手動確認でもフォールバックしない。**
@@ -30,7 +30,7 @@ OpenAI の Codex CLI を第三者レビュアーとして呼び出す仕組み�
 推論の深さ（`model_reasoning_effort`）は **chatgpt モードのみ** に渡す。apikey は未検証の
 config キーを足して経路ごと壊すリスクを避けるため付けない。
 
-`CODEX_CHATGPT_MODEL_FALLBACKS`（既定 `"gpt-5.6-sol gpt-5.5"`）には
+`CODEX_CHATGPT_MODEL_FALLBACKS`（既定 `"gpt-6-sol gpt-5.6-sol"`。2026-10-24 に gpt-5.5 の廃止を受けて変更）には
 **従量課金でしか使えないモデルを入れてはならない**。定額の前提が崩れる。
 
 - 主の認証情報: `~/.codex/auth.json`（`codex login` で作成・ChatGPTトークン）
@@ -40,7 +40,7 @@ config キーを足して経路ごと壊すリスクを避けるため付けな�
 
 ### フォールバックの流れ（すべて定額枠内）
 1. `/codex-review` 実行 → ChatGPT Plus で `gpt-6-astra`（effort high）
-2. モデル未対応で拒否 → 同じ定額枠のまま `gpt-5.6-sol` → `gpt-5.5` を順に試す
+2. モデル未対応で拒否 → 同じ定額枠のまま `gpt-6-sol` → `gpt-5.6-sol` を順に試す
 3. 認証失敗（未ログイン・トークン失効）→ モデルを変えても直らないので**即停止**。他モデルは試さない
 4. 定額枠が全滅 → **終了コード 75 + `CODEX_AUTH_FAILED`** を出して課金せず終了
 5. Claude は `CODEX_AUTH=apikey` を提案しない。CLI 更新・再ログイン・Claude 側代替を案内する
@@ -75,7 +75,9 @@ config キーを足して経路ごと壊すリスクを避けるため付けな�
 - 検証結果（2026-07-21）:
   - `gpt-5.6-sol` / `gpt-5.6-terra` / `gpt-5.6-luna` → ChatGPT Plusで動作（**要 Codex CLI 0.144.0 以降**）
   - `gpt-5.6`（階層名なし） → ChatGPT非対応（400: model metadata not found）
-  - `gpt-5.5` → 引き続き動作（旧既定・フォールバック用に維持）
+  - `gpt-5.5` → 2026-10-14 に Codex で廃止。ローカルのモデル一覧からも消えたため、2026-10-24 にフォールバックから外した
+- 検証結果（2026-10-24・Codex CLI 0.164.0）:
+  - `gpt-6-sol` → ChatGPT Plus で動作（`codex exec -m gpt-6-sol` で応答を確認）。フォールバックの1番目に採用
   - `gpt-5.4` / `gpt-5.4-mini` → 動作（古いCLIでも可）
   - `gpt-5.x-codex` / `codex-mini` → ChatGPT非対応（APIキー専用）
 - ベンチマークの比較値は `~/.claude/references/model-lineup.md` に一元化する（ここでは重複させない）。
