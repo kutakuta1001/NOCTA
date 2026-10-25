@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>感動したこと 使い方</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400&family=Noto+Sans+JP:wght@400;500&family=Noto+Serif+JP:wght@400&display=swap" rel="stylesheet">
+<style>
+  /* CEO がローカルで開く使い方。TFF の薄紫に合わせた一列の読み物 */
+  :root { --bg: #FCFBF5; --paper: #FFFDF8; --ink: #3D2E52; --sub: #7C6A9C; --line: #E3D9EC; --accent: #9A4F92; --leaf: #5E9C6C; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1E1828; --paper: #2A2236; --ink: #EDE6F3; --sub: #B3A3C8; --line: #43385A; --accent: #D58DCB; --leaf: #8CCB9A; color-scheme: dark; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif; font-size: 15px; line-height: 1.9; }
+  main { max-width: 640px; margin: 0 auto; padding: 48px 16px 80px; }
+  h1 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 26px; letter-spacing: .12em; margin: 0; }
+  .lead { color: var(--sub); margin: 8px 0 0; }
+  h2 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 18px; letter-spacing: .08em; margin: 44px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+  a { color: var(--accent); overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .links { display: grid; gap: 12px; margin-top: 28px; }
+  .link { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .link b { display: block; font-weight: 500; }
+  .link span { font-size: 13px; color: var(--sub); }
+  ol, ul { padding-left: 1.4em; margin: 0; }
+  li { margin: 6px 0; }
+  .say { display: inline-block; font-family: 'Noto Serif JP', serif; background: var(--paper); border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 2px 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 500; color: var(--sub); white-space: nowrap; }
+  .note { font-size: 13px; color: var(--sub); }
+  .date { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--sub); margin-top: 48px; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>感動したこと 使い方</h1>
+  <p class="lead">The First Flower の一言日記を書き足すときの手順です。</p>
+
+  <div class="links">
+    <div class="link"><b>書く</b><a href="https://claude.ai/artifact/6wjeg4tyEcDYtyxnHzRLHH">感動の書きとめ帳（入力ページ）</a><br><span>作者専用。スマホのブラウザで開けます。claude.ai にログインした状態で開いてください。</span></div>
+    <div class="link"><b>見る</b><a href="https://kutakuta1001.github.io/NOCTA/the-first-flower/kandou/">感動したこと（公開ページ）</a><br><span>TFF の Profile 節の「感動したことを読む →」からもたどれます。</span></div>
+  </div>
+
+  <h2>書いて載せるまで</h2>
+  <ol>
+    <li>入力ページで、日付・本文（3 文ほど）を入れて「残す」を押す。日付は思い出した日ではなく、感動した日にする。</li>
+    <li>長く書きたいときはブログに書き、その記事の URL を「ブログ記事の URL」に入れる。</li>
+    <li>写真を付けたいときは「写真を選ぶ」で 1 枚選ぶ。写真はサイトに公開されるので、人の顔が写っていないかを確かめる。</li>
+    <li>載せたくなったら、Claude Code に <span class="say">日記を反映して</span> と伝える。</li>
+    <li>Claude が載せる内容を一覧で見せるので、確かめて OK を出す。続けて <span class="say">コミットプッシュして</span> と伝えると、本番に出る。</li>
+  </ol>
+  <p class="note">入力ページに残しただけでは、サイトには出ません。必ず 5 の確認を通ります。</p>
+
+  <h2>直す・消す</h2>
+  <ul>
+    <li>入力ページの一覧で「直す」を押すと、上の欄に中身が戻る。直して「直して残す」を押す。</li>
+    <li>「消す」を押すと確認が出る。まだ載せていないものはその場で消える。載せたものは、次の反映でサイトからも外れる。</li>
+    <li>載せたものを直したり消したりしたら、また <span class="say">日記を反映して</span> と伝える。</li>
+  </ul>
+
+  <h2>入力ページの印</h2>
+  <table>
+    <tr><th>未反映</th><td>まだサイトに載っていない</td></tr>
+    <tr><th>直した・未反映</th><td>載せたあとに直した。次の反映で、サイトも直る</td></tr>
+    <tr><th>反映済み</th><td>いまサイトに載っている内容と同じ</td></tr>
+  </table>
+
+  <h2>花の咲き方</h2>
+  <ul>
+    <li>1 件書くごとに花びらが開き、6 件で一輪が満開になる。7 件目からは次の花が咲き始める。</li>
+    <li>年の中で、日付の古い順に 6 件ずつ一輪になる。思い出した順に書いても、載るときは日付順に並ぶ。</li>
+    <li>年が変わると新しい花から始まる。2026 年の一輪目は桜で、二輪目からは コスモス → マーガレット → 椿 → ネモフィラ → ひまわり の順。</li>
+    <li>前の年は、一輪目の花が一年ずつ順にずれる（2025 年はコスモス、2024 年はマーガレット）。</li>
+    <li>ある年の花を変えたいときは、Claude に「2027 年は椿にして」のように伝える。</li>
+  </ul>
+
+  <h2>困ったとき</h2>
+  <ul>
+    <li>入力ページに「作者専用です」「保存先につながりませんでした」と出る: claude.ai にログインし直して開く。</li>
+    <li>写真の欄が出ない: ページを開き直す。それでも出なければ、写真を外して本文だけ残し、写真はあとで足す。</li>
+    <li>写真が「読み込めませんでした」と出る: スマホの写真アプリで JPEG として書き出してから選ぶ。</li>
+    <li>Claude が手順を覚えていないとき: 「docs/tff-kandou.md を読んで日記を反映して」と伝える。</li>
+  </ul>
+
+  <p class="date">2026.10.25</p>
+</main>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # TFF「感動したこと」の運用
 
-The First Flower の一言日記（`website/the-first-flower/kandou/`）の書き足し方。
+The First Flower の一言日記（`website/the-first-flower/kandou/`）の書き足し方（Claude 向け）。CEO 向けの使い方は `docs/tff-kandou-guide.html`。
 
 ## 置き場所
 

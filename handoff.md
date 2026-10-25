@@ -199,3 +199,4 @@
 - 2026-10-25: TFF に「感動したこと」一言日記を追加（kandou/・Profile の自己紹介文の下にリンク・データは空でコミット、未 push）。入力ページ https://claude.ai/artifact/6wjeg4tyEcDYtyxnHzRLHH を作成（作者専用）。手順は docs/tff-kandou.md。次: CEO が入力ページで書き、「日記を反映して」と伝える。push は CEO の指示で
 - 2026-10-25: 感動したことに写真 1 枚の機能を追加（入力ページで選んで縮めて保存・サイトは栞の本文の下に表示し押すと拡大）。入力ページの 7 件は未反映（UNISON の曲名は harmonized finale に修正済み）。次: CEO が「日記を反映して」と伝える
 - 2026-10-25: 感動したこと（7 件）を公開（a9a369b・04e060a・4c1a967、Deploy success）。本番の /the-first-flower/kandou/ と Profile のリンクを確認、入力ページの 7 件は反映済みに。次: 写真を足したら「日記を反映して」
+- 2026-10-25: 感動したことを 6 件で一輪が咲く形に変更（c1085bd、未 push）。CEO 向けの使い方ページ docs/tff-kandou-guide.html を作成。次: CEO が確認して push を指示
