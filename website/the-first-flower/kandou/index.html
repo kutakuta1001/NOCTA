@@ -64,6 +64,12 @@
         .text { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 14.5px; line-height: 2.2; margin: 2px 0 0; }
         .blog { display: inline-block; margin-top: 8px; font-size: 11.5px; letter-spacing: 2px; color: #9A4F92; text-decoration: none; border-bottom: 1px solid rgba(177,104,168,.35); }
         .blog:hover { color: var(--accent); }
+        .photo { display: block; margin: 12px 0 0; padding: 0; border: 0; background: none; cursor: zoom-in; max-width: 100%; }
+        .photo img { display: block; width: auto; height: auto; max-width: 100%; max-height: 320px; border-radius: 3px; }
+        .photo:focus-visible { outline: 2px solid var(--deep); outline-offset: 3px; }
+        #lb { padding: 0; border: 0; background: transparent; max-width: 94vw; max-height: 92vh; cursor: zoom-out; }
+        #lb::backdrop { background: rgba(61,46,82,.82); }
+        #lb img { display: block; max-width: 94vw; max-height: 92vh; width: auto; height: auto; border-radius: 3px; }
         .empty { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 14px; line-height: 2.2; color: #5b4c70; padding: 40px 0 0; }
 
         /* 栞のあいだの草・年の終わりの下草 */
@@ -122,6 +128,8 @@
         <p>あなたの今年は、どんな花が咲きましたか。</p>
         <a href="../index.html#profile" class="back">← The First Flower</a>
     </footer>
+
+    <dialog id="lb" aria-label="写真"><img alt=""></dialog>
 
     <script src="flower-kinds.js"></script>
     <script src="kandou-data.js"></script>

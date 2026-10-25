@@ -27,7 +27,8 @@
         var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(e.date || "");
         if (!m || !e.text) return;
         var y = +m[1];
-        (byYear[y] = byYear[y] || []).push({ md: m[2] + "." + m[3], date: e.date, text: e.text, blog: safeHref(e.blog) });
+        var ph = e.photo && /^img\/[\w-]+\.jpg$/.test(e.photo.src || "") ? e.photo : null;
+        (byYear[y] = byYear[y] || []).push({ md: m[2] + "." + m[3], date: e.date, text: e.text, blog: safeHref(e.blog), photo: ph });
     });
     var years = Object.keys(byYear).map(Number).sort(function (a, b) { return b - a; });
 
@@ -87,6 +88,20 @@
             t.textContent = e.text;
             art.appendChild(d);
             art.appendChild(t);
+            if (e.photo) {
+                var pb = document.createElement("button");
+                pb.type = "button";
+                pb.className = "photo";
+                pb.setAttribute("aria-label", e.md + " の写真を大きく見る");
+                var im = document.createElement("img");
+                im.src = e.photo.src;
+                im.alt = e.md + " の写真";
+                im.loading = "lazy";
+                if (e.photo.w && e.photo.h) { im.width = e.photo.w; im.height = e.photo.h; }
+                pb.appendChild(im);
+                pb.addEventListener("click", function () { openPhoto(im); });
+                art.appendChild(pb);
+            }
             if (e.blog) {
                 var a = document.createElement("a");
                 a.className = "blog";
@@ -101,6 +116,15 @@
         sec.insertAdjacentHTML("beforeend", grass());
         root.appendChild(sec);
     });
+
+    // 写真を大きく見る（押すか Esc で閉じる）
+    var lb = document.getElementById("lb"), lbImg = lb.querySelector("img");
+    function openPhoto(im) {
+        lbImg.src = im.src;
+        lbImg.alt = im.alt;
+        lb.showModal();
+    }
+    lb.addEventListener("click", function () { lb.close(); });
 
     function petalEls(y, i) { return document.querySelectorAll('.petal[data-y="' + y + '"][data-i="' + i + '"]'); }
 
