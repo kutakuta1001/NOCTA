@@ -195,3 +195,5 @@
 - 2026-10-25: 旅の地図に 47 地域・136 枚の写真を載せて push。この Mac からは数 MB を超える送信が途中で切れるため、写真は 10 枚ずつ 28 件に分けて送った（原因は未特定）。次: 本番の旅の地図を CEO が確かめる
 - 2026-10-25: 画像を小分けに push する scripts/push-batched.py を追加（テスト 12 件通過）。手順は tools/journey/README.md「サイトに出す」。次: 次に写真を足すとき、自宅の回線で通るか確かめる（通らなければブラウザでアップロード）
 - 2026-10-25: TFF の Profile 節（Hobby の下）に「旅の一枚を見る →」のリンクを追加。次: CEO が push を指示したら本番で確かめる
+- 2026-10-25: 旅の地図へのリンクと push-batched を push し、本番で確認済み。おすすめ写真の置き場 ~/Pictures/nocta-journey/おすすめ/ を作成。次: CEO が写真を入れたら ingest → geo → suggest → assess で取り込み、選ぶ画面に出す
+- 2026-10-25: TFF に「感動したこと」一言日記を追加（kandou/・Profile の自己紹介文の下にリンク・データは空でコミット、未 push）。入力ページ https://claude.ai/artifact/6wjeg4tyEcDYtyxnHzRLHH を作成（作者専用）。手順は docs/tff-kandou.md。次: CEO が入力ページで書き、「日記を反映して」と伝える。push は CEO の指示で
