@@ -1,7 +1,19 @@
-/* 感動したこと: kandou-data.js を年ごとの花と栞にして並べる（描画の部品は flower-kinds.js） */
+/* 感動したこと: kandou-data.js を 6 件で一輪の花と栞にして並べる（描画の部品は flower-kinds.js） */
 (function () {
     var ORDER = ["sakura", "cosmos", "daisy", "camellia", "nemophila", "sunflower"];
-    var BASE_YEAR = 2026;   // 桜の年。ここから一年さかのぼるごとに ORDER の次の花
+    var BASE_YEAR = 2026;   // 桜の年。ここから一年さかのぼるごとに ORDER の次の花（その年の一輪目）
+    var PER_FLOWER = 6;     // 一輪が満開になる件数。年の中で日付順に 6 件ずつ区切り、二輪目からは ORDER の次の花
+    var KANJI = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+
+    // 6 件でちょうど満開になるよう、花びらの数を 6 の倍数に揃える（1 件 = 満開の 1/6）
+    FLOWER_KINDS.sakura.slots = 6;
+    FLOWER_KINDS.cosmos.slots = 6;
+    FLOWER_KINDS.nemophila.slots = 6;
+    FLOWER_KINDS.daisy.slots = 12;
+    FLOWER_KINDS.camellia.slots = 12;
+    FLOWER_KINDS.camellia.rings = [{ n: 6, off: 0, ls: 1, layer: 0, tone: 0 }, { n: 6, off: 30, ls: .76, layer: 1, tone: 1 }];
+    FLOWER_KINDS.sunflower.slots = 18;
+    FLOWER_KINDS.sunflower.rings = [{ n: 12, off: 0, ls: 1, layer: 0, tone: 0 }, { n: 6, off: 15, ls: .86, layer: -1, tone: 1 }];
     var entries = window.TFF_KANDOU || [];
     var fixed = window.TFF_KANDOU_FLOWERS || {};
     var thisYear = new Date().getFullYear();
@@ -32,8 +44,10 @@
     });
     var years = Object.keys(byYear).map(Number).sort(function (a, b) { return b - a; });
 
-    function bigFlower(year, kind, n) {
-        var ex = function (i) { return 'data-y="' + year + '" data-i="' + i + '"'; };
+    // m 件書いた一輪。花びら i は (i * 6 / 枚数) 件目の栞に結びつく
+    function bigFlower(key, kind, m) {
+        var S = FLOWER_KINDS[kind].slots, n = S * m / PER_FLOWER;
+        var ex = function (i) { return 'data-y="' + key + '" data-i="' + Math.floor(i * PER_FLOWER / S) + '"'; };
         return '<svg class="fsvg" viewBox="0 0 280 360" aria-hidden="true">' + flowerStalk(kind) + flowerPetals(kind, n, 104, 140, 140, "petal", ex, true) + '</svg>' +
             '<svg class="fsvg-sm" viewBox="20 20 240 240" aria-hidden="true">' + flowerPetals(kind, n, 104, 140, 140, "petal", ex, true) + '</svg>';
     }
@@ -51,16 +65,26 @@
     }
 
     var root = document.getElementById("years");
+    var blocks = [];
     years.forEach(function (year) {
-        var list = byYear[year].sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
-        var kind = kindOf(year), K = FLOWER_KINDS[kind];
+        var all = byYear[year].sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+        var count = Math.max(1, Math.ceil(all.length / PER_FLOWER)), first = ORDER.indexOf(kindOf(year)), c;
+        for (c = 0; c < count; c++) {
+            blocks.push({ year: year, c: c, many: count > 1, last: c === count - 1,
+                kind: ORDER[(first + c) % ORDER.length], list: all.slice(c * PER_FLOWER, (c + 1) * PER_FLOWER) });
+        }
+    });
+
+    blocks.forEach(function (B) {
+        var year = B.year, list = B.list, kind = B.kind, K = FLOWER_KINDS[kind], key = year + "-" + B.c;
+        var nth = (KANJI[B.c] || String(B.c + 1)) + "輪目";
         var sec = document.createElement("section");
-        sec.className = "yearsec";
-        sec.setAttribute("aria-label", year + "年");
+        sec.className = "yearsec" + (B.last ? "" : " same-year");
+        sec.setAttribute("aria-label", year + "年" + (B.many ? " " + nth : ""));
 
         var col = document.createElement("div");
         col.className = "flowercol";
-        col.innerHTML = '<div><h2 class="year">' + year + '</h2><div class="kind">' + K.name + '</div></div>' + bigFlower(year, kind, list.length) +
+        col.innerHTML = '<div><h2 class="year">' + year + '</h2><div class="kind">' + (B.many ? nth + " " : "") + K.name + '</div></div>' + bigFlower(key, kind, list.length) +
             (list.length ? '<div class="hint">花びらを押すと、その日へ</div>' : '');
         sec.appendChild(col);
 
@@ -75,8 +99,8 @@
         list.forEach(function (e, i) {
             var art = document.createElement("article");
             art.className = "card";
-            art.id = "k" + year + "-" + i;
-            art.dataset.y = year;
+            art.id = "k" + key + "-" + i;
+            art.dataset.y = key;
             art.dataset.i = i;
             art.innerHTML = '<div class="pf"><svg viewBox="0 0 100 100" aria-hidden="true">' + flowerPetals(kind, K.slots, 44, 50, 50, "p") + '</svg></div>';
             var d = document.createElement("time");
@@ -113,7 +137,7 @@
             if (i % 2 === 0 && i < list.length - 1) cards.insertAdjacentHTML("beforeend", sprig(i % 4 === 0 ? "right" : "left", i % 4 !== 0));
         });
         sec.appendChild(cards);
-        sec.insertAdjacentHTML("beforeend", grass());
+        if (B.last) sec.insertAdjacentHTML("beforeend", grass());   // 下草は年の終わりだけ
         root.appendChild(sec);
     });
 
