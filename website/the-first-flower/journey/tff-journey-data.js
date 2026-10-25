@@ -305,6 +305,17 @@ const TFF_JOURNEY = {
       ]
     },
     {
+      "id": "place-22-1",
+      "kind": "place",
+      "parentId": "JP-22",
+      "name": "網代",
+      "photoIds": [
+        "0be591bba40a50f1",
+        "a56ac2cef5de0c53",
+        "d654aa1712adb51d"
+      ]
+    },
+    {
       "id": "JP-23",
       "kind": "pref",
       "parentId": null,
@@ -335,6 +346,17 @@ const TFF_JOURNEY = {
         "20c0b947b3663449",
         "5468418f7a5a2502",
         "a497e05077e8ef4f"
+      ]
+    },
+    {
+      "id": "place-25-1",
+      "kind": "place",
+      "parentId": "JP-25",
+      "name": "琵琶湖",
+      "photoIds": [
+        "4c54ba7e19717a29",
+        "582bcf5d36b57d4a",
+        "d2e22c3ff4b71a0e"
       ]
     },
     {
@@ -1226,6 +1248,33 @@ const TFF_JOURNEY = {
       "caption": null,
       "alt": "静岡の景色"
     },
+    "0be591bba40a50f1": {
+      "src": "img/0be591bba40a50f1.jpg",
+      "thumb": "img/0be591bba40a50f1-s.jpg",
+      "w": 1108,
+      "h": 1477,
+      "taken": "2026-10",
+      "caption": null,
+      "alt": "網代の景色"
+    },
+    "a56ac2cef5de0c53": {
+      "src": "img/a56ac2cef5de0c53.jpg",
+      "thumb": "img/a56ac2cef5de0c53-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2026-10",
+      "caption": null,
+      "alt": "網代の景色"
+    },
+    "d654aa1712adb51d": {
+      "src": "img/d654aa1712adb51d.jpg",
+      "thumb": "img/d654aa1712adb51d-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2026-10",
+      "caption": null,
+      "alt": "網代の景色"
+    },
     "89e3f306c098f82f": {
       "src": "img/89e3f306c098f82f.jpg",
       "thumb": "img/89e3f306c098f82f-s.jpg",
@@ -1306,6 +1355,33 @@ const TFF_JOURNEY = {
       "taken": "2024-08",
       "caption": null,
       "alt": "滋賀の景色"
+    },
+    "4c54ba7e19717a29": {
+      "src": "img/4c54ba7e19717a29.jpg",
+      "thumb": "img/4c54ba7e19717a29-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2026-10",
+      "caption": null,
+      "alt": "琵琶湖の景色"
+    },
+    "582bcf5d36b57d4a": {
+      "src": "img/582bcf5d36b57d4a.jpg",
+      "thumb": "img/582bcf5d36b57d4a-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2026-10",
+      "caption": null,
+      "alt": "琵琶湖の景色"
+    },
+    "d2e22c3ff4b71a0e": {
+      "src": "img/d2e22c3ff4b71a0e.jpg",
+      "thumb": "img/d2e22c3ff4b71a0e-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2026-10",
+      "caption": null,
+      "alt": "琵琶湖の景色"
     },
     "c55650e37f49975c": {
       "src": "img/c55650e37f49975c.jpg",
