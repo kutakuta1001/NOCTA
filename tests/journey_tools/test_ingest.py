@@ -184,6 +184,22 @@ class IngestTest(unittest.TestCase):
         self.run_ingest()
         self.assertEqual(self.count("photos"), 2)
 
+    def test_ingest_photos_app_nan_gps_is_no_location(self):
+        # Samsung は位置情報なしでも GPS 欄に 0/0（NaN）を書く。撮影日は読み、位置は NULL にする
+        from PIL import Image, TiffImagePlugin
+        ex = Image.Exif()
+        ex.get_ifd(0x8769)[0x9003] = "2026:10:16 08:38:29"
+        nan = TiffImagePlugin.IFDRational(0, 0)
+        g = ex.get_ifd(0x8825)
+        g[1], g[2], g[3], g[4] = "\x00", (nan, nan, nan), "\x00", (nan, nan, nan)
+        make_jpeg(self.root / "trip" / "a.jpg", exif=ex.tobytes())
+        r = self.run_ingest(kind="photos_app")
+        self.assertEqual(r.pending, 0)
+        lat, lng, ts = self.conn.execute("SELECT lat, lng, taken_utc FROM photos").fetchone()
+        self.assertIsNone(lat)
+        self.assertIsNone(lng)
+        self.assertEqual(ts, 1792107509)  # 2026-10-16 08:38:29 JST
+
     def test_ingest_photos_app_overseas_time(self):
         # ニューヨークで現地 2016-03-01 21:00（オフセットの記録なし）→ UTC 2016-03-02 02:00
         make_jpeg(self.root / "trip" / "a.jpg", exif=gps_exif(40.71, -74.0, when="2016:03:01 21:00:00"))

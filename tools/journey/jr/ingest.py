@@ -7,6 +7,7 @@ photos_app: 写真そのものの EXIF（DateTimeOriginal・GPS）を読む。�
 import datetime as dt
 import hashlib
 import json
+import math
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -143,8 +144,15 @@ def _read_exif(path):
     if gps.get(2) and gps.get(4):
         def deg(v):
             return _ratio(v[0]) + _ratio(v[1]) / 60 + _ratio(v[2]) / 3600
-        lat = deg(gps[2]) * (-1 if gps.get(1) == "S" else 1)
-        lng = deg(gps[4]) * (-1 if gps.get(3) == "W" else 1)
+        try:
+            lat = deg(gps[2]) * (-1 if gps.get(1) == "S" else 1)
+            lng = deg(gps[4]) * (-1 if gps.get(3) == "W" else 1)
+        except (ZeroDivisionError, TypeError, ValueError, IndexError):
+            lat = lng = None
+        # Samsung は位置情報なしでも 0/0（NaN）を書く。位置なしとして扱う
+        if lat is None or lng is None or not (math.isfinite(lat) and math.isfinite(lng)):
+            lat = lng = None
+    if lat is not None:
         if not off:  # オフセットの記録がなければ、撮影場所のタイムゾーンで読む
             from jr import timeutil
 
