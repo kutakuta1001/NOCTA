@@ -397,7 +397,7 @@
     $("#export").addEventListener("click", function () {
         notice("書き出しています…");
         api("/api/export", {}).then(function (r) {
-            if (r.ok) notice("書き出しました: " + r.regions + " 地域・" + r.photos + " 枚。サイトに出すには、git でコミットして push してください。");
+            if (r.ok) notice("書き出しました: " + r.regions + " 地域・" + r.photos + " 枚。サイトに出すには、Claude に「push して」と頼んでください（写真を小分けにして送ります）。");
             else notice("書き出せませんでした（公開ファイルは前のまま）: " + r.reasons.join(" / "));
         }).catch(fail);
     });

@@ -45,7 +45,25 @@ $VENV/bin/python tools/journey/jr.py backup    # バックアップ用に重複�
 4. 「候補を作り直す」を押す（地域を付けた写真の判定）
 5. 「地域ごとに選ぶ」で、各地域 2〜3 枚を選ぶ。ひとことは選んだ枠に書く
 6. 写真が多い地域は「地点」で名前を付けて地点にし、地点ごとに選んでから、地域の代表 2〜3 枚を選ぶ
-7. 「公開データを書き出す」→ `website/the-first-flower/journey/` が更新される。サイトに出すには git でコミットして push する
+7. 「公開データを書き出す」→ `website/the-first-flower/journey/` が更新される。サイトに出すには下の「サイトに出す」で push する
+
+## サイトに出す
+
+この Mac からは数 MB を超える push が途中で切れる（HTTP 408。2026-10-25 に自宅の回線でもテザリングでも起きた）。
+写真は `scripts/push-batched.py` で約 1.5MB ずつのコミットに分けて送る。写真を先に、データを最後に送るので、途中で止まってもページが壊れない。
+Claude に「push して」と頼めばこれで送る。自分で送るときは次のとおり。
+
+```bash
+python3 scripts/push-batched.py --assets website/the-first-flower/journey/img \
+  --then website/the-first-flower/journey/tff-journey-data.js \
+  -m "feat(tff-journey): 旅の地図の写真を更新" --dry-run   # 分け方を見る。よければ --dry-run を外す
+```
+
+**それでも途中で止まるとき（ブラウザで写真を上げる）:**
+
+1. github.com の NOCTA リポジトリで `website/the-first-flower/journey/img` を開く
+2. 「Add file」→「Upload files」に、手元の `img/` のうちまだ届いていない写真をドラッグする（1 回 100 ファイルまで）。「Commit directly to the main branch」で確定する
+3. Claude に「写真を上げたので取り込んで」と頼む。手元の同じ写真を片付けてから `git pull` し、データだけを push する
 
 ## 写真を足すとき（新しい旅のあと）
 
