@@ -40,7 +40,8 @@
         if (!m || !e.text) return;
         var y = +m[1];
         var ph = e.photo && /^img\/[\w-]+\.jpg$/.test(e.photo.src || "") ? e.photo : null;
-        (byYear[y] = byYear[y] || []).push({ md: m[2] + "." + m[3], date: e.date, text: e.text, blog: safeHref(e.blog), photo: ph });
+        var mu = e.music && /^[\w-]{11}$/.test(e.music.id || "") ? { id: e.music.id, start: Math.max(0, Math.floor(+e.music.start || 0)) } : null;
+        (byYear[y] = byYear[y] || []).push({ md: m[2] + "." + m[3], date: e.date, text: e.text, blog: safeHref(e.blog), photo: ph, music: mu });
     });
     var years = Object.keys(byYear).map(Number).sort(function (a, b) { return b - a; });
 
@@ -65,6 +66,41 @@
     }
 
     var root = document.getElementById("years");
+    // 曲: はじめはサムネイルだけ。押したらその場で YouTube の再生に差し替える（ページを重くしない）
+    function musicEl(mu, md) {
+        var wrap = document.createElement("div");
+        wrap.className = "music";
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "music-play";
+        btn.setAttribute("aria-label", md + " の曲を再生する");
+        var im = document.createElement("img");
+        im.src = "https://i.ytimg.com/vi/" + mu.id + "/mqdefault.jpg";
+        im.alt = "";
+        im.loading = "lazy";
+        btn.appendChild(im);
+        btn.insertAdjacentHTML("beforeend", '<span class="music-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg></span>');
+        btn.addEventListener("click", function () {
+            var f = document.createElement("iframe");
+            f.src = "https://www.youtube-nocookie.com/embed/" + mu.id + "?autoplay=1&rel=0" + (mu.start ? "&start=" + mu.start : "");
+            f.title = md + " の曲";
+            f.allow = "autoplay; encrypted-media; picture-in-picture";
+            f.allowFullscreen = true;
+            wrap.replaceChild(f, btn);
+        });
+        wrap.appendChild(btn);
+        var a = document.createElement("a");
+        a.className = "music-out";
+        a.href = "https://www.youtube.com/watch?v=" + mu.id + (mu.start ? "&t=" + mu.start + "s" : "");
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.textContent = "YouTube で開く ↗";
+        var box = document.createElement("div");
+        box.appendChild(wrap);
+        box.appendChild(a);
+        return box;
+    }
+
     var blocks = [];
     years.forEach(function (year) {
         var all = byYear[year].sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
@@ -126,6 +162,7 @@
                 pb.addEventListener("click", function () { openPhoto(im); });
                 art.appendChild(pb);
             }
+            if (e.music) art.appendChild(musicEl(e.music, e.md));
             if (e.blog) {
                 var a = document.createElement("a");
                 a.className = "blog";
