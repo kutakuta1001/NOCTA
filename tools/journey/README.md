@@ -1,6 +1,7 @@
 # 旅の地図の道具（tools/journey）
 
 The First Flower の「旅の一枚」ページ（`website/the-first-flower/journey/`）に載せる写真を、Google Takeout の書き出しから選ぶための道具。Mac の上だけで動き、写真をどこにも送らない。
+CEO 向けの使い方は `docs/tff-journey-guide.html`（感動したことの使い方 `docs/tff-kandou-guide.html` と相互リンク）。
 
 - 設計書: `docs/superpowers/specs/2026-10-18-tff-journey-map-design.md`
 - 計画書: `docs/superpowers/plans/2026-10-19-tff-journey-picker.md`

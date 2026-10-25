@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>旅の一枚 使い方</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400&family=Noto+Sans+JP:wght@400;500&family=Noto+Serif+JP:wght@400&display=swap" rel="stylesheet">
+<style>
+  /* CEO がローカルで開く使い方。感動したことの使い方（tff-kandou-guide.html）と同じ形 */
+  :root { --bg: #FCFBF5; --paper: #FFFDF8; --ink: #3D2E52; --sub: #7C6A9C; --line: #E3D9EC; --accent: #9A4F92; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #1E1828; --paper: #2A2236; --ink: #EDE6F3; --sub: #B3A3C8; --line: #43385A; --accent: #D58DCB; color-scheme: dark; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif; font-size: 15px; line-height: 1.9; }
+  main { max-width: 640px; margin: 0 auto; padding: 48px 16px 80px; }
+  h1 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 26px; letter-spacing: .12em; margin: 0; }
+  .lead { color: var(--sub); margin: 8px 0 0; }
+  h2 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 18px; letter-spacing: .08em; margin: 44px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+  a { color: var(--accent); overflow-wrap: anywhere; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .links { display: grid; gap: 12px; margin-top: 28px; }
+  .link { background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .link b { display: block; font-weight: 500; }
+  .link span { font-size: 13px; color: var(--sub); }
+  ol, ul { padding-left: 1.4em; margin: 0; }
+  li { margin: 6px 0; }
+  .say { display: inline-block; font-family: 'Noto Serif JP', serif; background: var(--paper); border: 1px solid var(--accent); color: var(--accent); border-radius: 999px; padding: 2px 14px; }
+  code { font-size: 13px; background: var(--paper); border: 1px solid var(--line); border-radius: 3px; padding: 1px 5px; overflow-wrap: anywhere; }
+  .note { font-size: 13px; color: var(--sub); }
+  .other { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; }
+  .date { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--sub); margin-top: 32px; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>旅の一枚 使い方</h1>
+  <p class="lead">The First Flower の旅の地図に、写真を足すときの手順です。</p>
+
+  <div class="links">
+    <div class="link"><b>見る</b><a href="https://kutakuta1001.github.io/NOCTA/the-first-flower/journey/">旅の一枚（公開ページ）</a><br><span>TFF の Profile 節の「旅の一枚を見る →」からもたどれます。</span></div>
+    <div class="link"><b>感動したことの使い方</b><a href="tff-kandou-guide.html">感動したこと 使い方</a><br><span>一言日記の書き足し方はこちら。</span></div>
+  </div>
+
+  <h2>写真を足す（いちばん楽な方法）</h2>
+  <ol>
+    <li>Claude Code のチャットに写真を貼り、どこに足すかを書いて伝える。<br><span class="say">静岡に網代を追加して、この写真を載せて</span></li>
+    <li>Claude が写真を取り込み、地域や地点に割り当てて、画面での見え方を確かめてから一覧を見せる。</li>
+    <li>よければ <span class="say">プッシュして</span> と伝えると、本番に出る。</li>
+  </ol>
+  <p class="note">スマホの写真は、元の画質のまま渡すと撮影日が残ります。LINE で送り直した写真は撮影日が消えるので、いつ撮ったかを一言添えてください。</p>
+
+  <h2>決まりごと</h2>
+  <ul>
+    <li>1 つの地域・地点に載せるのは 2〜3 枚。</li>
+    <li>人の顔がわかる写真は載せない。写っていたら Claude が知らせて、切り落とすか外すかを聞く。</li>
+    <li>写真を載せると、撮影した年月だけが出る（日にちと撮影場所は出さない）。</li>
+  </ul>
+
+  <h2>地点</h2>
+  <ul>
+    <li>地点は、県や国の中を分けた小さな場所。県を押すと「◯◯の代表」の横に並ぶ。</li>
+    <li>いまある地点: 北海道（道北・道南・道央）、静岡（網代）、滋賀（琵琶湖）、アメリカ（東部・西部）。</li>
+    <li>新しい地点は、名前と県を伝えれば Claude が作る。</li>
+  </ul>
+
+  <h2>自分で選ぶとき</h2>
+  <ol>
+    <li>写真を <code>~/Pictures/nocta-journey/おすすめ/</code> の下に入れる（地点ごとにフォルダを分けるとわかりやすい）。</li>
+    <li>Claude に <span class="say">おすすめの写真を取り込んで、選ぶ画面を開いて</span> と伝える。</li>
+    <li>開いた画面の「地域ごとに選ぶ」で 2〜3 枚を選び、「公開データを書き出す」を押す。</li>
+    <li>Claude に <span class="say">プッシュして</span> と伝える。</li>
+  </ol>
+  <p class="note">Google Takeout から大量に取り込み直すときの手順は、Claude 向けの手順書 tools/journey/README.md にある。</p>
+
+  <h2>困ったとき</h2>
+  <ul>
+    <li>push が途中で切れる: Claude が小分けにして送り直す。それでも止まるときは、README の「ブラウザで写真を上げる」を Claude に案内してもらう。</li>
+    <li>Claude が手順を覚えていないとき: 「docs/tff-journey-guide.html と tools/journey/README.md を読んで」と伝える。</li>
+  </ul>
+
+  <p class="other">感動したことの書き足し方は <a href="tff-kandou-guide.html">感動したこと 使い方</a>。</p>
+  <p class="date">2026.10.25</p>
+</main>
+</body>
+</html>
