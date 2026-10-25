@@ -194,3 +194,4 @@
 - 2026-10-24: 起案を Sonnet 5.5 に交代し G-01・R-09・model-lineup.md rev.11 に反映、Codex の予備を gpt-6-astra → gpt-6-sol → gpt-5.6-sol に変更。次: Haiku 5.5 の採否・深い推論の第一候補・svp-generator の effort を CEO が判断
 - 2026-10-25: 旅の地図に 47 地域・136 枚の写真を載せて push。この Mac からは数 MB を超える送信が途中で切れるため、写真は 10 枚ずつ 28 件に分けて送った（原因は未特定）。次: 本番の旅の地図を CEO が確かめる
 - 2026-10-25: 画像を小分けに push する scripts/push-batched.py を追加（テスト 12 件通過）。手順は tools/journey/README.md「サイトに出す」。次: 次に写真を足すとき、自宅の回線で通るか確かめる（通らなければブラウザでアップロード）
+- 2026-10-25: TFF の Profile 節（Hobby の下）に「旅の一枚を見る →」のリンクを追加。次: CEO が push を指示したら本番で確かめる
