@@ -82,7 +82,7 @@ const TFF_JOURNEY = {
       "name": "道央",
       "photoIds": [
         "fda3a67e55b0892c",
-        "8c6417544a0a9ffe",
+        "60021d76de7de35c",
         "252b9ec19f8f86dd"
       ]
     },
@@ -193,6 +193,17 @@ const TFF_JOURNEY = {
       "photoIds": [
         "0b00d46bcdc9a7cf",
         "36306eb02eeee317"
+      ]
+    },
+    {
+      "id": "place-11-1",
+      "kind": "place",
+      "parentId": "JP-11",
+      "name": "ムーミン",
+      "photoIds": [
+        "a6b1f1663d31c601",
+        "8170926c49d7cece",
+        "e2bd930afdda96fb"
       ]
     },
     {
@@ -729,12 +740,12 @@ const TFF_JOURNEY = {
       "caption": null,
       "alt": "道央の景色"
     },
-    "8c6417544a0a9ffe": {
-      "src": "img/8c6417544a0a9ffe.jpg",
-      "thumb": "img/8c6417544a0a9ffe-s.jpg",
+    "60021d76de7de35c": {
+      "src": "img/60021d76de7de35c.jpg",
+      "thumb": "img/60021d76de7de35c-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-09",
+      "taken": "2026-09",
       "caption": null,
       "alt": "道央の景色"
     },
@@ -1007,6 +1018,33 @@ const TFF_JOURNEY = {
       "taken": "2012-02",
       "caption": null,
       "alt": "埼玉の景色"
+    },
+    "a6b1f1663d31c601": {
+      "src": "img/a6b1f1663d31c601.jpg",
+      "thumb": "img/a6b1f1663d31c601-s.jpg",
+      "w": 1108,
+      "h": 1477,
+      "taken": "2024-11",
+      "caption": null,
+      "alt": "ムーミンの景色"
+    },
+    "8170926c49d7cece": {
+      "src": "img/8170926c49d7cece.jpg",
+      "thumb": "img/8170926c49d7cece-s.jpg",
+      "w": 1108,
+      "h": 1477,
+      "taken": "2024-11",
+      "caption": null,
+      "alt": "ムーミンの景色"
+    },
+    "e2bd930afdda96fb": {
+      "src": "img/e2bd930afdda96fb.jpg",
+      "thumb": "img/e2bd930afdda96fb-s.jpg",
+      "w": 1108,
+      "h": 1477,
+      "taken": "2024-11",
+      "caption": null,
+      "alt": "ムーミンの景色"
     },
     "dd021e36d7647f6a": {
       "src": "img/dd021e36d7647f6a.jpg",
