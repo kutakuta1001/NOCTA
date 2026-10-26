@@ -98,6 +98,17 @@ const TFF_JOURNEY = {
       ]
     },
     {
+      "id": "place-02-1",
+      "kind": "place",
+      "parentId": "JP-02",
+      "name": "その他",
+      "photoIds": [
+        "2668f070ee4783ff",
+        "2b7af8b08078681f",
+        "5fc48f44f2b684c1"
+      ]
+    },
+    {
       "id": "JP-03",
       "kind": "pref",
       "parentId": null,
@@ -566,6 +577,17 @@ const TFF_JOURNEY = {
       ]
     },
     {
+      "id": "place-us-1",
+      "kind": "place",
+      "parentId": "US",
+      "name": "グランドキャニオン",
+      "photoIds": [
+        "ba339988e91a8290",
+        "04afd64884618f63",
+        "b028096887a1a275"
+      ]
+    },
+    {
       "id": "place-us-east",
       "kind": "place",
       "parentId": "US",
@@ -795,6 +817,33 @@ const TFF_JOURNEY = {
       "taken": "2014-08",
       "caption": null,
       "alt": "青森の景色"
+    },
+    "2668f070ee4783ff": {
+      "src": "img/2668f070ee4783ff.jpg",
+      "thumb": "img/2668f070ee4783ff-s.jpg",
+      "w": 1600,
+      "h": 900,
+      "taken": null,
+      "caption": null,
+      "alt": "その他の景色"
+    },
+    "2b7af8b08078681f": {
+      "src": "img/2b7af8b08078681f.jpg",
+      "thumb": "img/2b7af8b08078681f-s.jpg",
+      "w": 1600,
+      "h": 900,
+      "taken": null,
+      "caption": null,
+      "alt": "その他の景色"
+    },
+    "5fc48f44f2b684c1": {
+      "src": "img/5fc48f44f2b684c1.jpg",
+      "thumb": "img/5fc48f44f2b684c1-s.jpg",
+      "w": 640,
+      "h": 480,
+      "taken": null,
+      "caption": null,
+      "alt": "その他の景色"
     },
     "96d87362bc9b9859": {
       "src": "img/96d87362bc9b9859.jpg",
@@ -1911,6 +1960,33 @@ const TFF_JOURNEY = {
       "taken": "2011-08",
       "caption": null,
       "alt": "アメリカの景色"
+    },
+    "ba339988e91a8290": {
+      "src": "img/ba339988e91a8290.jpg",
+      "thumb": "img/ba339988e91a8290-s.jpg",
+      "w": 640,
+      "h": 480,
+      "taken": null,
+      "caption": null,
+      "alt": "グランドキャニオンの景色"
+    },
+    "04afd64884618f63": {
+      "src": "img/04afd64884618f63.jpg",
+      "thumb": "img/04afd64884618f63-s.jpg",
+      "w": 640,
+      "h": 480,
+      "taken": null,
+      "caption": null,
+      "alt": "グランドキャニオンの景色"
+    },
+    "b028096887a1a275": {
+      "src": "img/b028096887a1a275.jpg",
+      "thumb": "img/b028096887a1a275-s.jpg",
+      "w": 640,
+      "h": 480,
+      "taken": null,
+      "caption": null,
+      "alt": "グランドキャニオンの景色"
     },
     "84bb7e3a568f084e": {
       "src": "img/84bb7e3a568f084e.jpg",
