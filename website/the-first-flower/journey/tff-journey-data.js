@@ -131,6 +131,17 @@ const TFF_JOURNEY = {
       ]
     },
     {
+      "id": "place-05-1",
+      "kind": "place",
+      "parentId": "JP-05",
+      "name": "大曲花火",
+      "photoIds": [
+        "e3351bc7b386853d",
+        "fc9c114850e24229",
+        "3eb577e48f12d9eb"
+      ]
+    },
+    {
       "id": "JP-06",
       "kind": "pref",
       "parentId": null,
@@ -865,6 +876,33 @@ const TFF_JOURNEY = {
       "taken": "2014-04",
       "caption": null,
       "alt": "秋田の景色"
+    },
+    "e3351bc7b386853d": {
+      "src": "img/e3351bc7b386853d.jpg",
+      "thumb": "img/e3351bc7b386853d-s.jpg",
+      "w": 1600,
+      "h": 1200,
+      "taken": null,
+      "caption": null,
+      "alt": "大曲花火の景色"
+    },
+    "fc9c114850e24229": {
+      "src": "img/fc9c114850e24229.jpg",
+      "thumb": "img/fc9c114850e24229-s.jpg",
+      "w": 1600,
+      "h": 1200,
+      "taken": null,
+      "caption": null,
+      "alt": "大曲花火の景色"
+    },
+    "3eb577e48f12d9eb": {
+      "src": "img/3eb577e48f12d9eb.jpg",
+      "thumb": "img/3eb577e48f12d9eb-s.jpg",
+      "w": 1600,
+      "h": 1200,
+      "taken": null,
+      "caption": null,
+      "alt": "大曲花火の景色"
     },
     "fc5ab11152a013d1": {
       "src": "img/fc5ab11152a013d1.jpg",
