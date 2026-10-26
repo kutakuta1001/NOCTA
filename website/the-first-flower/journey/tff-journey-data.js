@@ -327,6 +327,16 @@ const TFF_JOURNEY = {
       ]
     },
     {
+      "id": "place-23-1",
+      "kind": "place",
+      "parentId": "JP-23",
+      "name": "名古屋",
+      "photoIds": [
+        "03763941dd1e1202",
+        "52ffe873d9187509"
+      ]
+    },
+    {
       "id": "JP-24",
       "kind": "pref",
       "parentId": null,
@@ -509,6 +519,17 @@ const TFF_JOURNEY = {
         "31c7b0b0c1181724",
         "b2228f79bf7dde0f",
         "3c9913f9d6c39c70"
+      ]
+    },
+    {
+      "id": "place-47-1",
+      "kind": "place",
+      "parentId": "JP-47",
+      "name": "那覇",
+      "photoIds": [
+        "77b835c581a5cfeb",
+        "a2ea5c96ff71eaa5",
+        "d9ebf2b3a3d49af1"
       ]
     },
     {
@@ -1302,6 +1323,24 @@ const TFF_JOURNEY = {
       "caption": null,
       "alt": "愛知の景色"
     },
+    "03763941dd1e1202": {
+      "src": "img/03763941dd1e1202.jpg",
+      "thumb": "img/03763941dd1e1202-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2026-03",
+      "caption": null,
+      "alt": "名古屋の景色"
+    },
+    "52ffe873d9187509": {
+      "src": "img/52ffe873d9187509.jpg",
+      "thumb": "img/52ffe873d9187509-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2025-09",
+      "caption": null,
+      "alt": "名古屋の景色"
+    },
     "08810d93ffda7205": {
       "src": "img/08810d93ffda7205.jpg",
       "thumb": "img/08810d93ffda7205-s.jpg",
@@ -1742,6 +1781,33 @@ const TFF_JOURNEY = {
       "taken": "2018-08",
       "caption": null,
       "alt": "沖縄の景色"
+    },
+    "77b835c581a5cfeb": {
+      "src": "img/77b835c581a5cfeb.jpg",
+      "thumb": "img/77b835c581a5cfeb-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2025-06",
+      "caption": null,
+      "alt": "那覇の景色"
+    },
+    "a2ea5c96ff71eaa5": {
+      "src": "img/a2ea5c96ff71eaa5.jpg",
+      "thumb": "img/a2ea5c96ff71eaa5-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2025-06",
+      "caption": null,
+      "alt": "那覇の景色"
+    },
+    "d9ebf2b3a3d49af1": {
+      "src": "img/d9ebf2b3a3d49af1.jpg",
+      "thumb": "img/d9ebf2b3a3d49af1-s.jpg",
+      "w": 1200,
+      "h": 1600,
+      "taken": "2025-06",
+      "caption": null,
+      "alt": "那覇の景色"
     },
     "4926146221d7f204": {
       "src": "img/4926146221d7f204.jpg",
