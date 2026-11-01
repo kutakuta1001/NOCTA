@@ -25,7 +25,7 @@
     var map = $("#jr-map"), list = $("#jr-list"), thumbs = $("#jr-thumbs"), places = $("#jr-places");
     var main = $("img.jr-main"), status = $("#jr-status"), label = $("#jr-label");
     var taken = $("#jr-taken"), caption = $("#jr-caption"), photoBox = $("#jr-photo");
-    var frame = $(".jr-frame"), fx = $("#jr-fx"), pos = $("#jr-pos"), found = $("#jr-found");
+    var frame = $(".jr-frame"), pos = $("#jr-pos"), found = $("#jr-found");
     var prevBtn = $(".jr-prev"), nextBtn = $(".jr-next");
 
     var published = core.publishedRegions(data);
@@ -175,7 +175,6 @@
         var p = data.photos[pid];
         var token = ++state.token;
         var isNew = markSeen(pid);
-        clearFx();
         state.photoId = pid;
         status.textContent = "";
         main.hidden = false;
@@ -187,8 +186,11 @@
             if (token !== state.token) return;
             main.classList.remove("is-loading");
             status.textContent = "";
-            // はじめて見た写真だけ。最初に自動で出る 1 枚と、動きを減らす設定では出さない
-            if (isNew && byViewer && !reduceMotion) playRandomFx();
+            // はじめて見た写真だけ、ページに演出（journey-fx.js）。最初に自動で出る 1 枚と、動きを減らす設定では出さない
+            if (isNew && byViewer && !reduceMotion && window.JourneyFx) {
+                var r = byId[state.regionId];
+                JourneyFx.play({ x: lastPointer.x, y: lastPointer.y, text: r.name });
+            }
         };
         main.onerror = function () {
             if (token !== state.token) return;
@@ -215,70 +217,6 @@
         showPhoto(ids[(ids.indexOf(state.photoId) + d + ids.length) % ids.length], true);
     }
 
-    // ---- はじめて見た写真の演出（4 つから、前回と違うものを選ぶ） ----
-    var PETAL_COLORS = ["#EEA4C0", "#FDD9D9", "#B168A8", "#B8E3B7", "#A6DDD6", "#FFFFFF"];
-    var lastFx = -1, fxTimer = 0;
-    function rand(a, b) { return a + Math.random() * (b - a); }
-    function clearFx() {
-        clearTimeout(fxTimer);
-        fx.textContent = "";
-        if (main.getAnimations) main.getAnimations().forEach(function (a) { a.cancel(); });
-    }
-    function petals() {
-        for (var i = 0; i < 18; i++) {
-            var s = rand(8, 15), d = el("span", "jr-petal");
-            d.style.width = s + "px";
-            d.style.height = (s * 1.3) + "px";
-            d.style.left = rand(0, 100) + "%";
-            d.style.background = PETAL_COLORS[i % PETAL_COLORS.length];
-            fx.appendChild(d);
-            var drift = rand(-60, 60), turn = rand(180, 540);
-            d.animate([
-                { transform: "translate(0, 0) rotate(0deg)", opacity: 0 },
-                { opacity: .95, offset: .15 },
-                { transform: "translate(" + drift + "px, " + (frame.clientHeight + 40) + "px) rotate(" + turn + "deg)", opacity: 0 }
-            ], { duration: rand(1800, 2800), delay: rand(0, 600), easing: "cubic-bezier(.3,.1,.5,1)", fill: "both" });
-        }
-    }
-    function develop() {
-        main.animate([
-            { filter: "brightness(1.9) saturate(0) sepia(.5) blur(6px)" },
-            { filter: "brightness(1.2) saturate(.6) sepia(.25) blur(1px)", offset: .55 },
-            { filter: "none" }
-        ], { duration: 1800, easing: "ease-out" });
-    }
-    function iris() {
-        // radial-reveal-mask（~/designer）: 写真の中の一点からにじむように開く
-        var at = "circle at " + rand(25, 75) + "% " + rand(30, 70) + "%";
-        var keys = [0, 30, 60, 100, 160].map(function (r) {
-            var m = "radial-gradient(" + at + ", #000 " + Math.max(r - 15, 0) + "%, transparent " + r + "%)";
-            return { maskImage: m, webkitMaskImage: m };
-        });
-        main.animate(keys, { duration: 1300, easing: "cubic-bezier(.22,1,.36,1)" });
-    }
-    function sweep() {
-        var band = el("span", "jr-sweep");
-        fx.appendChild(band);
-        band.animate([{ transform: "translateX(-120%) rotate(18deg)" }, { transform: "translateX(320%) rotate(18deg)" }],
-                     { duration: 1300, easing: "ease-in-out", fill: "both" });
-        for (var i = 0; i < 7; i++) {
-            var sp = el("span", "jr-spark");
-            sp.style.left = rand(8, 92) + "%";
-            sp.style.top = rand(10, 85) + "%";
-            fx.appendChild(sp);
-            sp.animate([{ opacity: 0, transform: "scale(.2)" }, { opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(.2)" }],
-                       { duration: 900, delay: 300 + rand(0, 900), fill: "both" });
-        }
-    }
-    var FX = [petals, develop, iris, sweep];
-    function playRandomFx() {
-        var i = Math.floor(Math.random() * (FX.length - 1));
-        if (lastFx >= 0 && i >= lastFx) i++;
-        else if (lastFx < 0) i = Math.floor(Math.random() * FX.length);
-        lastFx = i;
-        FX[i]();
-        fxTimer = setTimeout(function () { fx.textContent = ""; }, 3600);
-    }
 
     function selectRegion(id, fromMapOrList, byViewer) {
         var region = byId[id];
@@ -310,6 +248,13 @@
     document.querySelectorAll("#jr-tabs button").forEach(function (b) {
         b.addEventListener("click", function () { setMode(b.dataset.mode); });
     });
+    // 演出の起点にする、最後に押した場所（キーボード操作なら写真の中央）
+    var lastPointer = { x: innerWidth / 2, y: innerHeight / 2 };
+    document.addEventListener("pointerdown", function (e) { lastPointer = { x: e.clientX, y: e.clientY }; }, true);
+    document.addEventListener("keydown", function () {
+        var b = frame.getBoundingClientRect();
+        lastPointer = { x: b.left + b.width / 2, y: b.top + b.height / 2 };
+    }, true);
     prevBtn.addEventListener("click", function () { step(-1); });
     nextBtn.addEventListener("click", function () { step(1); });
     photoBox.addEventListener("keydown", function (e) {

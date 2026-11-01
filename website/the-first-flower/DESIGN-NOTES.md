@@ -71,6 +71,8 @@ NOCTA グローバルカラーを上書きせず、Tailwind config 内で `tff-`
 - データ: `tff-journey-data.js` の `TFF_JOURNEY = { schemaVersion: 1, regions: [{ id, kind: pref|country|place, parentId, name, photoIds }], photos: { <16桁16進>: { src, thumb, w, h, taken, caption, alt } } }`。公開するのは写真 2〜3 枚の地域だけ。写真の項目はこの 7 つだけで、位置情報を入れる場所はない（`journey-core.js` の検証で弾く。弾かれたらページは「準備中」になる）。ひとことは `textContent` で出す。
 - テスト: `node --test "tests/journey/test_*.mjs"`（データ・地図）と `tests/journey/check_page.cjs`（ブラウザ。実行方法はファイル冒頭）。
 - 公開データと `img/` は `tools/journey` の export が書く（手で写真を置かない）。写真の選び方は `tools/journey/README.md`。
+- 見つけやすさ（2026-11-01）: 日本／世界は件数つきの切り替え、地点は地域名のすぐ下・写真の上、地点のある県はタイルに点と「◯か所」。写真には矢印と「1 / 3」、まだ見ていない写真のサムネイルに点。見た写真は見た人のブラウザに `tff-journey-seen` で覚え、「見つけた景色 n / 全体」を出す。
+- はじめて見た写真の演出（`journey-fx.js`）: 写真ではなくページに出す（CEO 指示）。額装・にじみ・波紋・地名の粒（見出しの右の帯。狭い画面では波紋）の 4 つから、前回と違うものを選ぶ。最初に自動で出る 1 枚と、動きを減らす設定では出さない。
 
 - Connection の背景は元サイトの写真（Strikingly 備え付けのビルバオの街並み）を**使っていない**。素材の権利が不明なため、CEO 自身の Flickr 写真に替えた。
 - アイコン `img/icon-*.jpg`（264px・CSS で円形）は本人の Flickr 写真から切り抜いたもの。Flickr＝桜（28095409850「the first flower」）、Old Blog＝万年筆（51007397898「pen」）、ブクログ＝本棚（5470813410）。下段の 3 つは各アカウントのアイコン（X ポケカ＝カヲルさん @kwr_pkc の絵・クレジットは Self の「もうひとつの顔」に記載 / X トレード＝作者のアイコン絵 / 7Witches＝ピンクのうさぎ）。2026-10-18 まで使っていた AI 生成の水彩アイコンは、レビューで「本人の写真の中で浮く・断りがない」と指摘され差し替えた。
