@@ -65,6 +65,16 @@ const NOCTA_APP_COLLECTIONS = [
 
 const NOCTA_APPS = [
   {
+    title: "Spinebloom",
+    collection: "yori",
+    cat: "app",
+    url: "./spinebloom/index.html",
+    imgUrl: "./spinebloom/cover.svg",
+    thumbClass: "thumb-4",
+    descJa: "読み返すほど背表紙に日本の色と模様が浮かぶ本棚。書き留めた言葉に週に一度再会する、副読のためのノート。",
+    descEn: "A bookshelf whose spines take on Japanese colours and patterns each time you reread. Meet the words you noted again, once a week."
+  },
+  {
     title: "NuWord before",
     collection: "nuword",
     cat: "app",

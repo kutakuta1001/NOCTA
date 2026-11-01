@@ -90,7 +90,7 @@ Claude / ElevenLabs は禁止語にしない。API キーを自分で用意す�
 
 ```json copy-audit-config
 {
-  "intro_pages": ["website/lampnook/index.html", "website/barside/index.html"],
+  "intro_pages": ["website/lampnook/index.html", "website/barside/index.html", "website/spinebloom/index.html"],
   "card_file": "website/apps-data.js",
   "banned_terms": ["Tailscale", "Funnel", "sql.js", "SQLite", "FSRS", "three.js", "IndexedDB", "PWA", "Gemini", "接続トークン", "作者専用", "作者の Mac", "作者用の入口", "使い方（作者用）", "灯りを確かめ", "ts.net", "localhost", "127.0.0.1"],
   "banned_heading_patterns": ["この(春|夏|秋|冬)", "増えたもの", "新しく", "アップデート", "更新履歴", "What's new"],

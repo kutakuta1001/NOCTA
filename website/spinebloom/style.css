@@ -1,0 +1,66 @@
+/* Spinebloom の紹介ページ。地と色はアプリ本体の「朝の書斎」（紙 #f3efe8・墨・茶 #7a4a2b）。
+   色を持つのは背表紙だけ。開いたときに一度だけ、棚の本が淡い色から本来の色へにじむ */
+:root{color-scheme:light dark;--bg:#f3efe8;--paper:#fffdf9;--ink:#2d2a26;--sub:#6b6257;--rule:#e4dbcd;--shelf:#c9b9a3;--tea:#7a4a2b;--display:'Shippori Mincho','Hiragino Mincho ProN','Yu Mincho',serif;--body:'Zen Kaku Gothic New','Hiragino Sans','Yu Gothic',system-ui,sans-serif;--en:'EB Garamond',Georgia,serif}
+@media (prefers-color-scheme:dark){:root{--bg:#1f1915;--paper:#2a221c;--ink:#efe4d2;--sub:#b9a98f;--rule:#3a3028;--shelf:#5a4a3b;--tea:#e8aa5c}}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg)}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+svg{display:block;max-width:100%;height:auto}
+.skip:not(:focus){clip-path:inset(50%);width:1px;height:1px;overflow:hidden;position:absolute}
+.skip:focus{position:absolute;top:8px;left:8px;background:var(--ink);color:var(--bg);padding:6px 10px;border-radius:6px;z-index:9}
+:focus-visible{outline:2px solid var(--tea);outline-offset:3px;border-radius:4px}
+
+.wrap{max-width:1080px;margin:0 auto;padding:22px 24px 64px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding:6px 0 24px}
+.brand{font-family:var(--en);font-size:26px;letter-spacing:.01em;text-decoration:none}
+.top nav{font-size:13px}
+.text-link{color:var(--sub);text-decoration:none;border-bottom:1px solid transparent}
+.text-link:hover,.text-link:focus-visible{color:var(--ink);border-bottom-color:var(--tea)}
+
+/* 最初の画面: 左に文、右に棚。棚の絵がこのページのいちばん大きな物 */
+.hero{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:48px;align-items:end;padding:32px 0 96px}
+.hero h1{font-family:var(--display);font-weight:600;font-size:clamp(28px,3.3vw,44px);line-height:1.5;letter-spacing:.04em;margin-bottom:22px}
+.hero h1 .line{display:inline-block;white-space:nowrap}
+.lead{max-width:30em;line-height:2.05}
+.status{display:inline-block;margin-top:28px;padding:6px 14px;border:1px solid var(--rule);border-radius:999px;font-size:13px;color:var(--sub);background:var(--paper)}
+.hero-visual{display:grid;gap:14px}
+.shelf{width:100%}
+figcaption{font-size:12.5px;color:var(--sub)}
+
+/* 背表紙: 書名札は明るい紙色のまま（暗い地でも読めるように） */
+.t{font-family:var(--display);font-weight:700;writing-mode:vertical-rl;text-anchor:start;fill:#2d2a26;letter-spacing:.04em}
+.dot{fill:#2d2a26}
+.board{fill:var(--shelf)}
+
+@media (prefers-reduced-motion:no-preference){
+  .shelf .grow{animation:bloom 1.6s ease-out both}
+  .shelf .grow:nth-child(2){animation-delay:.08s}.shelf .grow:nth-child(3){animation-delay:.16s}.shelf .grow:nth-child(4){animation-delay:.24s}.shelf .grow:nth-child(5){animation-delay:.32s}.shelf .grow:nth-child(6){animation-delay:.4s}.shelf .grow:nth-child(7){animation-delay:.48s}.shelf .grow:nth-child(8){animation-delay:.56s}.shelf .grow:nth-child(9){animation-delay:.64s}
+  @keyframes bloom{from{filter:saturate(0) brightness(1.08);opacity:.85}to{filter:none;opacity:1}}
+}
+
+.intro-line{margin-bottom:36px;max-width:40em}
+.intro-line h2{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.6vw,32px);line-height:1.5;letter-spacing:.04em;margin-bottom:8px}
+.intro-line p{color:var(--sub)}
+.grow-sec,.keeps{padding-top:96px}
+.hero+section{padding-top:0}
+
+/* 一冊の育ち */
+.growth-wrap{max-width:560px}
+.growth{width:100%}
+
+.intro-line h2 .line{display:inline-block;white-space:nowrap}
+.keep-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;max-width:720px}
+.keep-list div{border-top:1px solid var(--rule);padding-top:14px}
+.keep-list dt{font-family:var(--display);font-weight:600;font-size:19px;letter-spacing:.04em;margin-bottom:6px}
+.keep-list dd{font-size:14px;color:var(--sub);line-height:1.85}
+
+.closing{padding-top:112px;font-family:var(--display);font-weight:600;font-size:clamp(20px,2.2vw,26px);letter-spacing:.06em}
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:72px;padding-top:20px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--sub)}
+footer [lang=en]{font-family:var(--en);font-size:14px}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;gap:36px;padding-bottom:72px}
+  .keep-list{grid-template-columns:1fr;gap:20px}
+    .grow-sec,.keeps{padding-top:72px}
+}
