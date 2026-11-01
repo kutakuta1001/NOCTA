@@ -456,16 +456,32 @@
         .tff-header.on-photo .tff-brand-link:hover { color: #fff; }
 
         /* ── Blog cards ── */
+        /* 箱は敷かない（紫のパネルは差し戻し済み）。上の細線と、桜色の花びらの印で The First Flower らしさを出す */
         .tff-blog-card {
+            display: block; position: relative; padding-top: 22px;
             border-top: 1px solid rgba(255,255,255,0.45);
             text-shadow: 0 1px 12px rgba(30,22,42,0.9), 0 0 2px rgba(30,22,42,0.7);
             transition: transform 0.3s ease, border-color 0.3s ease;
-            cursor: pointer;
         }
-        .tff-blog-card:hover {
-            border-top-color: #EEA4C0;
-            transform: translateY(-3px);
+        .tff-blog-card::before {
+            content: ""; position: absolute; top: -5px; left: 0; width: 9px; height: 9px;
+            border-radius: 80% 0 80% 0; background: #EEA4C0; transform: rotate(-20deg);
         }
+        .tff-blog-card:hover, .tff-blog-card:focus-visible { border-top-color: #EEA4C0; transform: translateY(-3px); }
+        .tff-blog-card:focus-visible { outline: 2px solid #fff; outline-offset: 6px; }
+        .tff-blog-date { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; letter-spacing: .12em; color: rgba(255,255,255,0.6); }
+        .tff-blog-more { display: inline-block; margin-top: 14px; font-size: 11px; letter-spacing: .2em; color: #FDD9D9; }
+        .tff-blog-card:hover .tff-blog-more { color: #fff; }
+        .tff-blog-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 220px; padding: 14px 28px;
+            border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.85);
+            transition: background-color .3s ease, border-color .3s ease, color .3s ease;
+        }
+        .tff-blog-btn:hover, .tff-blog-btn:focus-visible { background: rgba(255,255,255,0.1); border-color: #EEA4C0; color: #fff; }
+        .tff-blog-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+        .tff-blog-btn.is-now { border-color: rgba(238,164,192,0.75); }
+        .tff-blog-btn-main { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; letter-spacing: .2em; }
+        .tff-blog-btn-sub { font-family: 'Noto Sans JP', sans-serif; font-size: 10px; letter-spacing: .12em; color: rgba(255,255,255,0.55); }
 
         /* ── Divider ── */
         .tff-divider {
@@ -1031,14 +1047,37 @@
                 <p class="font-jp text-white/55 text-[13px] mt-4">脳の整理。出会いとのわくわく。感動し乗り越えろ。</p>
             </div>
 
-            <!-- Blog cards grid -->
-            <div class="grid md:grid-cols-3 gap-6 mb-10" id="tff-blog-grid"></div>
+            <!-- 過去のブログ（Ameblo）から作者が選んだ 3 本。新しい記事は NOCTA の Blog に書く（2026-11-01） -->
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <a href="https://ameblo.jp/kutakuta-1001/entry-11483682214.html" target="_blank" rel="noopener" class="tff-blog-card tff-reveal">
+                    <time class="tff-blog-date" datetime="2013-03-05">2013.03.05</time>
+                    <h3 class="font-jpserif text-white text-[18px] leading-snug mt-2 mb-3">さよなら</h3>
+                    <p class="font-jpserif text-white/80 text-[13px] leading-[1.9] line-clamp-3">もしも別れがなかったら、人の心はどうなっていくのだろう。楽しい事や嬉しい事を、充実していることと捉えがちだった社会人１年目。</p>
+                    <span class="tff-blog-more">続きを読む<span aria-hidden="true"> ↗</span></span>
+                </a>
+                <a href="https://ameblo.jp/kutakuta-1001/entry-11047332052.html" target="_blank" rel="noopener" class="tff-blog-card tff-reveal" style="transition-delay:0.1s">
+                    <time class="tff-blog-date" datetime="2011-10-14">2011.10.14</time>
+                    <h3 class="font-jpserif text-white text-[18px] leading-snug mt-2 mb-3">間だそこにあってほしい、</h3>
+                    <p class="font-jpserif text-white/80 text-[13px] leading-[1.9] line-clamp-3">多分僕が昔より失ったものは「間」なんだとおもう。隙間の時間。考えたこと。</p>
+                    <span class="tff-blog-more">続きを読む<span aria-hidden="true"> ↗</span></span>
+                </a>
+                <a href="https://ameblo.jp/kutakuta-1001/entry-10409349248.html" target="_blank" rel="noopener" class="tff-blog-card tff-reveal" style="transition-delay:0.2s">
+                    <time class="tff-blog-date" datetime="2009-12-12">2009.12.12</time>
+                    <h3 class="font-jpserif text-white text-[18px] leading-snug mt-2 mb-3">いつの間にかフィナーレ</h3>
+                    <p class="font-jpserif text-white/80 text-[13px] leading-[1.9] line-clamp-3">１番感じたことは、あなたは何をしてましたか？といわれたときに勉強です。っていえるようになりたいと思ったことです。</p>
+                    <span class="tff-blog-more">続きを読む<span aria-hidden="true"> ↗</span></span>
+                </a>
+            </div>
 
-            <!-- More link -->
-            <div class="text-center tff-reveal">
-                <a href="../index.html#blog"
-                   class="inline-block font-jp text-[12px] tracking-[3px] text-white/70 border border-white/30 px-8 py-3 hover:bg-white/10 hover:text-white transition-all duration-300">
-                    他の記事はこちら →
+            <!-- 過去のブログ / 今のブログ -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4 tff-reveal">
+                <a href="https://ameblo.jp/kutakuta-1001/" target="_blank" rel="noopener" class="tff-blog-btn">
+                    <span class="tff-blog-btn-main">過去のブログ<span aria-hidden="true"> ↗</span></span>
+                    <span class="tff-blog-btn-sub">Ameblo・2009〜</span>
+                </a>
+                <a href="../index.html#blog" class="tff-blog-btn is-now">
+                    <span class="tff-blog-btn-main">今のブログ<span aria-hidden="true"> →</span></span>
+                    <span class="tff-blog-btn-sub">NOCTA で書いています</span>
                 </a>
             </div>
 
@@ -1116,7 +1155,6 @@
     <script src="tff-profile-data.js"></script>
     <script src="tff-quotes.js"></script>
     <script src="tff-gallery-data.js"></script>
-    <script src="../blog-data.js"></script>
     <script>
     (function () {
 
@@ -1184,46 +1222,6 @@
             // スマホにはホバーがないので、触れたら止め、もう一度触れたら流す
             document.querySelectorAll('.marquee-inner').forEach(function (row) {
                 row.addEventListener('click', function () { row.classList.toggle('is-paused'); });
-            });
-        }
-
-        /* ── Blog cards ── */
-        function buildBlog() {
-            var grid = document.getElementById('tff-blog-grid');
-            if (!grid || typeof NOCTA_BLOG === 'undefined') return;
-
-            var posts = NOCTA_BLOG.slice(0, 3);
-            if (posts.length === 0) {
-                grid.innerHTML = '<p class="font-jp text-white/40 col-span-3 text-center">記事がありません。</p>';
-                return;
-            }
-
-            function esc(s) {
-                return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-            }
-
-            var catColors = {
-                music: 'bg-[rgba(177,104,168,0.15)] text-[#B168A8]',
-                essay: 'bg-[rgba(238,164,192,0.15)] text-[#EEA4C0]',
-                book:  'bg-[rgba(166,221,214,0.15)] text-[#A6DDD6]'
-            };
-            var catLabels = { music: 'Music', essay: 'Essay', book: 'Book' };
-
-            posts.forEach(function (post, i) {
-                var badgeCol = catColors[post.cat] || catColors.essay;
-                var badgeLbl = catLabels[post.cat]  || 'Essay';
-                var card = document.createElement('div');
-                card.className = 'tff-blog-card pt-5 pb-2 tff-reveal';
-                card.setAttribute('style', i > 0 ? 'transition-delay:' + (i * 0.1) + 's' : '');
-                card.onclick = function () { window.open('../blog/post.html?slug=' + post.slug, '_blank'); };
-                card.innerHTML =
-                    '<div class="flex items-center gap-2 mb-3">' +
-                        '<span class="text-[10px] font-bold px-2 py-1 rounded tracking-wider ' + badgeCol + '">' + badgeLbl + '</span>' +
-                        '<span class="font-jp text-white/35 text-[11px] tracking-wider">' + esc(post.date) + '</span>' +
-                    '</div>' +
-                    '<h3 class="font-jpserif text-white text-[17px] leading-snug mb-3">' + esc(post.title) + '</h3>' +
-                    '<p class="font-jp text-white/75 text-[13px] leading-relaxed line-clamp-3">' + esc(post.excerpt) + '</p>';
-                grid.appendChild(card);
             });
         }
 
@@ -1442,7 +1440,6 @@
         renderProfile();
         loadGallery();
         buildStream();
-        buildBlog();
         initReveal();
 
     })();
