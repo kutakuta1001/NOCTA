@@ -29,7 +29,7 @@ svg{display:block;max-width:100%;height:auto}
 figcaption{font-size:12.5px;color:var(--sub)}
 
 /* 背表紙: 書名札は明るい紙色のまま（暗い地でも読めるように） */
-.t{font-family:var(--display);font-weight:700;writing-mode:vertical-rl;text-anchor:start;fill:#2d2a26;letter-spacing:.04em}
+.t{font-family:var(--display);font-weight:700;text-anchor:middle;fill:#2d2a26}
 .dot{fill:#2d2a26}
 .board{fill:var(--shelf)}
 
