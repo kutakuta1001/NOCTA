@@ -29,7 +29,7 @@ async function openPage(browser, opts) {
     const errors = [];
     page.on("pageerror", (e) => errors.push("pageerror: " + e.message));
     page.on("console", (m) => { if (m.type() === "error") errors.push("console: " + m.text()); });
-    await page.route("**/tff-journey-data.js", (r) =>
+    await page.route("**/tff-journey-data.js*", (r) =>
         r.fulfill({ contentType: "application/javascript", body: opts.empty ? EMPTY : FIXTURE }));
     await page.route("**/journey/img/**", (r) => {
         const broken = opts.brokenImage && r.request().url().includes(BROKEN_ID);

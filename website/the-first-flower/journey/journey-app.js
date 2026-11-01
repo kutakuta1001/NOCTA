@@ -32,10 +32,10 @@
     var byId = {};
     data.regions.forEach(function (r) { byId[r.id] = r; });
 
-    var state = { mode: "jp", regionId: null, photoId: null, token: 0 };
+    var state = { mode: "jp", regionId: null, photoId: null, token: 0, scrollUntil: 0 };
 
     // 見た写真は見た人のブラウザにだけ覚える（消えても演出が出直すだけ）
-    var SEEN_KEY = "tff-journey-seen";
+    var SEEN_KEY = "tff-journey-seen-2"; // 演出を作り直したので数え直す（2026-11-01）
     var seen = {};
     try { (JSON.parse(localStorage.getItem(SEEN_KEY)) || []).forEach(function (id) { seen[id] = true; }); } catch (e) {}
     function markSeen(pid) {
@@ -187,9 +187,12 @@
             main.classList.remove("is-loading");
             status.textContent = "";
             // はじめて見た写真だけ、ページに演出（journey-fx.js）。最初に自動で出る 1 枚と、動きを減らす設定では出さない
+            // スマホで写真まで流している間は待ち、流れ終わってから出す
             if (isNew && byViewer && !reduceMotion && window.JourneyFx) {
-                var r = byId[state.regionId];
-                JourneyFx.play({ x: lastPointer.x, y: lastPointer.y, text: r.name });
+                setTimeout(function () {
+                    if (token !== state.token) return;
+                    JourneyFx.play(fxOrigin(byId[state.regionId].name));
+                }, Math.max(0, state.scrollUntil - Date.now()));
             }
         };
         main.onerror = function () {
@@ -236,6 +239,7 @@
         renderThumbs(region);
         showPhoto(region.photoIds[0], byViewer);
         if (fromMapOrList && window.matchMedia("(max-width: 767px)").matches) {
+            state.scrollUntil = Date.now() + 650;
             photoBox.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
         }
     }
@@ -249,12 +253,15 @@
         b.addEventListener("click", function () { setMode(b.dataset.mode); });
     });
     // 演出の起点にする、最後に押した場所（キーボード操作なら写真の中央）
-    var lastPointer = { x: innerWidth / 2, y: innerHeight / 2 };
-    document.addEventListener("pointerdown", function (e) { lastPointer = { x: e.clientX, y: e.clientY }; }, true);
-    document.addEventListener("keydown", function () {
+    // 押したあとにページが流れていたら（スマホ）、押した場所ではなく写真の中央を起点にする
+    var lastPointer = null;
+    document.addEventListener("pointerdown", function (e) { lastPointer = { x: e.clientX, y: e.clientY, sy: scrollY }; }, true);
+    document.addEventListener("keydown", function () { lastPointer = null; }, true);
+    function fxOrigin(text) {
+        if (lastPointer && Math.abs(scrollY - lastPointer.sy) < 40) return { x: lastPointer.x, y: lastPointer.y, text: text };
         var b = frame.getBoundingClientRect();
-        lastPointer = { x: b.left + b.width / 2, y: b.top + b.height / 2 };
-    }, true);
+        return { x: b.left + b.width / 2, y: b.top + b.height / 2, text: text };
+    }
     prevBtn.addEventListener("click", function () { step(-1); });
     nextBtn.addEventListener("click", function () { step(1); });
     photoBox.addEventListener("keydown", function (e) {

@@ -71,8 +71,8 @@
             var dx = rand(-30, 30), dy = rand(-20, 30);
             n.animate([
                 { opacity: 0, transform: "translate(0,0) scale(.3)" },
-                { opacity: .55, offset: .16 },
-                { opacity: .45, transform: "translate(" + dx * .6 + "px," + dy * .6 + "px) scale(1.25)", offset: .55 },
+                { opacity: .75, offset: .16 },
+                { opacity: .6, transform: "translate(" + dx * .6 + "px," + dy * .6 + "px) scale(1.25)", offset: .55 },
                 { opacity: 0, transform: "translate(" + dx + "px," + dy + "px) scale(1.9)" }
             ], { duration: rand(2600, 3200), delay: i * 140, easing: "cubic-bezier(.19,.68,.34,1)", fill: "both" });
         }
@@ -85,7 +85,7 @@
         [ROSE, ACCENT, PINK].forEach(function (c, i) {
             var n = document.createElement("span"), d = R * 2;
             n.style.cssText = "position:absolute;left:" + (o.x - R) + "px;top:" + (o.y - R) + "px;width:" + d + "px;height:" + d + "px;border-radius:50%;" +
-                "background:radial-gradient(circle, transparent 60%, rgba(" + c + ",.0) 64%, rgba(" + c + ",.5) 69%, rgba(" + c + ",.0) 74%, transparent 78%)";
+                "background:radial-gradient(circle, transparent 60%, rgba(" + c + ",.0) 62%, rgba(" + c + ",.75) 69%, rgba(" + c + ",.0) 76%, transparent 80%)";
             L.appendChild(n);
             n.animate([{ transform: "scale(.04)", opacity: 0 }, { opacity: 1, offset: .12 }, { transform: "scale(1)", opacity: 0 }],
                       { duration: 2400, delay: i * 320, easing: "cubic-bezier(.22,1,.36,1)", fill: "both" });
