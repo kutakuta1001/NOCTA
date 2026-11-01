@@ -1,0 +1,100 @@
+/* The First Flower — 過去のブログ（Ameblo から選んだ記事）の記事ページ
+ * 元サイト（Strikingly）の記事ページの形: 色の帯に題名と副題、その下に日付と線、白い本文の欄。
+ * 帯の色を桜のグラデーションにし、花びらを舞わせて The First Flower に寄せる（2026-11-01 CEO 指示）。
+ * 色は DESIGN-NOTES.md 2 章のトークン。 */
+:root {
+    --ob-base: #FCFBF5;
+    --ob-text: #3D2E52;
+    --ob-sub: #9A86B0;
+    --ob-accent: #B168A8;
+    --ob-rose: #EEA4C0;
+    --ob-pink: #FDD9D9;
+    --ob-line: #E6E0EC;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ob-base); color: var(--ob-text); font-family: 'Noto Sans JP', sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--ob-accent); outline-offset: 3px; }
+
+/* ── 桜の帯 ── */
+.ob-hero {
+    position: relative; overflow: hidden;
+    min-height: clamp(300px, 46vh, 440px);
+    display: flex; align-items: flex-end;
+    padding: 96px 0 56px;
+    background:
+        radial-gradient(ellipse 70% 90% at 88% 8%, rgba(253, 217, 217, .95) 0%, transparent 62%),
+        radial-gradient(ellipse 60% 70% at 55% 40%, rgba(238, 164, 192, .85) 0%, transparent 70%),
+        radial-gradient(ellipse 80% 90% at 8% 100%, rgba(61, 46, 82, .95) 0%, transparent 70%),
+        linear-gradient(135deg, #B168A8 0%, #EEA4C0 55%, #FDD9D9 100%);
+}
+.ob-hero::after {
+    /* 文字の下だけ少し沈めて、白い題名を読ませる */
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 35%, rgba(61, 46, 82, .35) 100%);
+    pointer-events: none;
+}
+.ob-hero-inner { position: relative; z-index: 1; width: 100%; max-width: 720px; margin: 0 auto; padding: 0 16px; color: #fff;
+                 text-shadow: 0 1px 14px rgba(61, 46, 82, .55); }
+.ob-kicker { margin: 0 0 10px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; letter-spacing: .14em; color: rgba(255, 255, 255, .8); }
+.ob-hero h1 { margin: 0; font-family: 'Noto Serif JP', serif; font-weight: 600; font-size: clamp(30px, 6vw, 46px); line-height: 1.35; letter-spacing: .04em; }
+.ob-sub { margin: 14px 0 0; font-family: 'Noto Serif JP', serif; font-size: clamp(15px, 2.6vw, 19px); line-height: 1.8; color: rgba(255, 255, 255, .92); }
+
+.ob-back {
+    position: absolute; top: 24px; left: 16px; z-index: 2;
+    font-size: 13px; text-decoration: none; color: #fff; letter-spacing: .04em;
+    padding: 7px 14px; border-radius: 4px; background: rgba(61, 46, 82, .55);
+    transition: background-color .3s ease;
+}
+.ob-back:hover { background: rgba(61, 46, 82, .78); }
+.ob-back:focus-visible { outline-color: #fff; }
+
+/* 花びら（TFF の題字のまわりと同じく、ゆっくり落ちる） */
+.ob-petal {
+    position: absolute; top: -20px; left: var(--x); width: 11px; height: 14px; z-index: 0;
+    border-radius: 80% 0 80% 0; background: rgba(255, 255, 255, .85);
+    animation: obFall var(--d) linear var(--delay) infinite;
+}
+.ob-petal:nth-child(even) { background: rgba(253, 217, 217, .9); width: 9px; height: 12px; }
+@keyframes obFall {
+    0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+    10%  { opacity: 1; }
+    100% { transform: translate(-60px, 480px) rotate(420deg); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .ob-petal { animation: none; opacity: .7; top: 30%; } }
+
+/* ── 本文 ── */
+.ob-main { max-width: 720px; margin: 0 auto; padding: 0 16px 72px; }
+.ob-date { display: block; padding: 18px 0 14px; border-bottom: 1px solid var(--ob-line); font-size: 14px; color: var(--ob-sub); letter-spacing: .04em; }
+.ob-body { padding-top: 32px; font-size: 16px; line-height: 2.05; letter-spacing: .02em; }
+.ob-body p { margin: 0 0 1.6em; }
+
+.ob-divider { position: relative; width: 200px; height: 1px; margin: 48px auto 40px; background: var(--ob-line); }
+.ob-divider::after {
+    content: ""; position: absolute; left: 50%; top: -5px; width: 10px; height: 10px; margin-left: -5px;
+    border-radius: 80% 0 80% 0; background: var(--ob-rose); transform: rotate(-20deg);
+}
+
+.ob-note { margin: 0; text-align: center; font-size: 13px; color: var(--ob-sub); }
+.ob-ameblo {
+    display: table; margin: 16px auto 0; padding: 11px 28px;
+    font-size: 13px; letter-spacing: .16em; text-decoration: none;
+    border: 1px solid var(--ob-rose); border-radius: 999px; color: var(--ob-text);
+    transition: background-color .3s ease;
+}
+.ob-ameblo:hover { background: var(--ob-pink); }
+
+/* ── ほかの記事 ── */
+.ob-others { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--ob-line); }
+.ob-others h2 { margin: 0 0 14px; font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 17px; letter-spacing: .08em; }
+.ob-others ul { margin: 0; padding: 0; list-style: none; }
+.ob-others li a { display: flex; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px dashed var(--ob-line); text-decoration: none; }
+.ob-others li a:hover span { color: var(--ob-accent); }
+.ob-others time { flex: none; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: var(--ob-sub); }
+.ob-others span { font-family: 'Noto Serif JP', serif; font-size: 15px; }
+.ob-links { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 22px; font-size: 13px; letter-spacing: .1em; }
+.ob-links a { color: var(--ob-accent); text-decoration: none; }
+.ob-links a:hover { text-decoration: underline; }
+
+.ob-foot { padding: 28px 16px; text-align: center; background: #705E92; }
+.ob-foot a { font-family: 'Cormorant Garamond', serif; font-size: 15px; letter-spacing: .2em; color: rgba(255, 255, 255, .85); text-decoration: none; }
