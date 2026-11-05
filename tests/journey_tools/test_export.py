@@ -141,6 +141,13 @@ class ExportTest(unittest.TestCase):
         self.assertEqual(p["taken"], "2016-03")
         self.assertEqual(p["alt"], "北海道の景色")
 
+    def test_export_theme_region(self):
+        self.photo("theme-summer-fes")
+        self.photo("theme-summer-fes")
+        self.assertTrue(self.run_export().ok)
+        r = self.data()["regions"][0]
+        self.assertEqual((r["id"], r["kind"], r["parentId"], r["name"]), ("theme-summer-fes", "theme", None, "夏フェス"))
+
     def test_export_removes_unselected(self):
         a = self.photo("JP-01")
         self.photo("JP-01")

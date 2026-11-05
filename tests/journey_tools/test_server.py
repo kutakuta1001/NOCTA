@@ -30,6 +30,16 @@ class ServerTest(unittest.TestCase):
         self.token = self.url.split("t=")[1]
         threading.Thread(target=self.httpd.serve_forever, daemon=True).start()
 
+    def add_photos(self, n):
+        """setUp の 5 枚に足して、ID 1〜n の写真をそろえる（上限の 10 枚を超える選択を試すため）"""
+        conn = store.connect(self.db)
+        for i in range(5, n):
+            pid = f"{i + 1:016x}"
+            conn.execute("INSERT INTO photos(id, sha256, lkey, taken_utc, lat, lng) VALUES (?,?,?,?,?,?)", (pid, pid * 4, pid, T + i * 86400, 43.2, 141.0))
+            conn.execute("INSERT INTO regions(photo_id, region_id, status) VALUES (?, 'JP-01', 'resolved')", (pid,))
+        conn.commit()
+        conn.close()
+
     def tearDown(self):
         self.httpd.shutdown()
         self.httpd.server_close()
@@ -98,22 +108,24 @@ class ServerTest(unittest.TestCase):
         self.assertTrue(items["0000000000000001"]["selected"])
         self.assertEqual(items["0000000000000001"]["caption"], "運河の夜")
 
-    def test_server_fourth_select_refused(self):
-        for i in (1, 2, 3):
+    def test_server_eleventh_select_refused(self):
+        self.add_photos(11)
+        for i in range(1, 11):
             self.assertEqual(self.req("POST", "/api/decision", {"photo_id": f"{i:016x}", "region_id": "JP-01", "selected": True})[0], 200)
-        self.assertEqual(self.req("POST", "/api/decision", {"photo_id": f"{4:016x}", "region_id": "JP-01", "selected": True})[0], 409)
-        self.assertEqual(self.selected(), 3)
+        self.assertEqual(self.req("POST", "/api/decision", {"photo_id": f"{11:016x}", "region_id": "JP-01", "selected": True})[0], 409)
+        self.assertEqual(self.selected(), 10)
 
-    def test_server_concurrent_fourth(self):
-        for i in (1, 2):
+    def test_server_concurrent_eleventh(self):
+        self.add_photos(12)
+        for i in range(1, 10):
             self.req("POST", "/api/decision", {"photo_id": f"{i:016x}", "region_id": "JP-01", "selected": True})
         threads = [threading.Thread(target=self.req, args=("POST", "/api/decision", {"photo_id": f"{i:016x}", "region_id": "JP-01", "selected": True}))
-                   for i in (3, 4, 5)]
+                   for i in (10, 11, 12)]
         for t in threads:
             t.start()
         for t in threads:
             t.join()
-        self.assertEqual(self.selected(), 3)
+        self.assertEqual(self.selected(), 10)
 
     def test_server_rejects_long_caption(self):
         r = self.req("POST", "/api/decision", {"photo_id": "0000000000000001", "region_id": "JP-01", "caption": "あ" * 201})

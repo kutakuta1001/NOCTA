@@ -69,8 +69,12 @@ SUBREGIONS = {
 }
 
 
+# 県をまたぐまとまり。地図には出さず、日本の一覧の最後に並べる（2026-11-05 CEO 指示）
+THEMES = {"theme-summer-fes": "夏フェス"}
+
+
 def name(region_id, fallback=None):
-    return PREFS.get(region_id) or COUNTRIES.get(region_id) or fallback or region_id
+    return PREFS.get(region_id) or COUNTRIES.get(region_id) or THEMES.get(region_id) or fallback or region_id
 
 
 def kind(region_id):
@@ -78,4 +82,6 @@ def kind(region_id):
         return "pref"
     if region_id.startswith("place-"):
         return "place"
+    if region_id.startswith("theme-"):
+        return "theme"
     return "country"

@@ -21,6 +21,7 @@ LARGE_EDGE = 1600
 THUMB_EDGE = 480
 QUALITY = 82
 MAX_BYTES = 1_000_000
+MIN_PHOTOS, MAX_PHOTOS = 2, 10  # 1 地域に載せる枚数（2026-11-05 CEO 指示で上限を 3 から 10 へ）
 JOURNEY_DIR = Path("website") / "the-first-flower" / "journey"
 DATA_NAME = "tff-journey-data.js"
 IMG_NAME_RE = re.compile(r"^[a-f0-9]{16}(-s)?\.jpg$")
@@ -30,7 +31,7 @@ HEADER = """/**
  * The First Flower — 旅の地図の公開データ（作者が選んだ写真だけ）
  *
  * tools/journey の export が書く。手で直すときは項目を増やさない（journey-core.js の検証で弾かれる）。
- * 形: regions[] = { id, kind: "pref" | "country" | "place", parentId, name, photoIds }、
+ * 形: regions[] = { id, kind: "pref" | "country" | "place" | "theme", parentId, name, photoIds }、
  *     photos{}  = { src, thumb, w, h, taken: "YYYY-MM" | null, caption: 文字列 | null, alt }
  */
 """
@@ -70,12 +71,12 @@ def _snapshot(conn):
         child_ids = [p for p in place_rows if place_rows[p][1] == rid]
         child_selected = {pid for c in child_ids for pid, _ in sel.get(c, [])}
         photo_ids = [p for p in reps.get(rid, []) if p in child_selected] if reps.get(rid) else own
-        if not 2 <= len(photo_ids) <= 3:
+        if not MIN_PHOTOS <= len(photo_ids) <= MAX_PHOTOS:
             continue
         out.append({"id": rid, "kind": regions.kind(rid), "parentId": None, "name": regions.name(rid), "photoIds": photo_ids})
         for c in sorted(child_ids):
             ids = [pid for pid, _ in sel.get(c, [])]
-            if 2 <= len(ids) <= 3:
+            if MIN_PHOTOS <= len(ids) <= MAX_PHOTOS:
                 out.append({"id": c, "kind": "place", "parentId": rid, "name": place_rows[c][2], "photoIds": ids})
     return out, variant
 
@@ -91,8 +92,8 @@ def validate_export(data):
     referenced = set()
     for r in regs:
         pids = r.get("photoIds", [])
-        if not 2 <= len(pids) <= 3:
-            errs.append(f"{r.get('id')}: 写真が 2〜3 枚でない")
+        if not MIN_PHOTOS <= len(pids) <= MAX_PHOTOS:
+            errs.append(f"{r.get('id')}: 写真が {MIN_PHOTOS}〜{MAX_PHOTOS} 枚でない")
         if len(set(pids)) != len(pids):
             errs.append(f"{r.get('id')}: 写真が重複している")
         referenced.update(pids)

@@ -20,13 +20,13 @@ UI_DIR = Path(__file__).resolve().parent.parent / "ui"
 STATIC = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript; charset=utf-8"),
           "/app.css": ("app.css", "text/css; charset=utf-8")}
 PHOTO_ID_RE = re.compile(r"^[a-f0-9]{16}$")
-REGION_RE = re.compile(r"^(JP-(0[1-9]|[1-3][0-9]|4[0-7])|[A-Z]{2}|place-[a-z0-9-]+)$")
+REGION_RE = re.compile(r"^(JP-(0[1-9]|[1-3][0-9]|4[0-7])|[A-Z]{2}|place-[a-z0-9-]+|theme-[a-z0-9-]+)$")
 GROUP_RE = re.compile(r"^day-\d{4}-\d{2}-\d{2}(-more)?$")
 MAX_BODY = 64 * 1024
 MAX_CAPTION = 200
 MAX_PLACE_NAME = 40
 PAGE = 30
-MAX_SELECTED = 3
+MAX_SELECTED = 10  # export.MAX_PHOTOS と同じ
 MONTH_RE = re.compile(r"^\d{4}-(0[1-9]|1[0-2])$")
 SCENIC_T = 0.5  # 日ごとの確認で「景色の写真」と数える景色らしさ
 
@@ -151,7 +151,7 @@ def api_proposals(conn, q):
 
 
 def api_region_names(conn, q):
-    out = [{"id": k, "name": v} for k, v in regions.PREFS.items()] + [{"id": k, "name": v} for k, v in regions.COUNTRIES.items()]
+    out = [{"id": k, "name": v} for k, v in regions.PREFS.items()] + [{"id": k, "name": v} for k, v in regions.COUNTRIES.items()] + [{"id": k, "name": v} for k, v in regions.THEMES.items()]
     out += [{"id": pid, "name": name, "parent_id": parent} for pid, parent, name in conn.execute("SELECT id, parent_id, name FROM places")]
     return {"regions": out}
 
@@ -167,7 +167,7 @@ def post_decision(conn, b):
             already = conn.execute("SELECT selected FROM region_choices WHERE photo_id = ? AND region_id = ?", (pid, rid)).fetchone()
             others = conn.execute("SELECT COUNT(*) FROM region_choices WHERE region_id = ? AND selected = 1 AND photo_id != ?", (rid, pid)).fetchone()[0]
             if not (already and already[0]) and others >= MAX_SELECTED:
-                raise Conflict("この地域はもう 3 枚選んでいます")
+                raise Conflict(f"この地域はもう {MAX_SELECTED} 枚選んでいます")
             candidates.set_choice(conn, pid, rid, True)
         elif b.get("selected") is False:
             candidates.set_choice(conn, pid, rid, False)
@@ -222,7 +222,7 @@ def post_representatives(conn, b):
     parent = _region(b.get("parent_id"))
     ids = b.get("photo_ids")
     if not isinstance(ids, list) or not 2 <= len(ids) <= MAX_SELECTED or len(set(ids)) != len(ids):
-        raise BadRequest("photo_ids は 2〜3 枚")
+        raise BadRequest(f"photo_ids は 2〜{MAX_SELECTED} 枚")
     ids = [_photo(conn, p) for p in ids]
     child_selected = {r[0] for r in conn.execute(
         "SELECT c.photo_id FROM region_choices c JOIN places p ON p.id = c.region_id WHERE p.parent_id = ? AND c.selected = 1", (parent,))}

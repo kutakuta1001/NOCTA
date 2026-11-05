@@ -100,6 +100,8 @@
             var order = {};
             JP_TILES.forEach(function (t, i) { order[t.id] = i; });
             rs.sort(function (a, b) { return order[a.id] - order[b.id]; });
+            // 県をまたぐまとまり（夏フェスなど）は地図に出さず、県の後ろに並べる
+            rs = rs.concat(published.filter(function (r) { return r.kind === "theme"; }));
         }
         return rs;
     }

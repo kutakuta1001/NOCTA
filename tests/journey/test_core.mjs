@@ -35,10 +35,17 @@ test("validate-rejects-missing-photo", () => {
     assert.equal(core.validateJourney(d).ok, false);
 });
 
-test("validate-rejects-four-photos", () => {
+test("validate-rejects-eleven-photos", () => {
     const d = clone();
-    d.regions[0].photoIds.push("a000000000000006");
+    while (d.regions[0].photoIds.length < 11) d.regions[0].photoIds.push("a000000000000006");
     assert.equal(core.validateJourney(d).ok, false);
+});
+
+test("validate-accepts-theme-region", () => {
+    const d = clone();
+    d.regions.push({ id: "theme-summer-fes", kind: "theme", parentId: null, name: "夏フェス", photoIds: d.regions[0].photoIds.slice() });
+    assert.equal(core.validateJourney(d).ok, true);
+    assert.ok(core.isVisited(d, "theme-summer-fes"));
 });
 
 test("validate-rejects-duplicate-region-id", () => {
