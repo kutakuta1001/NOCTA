@@ -54,9 +54,9 @@ test("validate-rejects-duplicate-region-id", () => {
     assert.equal(core.validateJourney(d).ok, false);
 });
 
-test("validate-rejects-bad-taken", () => {
+test("validate-rejects-taken", () => {
     const d = clone();
-    d.photos.a000000000000001.taken = "2017/02";
+    d.photos.a000000000000001.taken = "2017-02";
     assert.equal(core.validateJourney(d).ok, false);
 });
 

@@ -3,14 +3,13 @@
  * The First Flower — 旅の地図: 公開データ（TFF_JOURNEY）の検証と整形。DOM には触れない。
  *
  * 公開する地域は採用写真が 2〜10 枚のものだけ（2026-11-05 CEO 指示で上限を 3 から 10 へ）。写真に置ける項目は PHOTO_FIELDS だけで、
- * 位置情報を入れる場所は作らない（設計書 docs/superpowers/specs/2026-10-18-tff-journey-map-design.md）。
+ * 位置情報と撮影日を入れる場所は作らない（設計書 docs/superpowers/specs/2026-10-18-tff-journey-map-design.md）。
  */
 (function () {
-    var PHOTO_FIELDS = ["src", "thumb", "w", "h", "taken", "caption", "alt"];
+    var PHOTO_FIELDS = ["src", "thumb", "w", "h", "caption", "alt"]; // 撮影日は持たない（いつ撮ったかを外から読ませない）
     var REGION_FIELDS = ["id", "kind", "parentId", "name", "photoIds"];
     var KINDS = ["pref", "country", "place", "theme"]; // theme = 県をまたぐまとまり（夏フェスなど）。地図には出さず日本の一覧の最後に並べる
     var IMG_RE = /^img\/[a-f0-9]{16}(-s)?\.jpg$/;
-    var TAKEN_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
     var ID_RE = /^(JP-(0[1-9]|[1-3][0-9]|4[0-7])|[A-Z]{2}|place-[a-z0-9-]+|theme-[a-z0-9-]+)$/;
     var MIN_PHOTOS = 2;
     var MAX_PHOTOS = 10;
@@ -32,7 +31,6 @@
             if (p.src !== "img/" + pid + ".jpg" || !IMG_RE.test(p.src)) errors.push("写真 " + pid + " の src が不正");
             if (p.thumb !== "img/" + pid + "-s.jpg" || !IMG_RE.test(p.thumb)) errors.push("写真 " + pid + " の thumb が不正");
             if (!(p.w > 0) || !(p.h > 0)) errors.push("写真 " + pid + " の w/h が不正");
-            if (p.taken !== null && !TAKEN_RE.test(p.taken)) errors.push("写真 " + pid + " の taken が不正");
             if (p.caption !== null && typeof p.caption !== "string") errors.push("写真 " + pid + " の caption が不正");
             if (typeof p.alt !== "string") errors.push("写真 " + pid + " の alt が不正");
         });

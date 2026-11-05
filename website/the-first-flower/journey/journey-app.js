@@ -24,7 +24,7 @@
     var $ = function (sel) { return document.querySelector(sel); };
     var map = $("#jr-map"), list = $("#jr-list"), thumbs = $("#jr-thumbs"), places = $("#jr-places");
     var main = $("img.jr-main"), status = $("#jr-status"), label = $("#jr-label");
-    var taken = $("#jr-taken"), caption = $("#jr-caption"), photoBox = $("#jr-photo");
+    var caption = $("#jr-caption"), photoBox = $("#jr-photo");
     var frame = $(".jr-frame"), pos = $("#jr-pos"), found = $("#jr-found");
     var prevBtn = $(".jr-prev"), nextBtn = $(".jr-next");
 
@@ -205,7 +205,6 @@
         frame.style.setProperty("--jr-ar", String(p.w / p.h));
         main.alt = p.alt;
         main.src = p.src;
-        taken.textContent = p.taken ? p.taken.replace("-", ".") : "";
         caption.textContent = p.caption || "";
         thumbs.querySelectorAll("button").forEach(function (b) {
             b.setAttribute("aria-current", String(b.dataset.photo === pid));

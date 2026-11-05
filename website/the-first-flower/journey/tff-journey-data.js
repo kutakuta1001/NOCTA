@@ -4,7 +4,7 @@
  *
  * tools/journey の export が書く。手で直すときは項目を増やさない（journey-core.js の検証で弾かれる）。
  * 形: regions[] = { id, kind: "pref" | "country" | "place" | "theme", parentId, name, photoIds }、
- *     photos{}  = { src, thumb, w, h, taken: "YYYY-MM" | null, caption: 文字列 | null, alt }
+ *     photos{}  = { src, thumb, w, h, caption: 文字列 | null, alt }（撮影日は出さない。2026-11-05 CEO 指示）
  */
 const TFF_JOURNEY = {
   "schemaVersion": 1,
@@ -891,7 +891,6 @@ const TFF_JOURNEY = {
       "thumb": "img/588ec10c96024b48-s.jpg",
       "w": 1600,
       "h": 1008,
-      "taken": "2009-09",
       "caption": null,
       "alt": "オーストラリアの景色"
     },
@@ -900,7 +899,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ea37c7749c3e6487-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2009-09",
       "caption": null,
       "alt": "オーストラリアの景色"
     },
@@ -909,7 +907,6 @@ const TFF_JOURNEY = {
       "thumb": "img/59e4a7543d24de9d-s.jpg",
       "w": 1600,
       "h": 1032,
-      "taken": "2009-09",
       "caption": null,
       "alt": "オーストラリアの景色"
     },
@@ -918,7 +915,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ed541a9e176b2f1e-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-09",
       "caption": null,
       "alt": "カナダの景色"
     },
@@ -927,7 +923,6 @@ const TFF_JOURNEY = {
       "thumb": "img/8e55e6878408f121-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-09",
       "caption": null,
       "alt": "カナダの景色"
     },
@@ -936,7 +931,6 @@ const TFF_JOURNEY = {
       "thumb": "img/32e771f092b14197-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-09",
       "caption": null,
       "alt": "カナダの景色"
     },
@@ -945,7 +939,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b5273b6827859717-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2012-03",
       "caption": null,
       "alt": "グアムの景色"
     },
@@ -954,7 +947,6 @@ const TFF_JOURNEY = {
       "thumb": "img/48f9e0c4e651eef8-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2012-03",
       "caption": null,
       "alt": "グアムの景色"
     },
@@ -963,7 +955,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d8b1f6309d33f99b-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2012-03",
       "caption": null,
       "alt": "グアムの景色"
     },
@@ -972,7 +963,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b526214eb9fa0f12-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2015-11",
       "caption": null,
       "alt": "香港の景色"
     },
@@ -981,7 +971,6 @@ const TFF_JOURNEY = {
       "thumb": "img/9a207ba38262c653-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2015-11",
       "caption": null,
       "alt": "香港の景色"
     },
@@ -990,7 +979,6 @@ const TFF_JOURNEY = {
       "thumb": "img/fe65d3d2b97cfe0c-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2015-11",
       "caption": null,
       "alt": "香港の景色"
     },
@@ -999,7 +987,6 @@ const TFF_JOURNEY = {
       "thumb": "img/31f276f43d562270-s.jpg",
       "w": 1493,
       "h": 1600,
-      "taken": "2008-09",
       "caption": null,
       "alt": "インドネシアの景色"
     },
@@ -1008,7 +995,6 @@ const TFF_JOURNEY = {
       "thumb": "img/bf0c3a586980864e-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2008-09",
       "caption": null,
       "alt": "インドネシアの景色"
     },
@@ -1017,7 +1003,6 @@ const TFF_JOURNEY = {
       "thumb": "img/413665d86d344b64-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2008-09",
       "caption": null,
       "alt": "インドネシアの景色"
     },
@@ -1026,7 +1011,6 @@ const TFF_JOURNEY = {
       "thumb": "img/3765fdbc2b1fd19e-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-05",
       "caption": null,
       "alt": "北海道の景色"
     },
@@ -1035,7 +1019,6 @@ const TFF_JOURNEY = {
       "thumb": "img/574e1c1999fb3dc5-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-01",
       "caption": null,
       "alt": "北海道の景色"
     },
@@ -1044,7 +1027,6 @@ const TFF_JOURNEY = {
       "thumb": "img/1a0b9bf225a79034-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-05",
       "caption": null,
       "alt": "北海道の景色"
     },
@@ -1053,7 +1035,6 @@ const TFF_JOURNEY = {
       "thumb": "img/293b5211b9e1d265-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-05",
       "caption": null,
       "alt": "道北の景色"
     },
@@ -1062,7 +1043,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d2a22d61cc9ca215-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-05",
       "caption": null,
       "alt": "道北の景色"
     },
@@ -1071,7 +1051,6 @@ const TFF_JOURNEY = {
       "thumb": "img/4e2f079846f105e7-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2013-05",
       "caption": null,
       "alt": "道北の景色"
     },
@@ -1080,7 +1059,6 @@ const TFF_JOURNEY = {
       "thumb": "img/589292dc5cd130ca-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-01",
       "caption": null,
       "alt": "道南の景色"
     },
@@ -1089,7 +1067,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d65ac18a225e6e4a-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-01",
       "caption": null,
       "alt": "道南の景色"
     },
@@ -1098,7 +1075,6 @@ const TFF_JOURNEY = {
       "thumb": "img/45073a06622bbafb-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-01",
       "caption": null,
       "alt": "道南の景色"
     },
@@ -1107,7 +1083,6 @@ const TFF_JOURNEY = {
       "thumb": "img/fda3a67e55b0892c-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-09",
       "caption": null,
       "alt": "道央の景色"
     },
@@ -1116,7 +1091,6 @@ const TFF_JOURNEY = {
       "thumb": "img/60021d76de7de35c-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2026-09",
       "caption": null,
       "alt": "道央の景色"
     },
@@ -1125,7 +1099,6 @@ const TFF_JOURNEY = {
       "thumb": "img/252b9ec19f8f86dd-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-09",
       "caption": null,
       "alt": "道央の景色"
     },
@@ -1134,7 +1107,6 @@ const TFF_JOURNEY = {
       "thumb": "img/adb5583c53220f0b-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-08",
       "caption": null,
       "alt": "青森の景色"
     },
@@ -1143,7 +1115,6 @@ const TFF_JOURNEY = {
       "thumb": "img/93d61d7450dbadce-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-08",
       "caption": null,
       "alt": "青森の景色"
     },
@@ -1152,7 +1123,6 @@ const TFF_JOURNEY = {
       "thumb": "img/59cc84243c6563bc-s.jpg",
       "w": 400,
       "h": 240,
-      "taken": "2009-03",
       "caption": null,
       "alt": "青森の景色"
     },
@@ -1161,7 +1131,6 @@ const TFF_JOURNEY = {
       "thumb": "img/2668f070ee4783ff-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": null,
       "caption": null,
       "alt": "その他の景色"
     },
@@ -1170,7 +1139,6 @@ const TFF_JOURNEY = {
       "thumb": "img/2b7af8b08078681f-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": null,
       "caption": null,
       "alt": "その他の景色"
     },
@@ -1179,7 +1147,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5fc48f44f2b684c1-s.jpg",
       "w": 640,
       "h": 480,
-      "taken": null,
       "caption": null,
       "alt": "その他の景色"
     },
@@ -1188,7 +1155,6 @@ const TFF_JOURNEY = {
       "thumb": "img/1fdcbec4c593b035-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2013-06",
       "caption": null,
       "alt": "十二湖の景色"
     },
@@ -1197,7 +1163,6 @@ const TFF_JOURNEY = {
       "thumb": "img/dc3c4870ec7ab48b-s.jpg",
       "w": 640,
       "h": 480,
-      "taken": "2012-08",
       "caption": null,
       "alt": "十二湖の景色"
     },
@@ -1206,7 +1171,6 @@ const TFF_JOURNEY = {
       "thumb": "img/80572ee0718de955-s.jpg",
       "w": 640,
       "h": 480,
-      "taken": "2012-08",
       "caption": null,
       "alt": "十二湖の景色"
     },
@@ -1215,7 +1179,6 @@ const TFF_JOURNEY = {
       "thumb": "img/caf764e7aa209f29-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2012-08",
       "caption": null,
       "alt": "十二湖の景色"
     },
@@ -1224,7 +1187,6 @@ const TFF_JOURNEY = {
       "thumb": "img/43f2c8ad909a17d7-s.jpg",
       "w": 240,
       "h": 400,
-      "taken": "2009-03",
       "caption": null,
       "alt": "岩手の景色"
     },
@@ -1233,7 +1195,6 @@ const TFF_JOURNEY = {
       "thumb": "img/28cc90d856ae6dbd-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2012-09",
       "caption": null,
       "alt": "岩手の景色"
     },
@@ -1242,7 +1203,6 @@ const TFF_JOURNEY = {
       "thumb": "img/96d87362bc9b9859-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-11",
       "caption": null,
       "alt": "岩手の景色"
     },
@@ -1251,7 +1211,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ae8660de10a91f43-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-07",
       "caption": null,
       "alt": "岩手の景色"
     },
@@ -1260,7 +1219,6 @@ const TFF_JOURNEY = {
       "thumb": "img/2ea0c6449c4a3ce5-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-04",
       "caption": null,
       "alt": "宮城の景色"
     },
@@ -1269,7 +1227,6 @@ const TFF_JOURNEY = {
       "thumb": "img/58b4802260574a53-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-11",
       "caption": null,
       "alt": "宮城の景色"
     },
@@ -1278,7 +1235,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5622e573504ac48e-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-06",
       "caption": null,
       "alt": "宮城の景色"
     },
@@ -1287,7 +1243,6 @@ const TFF_JOURNEY = {
       "thumb": "img/4476f7ed1d1b8f6f-s.jpg",
       "w": 1280,
       "h": 1280,
-      "taken": null,
       "caption": null,
       "alt": "秋田の景色"
     },
@@ -1296,7 +1251,6 @@ const TFF_JOURNEY = {
       "thumb": "img/2d5d826950afc988-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2013-06",
       "caption": null,
       "alt": "秋田の景色"
     },
@@ -1305,7 +1259,6 @@ const TFF_JOURNEY = {
       "thumb": "img/54863f2e8f9ca696-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2013-06",
       "caption": null,
       "alt": "秋田の景色"
     },
@@ -1314,7 +1267,6 @@ const TFF_JOURNEY = {
       "thumb": "img/e3351bc7b386853d-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": null,
       "caption": null,
       "alt": "大曲花火の景色"
     },
@@ -1323,7 +1275,6 @@ const TFF_JOURNEY = {
       "thumb": "img/fc9c114850e24229-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": null,
       "caption": null,
       "alt": "大曲花火の景色"
     },
@@ -1332,7 +1283,6 @@ const TFF_JOURNEY = {
       "thumb": "img/3eb577e48f12d9eb-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": null,
       "caption": null,
       "alt": "大曲花火の景色"
     },
@@ -1341,7 +1291,6 @@ const TFF_JOURNEY = {
       "thumb": "img/8517b98b014dde61-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-04",
       "caption": null,
       "alt": "春の景色"
     },
@@ -1350,7 +1299,6 @@ const TFF_JOURNEY = {
       "thumb": "img/739bad0a047a20bb-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-04",
       "caption": null,
       "alt": "春の景色"
     },
@@ -1359,7 +1307,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b935494935b79e99-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-04",
       "caption": null,
       "alt": "春の景色"
     },
@@ -1368,7 +1315,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d1f7c94a5b45fba3-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-02",
       "caption": null,
       "alt": "山形の景色"
     },
@@ -1377,7 +1323,6 @@ const TFF_JOURNEY = {
       "thumb": "img/073e1afdbef02d77-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-02",
       "caption": null,
       "alt": "山形の景色"
     },
@@ -1386,7 +1331,6 @@ const TFF_JOURNEY = {
       "thumb": "img/751fb8acdb090c2a-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-02",
       "caption": null,
       "alt": "山形の景色"
     },
@@ -1395,7 +1339,6 @@ const TFF_JOURNEY = {
       "thumb": "img/1b11df844d17c7bb-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2013-12",
       "caption": null,
       "alt": "福島の景色"
     },
@@ -1404,7 +1347,6 @@ const TFF_JOURNEY = {
       "thumb": "img/eeb5c7179d7ee637-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-02",
       "caption": null,
       "alt": "福島の景色"
     },
@@ -1413,7 +1355,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b66c6aa2027f82e1-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2014-02",
       "caption": null,
       "alt": "福島の景色"
     },
@@ -1422,7 +1363,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a2d5879338e2180a-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-08",
       "caption": null,
       "alt": "茨城の景色"
     },
@@ -1431,7 +1371,6 @@ const TFF_JOURNEY = {
       "thumb": "img/72bca2c054fe4a3e-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-08",
       "caption": null,
       "alt": "茨城の景色"
     },
@@ -1440,7 +1379,6 @@ const TFF_JOURNEY = {
       "thumb": "img/27793dbef584e371-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-08",
       "caption": null,
       "alt": "茨城の景色"
     },
@@ -1449,7 +1387,6 @@ const TFF_JOURNEY = {
       "thumb": "img/8e6fa0169872120a-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "ひたちなかの景色"
     },
@@ -1458,7 +1395,6 @@ const TFF_JOURNEY = {
       "thumb": "img/f9729bc146ce0a98-s.jpg",
       "w": 1600,
       "h": 1285,
-      "taken": "2011-08",
       "caption": null,
       "alt": "ひたちなかの景色"
     },
@@ -1467,7 +1403,6 @@ const TFF_JOURNEY = {
       "thumb": "img/8773b7826bbf4178-s.jpg",
       "w": 240,
       "h": 400,
-      "taken": "2009-03",
       "caption": null,
       "alt": "栃木の景色"
     },
@@ -1476,7 +1411,6 @@ const TFF_JOURNEY = {
       "thumb": "img/774109f6cb34a165-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2014-03",
       "caption": null,
       "alt": "栃木の景色"
     },
@@ -1485,7 +1419,6 @@ const TFF_JOURNEY = {
       "thumb": "img/76d56a548d36202a-s.jpg",
       "w": 240,
       "h": 400,
-      "taken": "2009-03",
       "caption": null,
       "alt": "栃木の景色"
     },
@@ -1494,7 +1427,6 @@ const TFF_JOURNEY = {
       "thumb": "img/46b78f33e95f4faa-s.jpg",
       "w": 240,
       "h": 400,
-      "taken": "2009-03",
       "caption": null,
       "alt": "日光の景色"
     },
@@ -1503,7 +1435,6 @@ const TFF_JOURNEY = {
       "thumb": "img/73b5eef1a2056154-s.jpg",
       "w": 240,
       "h": 400,
-      "taken": "2009-03",
       "caption": null,
       "alt": "日光の景色"
     },
@@ -1512,7 +1443,6 @@ const TFF_JOURNEY = {
       "thumb": "img/4eb3f6bebc9d8966-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2010-08",
       "caption": null,
       "alt": "群馬の景色"
     },
@@ -1521,7 +1451,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c4889a00bbdd2a35-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2010-08",
       "caption": null,
       "alt": "群馬の景色"
     },
@@ -1530,7 +1459,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ba8d011d49d38efe-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2010-08",
       "caption": null,
       "alt": "群馬の景色"
     },
@@ -1539,7 +1467,6 @@ const TFF_JOURNEY = {
       "thumb": "img/0b00d46bcdc9a7cf-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-02",
       "caption": null,
       "alt": "埼玉の景色"
     },
@@ -1548,7 +1475,6 @@ const TFF_JOURNEY = {
       "thumb": "img/36306eb02eeee317-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-02",
       "caption": null,
       "alt": "埼玉の景色"
     },
@@ -1557,7 +1483,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a6b1f1663d31c601-s.jpg",
       "w": 1108,
       "h": 1477,
-      "taken": "2024-11",
       "caption": null,
       "alt": "ムーミンの景色"
     },
@@ -1566,7 +1491,6 @@ const TFF_JOURNEY = {
       "thumb": "img/8170926c49d7cece-s.jpg",
       "w": 1108,
       "h": 1477,
-      "taken": "2024-11",
       "caption": null,
       "alt": "ムーミンの景色"
     },
@@ -1575,7 +1499,6 @@ const TFF_JOURNEY = {
       "thumb": "img/e2bd930afdda96fb-s.jpg",
       "w": 1108,
       "h": 1477,
-      "taken": "2024-11",
       "caption": null,
       "alt": "ムーミンの景色"
     },
@@ -1584,7 +1507,6 @@ const TFF_JOURNEY = {
       "thumb": "img/dd021e36d7647f6a-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-02",
       "caption": null,
       "alt": "千葉の景色"
     },
@@ -1593,7 +1515,6 @@ const TFF_JOURNEY = {
       "thumb": "img/35720c8135b538d3-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2017-04",
       "caption": null,
       "alt": "千葉の景色"
     },
@@ -1602,7 +1523,6 @@ const TFF_JOURNEY = {
       "thumb": "img/f0efed253d5d0059-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2026-03",
       "caption": null,
       "alt": "千葉の景色"
     },
@@ -1611,7 +1531,6 @@ const TFF_JOURNEY = {
       "thumb": "img/9308d32868f3d1d0-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-02",
       "caption": null,
       "alt": "東京の景色"
     },
@@ -1620,7 +1539,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d430e8862c0deb58-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2019-10",
       "caption": null,
       "alt": "東京の景色"
     },
@@ -1629,7 +1547,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b180298d384e534d-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2022-04",
       "caption": null,
       "alt": "東京の景色"
     },
@@ -1638,7 +1555,6 @@ const TFF_JOURNEY = {
       "thumb": "img/23f5c9c2f04415d6-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "六本木の景色"
     },
@@ -1647,7 +1563,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a2ddb92d8e7e11ec-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "六本木の景色"
     },
@@ -1656,7 +1571,6 @@ const TFF_JOURNEY = {
       "thumb": "img/0d91ae97145ec24c-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-08",
       "caption": null,
       "alt": "六本木の景色"
     },
@@ -1665,7 +1579,6 @@ const TFF_JOURNEY = {
       "thumb": "img/aabfe1aaa96b9705-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2015-05",
       "caption": null,
       "alt": "神奈川の景色"
     },
@@ -1674,7 +1587,6 @@ const TFF_JOURNEY = {
       "thumb": "img/3b9be7942c0f2f29-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2023-08",
       "caption": null,
       "alt": "神奈川の景色"
     },
@@ -1683,7 +1595,6 @@ const TFF_JOURNEY = {
       "thumb": "img/7443df2726d94788-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2023-08",
       "caption": null,
       "alt": "神奈川の景色"
     },
@@ -1692,7 +1603,6 @@ const TFF_JOURNEY = {
       "thumb": "img/39e65a26bbaf04fa-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-04",
       "caption": null,
       "alt": "新潟の景色"
     },
@@ -1701,7 +1611,6 @@ const TFF_JOURNEY = {
       "thumb": "img/6e9bad713ec1b1f6-s.jpg",
       "w": 240,
       "h": 400,
-      "taken": "2009-03",
       "caption": null,
       "alt": "新潟の景色"
     },
@@ -1710,7 +1619,6 @@ const TFF_JOURNEY = {
       "thumb": "img/85619e7034c1edfc-s.jpg",
       "w": 240,
       "h": 400,
-      "taken": "2009-03",
       "caption": null,
       "alt": "新潟の景色"
     },
@@ -1719,7 +1627,6 @@ const TFF_JOURNEY = {
       "thumb": "img/871bdeb3d518add2-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "富山の景色"
     },
@@ -1728,7 +1635,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c48170e00de2fec4-s.jpg",
       "w": 1401,
       "h": 786,
-      "taken": "2011-04",
       "caption": null,
       "alt": "富山の景色"
     },
@@ -1737,7 +1643,6 @@ const TFF_JOURNEY = {
       "thumb": "img/3dd5e83a9946a671-s.jpg",
       "w": 598,
       "h": 1600,
-      "taken": "2011-04",
       "caption": null,
       "alt": "富山の景色"
     },
@@ -1746,7 +1651,6 @@ const TFF_JOURNEY = {
       "thumb": "img/2c2c55a71c2277b5-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-04",
       "caption": null,
       "alt": "黒部ダムの景色"
     },
@@ -1755,7 +1659,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5b90a115e44ec2f7-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-04",
       "caption": null,
       "alt": "黒部ダムの景色"
     },
@@ -1764,7 +1667,6 @@ const TFF_JOURNEY = {
       "thumb": "img/29409566a0b8bd88-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "石川の景色"
     },
@@ -1773,7 +1675,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ed487631f530b2f1-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "石川の景色"
     },
@@ -1782,7 +1683,6 @@ const TFF_JOURNEY = {
       "thumb": "img/f8fc0038af8df1da-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-04",
       "caption": null,
       "alt": "石川の景色"
     },
@@ -1791,7 +1691,6 @@ const TFF_JOURNEY = {
       "thumb": "img/9bbff46ff46e6646-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-04",
       "caption": null,
       "alt": "加賀の景色"
     },
@@ -1800,7 +1699,6 @@ const TFF_JOURNEY = {
       "thumb": "img/9450477a652c960d-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2012-03",
       "caption": null,
       "alt": "金沢の景色"
     },
@@ -1809,7 +1707,6 @@ const TFF_JOURNEY = {
       "thumb": "img/93c7274e55ed4b07-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-05",
       "caption": null,
       "alt": "山梨の景色"
     },
@@ -1818,7 +1715,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b0514210fa5cdab7-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-05",
       "caption": null,
       "alt": "山梨の景色"
     },
@@ -1827,7 +1723,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a044010afc7f0cc2-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-05",
       "caption": null,
       "alt": "長野の景色"
     },
@@ -1836,7 +1731,6 @@ const TFF_JOURNEY = {
       "thumb": "img/164dfe635db9f2c3-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-09",
       "caption": null,
       "alt": "長野の景色"
     },
@@ -1845,7 +1739,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d0b99f1bea5291af-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-05",
       "caption": null,
       "alt": "長野の景色"
     },
@@ -1854,7 +1747,6 @@ const TFF_JOURNEY = {
       "thumb": "img/476474ddd9b75e88-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2013-12",
       "caption": null,
       "alt": "岐阜の景色"
     },
@@ -1863,7 +1755,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5b9a90d066b8ed62-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-12",
       "caption": null,
       "alt": "岐阜の景色"
     },
@@ -1872,7 +1763,6 @@ const TFF_JOURNEY = {
       "thumb": "img/54454de5ce7e2a99-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2013-12",
       "caption": null,
       "alt": "岐阜の景色"
     },
@@ -1881,7 +1771,6 @@ const TFF_JOURNEY = {
       "thumb": "img/0aa8fba9212dffad-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2024-08",
       "caption": null,
       "alt": "静岡の景色"
     },
@@ -1890,7 +1779,6 @@ const TFF_JOURNEY = {
       "thumb": "img/14f9571c21db6439-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2024-08",
       "caption": null,
       "alt": "静岡の景色"
     },
@@ -1899,7 +1787,6 @@ const TFF_JOURNEY = {
       "thumb": "img/981a2e93a8d72ac5-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2024-08",
       "caption": null,
       "alt": "静岡の景色"
     },
@@ -1908,7 +1795,6 @@ const TFF_JOURNEY = {
       "thumb": "img/0be591bba40a50f1-s.jpg",
       "w": 1108,
       "h": 1477,
-      "taken": "2026-10",
       "caption": null,
       "alt": "網代の景色"
     },
@@ -1917,7 +1803,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a56ac2cef5de0c53-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2026-10",
       "caption": null,
       "alt": "網代の景色"
     },
@@ -1926,7 +1811,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d654aa1712adb51d-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2026-10",
       "caption": null,
       "alt": "網代の景色"
     },
@@ -1935,7 +1819,6 @@ const TFF_JOURNEY = {
       "thumb": "img/89e3f306c098f82f-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2026-04",
       "caption": null,
       "alt": "愛知の景色"
     },
@@ -1944,7 +1827,6 @@ const TFF_JOURNEY = {
       "thumb": "img/3f9417bed00c8a65-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2013-12",
       "caption": null,
       "alt": "愛知の景色"
     },
@@ -1953,7 +1835,6 @@ const TFF_JOURNEY = {
       "thumb": "img/f9687ad9ebfd0bab-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-03",
       "caption": null,
       "alt": "愛知の景色"
     },
@@ -1962,7 +1843,6 @@ const TFF_JOURNEY = {
       "thumb": "img/03763941dd1e1202-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2026-03",
       "caption": null,
       "alt": "名古屋の景色"
     },
@@ -1971,7 +1851,6 @@ const TFF_JOURNEY = {
       "thumb": "img/52ffe873d9187509-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-09",
       "caption": null,
       "alt": "名古屋の景色"
     },
@@ -1980,7 +1859,6 @@ const TFF_JOURNEY = {
       "thumb": "img/08810d93ffda7205-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-07",
       "caption": null,
       "alt": "三重の景色"
     },
@@ -1989,7 +1867,6 @@ const TFF_JOURNEY = {
       "thumb": "img/59bb6ca83a543b7f-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2010-09",
       "caption": null,
       "alt": "三重の景色"
     },
@@ -1998,7 +1875,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c8626c57670986b4-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-07",
       "caption": null,
       "alt": "三重の景色"
     },
@@ -2007,7 +1883,6 @@ const TFF_JOURNEY = {
       "thumb": "img/20c0b947b3663449-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-09",
       "caption": null,
       "alt": "滋賀の景色"
     },
@@ -2016,7 +1891,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5468418f7a5a2502-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-09",
       "caption": null,
       "alt": "滋賀の景色"
     },
@@ -2025,7 +1899,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a497e05077e8ef4f-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2024-08",
       "caption": null,
       "alt": "滋賀の景色"
     },
@@ -2034,7 +1907,6 @@ const TFF_JOURNEY = {
       "thumb": "img/4c54ba7e19717a29-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2026-10",
       "caption": null,
       "alt": "琵琶湖の景色"
     },
@@ -2043,7 +1915,6 @@ const TFF_JOURNEY = {
       "thumb": "img/582bcf5d36b57d4a-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2026-10",
       "caption": null,
       "alt": "琵琶湖の景色"
     },
@@ -2052,7 +1923,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d2e22c3ff4b71a0e-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2026-10",
       "caption": null,
       "alt": "琵琶湖の景色"
     },
@@ -2061,7 +1931,6 @@ const TFF_JOURNEY = {
       "thumb": "img/365cebcbb85b8857-s.jpg",
       "w": 950,
       "h": 1600,
-      "taken": "2011-09",
       "caption": null,
       "alt": "大津の景色"
     },
@@ -2070,7 +1939,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a9d0c202e49ee60d-s.jpg",
       "w": 1600,
       "h": 950,
-      "taken": "2011-09",
       "caption": null,
       "alt": "大津の景色"
     },
@@ -2079,7 +1947,6 @@ const TFF_JOURNEY = {
       "thumb": "img/92cce368b65191ec-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-09",
       "caption": null,
       "alt": "大津の景色"
     },
@@ -2088,7 +1955,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c55650e37f49975c-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2015-09",
       "caption": null,
       "alt": "京都の景色"
     },
@@ -2097,7 +1963,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5f181106d6e8afc7-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-09",
       "caption": null,
       "alt": "京都の景色"
     },
@@ -2106,7 +1971,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5ef02f87d96ff18c-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2010-11",
       "caption": null,
       "alt": "京都の景色"
     },
@@ -2115,7 +1979,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c85657cee2889739-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2010-04",
       "caption": null,
       "alt": "春の景色"
     },
@@ -2124,7 +1987,6 @@ const TFF_JOURNEY = {
       "thumb": "img/01fee2247d881d73-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2010-04",
       "caption": null,
       "alt": "春の景色"
     },
@@ -2133,7 +1995,6 @@ const TFF_JOURNEY = {
       "thumb": "img/66366e23c6f68c7c-s.jpg",
       "w": 1067,
       "h": 1600,
-      "taken": "2010-04",
       "caption": null,
       "alt": "春の景色"
     },
@@ -2142,7 +2003,6 @@ const TFF_JOURNEY = {
       "thumb": "img/7a4332490d981842-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": null,
       "caption": null,
       "alt": "秋の景色"
     },
@@ -2151,7 +2011,6 @@ const TFF_JOURNEY = {
       "thumb": "img/df417e1d70932e29-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": null,
       "caption": null,
       "alt": "秋の景色"
     },
@@ -2160,7 +2019,6 @@ const TFF_JOURNEY = {
       "thumb": "img/da29b6c9e1bd633a-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2013-06",
       "caption": null,
       "alt": "大阪の景色"
     },
@@ -2169,7 +2027,6 @@ const TFF_JOURNEY = {
       "thumb": "img/fab4af82038c3962-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-04",
       "caption": null,
       "alt": "大阪の景色"
     },
@@ -2178,7 +2035,6 @@ const TFF_JOURNEY = {
       "thumb": "img/7c30fb751d0940e7-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-04",
       "caption": null,
       "alt": "万博記念公園の景色"
     },
@@ -2187,7 +2043,6 @@ const TFF_JOURNEY = {
       "thumb": "img/aea9ba65bdf0d2c1-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-04",
       "caption": null,
       "alt": "万博記念公園の景色"
     },
@@ -2196,7 +2051,6 @@ const TFF_JOURNEY = {
       "thumb": "img/8a147aedbf3f479e-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-04",
       "caption": null,
       "alt": "万博記念公園の景色"
     },
@@ -2205,7 +2059,6 @@ const TFF_JOURNEY = {
       "thumb": "img/7ddbc0df3533652d-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2010-10",
       "caption": null,
       "alt": "兵庫の景色"
     },
@@ -2214,7 +2067,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b91e07a9b82e72c3-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2010-07",
       "caption": null,
       "alt": "兵庫の景色"
     },
@@ -2223,7 +2075,6 @@ const TFF_JOURNEY = {
       "thumb": "img/0d1e1d47df21b63f-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-12",
       "caption": null,
       "alt": "兵庫の景色"
     },
@@ -2232,7 +2083,6 @@ const TFF_JOURNEY = {
       "thumb": "img/20cadb7d3d8d73c8-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2009-05",
       "caption": null,
       "alt": "神戸の景色"
     },
@@ -2241,7 +2091,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c3077c8ba04e3751-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2010-10",
       "caption": null,
       "alt": "神戸の景色"
     },
@@ -2250,7 +2099,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c801807b8a8f4883-s.jpg",
       "w": 960,
       "h": 717,
-      "taken": null,
       "caption": null,
       "alt": "神戸の景色"
     },
@@ -2259,7 +2107,6 @@ const TFF_JOURNEY = {
       "thumb": "img/df2c2fc9d80df649-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2013-05",
       "caption": null,
       "alt": "奈良の景色"
     },
@@ -2268,7 +2115,6 @@ const TFF_JOURNEY = {
       "thumb": "img/4aed464c82fb6142-s.jpg",
       "w": 1600,
       "h": 666,
-      "taken": "2013-05",
       "caption": null,
       "alt": "奈良の景色"
     },
@@ -2277,7 +2123,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c4f30c5a793738bf-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-02",
       "caption": null,
       "alt": "和歌山の景色"
     },
@@ -2286,7 +2131,6 @@ const TFF_JOURNEY = {
       "thumb": "img/e64be0d23ce935d5-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2007-08",
       "caption": null,
       "alt": "和歌山の景色"
     },
@@ -2295,7 +2139,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ce23168e1468eb43-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-02",
       "caption": null,
       "alt": "和歌山の景色"
     },
@@ -2304,7 +2147,6 @@ const TFF_JOURNEY = {
       "thumb": "img/de2d7b22c84ffa60-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-10",
       "caption": null,
       "alt": "鳥取の景色"
     },
@@ -2313,7 +2155,6 @@ const TFF_JOURNEY = {
       "thumb": "img/3544090346a6a76f-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2024-08",
       "caption": null,
       "alt": "鳥取の景色"
     },
@@ -2322,7 +2163,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b3933ce9af5ce59a-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2018-06",
       "caption": null,
       "alt": "鳥取の景色"
     },
@@ -2331,7 +2171,6 @@ const TFF_JOURNEY = {
       "thumb": "img/393c7b25fe321415-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2024-08",
       "caption": null,
       "alt": "島根の景色"
     },
@@ -2340,7 +2179,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a8d49aec4f79157f-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2024-08",
       "caption": null,
       "alt": "島根の景色"
     },
@@ -2349,7 +2187,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c01dc6098259229f-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-10",
       "caption": null,
       "alt": "岡山の景色"
     },
@@ -2358,7 +2195,6 @@ const TFF_JOURNEY = {
       "thumb": "img/2faad75928ccb207-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2024-08",
       "caption": null,
       "alt": "岡山の景色"
     },
@@ -2367,7 +2203,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d5dfe99c48829edc-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-02",
       "caption": null,
       "alt": "山口の景色"
     },
@@ -2376,7 +2211,6 @@ const TFF_JOURNEY = {
       "thumb": "img/f6183b7bba0dbfde-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-02",
       "caption": null,
       "alt": "山口の景色"
     },
@@ -2385,7 +2219,6 @@ const TFF_JOURNEY = {
       "thumb": "img/da18552459977279-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-02",
       "caption": null,
       "alt": "山口の景色"
     },
@@ -2394,7 +2227,6 @@ const TFF_JOURNEY = {
       "thumb": "img/609b38b6e98cb099-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": null,
       "caption": null,
       "alt": "徳島の景色"
     },
@@ -2403,7 +2235,6 @@ const TFF_JOURNEY = {
       "thumb": "img/535c8b2dbead03a3-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": null,
       "caption": null,
       "alt": "徳島の景色"
     },
@@ -2412,7 +2243,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d0a8db7fff25111c-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "香川の景色"
     },
@@ -2421,7 +2251,6 @@ const TFF_JOURNEY = {
       "thumb": "img/6e45fc64a0f00f09-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-12",
       "caption": null,
       "alt": "香川の景色"
     },
@@ -2430,7 +2259,6 @@ const TFF_JOURNEY = {
       "thumb": "img/67c8bbf17044ba4f-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-03",
       "caption": null,
       "alt": "香川の景色"
     },
@@ -2439,7 +2267,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a4ccfd63f9048a39-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-03",
       "caption": null,
       "alt": "女木島（鬼ヶ島）の景色"
     },
@@ -2448,7 +2275,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5e17c891464aeb81-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-03",
       "caption": null,
       "alt": "女木島（鬼ヶ島）の景色"
     },
@@ -2457,7 +2283,6 @@ const TFF_JOURNEY = {
       "thumb": "img/c40b6560c7a8e574-s.jpg",
       "w": 1600,
       "h": 1358,
-      "taken": "2011-03",
       "caption": null,
       "alt": "女木島（鬼ヶ島）の景色"
     },
@@ -2466,7 +2291,6 @@ const TFF_JOURNEY = {
       "thumb": "img/2d6b49a7c814a2cb-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": null,
       "caption": null,
       "alt": "高松（栗林公園）の景色"
     },
@@ -2475,7 +2299,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a9aa79485dc8f481-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": null,
       "caption": null,
       "alt": "高松（栗林公園）の景色"
     },
@@ -2484,7 +2307,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5be2e586ae93348e-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": null,
       "caption": null,
       "alt": "高松（栗林公園）の景色"
     },
@@ -2493,7 +2315,6 @@ const TFF_JOURNEY = {
       "thumb": "img/642b0c3d376e0f55-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2015-06",
       "caption": null,
       "alt": "長崎の景色"
     },
@@ -2502,7 +2323,6 @@ const TFF_JOURNEY = {
       "thumb": "img/94ad7de061b23bf5-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2015-06",
       "caption": null,
       "alt": "長崎の景色"
     },
@@ -2511,7 +2331,6 @@ const TFF_JOURNEY = {
       "thumb": "img/835d56182e3c8514-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2015-06",
       "caption": null,
       "alt": "長崎の景色"
     },
@@ -2520,7 +2339,6 @@ const TFF_JOURNEY = {
       "thumb": "img/789c3f16b75e30a5-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "熊本の景色"
     },
@@ -2529,7 +2347,6 @@ const TFF_JOURNEY = {
       "thumb": "img/5cc3101288749a1e-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "熊本の景色"
     },
@@ -2538,7 +2355,6 @@ const TFF_JOURNEY = {
       "thumb": "img/9eb061f87a959c64-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "大分の景色"
     },
@@ -2547,7 +2363,6 @@ const TFF_JOURNEY = {
       "thumb": "img/e8471ffe72775392-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "大分の景色"
     },
@@ -2556,7 +2371,6 @@ const TFF_JOURNEY = {
       "thumb": "img/170aaa2f4f1e792d-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "大分の景色"
     },
@@ -2565,7 +2379,6 @@ const TFF_JOURNEY = {
       "thumb": "img/49d812cb46f810cc-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "宮崎の景色"
     },
@@ -2574,7 +2387,6 @@ const TFF_JOURNEY = {
       "thumb": "img/2b6149aa49f14a5d-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "宮崎の景色"
     },
@@ -2583,7 +2395,6 @@ const TFF_JOURNEY = {
       "thumb": "img/38d29f3676472414-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "宮崎の景色"
     },
@@ -2592,7 +2403,6 @@ const TFF_JOURNEY = {
       "thumb": "img/1c6603e43c08386e-s.jpg",
       "w": 1600,
       "h": 899,
-      "taken": "2012-03",
       "caption": null,
       "alt": "鹿児島の景色"
     },
@@ -2601,7 +2411,6 @@ const TFF_JOURNEY = {
       "thumb": "img/3400a5a6d2e502c0-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "鹿児島の景色"
     },
@@ -2610,7 +2419,6 @@ const TFF_JOURNEY = {
       "thumb": "img/84c5eed862038c82-s.jpg",
       "w": 658,
       "h": 1026,
-      "taken": "2012-03",
       "caption": null,
       "alt": "鹿児島の景色"
     },
@@ -2619,7 +2427,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ccbf686ab04c05f2-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2012-03",
       "caption": null,
       "alt": "屋久島の景色"
     },
@@ -2628,7 +2435,6 @@ const TFF_JOURNEY = {
       "thumb": "img/236e2011729fa79d-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2012-03",
       "caption": null,
       "alt": "屋久島の景色"
     },
@@ -2637,7 +2443,6 @@ const TFF_JOURNEY = {
       "thumb": "img/edb7e003e4d6112b-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2012-03",
       "caption": null,
       "alt": "屋久島の景色"
     },
@@ -2646,7 +2451,6 @@ const TFF_JOURNEY = {
       "thumb": "img/31c7b0b0c1181724-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-06",
       "caption": null,
       "alt": "沖縄の景色"
     },
@@ -2655,7 +2459,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b2228f79bf7dde0f-s.jpg",
       "w": 778,
       "h": 1600,
-      "taken": "2018-08",
       "caption": null,
       "alt": "沖縄の景色"
     },
@@ -2664,7 +2467,6 @@ const TFF_JOURNEY = {
       "thumb": "img/3c9913f9d6c39c70-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2018-08",
       "caption": null,
       "alt": "沖縄の景色"
     },
@@ -2673,7 +2475,6 @@ const TFF_JOURNEY = {
       "thumb": "img/77b835c581a5cfeb-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-06",
       "caption": null,
       "alt": "那覇の景色"
     },
@@ -2682,7 +2483,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a2ea5c96ff71eaa5-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-06",
       "caption": null,
       "alt": "那覇の景色"
     },
@@ -2691,7 +2491,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d9ebf2b3a3d49af1-s.jpg",
       "w": 1200,
       "h": 1600,
-      "taken": "2025-06",
       "caption": null,
       "alt": "那覇の景色"
     },
@@ -2700,7 +2499,6 @@ const TFF_JOURNEY = {
       "thumb": "img/1100f798e3092d3b-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2010-03",
       "caption": null,
       "alt": "韓国の景色"
     },
@@ -2709,7 +2507,6 @@ const TFF_JOURNEY = {
       "thumb": "img/de4337c3034344c3-s.jpg",
       "w": 1600,
       "h": 1200,
-      "taken": "2010-03",
       "caption": null,
       "alt": "韓国の景色"
     },
@@ -2718,7 +2515,6 @@ const TFF_JOURNEY = {
       "thumb": "img/4926146221d7f204-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2011-08",
       "caption": null,
       "alt": "アメリカの景色"
     },
@@ -2727,7 +2523,6 @@ const TFF_JOURNEY = {
       "thumb": "img/24f8fa56ecbcecc9-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2014-09",
       "caption": null,
       "alt": "アメリカの景色"
     },
@@ -2736,7 +2531,6 @@ const TFF_JOURNEY = {
       "thumb": "img/0e3fbd9a20fd4e09-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "アメリカの景色"
     },
@@ -2745,7 +2539,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ba339988e91a8290-s.jpg",
       "w": 640,
       "h": 480,
-      "taken": null,
       "caption": null,
       "alt": "グランドキャニオンの景色"
     },
@@ -2754,7 +2547,6 @@ const TFF_JOURNEY = {
       "thumb": "img/04afd64884618f63-s.jpg",
       "w": 640,
       "h": 480,
-      "taken": null,
       "caption": null,
       "alt": "グランドキャニオンの景色"
     },
@@ -2763,7 +2555,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b028096887a1a275-s.jpg",
       "w": 640,
       "h": 480,
-      "taken": null,
       "caption": null,
       "alt": "グランドキャニオンの景色"
     },
@@ -2772,7 +2563,6 @@ const TFF_JOURNEY = {
       "thumb": "img/f17d15ca982e27e3-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2010-12",
       "caption": null,
       "alt": "ニューヨークの景色"
     },
@@ -2781,7 +2571,6 @@ const TFF_JOURNEY = {
       "thumb": "img/435efac00fa4d723-s.jpg",
       "w": 1600,
       "h": 1542,
-      "taken": "2010-12",
       "caption": null,
       "alt": "ニューヨークの景色"
     },
@@ -2790,7 +2579,6 @@ const TFF_JOURNEY = {
       "thumb": "img/1be2f37a0931d74d-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2010-12",
       "caption": null,
       "alt": "ニューヨークの景色"
     },
@@ -2799,7 +2587,6 @@ const TFF_JOURNEY = {
       "thumb": "img/49471a29bfddb9db-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "ロサンゼルスの景色"
     },
@@ -2808,7 +2595,6 @@ const TFF_JOURNEY = {
       "thumb": "img/048c3496818f1feb-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "ロサンゼルスの景色"
     },
@@ -2817,7 +2603,6 @@ const TFF_JOURNEY = {
       "thumb": "img/f7fc69c01cc09cc7-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "ロサンゼルスの景色"
     },
@@ -2826,7 +2611,6 @@ const TFF_JOURNEY = {
       "thumb": "img/84bb7e3a568f084e-s.jpg",
       "w": 1195,
       "h": 1600,
-      "taken": "2010-12",
       "caption": null,
       "alt": "東部の景色"
     },
@@ -2835,7 +2619,6 @@ const TFF_JOURNEY = {
       "thumb": "img/650de0fc2ae76d19-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2010-12",
       "caption": null,
       "alt": "東部の景色"
     },
@@ -2844,7 +2627,6 @@ const TFF_JOURNEY = {
       "thumb": "img/53c378a4e4416cba-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2010-12",
       "caption": null,
       "alt": "東部の景色"
     },
@@ -2853,7 +2635,6 @@ const TFF_JOURNEY = {
       "thumb": "img/7c3029e26ba9273a-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-09",
       "caption": null,
       "alt": "西部の景色"
     },
@@ -2862,7 +2643,6 @@ const TFF_JOURNEY = {
       "thumb": "img/1e84ace3fa1e5329-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-09",
       "caption": null,
       "alt": "西部の景色"
     },
@@ -2871,7 +2651,6 @@ const TFF_JOURNEY = {
       "thumb": "img/47ebcf7f8b98ed43-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2014-09",
       "caption": null,
       "alt": "西部の景色"
     },
@@ -2880,7 +2659,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b928415e96749d7e-s.jpg",
       "w": 1600,
       "h": 900,
-      "taken": "2012-09",
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2889,7 +2667,6 @@ const TFF_JOURNEY = {
       "thumb": "img/fe49e9c5cec3b176-s.jpg",
       "w": 1564,
       "h": 1600,
-      "taken": "2012-07",
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2898,7 +2675,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a48b7b68fce951dd-s.jpg",
       "w": 1600,
       "h": 669,
-      "taken": "2011-08",
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2907,7 +2683,6 @@ const TFF_JOURNEY = {
       "thumb": "img/ed273dca0a62d8b0-s.jpg",
       "w": 1600,
       "h": 939,
-      "taken": "2012-09",
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2916,7 +2691,6 @@ const TFF_JOURNEY = {
       "thumb": "img/67645b105a63cc7a-s.jpg",
       "w": 900,
       "h": 1600,
-      "taken": "2013-04",
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2925,7 +2699,6 @@ const TFF_JOURNEY = {
       "thumb": "img/21ffbdb41bf3b425-s.jpg",
       "w": 1184,
       "h": 1600,
-      "taken": "2013-05",
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2934,7 +2707,6 @@ const TFF_JOURNEY = {
       "thumb": "img/e1655d8b8ef67cd7-s.jpg",
       "w": 1600,
       "h": 1195,
-      "taken": "2011-08",
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2943,7 +2715,6 @@ const TFF_JOURNEY = {
       "thumb": "img/b75cec4461234cd4-s.jpg",
       "w": 1600,
       "h": 1071,
-      "taken": "2011-08",
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2952,7 +2723,6 @@ const TFF_JOURNEY = {
       "thumb": "img/a5c56acf55d41a69-s.jpg",
       "w": 1600,
       "h": 1071,
-      "taken": null,
       "caption": null,
       "alt": "夏フェスの景色"
     },
@@ -2961,7 +2731,6 @@ const TFF_JOURNEY = {
       "thumb": "img/d32cbce0b2a0a430-s.jpg",
       "w": 1600,
       "h": 1395,
-      "taken": "2012-02",
       "caption": null,
       "alt": "夏フェスの景色"
     }

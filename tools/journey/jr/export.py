@@ -15,7 +15,7 @@ from pathlib import Path
 
 from PIL import Image, ImageCms, ImageOps, IptcImagePlugin
 
-from jr import ingest, regions, timeutil  # noqa: F401  ingest は HEIC を開けるようにする
+from jr import ingest, regions  # noqa: F401  ingest は HEIC を開けるようにする
 
 LARGE_EDGE = 1600
 THUMB_EDGE = 480
@@ -32,7 +32,7 @@ HEADER = """/**
  *
  * tools/journey の export が書く。手で直すときは項目を増やさない（journey-core.js の検証で弾かれる）。
  * 形: regions[] = { id, kind: "pref" | "country" | "place" | "theme", parentId, name, photoIds }、
- *     photos{}  = { src, thumb, w, h, taken: "YYYY-MM" | null, caption: 文字列 | null, alt }
+ *     photos{}  = { src, thumb, w, h, caption: 文字列 | null, alt }（撮影日は出さない。2026-11-05 CEO 指示）
  */
 """
 
@@ -207,12 +207,10 @@ def _run(conn, home, repo_root, validate, report):
                 return report
             w, h = _encode(row[0], staging / f"{pid}.jpg", LARGE_EDGE)
             _encode(row[0], staging / f"{pid}-s.jpg", THUMB_EDGE)
-            ts, lat, lng = conn.execute("SELECT taken_utc, lat, lng FROM photos WHERE id = ?", (pid,)).fetchone()
             cap = conn.execute("SELECT caption FROM photo_editorial WHERE photo_id = ?", (pid,)).fetchone()
             first = next(r for r in regs if pid in r["photoIds"])
             photos[pid] = {
                 "src": f"img/{pid}.jpg", "thumb": f"img/{pid}-s.jpg", "w": w, "h": h,
-                "taken": timeutil.local(ts, lat, lng)[0].strftime("%Y-%m") if ts is not None else None,
                 "caption": (cap[0] if cap and cap[0] else None),
                 "alt": f"{first['name']}の景色",
             }

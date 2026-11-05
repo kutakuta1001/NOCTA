@@ -138,7 +138,7 @@ class ExportTest(unittest.TestCase):
         self.assertEqual(len(d["photos"]), 2)
         self.assertEqual(d["regions"][0]["name"], "北海道")
         p = next(iter(d["photos"].values()))
-        self.assertEqual(p["taken"], "2016-03")
+        self.assertNotIn("taken", p)
         self.assertEqual(p["alt"], "北海道の景色")
 
     def test_export_theme_region(self):
@@ -238,7 +238,7 @@ class ExportTest(unittest.TestCase):
 
 class ValidateExportTest(unittest.TestCase):
     def base(self):
-        p = {"src": "img/aaaaaaaaaaaaaaaa.jpg", "thumb": "img/aaaaaaaaaaaaaaaa-s.jpg", "w": 1, "h": 1, "taken": None, "caption": None, "alt": "x"}
+        p = {"src": "img/aaaaaaaaaaaaaaaa.jpg", "thumb": "img/aaaaaaaaaaaaaaaa-s.jpg", "w": 1, "h": 1, "caption": None, "alt": "x"}
         q = dict(p, src="img/bbbbbbbbbbbbbbbb.jpg", thumb="img/bbbbbbbbbbbbbbbb-s.jpg")
         return {"schemaVersion": 1,
                 "regions": [{"id": "JP-01", "kind": "pref", "parentId": None, "name": "北海道", "photoIds": ["aaaaaaaaaaaaaaaa", "bbbbbbbbbbbbbbbb"]}],
