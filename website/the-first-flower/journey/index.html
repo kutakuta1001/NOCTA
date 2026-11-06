@@ -13,7 +13,7 @@
 /* 色と書体は公開中の旅の一枚（journey/index.html）のトークンに合わせる */
 :root{
   --bg:#FCFBF5; --ink:#3D2E52; --sub:#9A86B0; --meta:#6F6280;
-  --yes:#EEA4C0; --yes-h:#E995B6; --onyes:#3D2E52; --no:#E6E0EC; --onno:#60566B;
+  --yes:#EEA4C0; --yes-h:#E995B6; --onyes:#3D2E52; --ontile:#FFFFFF; --no:#E6E0EC; --onno:#60566B;
   --cur:#B168A8; --oncur:#FFFFFF; --cur-deep:#A05A98; --edge:#FCFBF5;
   --line:rgba(177,104,168,.35); --card:#FFFFFF; --shade:rgba(61,46,82,.22);
   --veil:rgba(61,46,82,.66); --glow:rgba(177,104,168,.3); --glow2:rgba(238,164,192,.75);
@@ -22,7 +22,7 @@
 @media (prefers-color-scheme:dark){
   :root{
     --bg:#1B1630; --ink:#F1EAF7; --sub:#B6A6CE; --meta:#C8BCE0;
-    --yes:#E9A5C6; --yes-h:#F2B6D1; --onyes:#2A1F44; --no:#3A3157; --onno:#C8BCE0;
+    --yes:#E9A5C6; --yes-h:#F2B6D1; --onyes:#2A1F44; --ontile:#2A1F44; --no:#3A3157; --onno:#C8BCE0;
     --cur:#E3AEDB; --oncur:#2A1F44; --cur-deep:#E3AEDB; --edge:#1B1630;
     --line:rgba(227,174,219,.35); --card:#262040; --shade:rgba(0,0,0,.4);
     --veil:rgba(10,6,24,.78); --glow:rgba(227,174,219,.35); --glow2:rgba(233,165,198,.6);
@@ -106,7 +106,7 @@ h1{font-family:"Noto Serif JP",serif;font-weight:400;font-size:clamp(28px,7vw,36
 #mapT .tile.sel .tl{fill:var(--cur)}
 #mapT .ch{font-family:"Noto Serif JP",serif;font-weight:600;fill:var(--onno);text-anchor:middle;pointer-events:none}
 #mapT .nm{font-family:"Noto Sans JP",sans-serif;font-weight:500;fill:var(--onno);text-anchor:middle;pointer-events:none}
-#mapT .tile.yes .ch,#mapT .tile.yes .nm{fill:var(--onyes)}
+#mapT .tile.yes .ch,#mapT .tile.yes .nm{fill:var(--ontile)}
 #mapT .tile.sel .ch,#mapT .tile.sel .nm{fill:var(--oncur)}
 
 /* 県の本当の形 */
