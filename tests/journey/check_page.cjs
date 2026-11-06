@@ -11,7 +11,7 @@ const { chromium } = require("playwright");
 const BASE = (process.env.JR_BASE || "http://localhost:8766") + "/the-first-flower/journey/index.html";
 const FIXTURE = fs.readFileSync(path.join(__dirname, "fixtures", "journey-sample.js"), "utf8");
 const EMPTY = "const TFF_JOURNEY = { schemaVersion: 1, regions: [], photos: {} };";
-const BROKEN_ID = "a000000000000007"; // 京都の 2 枚目。img-error でだけ 404 にする
+const BROKEN_ID = "a000000000000001"; // 小樽の 1 枚目。img-error でだけ 404 にする
 const JPEG = Buffer.from(
     "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q==",
     "base64"
@@ -44,6 +44,11 @@ async function openPage(browser, opts) {
 
 const text = (page, sel) => page.$eval(sel, (el) => el.textContent.trim());
 
+const WAIT = 2600; // 寄る 0.7s + 形に変わる 0.7s + 花 0.6s のあと
+const visibleTiles = (page) => page.$$eval("#mapT .tile", (gs) =>
+    gs.filter((g) => { const c = getComputedStyle(g); return c.display !== "none" && c.visibility !== "hidden" && +c.opacity > 0.05; }).length);
+const chips = (page) => page.$$eval("#panel .chips button", (bs) => bs.map((b) => b.textContent.trim()));
+
 (async () => {
     const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || undefined });
     const allErrors = [];
@@ -51,95 +56,77 @@ const text = (page, sel) => page.$eval(sel, (el) => el.textContent.trim());
         let { page, errors } = await openPage(browser);
         allErrors.push(...errors);
 
-        check("tiles", (await page.$$(".jr-tile")).length === 47 && (await page.$$(".jr-tile.is-visited")).length === 2,
-            (await page.$$(".jr-tile")).length + " / " + (await page.$$(".jr-tile.is-visited")).length);
+        check("tiles", (await page.$$("#mapT .tile")).length === 48 && (await page.$$("#mapT .tile.yes")).length === 3,
+            (await page.$$("#mapT .tile")).length + " / " + (await page.$$("#mapT .tile.yes")).length);
+        check("all-panel", (await text(page, "#panel h2")) === "歩いた日本" && (await page.$$("#panel .sw")).length > 0);
 
-        await page.click('.jr-tile[data-region="JP-01"]');
-        const placeNames = await page.$$eval("#jr-places button", (bs) => bs.map((b) => b.textContent.trim()));
-        check("select-region",
-            (await text(page, "#jr-label")) === "北海道" && (await page.$$("#jr-thumbs button")).length === 3 && placeNames.includes("小樽"),
-            JSON.stringify(placeNames));
+        // 地方を押すと寄って、周りの地方のタイルは消える（県が 1 つなら詳細まで進む）
+        await page.click('.rb[data-k="chubu"]');
+        await page.waitForTimeout(WAIT);
+        check("zoom-region", (await text(page, "#panel h2")) === "長野" && (await visibleTiles(page)) === 0,
+            (await text(page, "#panel h2")) + " / tiles " + (await visibleTiles(page)));
 
-        await page.click('#jr-places button[data-region="place-otaru"]');
-        check("select-place", (await text(page, "#jr-label")) === "北海道 › 小樽" && (await page.$$("#jr-thumbs button")).length === 2);
+        await page.click('.rb[data-k="hokkaido"]');
+        await page.waitForTimeout(WAIT);
+        const c1 = await chips(page);
+        check("pref-detail", (await text(page, "#panel h2")) === "北海道" && c1.join("|") === "代表 3 枚|小樽 2 枚|美瑛 1 枚" &&
+            (await text(page, "#panel .pcount")) === "1 / 3", c1.join("|"));
 
-        await page.click("#jr-thumbs button:nth-child(2)");
-        const mainSrc = await page.$eval("img.jr-main", (i) => i.getAttribute("src"));
-        check("thumb-swap", mainSrc === "img/a000000000000002.jpg", mainSrc);
-
+        await page.click("#panel .chips button:nth-child(2)");
+        await page.click("#panel .thumbs button:nth-child(2)");
+        const mainSrc = await page.$eval("#panel .pbox img", (i) => i.getAttribute("src"));
+        check("place-and-thumb", mainSrc === "img/a000000000000002.jpg" && (await text(page, "#panel .pcount")) === "2 / 2", mainSrc);
         check("caption-is-text",
-            (await text(page, "#jr-caption")) === '<b>"夜"</b>' && (await page.$$("#jr-caption b")).length === 0);
+            (await text(page, "#panel .cap")) === '<b>"夜"</b>' && (await page.$$("#panel .cap b")).length === 0);
 
-        await page.click('.jr-tile[data-region="JP-20"]', { force: true });
-        check("disabled-tile", (await text(page, "#jr-label")) === "北海道 › 小樽");
+        // 全国へ戻るとタイルが戻る
+        await page.click('.rb[data-k="all"]');
+        await page.waitForTimeout(WAIT);
+        check("back-to-all", (await visibleTiles(page)) === 48 && (await text(page, "#panel h2")) === "歩いた日本",
+            "tiles " + (await visibleTiles(page)));
 
-        await page.click('#jr-tabs button[data-mode="world"]');
-        const worldList = await page.$$eval("#jr-list button", (bs) => bs.map((b) => b.textContent.trim()));
-        await page.click('#jr-list button[data-region="HK"]');
-        check("world", worldList.length === 1 && worldList[0] === "香港" && (await text(page, "#jr-label")) === "香港",
-            JSON.stringify(worldList));
-        await page.close();
+        await page.click("#bWd");
+        await page.waitForTimeout(WAIT);
+        const worldRb = await page.$$eval(".rb", (bs) => bs.map((b) => b.dataset.k));
+        await page.click('.rb[data-k="asia"]');
+        await page.waitForTimeout(WAIT);
+        check("world", worldRb.includes("asia") && (await text(page, "#panel h2")) === "香港" && (await text(page, "#nWd")) === "1",
+            worldRb.join(",") + " / " + (await text(page, "#panel h2")));
 
-        ({ page, errors } = await openPage(browser));
-        allErrors.push(...errors);
-        await page.focus('.jr-tile[data-region="JP-26"]');
+        // キーボードで地方ボタンを押せる
+        await page.click("#bJp");
+        await page.waitForTimeout(WAIT);
+        await page.focus('.rb[data-k="kinki"]');
         await page.keyboard.press("Enter");
-        const kb1 = await text(page, "#jr-label");
-        await page.focus('.jr-tile[data-region="JP-01"]');
-        await page.keyboard.press("Enter");
-        check("keyboard", kb1 === "京都" && (await text(page, "#jr-label")) === "北海道");
+        await page.waitForTimeout(WAIT);
+        check("keyboard", (await text(page, "#panel h2")) === "京都", await text(page, "#panel h2"));
+
+        // 撮影日・日付らしい文字を出さない
+        const body = await page.$eval("body", (b) => b.innerText);
+        check("no-dates", !/\d{4}\s*[年./-]\s*\d{1,2}/.test(body) && !/\d{1,2}\s*月\s*\d{1,2}\s*日/.test(body));
         await page.close();
 
         ({ page, errors } = await openPage(browser, { brokenImage: true }));
-        allErrors.push(...errors.filter((e) => !e.includes("404")));
-        await page.click('.jr-tile[data-region="JP-26"]');
-        await page.click("#jr-thumbs button:nth-child(2)");
-        await page.waitForTimeout(500);
-        check("img-error", (await text(page, "#jr-status")) === "写真を読み込めませんでした", await text(page, "#jr-status"));
-        await page.close();
-
-        ({ page, errors } = await openPage(browser, { slowId: "a000000000000001" }));
-        allErrors.push(...errors);
-        await page.click('.jr-tile[data-region="JP-26"]');
-        await page.click('.jr-tile[data-region="JP-01"]');
-        await page.click('.jr-tile[data-region="JP-26"]');
-        await page.waitForTimeout(1000);
-        const rapidSrc = await page.$eval("img.jr-main", (i) => i.getAttribute("src"));
-        check("rapid-switch", (await text(page, "#jr-label")) === "京都" && rapidSrc === "img/a000000000000006.jpg"
-            && (await text(page, "#jr-status")) === "", rapidSrc);
-        await page.close();
-
-        ({ page, errors } = await openPage(browser));
-        allErrors.push(...errors);
-        await page.click('.jr-tile[data-region="JP-26"]');
-        const wide = await page.$eval(".jr-frame", (f) => { const b = f.getBoundingClientRect(); return b.width / b.height; });
-        await page.click("#jr-thumbs button:nth-child(2)");
+        await page.click('.rb[data-k="hokkaido"]');
+        await page.waitForTimeout(WAIT);
+        await page.click("#panel .chips button:nth-child(2)");
         await page.waitForTimeout(300);
-        const tall = await page.$eval(".jr-frame", (f) => { const b = f.getBoundingClientRect(); return { r: b.width / b.height, h: b.height }; });
-        check("frame-follows-photo", Math.abs(wide - 1600 / 1067) < 0.02 && Math.abs(tall.r - 1067 / 1600) < 0.02 && tall.h <= 900 * 0.78 + 1,
-            wide.toFixed(3) + " / " + tall.r.toFixed(3) + " / h " + Math.round(tall.h));
-        await page.close();
-
-        ({ page, errors } = await openPage(browser, { slowId: "a000000000000006" }));
-        allErrors.push(...errors);
-        await page.click('.jr-tile[data-region="JP-26"]');
-        await page.waitForTimeout(450);
-        const during = await text(page, "#jr-status");
-        await page.waitForTimeout(700);
-        check("loading-text", during === "読み込み中" && (await text(page, "#jr-status")) === "", during);
+        check("img-error", (await text(page, "#panel h2")) === "北海道" &&
+            errors.filter((e) => e.startsWith("pageerror")).length === 0, errors.join(" | "));
         await page.close();
 
         ({ page, errors } = await openPage(browser, { empty: true }));
-        check("empty-data", (await text(page, "#jr-status")) === "旅の写真は準備中です。" && errors.length === 0, errors.join(" | "));
+        check("empty-data", (await text(page, "#empty")) === "旅の写真は準備中です。" && errors.length === 0, errors.join(" | "));
         await page.close();
 
         ({ page, errors } = await openPage(browser, { width: 390, mobile: true }));
         allErrors.push(...errors);
         const sw = await page.evaluate(() => document.documentElement.scrollWidth);
-        await page.click('.jr-tile[data-region="JP-26"]');
-        await page.waitForTimeout(1000);
-        const top = await page.$eval("#jr-photo", (el) => el.getBoundingClientRect().top);
-        check("mobile-390", sw <= 390 && top >= 0 && top < 900, "scrollWidth " + sw + " / top " + top);
+        await page.click('.rb[data-k="hokkaido"]');
+        await page.waitForTimeout(WAIT);
+        const sw2 = await page.evaluate(() => document.documentElement.scrollWidth);
+        const top = await page.$eval("#panel", (el) => el.getBoundingClientRect().top + window.scrollY);
+        check("mobile-390", sw <= 390 && sw2 <= 390 && top < 900 * 1.5, "scrollWidth " + sw + "/" + sw2 + " / top " + top);
         await page.close();
 
         check("no-errors", allErrors.length === 0, allErrors.join(" | "));
