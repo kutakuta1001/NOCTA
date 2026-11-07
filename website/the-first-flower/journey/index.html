@@ -517,7 +517,7 @@ h1{font-family:"Noto Serif JP",serif;font-weight:400;font-size:clamp(28px,7vw,36
       el("title", {}, g).textContent = t.label;
       if (t.visit) { el("rect", { class: "tshade", x: 0, y: 2.4, width: TS, height: TS, rx: 4 }, g); }
       el("rect", { class: "tl", x: 0, y: 0, width: TS, height: TS, rx: 4 }, g);
-      t.chEl = el("text", { class: "ch", x: 20, y: t.ky, dy: ".35em", "font-size": 24 }, g); t.chEl.textContent = t.ch;
+      t.chEl = el("text", { class: "ch", x: 20, y: t.ky, dy: ".35em", "font-size": t.world ? 18 : 20 }, g); t.chEl.textContent = t.ch;
       if (t.world) { /* 略字だけでは分かりにくい国は、名前を添える */
         t.nmEl = el("text", { class: "nm", x: 20, y: 34, "font-size": Math.min(6.6, 36 / t.label.length) }, g); t.nmEl.textContent = t.label;
       }
