@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>旅の一枚 — The First Flower</title>
+<meta name="description" content="The First Flower の作者が、日本と世界の行った場所で撮った景色を、漢字の地図から地域ごとに選んで並べています。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* 色と書体は公開中の旅の一枚（journey/index.html）のトークンに合わせる */
+:root{
+  --bg:#FCFBF5; --ink:#3D2E52; --sub:#9A86B0; --meta:#6F6280;
+  --yes:#EEA4C0; --yes-h:#E995B6; --onyes:#3D2E52; --ontile:#FFFFFF; --no:#E6E0EC; --onno:#60566B;
+  --cur:#B168A8; --oncur:#FFFFFF; --cur-deep:#A05A98; --edge:#FCFBF5;
+  --line:rgba(177,104,168,.35); --card:#FFFFFF; --shade:rgba(61,46,82,.22);
+  --veil:rgba(61,46,82,.66); --glow:rgba(177,104,168,.3); --glow2:rgba(238,164,192,.75);
+  --mh:clamp(400px,calc(100vh - 250px),720px);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#1B1630; --ink:#F1EAF7; --sub:#B6A6CE; --meta:#C8BCE0;
+    --yes:#E9A5C6; --yes-h:#F2B6D1; --onyes:#2A1F44; --ontile:#2A1F44; --no:#3A3157; --onno:#C8BCE0;
+    --cur:#E3AEDB; --oncur:#2A1F44; --cur-deep:#E3AEDB; --edge:#1B1630;
+    --line:rgba(227,174,219,.35); --card:#262040; --shade:rgba(0,0,0,.4);
+    --veil:rgba(10,6,24,.78); --glow:rgba(227,174,219,.35); --glow2:rgba(233,165,198,.6);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",sans-serif;font-weight:400;font-size:15px;line-height:1.7}
+button{font:inherit;color:inherit;cursor:pointer;background:none}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.nb{display:inline-block}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.page{max-width:1240px;margin:0 auto;padding:12px 18px 40px}
+.back{color:var(--sub);font-size:13px;letter-spacing:.08em;text-decoration:none}
+.back:hover{color:var(--cur)}
+@media (prefers-color-scheme:light){.back{color:var(--meta)}}
+
+.hero{display:grid;gap:8px 40px;margin:4px 0 10px;align-items:end}
+@media(min-width:900px){.hero{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
+h1{font-family:"Noto Serif JP",serif;font-weight:400;font-size:clamp(28px,7vw,36px);line-height:1.2;margin:0}
+.lead{margin:4px 0 0;max-width:46em;font-size:14px;color:var(--meta)}
+.hr{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:8px 16px}
+@media(min-width:900px){.hr{justify-content:flex-end}}
+.total{font-size:13px;color:var(--meta)}
+.tabs2{display:inline-flex;padding:3px;border-radius:999px;background:var(--no)}
+.tabs2 button{border:0;border-radius:999px;padding:6px 18px;min-height:40px;font-size:14px;display:inline-flex;align-items:baseline;gap:6px}
+.tabs2 button small{font-size:12px;color:var(--meta)}
+.tabs2 button[aria-pressed="true"]{background:#fff;color:#3D2E52;box-shadow:0 1px 3px rgba(61,46,82,.12)}
+.tabs2 button[aria-pressed="true"] small{color:#6F6280}
+
+/* 地方ボタン: タイルの並びを写した形入り。スマホは 1 行の横スクロールで、右端のボタンを半分見せ、大きい矢印を添える */
+.rwrap{position:relative;margin:0 -18px 6px}
+.regions{display:flex;gap:7px;overflow-x:auto;padding:6px 18px 12px;scrollbar-width:none;
+  --fl:0px;--fr:0px;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%);
+  mask-image:linear-gradient(to right,transparent 0,#000 var(--fl),#000 calc(100% - var(--fr)),transparent 100%)}
+.regions::-webkit-scrollbar{display:none}
+@media(min-width:960px){
+  .rwrap{margin:0 0 4px}
+  .regions{flex-wrap:wrap;overflow:visible;padding:6px 6px 10px;margin:0 -6px;gap:5px;-webkit-mask-image:none;mask-image:none}
+  .rb{padding:0 10px 0 6px!important;gap:5px!important;font-size:14px!important}
+  .rn{display:none!important}
+}
+.rb{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;min-height:46px;padding:0 12px 0 8px;border-radius:999px;border:1px solid var(--line);background:transparent;font-size:14px;font-weight:500;white-space:nowrap;transition:background .12s,box-shadow .6s ease,border-color .6s ease}
+.rb:hover{border-color:var(--cur)}
+.rb.glow{border-color:var(--cur);box-shadow:0 0 0 3px var(--glow),0 0 14px var(--glow2)}
+.rb .mini{width:30px;height:30px;flex:0 0 30px}
+.rb .mini rect{fill:var(--no)}
+.rb .mini rect.y{fill:var(--yes)}
+.rb .ct{font-size:12px;color:var(--meta)}
+.rb[aria-pressed="true"]{background:var(--cur-deep);border-color:var(--cur-deep);color:#fff}
+.rb[aria-pressed="true"] .ct{color:#fff}
+@media (prefers-color-scheme:dark){.rb[aria-pressed="true"]{color:#2A1F44}.rb[aria-pressed="true"] .ct{color:#2A1F44}}
+.rb[aria-pressed="true"] .mini rect{fill:rgba(255,255,255,.35)}
+.rb[aria-pressed="true"] .mini rect.y{fill:#F8C9DC}
+.rn{position:absolute;top:6px;width:46px;height:46px;border-radius:50%;border:1.5px solid var(--cur);background:var(--bg);display:none;align-items:center;justify-content:center;font-size:30px;line-height:1;z-index:2;color:var(--ink);box-shadow:0 2px 10px rgba(61,46,82,.28)}
+.rn.on{display:flex}
+.rn.l{left:4px}.rn.r{right:4px;animation:nudge 1.8s ease-in-out 3}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+
+/* stage */
+.stage{display:grid;gap:12px 32px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:960px){
+  .stage{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:start}
+  .panel{position:sticky;top:10px}
+}
+.mapcard{position:relative;height:clamp(340px,108vw,470px);overflow:hidden;animation:enter .85s ease both}
+.mapcard.world{height:clamp(220px,62vw,320px)}
+@media(min-width:960px){.mapcard{height:var(--mh)}.mapcard.world{height:min(var(--mh),560px)}}
+@keyframes enter{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.mapcard svg{position:absolute;inset:0;display:block;width:100%;height:100%}
+#mapS{pointer-events:none;visibility:hidden}
+
+/* タイル（公開ページと同じ配色） */
+#mapT .tshade{fill:var(--shade)}
+#mapT .tl{fill:var(--no)}
+#mapT .tile.yes .tl{fill:var(--yes);transition:fill .15s}
+#mapT .tile.yes{cursor:pointer}
+#mapT .tile.yes:hover .tl{fill:var(--yes-h)}
+#mapT .tile.sel .tl{fill:var(--cur)}
+#mapT .ch{font-family:"Noto Serif JP",serif;font-weight:600;fill:var(--onno);text-anchor:middle;pointer-events:none}
+#mapT .nm{font-family:"Noto Sans JP",sans-serif;font-weight:500;fill:var(--onno);text-anchor:middle;pointer-events:none}
+#mapT .tile.yes .ch,#mapT .tile.yes .nm{fill:var(--ontile)}
+#mapT .tile.sel .ch,#mapT .tile.sel .nm{fill:var(--oncur)}
+
+/* 県の本当の形 */
+#mapS .sh{stroke:var(--edge);stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-linejoin:round;fill:var(--no)}
+#mapS .sh.yes{fill:var(--yes);cursor:pointer;pointer-events:auto;transition:fill .15s}
+#mapS .sh.yes:hover{fill:var(--yes-h)}
+#mapS .sh.sel{fill:var(--cur)}
+#mapS .shd{fill:var(--shade);stroke:none}
+#mapS .kan{font-family:"Noto Serif JP",serif;font-weight:600;fill:var(--onyes);stroke:var(--edge);paint-order:stroke;stroke-linejoin:round;text-anchor:middle;pointer-events:none}
+#mapS .kan.no{fill:var(--onno)}
+#mapS .lab{font-family:"Noto Sans JP",sans-serif;font-weight:500;fill:var(--ink);stroke:var(--edge);paint-order:stroke;stroke-linejoin:round;text-anchor:middle;pointer-events:none}
+#mapS .lab.no{fill:var(--onno)}
+#mapS .stem{stroke:var(--ink);stroke-width:1.2;vector-effect:non-scaling-stroke;opacity:.5}
+#mapS .stemdot{fill:var(--ink)}
+#mapS .bloom{cursor:pointer;outline:none;pointer-events:auto}
+#mapS .flower{transition:transform .2s ease;transform-origin:0 0}
+#mapS .bloom:hover .flower{transform:scale(1.1)}
+#mapS .pring{fill:none;stroke:var(--edge);stroke-width:2.5}
+#mapS .selring,#mapS .fr,#mapS .fr2{fill:none;opacity:0}
+#mapS .selring{stroke:var(--cur);stroke-width:3.5}
+#mapS .fr2{stroke:var(--bg);stroke-width:7}
+#mapS .fr{stroke:var(--ink);stroke-width:3;stroke-dasharray:5 3}
+#mapS .bloom.sel .selring{opacity:1}
+#mapS .bloom:focus-visible .fr,#mapS .bloom:focus-visible .fr2{opacity:1}
+#mapS .hit{fill:transparent}
+
+/* panel */
+.panel{min-width:0;animation:enter .85s ease .1s both}
+.crumb{display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px;font-size:13px;margin:0 0 4px;min-height:34px}
+.crumb button{border:1px solid var(--line);border-radius:999px;padding:2px 12px;min-height:34px;font-weight:500;color:var(--ink)}
+.crumb .sep{color:var(--meta)}
+.crumb .here{color:var(--meta)}
+.panel h2{font-family:"Noto Serif JP",serif;font-weight:400;font-size:clamp(22px,4vw,28px);line-height:1.3;margin:0}
+.panel h2:focus{outline:none}
+.meta{margin:2px 0 10px;font-size:13px;color:var(--meta)}
+.head{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.stamp{flex:0 0 50px;width:50px;height:50px;border-radius:4px;background:var(--yes);color:var(--onyes);font-family:"Noto Serif JP",serif;font-weight:600;font-size:28px;line-height:50px;text-align:center}
+.nrow{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 12px}
+.fn{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--meta)}
+.fn svg{width:22px;height:22px;flex:0 0 22px}
+.tiles{display:grid;grid-template-columns:repeat(var(--cols,5),minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.tiles.few{gap:12px}
+.tile2{display:flex;flex-direction:column;align-items:stretch;gap:4px;width:100%;border:0;padding:0;text-align:center}
+.tile2 .ph{display:block;aspect-ratio:1;border-radius:6px;overflow:hidden;background:var(--no);opacity:.92;transition:opacity .2s}
+.tiles.few .tile2 .ph{aspect-ratio:4/3}
+.tile2:hover .ph{opacity:1}
+.tile2 img{display:block;width:100%;height:100%;object-fit:cover}
+.tile2 b{font-size:12.5px;font-weight:400;line-height:1.25}
+.tiles.few .tile2 b{font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.chips button{border:1px solid var(--line);border-radius:999px;padding:4px 14px;min-height:40px;font-size:13px}
+.chips button[aria-pressed="true"]{background:var(--cur-deep);border-color:var(--cur-deep);color:#fff}
+@media (prefers-color-scheme:dark){.chips button[aria-pressed="true"]{color:#2A1F44}}
+.pbox{position:relative;display:grid;place-items:center;border-radius:6px;background:#EFEAF1;overflow:hidden}
+@media (prefers-color-scheme:dark){.pbox{background:#2B2342}}
+.pbox img{display:block;max-width:100%;max-height:min(42vh,400px);width:auto;height:auto;transition:opacity .45s ease}
+.pbox img.loading{opacity:0}
+.pn{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;border:0;background:rgba(252,251,245,.86);color:#3D2E52;font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(61,46,82,.18)}
+.pn.p{left:10px}.pn.n{right:10px}
+.pn:disabled{opacity:.3;cursor:default}
+.pcount{position:absolute;left:10px;bottom:10px;background:var(--veil);color:#fff;border-radius:999px;padding:0 10px;font-size:12px;letter-spacing:.06em;line-height:22px}
+.cap{margin:8px 2px 0;font-size:14px}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:8px 2px 4px;scrollbar-width:thin}
+.th{flex:0 0 auto;border:0;padding:0;border-radius:4px}
+.th img{display:block;height:48px;width:auto;border-radius:4px;opacity:.6}
+.th:hover img{opacity:1}
+.th[aria-pressed="true"] img{opacity:1;outline:2px solid var(--cur);outline-offset:2px}
+
+/* 全国の右側: ゆっくり流れる 1 枚 + 和の色見本帳 */
+.slide{position:relative;height:clamp(200px,34vh,330px);border-radius:6px;overflow:hidden;background:var(--no)}
+.slidebtn{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;display:block}
+.slidebtn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
+.slidebtn img.on{opacity:1}
+.scap{position:absolute;left:10px;bottom:10px;background:var(--veil);color:#fff;border-radius:999px;padding:0 12px;font-size:13px;line-height:26px;pointer-events:none}
+.sctl{position:absolute;right:8px;bottom:8px;display:flex;gap:6px}
+.sctl button{min-width:40px;height:40px;border-radius:999px;border:0;background:rgba(252,251,245,.88);color:#3D2E52;font-size:13px;font-weight:500;padding:0 12px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(61,46,82,.2)}
+.sctl button.ic{padding:0;font-size:20px;line-height:1}
+.swatch{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px 6px;margin:16px 0 0;padding:0 0 2px;list-style:none}
+@media(min-width:960px){.swatch{grid-template-columns:repeat(10,minmax(0,1fr))}}
+.swatch li:nth-child(4n+1){--a:-1.6deg}
+.swatch li:nth-child(4n+2){--a:1.2deg}
+.swatch li:nth-child(4n+3){--a:-.5deg}
+.swatch li:nth-child(4n){--a:1.8deg}
+.sw{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;border:0;padding:0;text-align:center;border-radius:6px}
+.cards{position:relative;display:block;width:42px;height:70px}
+/* 和紙の色紙: 薄い影、やや不揃いな角度と角、端の柔らかなにじみ、軽い繊維 */
+.cards .c{position:absolute;inset:0;display:block;border-radius:2px 4px 3px 5px / 4px 2px 5px 3px;
+  background-image:
+    radial-gradient(120% 90% at 18% 8%,rgba(255,255,255,.38),rgba(255,255,255,0) 62%),
+    repeating-linear-gradient(97deg,rgba(255,255,255,.22) 0 1px,rgba(255,255,255,0) 1px 3px),
+    repeating-linear-gradient(11deg,rgba(111,98,128,.05) 0 1px,rgba(111,98,128,0) 1px 6px);
+  box-shadow:inset 0 0 7px rgba(255,255,255,.5),0 1px 1px rgba(61,46,82,.08),0 6px 8px -6px rgba(61,46,82,.32);
+  transition:transform .5s ease,box-shadow .6s ease,background-color .6s ease}
+.cards .c1{z-index:3;transform:rotate(var(--a,0deg))}
+.cards .c2{z-index:2;transform:rotate(calc(var(--a,0deg) + 8deg)) translateX(3px);transform-origin:50% 100%}
+.cards .c3{z-index:1;transform:rotate(calc(var(--a,0deg) - 9deg)) translateX(-3px);transform-origin:50% 100%}
+.cards .cn{position:absolute;top:12px;left:50%;transform:translateX(-50%);writing-mode:vertical-rl;font-family:"Noto Serif JP",serif;font-weight:600;font-size:13px;letter-spacing:.14em;line-height:1;white-space:nowrap;color:#3D2E52}
+.sw:hover .c2{transform:rotate(calc(var(--a,0deg) + 14deg)) translateX(7px)}
+.sw:hover .c3{transform:rotate(calc(var(--a,0deg) - 15deg)) translateX(-7px)}
+.sw.glow .c1{box-shadow:inset 0 0 7px rgba(255,255,255,.5),0 0 0 1.5px var(--cur),0 0 14px var(--glow2);transform:translateY(-3px) rotate(var(--a,0deg))}
+.sw .sn{font-size:12px;line-height:1.3;white-space:nowrap}
+
+@media (prefers-reduced-motion:reduce){
+  .mapcard,.panel{animation:none}
+  .rn.r{animation:none}
+  #mapS .flower,#mapT .tile.yes .tl,#mapS .sh.yes,.tile2 .ph,.rb,.pbox img,.slidebtn img,.cards .c{transition:none}
+  #mapS .bloom:hover .flower{transform:none}
+  .sw:hover .c2{transform:rotate(calc(var(--a,0deg) + 8deg)) translateX(3px)}
+  .sw:hover .c3{transform:rotate(calc(var(--a,0deg) - 9deg)) translateX(-3px)}
+}
+[hidden]{display:none!important}
+.empty{font-family:"Noto Serif JP",serif;font-size:15px;color:var(--meta);padding:48px 0}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="../index.html#profile">&larr; The First Flower</a>
+
+  <section class="hero" aria-labelledby="ttl">
+    <div>
+      <h1 id="ttl">旅の一枚</h1>
+      <p class="lead"><span class="nb">漢字の地図で、</span><span class="nb">地方を押すと、</span><span class="nb">県の形があらわれて、</span><span class="nb">写真が咲きます。</span></p>
+    </div>
+    <div class="hr">
+      <span class="total" id="total"></span>
+      <div class="tabs2" role="group" aria-label="地図の切り替え">
+        <button type="button" id="bJp" aria-pressed="true">日本<small id="nJp"></small></button>
+        <button type="button" id="bWd" aria-pressed="false">世界<small id="nWd"></small></button>
+      </div>
+    </div>
+  </section>
+
+  <div class="rwrap">
+    <button type="button" class="rn l" id="rnL" aria-label="地方ボタンを左へ">&#8249;</button>
+    <div class="regions" id="regions" role="group" aria-label="地方を選ぶと、地図がその地方へ寄ります"></div>
+    <button type="button" class="rn r" id="rnR" aria-label="地方ボタンを右へ">&#8250;</button>
+  </div>
+
+  <main class="stage">
+    <section class="mapcard" id="mapcard" aria-label="旅の地図">
+      <svg id="mapT" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="漢字タイルの地図。桜色が行った場所"></svg>
+      <svg id="mapS" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="寄った地方の県の形。桜色が行った場所"></svg>
+    </section>
+    <section class="panel" id="panel" aria-label="選んだ場所の写真"><noscript>この地図は JavaScript を使います。</noscript></section>
+  </main>
+  <div class="sr" id="sr" aria-live="polite"></div>
+</div>
+
+<script src="journey-core.js?v=20261105"></script>
+<script src="journey-shapes.js?v=20261106"></script>
+<script src="journey-map.js?v=20261101"></script>
+<script src="tff-journey-data.js?v=20261105"></script>
+<script>
+(function () {
+  "use strict";
+  var BASE = "";
+  var NS = "http://www.w3.org/2000/svg";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var PITCH = 44, TS = 40;
+
+  function J(a, b) { var o = []; for (var i = a; i <= b; i++) { o.push("JP-" + (i < 10 ? "0" + i : i)); } return o; }
+  var JREG = [
+    { k: "hokkaido", name: "北海道", ids: J(1, 1) },
+    { k: "tohoku", name: "東北", ids: J(2, 7) },
+    { k: "kanto", name: "関東", ids: J(8, 14) },
+    { k: "chubu", name: "中部", ids: J(15, 23) },
+    { k: "kinki", name: "近畿", ids: J(24, 30) },
+    { k: "chugoku", name: "中国", ids: J(31, 35) },
+    { k: "shikoku", name: "四国", ids: J(36, 39) },
+    { k: "kyushu", name: "九州", ids: J(40, 46) },
+    { k: "okinawa", name: "沖縄", ids: J(47, 47) },
+    { k: "fes", name: "夏フェス", ids: ["theme-summer-fes"] }
+  ];
+  var WREG = [
+    { k: "na", name: "北米", ids: ["CA", "US"], box: [90, 40, 250, 135] },
+    { k: "asia", name: "アジア", ids: ["KR", "HK", "ID"], box: [555, 70, 665, 200] },
+    { k: "oce", name: "オセアニア", ids: ["AU", "GU"], box: [575, 125, 695, 265] }
+  ];
+  var WANCH = { US: [164, 90], CA: [160, 52], AU: [628, 218], ID: [590, 172], KR: [615.6, 96], HK: [588.4, 123.8], GU: [649.4, 141.5] };
+  var WT = [ /* 世界は漢字の略称 + 国名。ごく粗く世界の並びを写した 7 列 × 4 行 */
+    { id: "CA", ch: "加", col: 2, row: 1 }, { id: "US", ch: "米", col: 2, row: 2 },
+    { id: "KR", ch: "韓", col: 6, row: 1 }, { id: "HK", ch: "香", col: 6, row: 2 },
+    { id: "ID", ch: "尼", col: 5, row: 3 }, { id: "GU", ch: "グ", col: 7, row: 3 },
+    { id: "AU", ch: "豪", col: 6, row: 4 }
+  ];
+  var MODES = {
+    jp: { cols: 12, rows: 14, regs: JREG, label: "全国", unit: "県", S: JOURNEY_SHAPES.jp },
+    world: { cols: 7, rows: 4, regs: WREG, label: "全世界", unit: "か国", S: JOURNEY_SHAPES.world }
+  };
+
+  /* ---- 県の花（名前はマネージャーの正本）と、描き分ける形・色 ----
+     形 8 種: r5=丸い 5 弁 / rose=重なる丸弁 / daisy=細い多弁 / x4=十字 4 弁 / star=とがった 5 弁 / lily=細長い 6 弁 / azl=切れ込みのある 5 弁 / tulip=立ち上がる 3 弁 */
+  var FLOWERS = [
+    ["JP-01", "r5", "#E05A8F", "ハマナス"], ["JP-02", "r5", "#FDE3EA", "りんごの花"], ["JP-03", "azl", "#BFA6E0", "キリ"],
+    ["JP-04", "azl", "#C96AA8", "ミヤギノハギ"], ["JP-05", "daisy", "#D3DC7B", "ふきのとう"], ["JP-06", "daisy", "#F29B4B", "べにばな"],
+    ["JP-07", "azl", "#F08FB4", "ネモトシャクナゲ"], ["JP-08", "rose", "#E0506E", "バラ"], ["JP-09", "azl", "#F4A8C4", "ヤシオツツジ"],
+    ["JP-10", "azl", "#F08A3C", "レンゲツツジ"], ["JP-11", "r5", "#F07BAE", "サクラソウ"], ["JP-12", "x4", "#F5CF3F", "菜の花"],
+    ["JP-13", "r5", "#F6B7D1", "ソメイヨシノ"], ["JP-14", "lily", "#FFFFFF", "ヤマユリ"], ["JP-15", "tulip", "#DB4B5E", "チューリップ"],
+    ["JP-16", "tulip", "#F29B4B", "チューリップ"], ["JP-17", "lily", "#5E3F66", "クロユリ"], ["JP-18", "lily", "#FFF1A8", "スイセン"],
+    ["JP-19", "r5", "#F9CFE0", "フジザクラ"], ["JP-20", "star", "#6F8FE0", "リンドウ"], ["JP-21", "azl", "#D983C0", "レンゲソウ"],
+    ["JP-22", "azl", "#EE5F8E", "ツツジ"], ["JP-23", "tulip", "#8A6FD0", "カキツバタ"], ["JP-24", "tulip", "#9E7CD6", "ハナショウブ"],
+    ["JP-25", "azl", "#F27FA8", "シャクナゲ"], ["JP-26", "r5", "#F3A9C8", "シダレザクラ"], ["JP-27", "r5", "#EC7FA6", "ウメ・サクラソウ"],
+    ["JP-28", "daisy", "#FFFFFF", "ノジギク"], ["JP-29", "rose", "#F6B7D1", "ナラヤエザクラ"], ["JP-30", "r5", "#EE86AD", "ウメ"],
+    ["JP-31", "r5", "#FFFFFF", "二十世紀梨の花"], ["JP-32", "rose", "#E55A8A", "ボタン"], ["JP-33", "r5", "#F9A5BC", "桃の花"],
+    ["JP-34", "star", "#D8452F", "モミジ"], ["JP-35", "r5", "#FFF7D6", "夏みかんの花"], ["JP-36", "r5", "#F6FBE6", "すだちの花"],
+    ["JP-37", "x4", "#F3F0DB", "オリーブ"], ["JP-38", "r5", "#FFFDF0", "みかんの花"], ["JP-39", "x4", "#C9654B", "ヤマモモ"],
+    ["JP-40", "r5", "#E96F9C", "ウメ"], ["JP-41", "x4", "#DCE8A8", "クスの花"], ["JP-42", "azl", "#E8508A", "ウンゼンツツジ"],
+    ["JP-43", "star", "#6F8FE0", "リンドウ"], ["JP-44", "r5", "#F18AAE", "ブンゴウメ"], ["JP-45", "lily", "#FFFFFF", "ハマユウ"],
+    ["JP-46", "azl", "#E5447E", "ミヤマキリシマ"], ["JP-47", "tulip", "#E5483B", "デイゴ"],
+    ["theme-summer-fes", "daisy", "#F7C531", null],
+    ["US", "rose", "#D94A5E", "バラ"], ["KR", "r5", "#E58BC3", "ムクゲ"], ["HK", "r5", "#C06BC0", "バウヒニア"],
+    ["ID", "star", "#FFFFFF", "ジャスミン"], ["AU", "rose", "#F5CF3F", "ゴールデンワトル"],
+    ["CA", "star", "#D8452F", null], ["GU", "r5", "#FFF3B0", null]
+  ];
+  var FL = {};
+  FLOWERS.forEach(function (a) { FL[a[0]] = { f: a[1], c: a[2], n: a[3] }; });
+
+  /* ---- 和の伝統色（淡い〜中くらいの明るさ）。写真から取った色は、この中でいちばん近い色に寄せて出す ---- */
+  var WASHI_SRC = [
+    ["薄浅葱", "#8CC9CE"], ["水浅葱", "#7FC4C0"], ["白群", "#96D0D1"], ["勿忘草", "#9CC9EC"], ["千草", "#8DB9DC"],
+    ["空", "#B3DDF0"], ["白藍", "#CBE8EC"], ["藤", "#BBBCDE"], ["薄藤", "#D3CFEA"], ["紅藤", "#C9B2D3"],
+    ["菫", "#A99AD2"], ["藤納戸", "#A3A9D4"], ["紅梅", "#EBA0B8"], ["桜", "#F7D3DC"], ["撫子", "#E3A6BC"],
+    ["朱鷺", "#F4B3C2"], ["薄紅", "#F4B4B3"], ["珊瑚", "#F5B1AA"], ["薄柿", "#E3B7A3"], ["薄香", "#EBCDB6"],
+    ["杏", "#F7C59A"], ["柑子", "#F5B47C"], ["淡黄", "#F8E9A0"], ["刈安", "#E9DA7C"], ["鳥の子", "#F3E3C3"],
+    ["若菜", "#CFE0A5"], ["柳", "#B7D09A"], ["萌黄", "#BFD98A"], ["裏葉", "#A8C6A0"], ["白緑", "#C9E2CF"],
+    ["青磁", "#A9D3C0"], ["若竹", "#9CCFB0"], ["灰桜", "#DCC9C6"], ["鳩羽", "#B2A5BB"], ["利休鼠", "#A9B0A2"]
+  ];
+  function hex2rgb(x) { return [parseInt(x.substr(1, 2), 16), parseInt(x.substr(3, 2), 16), parseInt(x.substr(5, 2), 16)]; }
+  function rgb2hsl(c) {
+    var r = c[0] / 255, g = c[1] / 255, b = c[2] / 255, mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, s = 0, hu = 0, d = mx - mn;
+    if (d > 0) {
+      s = d / (1 - Math.abs(2 * l - 1));
+      if (mx === r) { hu = ((g - b) / d) % 6; } else if (mx === g) { hu = (b - r) / d + 2; } else { hu = (r - g) / d + 4; }
+      hu = (hu * 60 + 360) % 360;
+    }
+    return [hu, s, l];
+  }
+  var WASHI = WASHI_SRC.map(function (a) { var rgb = hex2rgb(a[1]); return { n: a[0], hex: a[1], hsl: rgb2hsl(rgb), lum: (.299 * rgb[0] + .587 * rgb[1] + .114 * rgb[2]) / 255 }; });
+  var WBY = {}; WASHI.forEach(function (w) { WBY[w.n] = w; });
+  /* 近い順に並べた伝統色。色相を最も重く見る（明るさ・彩度は軽く）。表は淡い色だけなので、帯は地になじむ */
+  function rankWashi(rgb) {
+    var t = rgb2hsl(rgb);
+    return WASHI.map(function (w) {
+      var dh = Math.abs(t[0] - w.hsl[0]); dh = Math.min(dh, 360 - dh) / 180 * 2;
+      var dl = Math.abs(t[2] - w.hsl[2]) * .8, ds = Math.abs(t[1] - w.hsl[1]) * .3;
+      return { w: w, d: dh * dh + dl * dl + ds * ds };
+    }).sort(function (a, b) { return a.d - b.d; }).map(function (x) { return x.w; });
+  }
+  /* 色が取れない環境（file:// など）でも札が空にならない、地方ごとの決め打ち（日本 20 色・世界 6 色、どれも重ならない）。取れたら差し替える */
+  var DEFAULT_COL = {
+    hokkaido: ["白群", "空"], tohoku: ["若竹", "朱鷺"], kanto: ["刈安", "千草"], chubu: ["藤", "青磁"], kinki: ["紅梅", "若菜"],
+    chugoku: ["薄浅葱", "薄柿"], shikoku: ["柑子", "勿忘草"], kyushu: ["裏葉", "珊瑚"], okinawa: ["水浅葱", "淡黄"], fes: ["撫子", "薄藤"],
+    na: ["千草", "薄紅"], asia: ["珊瑚", "薄浅葱"], oce: ["水浅葱", "杏"]
+  };
+
+  /* 公開データは journey-core.js で検証する。使えないときは「準備中」だけを出す */
+  var raw = typeof TFF_JOURNEY !== "undefined" ? TFF_JOURNEY : null, check;
+  try { check = raw ? window.JourneyCore.validateJourney(raw) : { ok: false, errors: ["TFF_JOURNEY がない"] }; }
+  catch (e) { check = { ok: false, errors: [String(e)] }; }
+  if (!check.ok) { console.warn("旅の地図: 公開データを使えません", check.errors); }
+  if (!check.ok || !raw.regions.length) {
+    document.querySelector(".rwrap").hidden = true;
+    document.getElementById("mapcard").hidden = true;
+    document.querySelector(".hr").hidden = true;
+    var empty = document.createElement("p");
+    empty.className = "empty"; empty.id = "empty"; empty.textContent = "旅の写真は準備中です。";
+    document.getElementById("panel").appendChild(empty);
+    return;
+  }
+
+  var D = raw, photos = D.photos, byId = {}, kids = {};
+  D.regions.forEach(function (r) {
+    byId[r.id] = r;
+    if (r.parentId) { (kids[r.parentId] = kids[r.parentId] || []).push(r); }
+  });
+  function $(id) { return document.getElementById(id); }
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    for (var k in attrs) { e.setAttribute(k, attrs[k]); }
+    if (parent) { parent.appendChild(e); }
+    return e;
+  }
+  function h(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) { e.className = cls; }
+    if (text != null) { e.textContent = text; }
+    return e;
+  }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(x) { return Math.max(0, Math.min(1, x)); }
+  function ease(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function isVisit(id) { var r = byId[id]; return !!r && (r.kind === "pref" || r.kind === "country" || r.kind === "theme"); }
+  function allIds(r) {
+    var ids = r.photoIds.slice();
+    (kids[r.id] || []).forEach(function (c) { c.photoIds.forEach(function (p) { if (ids.indexOf(p) < 0) { ids.push(p); } }); });
+    return ids;
+  }
+  function repThumb(r) { var ids = allIds(r); return ids.length ? photos[ids[0]].thumb : null; }
+  function tx(col) { return (col - 1) * PITCH; }
+
+  function mainBox(d) {
+    var best = null;
+    d.split(/(?=M)/).forEach(function (s) {
+      var n = s.match(/-?\d+(?:\.\d+)?/g);
+      if (!n || n.length < 4) { return; }
+      var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+      for (var i = 0; i + 1 < n.length; i += 2) {
+        var x = +n[i], y = +n[i + 1];
+        if (x < x0) { x0 = x; } if (x > x1) { x1 = x; }
+        if (y < y0) { y0 = y; } if (y > y1) { y1 = y; }
+      }
+      var a = (x1 - x0) * (y1 - y0);
+      if (!best || a > best.a) { best = { x0: x0, y0: y0, x1: x1, y1: y1, a: a }; }
+    });
+    return best || { x0: 0, y0: 0, x1: 100, y1: 100, a: 1 };
+  }
+
+  var svgT = $("mapT"), svgS = $("mapS"), cont = $("mapcard"), panel = $("panel"), regionsEl = $("regions"), sr = $("sr");
+  var mode = "jp", M, scope = "all", prefId = null, tab = null, idx = 0;
+  var tiles = [], tileBy = {}, sps = [], items = [], regs = [], gbox = [0, 0, 1, 1], RV = {}, gRegs = {};
+  var gTiles, defs;
+  var cur = { x: 0, y: 0, w: 1, h: 1 }, vT = null, anim = null;
+  var fk = null, mC = 0, bC = 0;
+  var RB = 26;
+  var lastW = 0, nudged = false;
+
+  function sizes() { return { cw: cont.clientWidth || 600, ch: cont.clientHeight || 600 }; }
+  function fit(b, pad) {
+    var z = sizes(), asp = z.cw / z.ch;
+    var bw = (b[2] - b[0]) * (1 + pad * 2), bh = (b[3] - b[1]) * (1 + pad * 2), w, hh;
+    if (bw / bh > asp) { w = bw; hh = bw / asp; } else { hh = bh; w = bh * asp; }
+    var cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+    return { x: cx - w / 2, y: cy - hh / 2, w: w, h: hh };
+  }
+  function scaleOf(v) { var z = sizes(); return Math.min(z.cw / v.w, z.ch / v.h); }
+  function flowerPx() { return sizes().cw < 520 ? 20 : 24; }
+  function regionStat(def) {
+    var vis = def.ids.filter(isVisit), seen = {}, n = 0;
+    vis.forEach(function (id) { allIds(byId[id]).forEach(function (p) { if (!seen[p]) { seen[p] = 1; n++; } }); });
+    return { vis: vis, photos: n };
+  }
+
+  /* ---------- 県の花を描く（形 8 種 × 色）。R は半径。写真の円は上に重なる ---------- */
+  function drawPetals(f, spec, R) {
+    var form = spec.f, c = spec.c, st = { fill: c, stroke: "rgba(61,46,82,.34)", "stroke-width": 1.1 };
+    function add(tag, a, rot) {
+      var o = {}; for (var k in st) { o[k] = st[k]; } for (var k2 in a) { o[k2] = a[k2]; }
+      if (rot) { o.transform = "rotate(" + rot + ")"; }
+      return el(tag, o, f);
+    }
+    var i;
+    if (form === "r5") {
+      for (i = 0; i < 5; i++) { var a = (i * 72 - 90) * Math.PI / 180; add("circle", { cx: Math.cos(a) * R * .72, cy: Math.sin(a) * R * .72, r: R * .44 }); }
+    } else if (form === "rose") {
+      for (i = 0; i < 8; i++) { var a1 = (i * 45) * Math.PI / 180; add("circle", { cx: Math.cos(a1) * R * .8, cy: Math.sin(a1) * R * .8, r: R * .34 }); }
+      for (i = 0; i < 8; i++) { var a2 = (i * 45 + 22.5) * Math.PI / 180; add("circle", { cx: Math.cos(a2) * R * .62, cy: Math.sin(a2) * R * .62, r: R * .3 }); }
+    } else if (form === "daisy") {
+      for (i = 0; i < 14; i++) { add("ellipse", { cx: 0, cy: -R * .95, rx: R * .14, ry: R * .36 }, i * 360 / 14); }
+    } else if (form === "x4") {
+      for (i = 0; i < 4; i++) { add("ellipse", { cx: 0, cy: -R * .8, rx: R * .4, ry: R * .46 }, i * 90); }
+    } else if (form === "star") {
+      for (i = 0; i < 5; i++) { add("path", { d: "M" + (-R * .32) + " " + (-R * .4) + " Q0 " + (-R * 1.7) + " " + (R * .32) + " " + (-R * .4) + " Z" }, i * 72); }
+    } else if (form === "lily") {
+      for (i = 0; i < 6; i++) { add("path", { d: "M" + (-R * .2) + " " + (-R * .45) + " Q0 " + (-R * 1.7) + " " + (R * .2) + " " + (-R * .45) + " Z" }, i * 60); }
+    } else if (form === "azl") {
+      for (i = 0; i < 5; i++) {
+        add("path", { d: "M0 " + (-R * .45) + " C" + (R * .66) + " " + (-R * .8) + " " + (R * .56) + " " + (-R * 1.4) + " " + (R * .05) + " " + (-R * 1.2) +
+          " L0 " + (-R * 1.08) + " L" + (-R * .05) + " " + (-R * 1.2) + " C" + (-R * .56) + " " + (-R * 1.4) + " " + (-R * .66) + " " + (-R * .8) + " 0 " + (-R * .45) + " Z" }, i * 72);
+      }
+    } else if (form === "tulip") {
+      add("ellipse", { cx: 0, cy: -R * .85, rx: R * .36, ry: R * .6 }, -38);
+      add("ellipse", { cx: 0, cy: -R * .85, rx: R * .36, ry: R * .6 }, 38);
+      add("ellipse", { cx: 0, cy: -R * .9, rx: R * .38, ry: R * .64 }, 0);
+    }
+    add("circle", { cx: 0, cy: 0, r: R * .86 + 1 }); /* 写真の下地（花の色） */
+  }
+  function flowerIcon(spec) { /* パネル用の小さな花（写真なし） */
+    var sv = el("svg", { viewBox: "-36 -36 72 72", "aria-hidden": "true" });
+    var g = el("g", {}, sv);
+    drawPetals(g, spec, 26);
+    el("circle", { r: 12, fill: "#FFF3B0", stroke: "rgba(61,46,82,.34)", "stroke-width": 1.1 }, g);
+    return sv;
+  }
+
+  /* ---------- 組み立て ---------- */
+  function buildMap() {
+    M = MODES[mode]; regs = M.regs;
+    svgT.textContent = ""; svgS.textContent = "";
+    tiles = []; tileBy = {}; sps = []; items = []; RV = {}; gRegs = {};
+    var src = mode === "jp"
+      ? JP_TILES.map(function (t) { return { id: t.id, label: t.name, ch: t.name.charAt(0), col: t.col, row: t.row }; })
+          .concat([{ id: "theme-summer-fes", label: "夏フェス", ch: "夏", col: 12, row: 13 }])
+      : WT.map(function (t) { return { id: t.id, label: byId[t.id] ? byId[t.id].name : t.id, ch: t.ch, col: t.col, row: t.row, world: true }; });
+    src.forEach(function (t) {
+      t.group = null;
+      regs.forEach(function (d) { if (d.ids.indexOf(t.id) >= 0) { t.group = d.k; } });
+      t.visit = isVisit(t.id);
+      t.cx = tx(t.col) + TS / 2; t.cy = tx(t.row) + TS / 2;
+      t.ky = t.world ? 15 : 20;
+      tiles.push(t); tileBy[t.id] = t;
+    });
+    gbox = [0, 0, M.cols * PITCH - 4, M.rows * PITCH - 4];
+
+    svgT.setAttribute("viewBox", "0 0 " + (M.cols * PITCH) + " " + (M.rows * PITCH));
+    gTiles = el("g", {}, svgT);
+    tiles.forEach(function (t) {
+      var g = el("g", { class: "tile " + (t.visit ? "yes" : "no"), transform: "translate(" + tx(t.col) + " " + tx(t.row) + ")" }, gTiles);
+      el("title", {}, g).textContent = t.label;
+      if (t.visit) { el("rect", { class: "tshade", x: 0, y: 2.4, width: TS, height: TS, rx: 4 }, g); }
+      el("rect", { class: "tl", x: 0, y: 0, width: TS, height: TS, rx: 4 }, g);
+      t.chEl = el("text", { class: "ch", x: 20, y: t.ky, dy: ".35em", "font-size": t.world ? 18 : 20 }, g); t.chEl.textContent = t.ch;
+      if (t.world) { /* 略字だけでは分かりにくい国は、名前を添える */
+        t.nmEl = el("text", { class: "nm", x: 20, y: 34, "font-size": Math.min(6.6, 36 / t.label.length) }, g); t.nmEl.textContent = t.label;
+      }
+      t.g = g;
+      if (t.visit) { g.addEventListener("click", function () { choosePref(t.id, false); }); }
+    });
+
+    defs = el("defs", {}, svgS);
+    svgS.setAttribute("viewBox", "0 0 100 100");
+    regs.forEach(function (d) {
+      var g = el("g", {}, svgS); g.style.display = "none";
+      var o = { g: g };
+      o.gSh = el("g", {}, g); o.gKan = el("g", {}, g); o.gStem = el("g", {}, g); o.gBloom = el("g", {}, g); o.gLab = el("g", {}, g);
+      gRegs[d.k] = o;
+      var boxes = [], k = 0;
+      d.ids.forEach(function (id) {
+        var t = tileBy[id]; if (!t) { return; }
+        var path = M.S.paths[id];
+        if (!path) { path = "M0 0H100V100H0Z"; }
+        var mb = mainBox(path);
+        var C = mode === "world" && WANCH[id] ? WANCH[id].slice() : [(mb.x0 + mb.x1) / 2, (mb.y0 + mb.y1) / 2];
+        var sp = { id: id, tile: t, group: d.k, C: C, dim: Math.max(mb.x1 - mb.x0, mb.y1 - mb.y0), visit: t.visit, label: t.label };
+        boxes.push(mb);
+        sp.g = el("g", {}, o.gSh);
+        sp.shd = el("path", { class: "shd", d: path }, sp.g);
+        sp.path = el("path", { class: "sh " + (t.visit ? "yes" : "no"), d: path }, sp.g);
+        if (t.visit) { sp.path.addEventListener("click", function () { choosePref(id, false); }); }
+        sp.kan = el("text", { class: "kan" + (t.visit ? "" : " no"), dy: ".35em" }, o.gKan); sp.kan.textContent = t.ch;
+        sp.lab = el("text", { class: "lab" + (t.visit ? "" : " no") }, o.gLab); sp.lab.textContent = t.label;
+        sp.lab.style.opacity = 0;
+        sps.push(sp);
+        if (t.visit) {
+          var r = byId[id];
+          var it = { id: id, r: r, sp: sp, group: d.k, st: k * .05, off: [0, 0], ready: false, shown: false };
+          it.stem = el("g", {}, o.gStem);
+          it.stemLine = el("line", { class: "stem" }, it.stem);
+          it.stemDot = el("circle", { class: "stemdot" }, it.stem);
+          it.stem.style.display = "none";
+          it.node = bloomNode(o.gBloom, "b-" + id, repThumb(r), r.name + "の写真を開く", FL[id] || { f: "r5", c: "#F6B7D1" });
+          it.node.addEventListener("click", function () { choosePref(id, false); });
+          it.node.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choosePref(id, false); } });
+          it.node.style.visibility = "hidden"; it.node.style.opacity = 0;
+          preload(it, repThumb(r));
+          items.push(it); k++;
+        }
+      });
+      if (mode === "world") { d.sbox = d.box; }
+      else if (d.k === "fes") { d.sbox = [-30, -30, 130, 130]; }
+      else {
+        var b = [1e9, 1e9, -1e9, -1e9];
+        boxes.forEach(function (m) { b[0] = Math.min(b[0], m.x0); b[1] = Math.min(b[1], m.y0); b[2] = Math.max(b[2], m.x1); b[3] = Math.max(b[3], m.y1); });
+        d.sbox = b;
+      }
+    });
+    items.forEach(function (it) { it.stMax = .05 * (items.filter(function (x) { return x.group === it.group; }).length - 1); });
+    COLS = {};
+    regs.forEach(function (d) { COLS[d.k] = (DEFAULT_COL[d.k] || ["利休鼠"]).slice(); });
+    computeColors();
+  }
+
+  /* 写真が届くまで花は出さない */
+  function preload(it, src) {
+    if (!src) { it.ready = true; return; }
+    var im = new Image();
+    im.onload = im.onerror = function () { it.ready = true; };
+    im.src = BASE + src;
+    if (im.complete) { it.ready = true; }
+  }
+
+  function bloomNode(parent, id, src, aria, spec) {
+    var R = RB;
+    var g = el("g", { class: "bloom", tabindex: "-1", role: "button", "aria-label": aria }, parent);
+    var f = el("g", { class: "flower" }, g);
+    drawPetals(f, spec, R);
+    var pr = R * .86;
+    var cp = el("clipPath", { id: id }, defs); el("circle", { r: pr }, cp);
+    if (src) {
+      var im = el("image", { x: -pr, y: -pr, width: pr * 2, height: pr * 2, preserveAspectRatio: "xMidYMid slice", "clip-path": "url(#" + id + ")" }, f);
+      im.setAttribute("href", BASE + src);
+    }
+    el("circle", { class: "pring", r: pr }, f);
+    el("circle", { class: "selring", r: R * 1.2 }, f);
+    el("circle", { class: "fr2", r: R * 1.3 }, f);
+    el("circle", { class: "fr", r: R * 1.3 }, f);
+    el("circle", { class: "hit", r: Math.max(R * 1.15, 26) }, g);
+    return g;
+  }
+
+  function relax(list, view, getA, Rpx) {
+    var sc = scaleOf(view), z = sizes(), n = list.length, P = [], Q = [], i, j, guard;
+    for (i = 0; i < n; i++) { var a = getA(list[i]); P.push([(a[0] - view.x) * sc, (a[1] - view.y) * sc]); Q.push([P[i][0], P[i][1]]); }
+    var minD = Rpx * 2 + 14, pad = Rpx + 4;
+    for (guard = 0; guard < 90; guard++) {
+      for (i = 0; i < n; i++) { for (j = i + 1; j < n; j++) {
+        var dx = Q[j][0] - Q[i][0], dy = Q[j][1] - Q[i][1], d = Math.sqrt(dx * dx + dy * dy);
+        if (d < minD) {
+          if (d < .01) { dx = 1; dy = 0; d = 1; }
+          var m = (minD - d) / 2, ux = dx / d, uy = dy / d;
+          Q[i][0] -= ux * m; Q[i][1] -= uy * m; Q[j][0] += ux * m; Q[j][1] += uy * m;
+        }
+      } }
+      for (i = 0; i < n; i++) {
+        Q[i][0] += (P[i][0] - Q[i][0]) * .03; Q[i][1] += (P[i][1] - Q[i][1]) * .03;
+        Q[i][0] = Math.max(pad, Math.min(z.cw - pad, Q[i][0]));
+        Q[i][1] = Math.max(pad, Math.min(z.ch - pad - 18, Q[i][1]));
+      }
+    }
+    return Q.map(function (q, k) { return [(q[0] - P[k][0]) / sc, (q[1] - P[k][1]) / sc]; });
+  }
+  function ensureRV(k) {
+    if (RV[k]) { return RV[k]; }
+    var d = regs.filter(function (x) { return x.k === k; })[0];
+    var R = { sps: sps.filter(function (s) { return s.group === k; }), its: items.filter(function (i) { return i.group === k; }) };
+    R.vs = fit(d.sbox, .12);
+    var off = relax(R.its, R.vs, function (it) { return it.sp.C; }, flowerPx());
+    R.its.forEach(function (it, i) { it.off = off[i]; });
+    RV[k] = R;
+    return R;
+  }
+
+  function allView() {
+    var b = gbox, v = fit(b, .01), mx = 0, my = 0;
+    tiles.forEach(function (t) { mx += t.cx; my += t.cy; });
+    mx /= tiles.length; my /= tiles.length;
+    if (v.w > (b[2] - b[0]) + 1) { v.x = Math.max(b[2] - v.w, Math.min(b[0], mx - v.w / 2)); }
+    if (v.h > (b[3] - b[1]) + 1) { v.y = Math.max(b[3] - v.h, Math.min(b[1], my - v.h / 2)); }
+    return v;
+  }
+  function tileViewFor(k) {
+    if (k === "all") { return allView(); }
+    var d = regs.filter(function (x) { return x.k === k; })[0], b = [1e9, 1e9, -1e9, -1e9];
+    d.ids.forEach(function (id) {
+      var t = tileBy[id]; if (!t) { return; }
+      b[0] = Math.min(b[0], tx(t.col)); b[1] = Math.min(b[1], tx(t.row));
+      b[2] = Math.max(b[2], tx(t.col) + TS); b[3] = Math.max(b[3], tx(t.row) + TS);
+    });
+    var minS = 3 * PITCH, cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+    var w = Math.max(b[2] - b[0], minS), hh = Math.max(b[3] - b[1], minS);
+    return fit([cx - w / 2, cy - hh / 2, cx + w / 2, cy + hh / 2], .1);
+  }
+  function setTargets() {
+    vT = tileViewFor(scope);
+    items.forEach(function (it) { var on = it.group === scope; it.node.setAttribute("tabindex", on ? "0" : "-1"); it.node.setAttribute("aria-hidden", on ? "false" : "true"); });
+  }
+
+  function put(node, pos, sc, rpx, op) {
+    node.setAttribute("transform", "translate(" + pos[0] + " " + pos[1] + ") scale(" + (rpx / (RB * sc)) + ")");
+    node.style.opacity = op;
+    node.style.visibility = op < .03 ? "hidden" : "visible";
+  }
+  function hideItem(it) {
+    if (!it.shown) { return; }
+    it.shown = false;
+    it.node.style.visibility = "hidden"; it.node.style.opacity = 0;
+    it.stem.style.display = "none";
+    it.sp.lab.style.opacity = 0;
+  }
+  /* view = タイル層の見る範囲 / k = 形になる地方 / m = タイル→形（1 で完了） / b = 花（m が 1 になってからだけ） */
+  function apply(view, k, m, b) {
+    cur = view;
+    var sct = scaleOf(view);
+    svgT.setAttribute("viewBox", view.x + " " + view.y + " " + view.w + " " + view.h);
+    tiles.forEach(function (t) {
+      var inK = k && t.group === k;
+      /* 寄ったあとは、選んだ地方の形だけ。ほかの地方のタイルは完全に消す（戻すと元どおりに現れる） */
+      var op = inK ? 1 - clamp((m - .15) / .6) : 1 - clamp(m * 1.25);
+      t.g.style.opacity = op;
+      t.g.style.visibility = op < .02 ? "hidden" : "visible";
+      var ko = (inK && m > .001) ? 0 : 1;
+      t.chEl.style.opacity = ko;
+      if (t.nmEl) { t.nmEl.style.opacity = ko; }
+    });
+    Object.keys(gRegs).forEach(function (r) { gRegs[r].g.style.display = (r === k) ? "" : "none"; });
+    var show = !!k && (m > .001 || b > .001);
+    svgS.style.visibility = show ? "visible" : "hidden";
+    /* 形への変化が終わるまで、花は一切出さない（寄る途中・タイルの段階・形に変わる途中） */
+    var bloomOK = !!k && m >= .999 && b > 0;
+    if (!bloomOK) { items.forEach(hideItem); }
+    if (!show) { return; }
+    var R = ensureRV(k), vs = R.vs, scs = scaleOf(vs), rpx = flowerPx();
+    svgS.setAttribute("viewBox", vs.x + " " + vs.y + " " + vs.w + " " + vs.h);
+    R.sps.forEach(function (sp) {
+      var tcx = (sp.tile.cx - view.x) * sct, tcy = (sp.tile.cy - 20 + sp.tile.ky - view.y) * sct;
+      var fcx = (sp.C[0] - vs.x) * scs, fcy = (sp.C[1] - vs.y) * scs;
+      var px = lerp(tcx, fcx, m), py = lerp(tcy, fcy, m);
+      var sx = vs.x + px / scs, sy = vs.y + py / scs;
+      var cxs = (sp.tile.cx - view.x) * sct, cys = (sp.tile.cy - view.y) * sct;
+      var gx = vs.x + lerp(cxs, fcx, m) / scs, gy = vs.y + lerp(cys, fcy, m) / scs;
+      var s0 = TS * sct / (sp.dim * scs), s = lerp(s0, 1, m);
+      sp.g.setAttribute("transform", "translate(" + gx + " " + gy + ") scale(" + s + ") translate(" + (-sp.C[0]) + " " + (-sp.C[1]) + ")");
+      sp.g.style.opacity = clamp(m * 5);
+      sp.shd.setAttribute("transform", "translate(0 " + (2.4 / (s * scs)) + ")");
+      sp.kan.setAttribute("x", sx); sp.kan.setAttribute("y", sy);
+      sp.kan.setAttribute("font-size", lerp(24 * sct, 22, m) / scs);
+      sp.kan.setAttribute("stroke-width", 3 * m / scs);
+      sp.kan.style.opacity = m <= .001 ? 0 : 1 - clamp((m - .55) / .35);
+      if (!sp.visit) {
+        sp.lab.setAttribute("x", sp.C[0]); sp.lab.setAttribute("y", sp.C[1]);
+        sp.lab.setAttribute("font-size", 12.5 / scs); sp.lab.setAttribute("stroke-width", 3 / scs);
+        sp.lab.style.opacity = clamp((m - .85) * 6);
+      }
+    });
+    if (!bloomOK) { return; }
+    R.its.forEach(function (it) {
+      var p = it.ready ? clamp((b - it.st) / (1 - it.stMax)) : 0, e = ease(p);
+      if (p <= 0) { hideItem(it); return; }
+      it.shown = true;
+      var x = it.sp.C[0] + it.off[0] * e, y = it.sp.C[1] + it.off[1] * e;
+      put(it.node, [x, y], scs, rpx * (.5 + .5 * e), clamp(p * 1.6));
+      var dx = it.off[0] * e * scs, dy = it.off[1] * e * scs, far = Math.sqrt(dx * dx + dy * dy) > rpx * .7;
+      it.stem.style.display = far ? "" : "none";
+      if (far) {
+        it.stemLine.setAttribute("x1", it.sp.C[0]); it.stemLine.setAttribute("y1", it.sp.C[1]);
+        it.stemLine.setAttribute("x2", x); it.stemLine.setAttribute("y2", y);
+        it.stemDot.setAttribute("cx", it.sp.C[0]); it.stemDot.setAttribute("cy", it.sp.C[1]); it.stemDot.setAttribute("r", 3 / scs);
+      }
+      var lab = it.sp.lab;
+      lab.setAttribute("x", x); lab.setAttribute("y", y + (rpx * 1.15 + 13) / scs);
+      lab.setAttribute("font-size", 12.5 / scs); lab.setAttribute("stroke-width", 3 / scs);
+      lab.style.opacity = clamp((p - .5) * 2);
+    });
+  }
+
+  function go(newScope) {
+    var oldFk = fk, oldM = mC, oldB = bC, oldView = { x: cur.x, y: cur.y, w: cur.w, h: cur.h };
+    scope = newScope; setTargets();
+    var nf = newScope === "all" ? null : newScope;
+    var needOut = !!oldFk && oldFk !== nf && (oldM > .001 || oldB > .001);
+    var sameV = Math.abs(oldView.x - vT.x) + Math.abs(oldView.y - vT.y) + Math.abs(oldView.w - vT.w) < .5;
+    var tO = needOut ? 520 : 0, tZ = sameV ? 0 : 700, tM = nf ? 700 : 0, tB = nf ? 600 : 0;
+    var total = tO + tZ + tM + tB;
+    if (anim) { cancelAnimationFrame(anim); anim = null; }
+    function frame(t) {
+      var k2, m = 0, b = 0, view;
+      if (t < tO) {
+        /* 戻すときは、先に花が消え、そのあとで形がタイルへ戻る */
+        var tb = tO * .35;
+        k2 = oldFk; view = oldView;
+        if (t < tb) { b = oldB * (1 - t / tb); m = oldM; }
+        else { b = 0; m = oldM * (1 - ease((t - tb) / (tO - tb))); }
+      } else {
+        var t1 = t - tO, z = tZ ? ease(clamp(t1 / tZ)) : 1;
+        view = { x: lerp(oldView.x, vT.x, z), y: lerp(oldView.y, vT.y, z), w: lerp(oldView.w, vT.w, z), h: lerp(oldView.h, vT.h, z) };
+        k2 = nf;
+        var t2 = t1 - tZ; m = tM ? ease(clamp(t2 / tM)) : 0;
+        var t3 = t2 - tM; b = tB ? clamp(t3 / tB) : 0;
+        if (m < 1) { b = 0; }
+      }
+      fk = k2; mC = m; bC = b;
+      apply(view, k2, m, b);
+    }
+    if (reduce || total === 0) { frame(total); return; }
+    var t0 = performance.now();
+    (function step(now) {
+      var t = Math.max(0, Math.min(total, now - t0));
+      frame(t);
+      if (t < total) { anim = requestAnimationFrame(step); } else { anim = null; }
+    })(t0);
+  }
+  function jump() {
+    if (anim) { cancelAnimationFrame(anim); anim = null; }
+    vT = tileViewFor(scope);
+    fk = scope === "all" ? null : scope; mC = fk ? 1 : 0; bC = fk ? 1 : 0;
+    apply(vT, fk, mC, bC);
+  }
+
+  /* ---------- 操作 ---------- */
+  function setScope(k) {
+    var d = regs.filter(function (x) { return x.k === k; })[0];
+    prefId = null; tab = null; idx = 0;
+    go(k); syncButtons();
+    var vis = d ? d.ids.filter(isVisit) : [];
+    if (d && vis.length === 1) { prefId = vis[0]; tab = prefId; }
+    markSel(); renderPanel(false);
+    announce(k === "all" ? "全体の地図に戻りました" : d.name + "へ寄りました。" + vis.length + (mode === "jp" ? " 件" : " か国") + "が咲きます");
+  }
+  function choosePref(id, user) {
+    var g = tileBy[id].group;
+    if (g !== scope) { go(g); syncButtons(); }
+    prefId = id; tab = id; idx = 0;
+    markSel(); renderPanel(user); revealPanel();
+    announce(byId[id].name + "の写真");
+  }
+  function markSel() {
+    tiles.forEach(function (t) { t.g.classList.toggle("sel", t.id === prefId); });
+    sps.forEach(function (sp) { sp.path.classList.toggle("sel", sp.id === prefId); if (sp.id === prefId) { sp.g.parentNode.appendChild(sp.g); } });
+    items.forEach(function (it) { it.node.classList.toggle("sel", it.id === prefId); });
+  }
+  function revealPanel() {
+    if (window.innerWidth >= 960) { return; }
+    var r = panel.getBoundingClientRect();
+    if (r.top > window.innerHeight * .66) { window.scrollBy({ top: r.top - window.innerHeight * .5, behavior: reduce ? "auto" : "smooth" }); }
+  }
+  function announce(t) { sr.textContent = t; }
+
+  /* ---------- 地方ボタン ---------- */
+  function miniSvg(ids) {
+    var b = [1e9, 1e9, -1e9, -1e9], list = [];
+    ids.forEach(function (id) { var t = tileBy[id]; if (!t) { return; } list.push(t);
+      b[0] = Math.min(b[0], tx(t.col)); b[1] = Math.min(b[1], tx(t.row)); b[2] = Math.max(b[2], tx(t.col) + TS); b[3] = Math.max(b[3], tx(t.row) + TS); });
+    var s = Math.max(b[2] - b[0], b[3] - b[1], 2 * PITCH), cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+    var sv = el("svg", { class: "mini", viewBox: (cx - s / 2 - 2) + " " + (cy - s / 2 - 2) + " " + (s + 4) + " " + (s + 4), "aria-hidden": "true" });
+    list.forEach(function (t) { el("rect", { class: t.visit ? "y" : "", x: tx(t.col), y: tx(t.row), width: TS, height: TS, rx: 7 }, sv); });
+    return sv;
+  }
+  function buildButtons() {
+    regionsEl.textContent = "";
+    var all = tiles.filter(function (t) { return t.id !== "theme-summer-fes"; }).map(function (t) { return t.id; });
+    var list = [{ k: "all", name: M.label }].concat(regs);
+    list.forEach(function (d) {
+      var b = h("button", "rb"); b.type = "button"; b.setAttribute("data-k", d.k);
+      var n = d.k === "all" ? 0 : regionStat(d).vis.length;
+      b.appendChild(miniSvg(d.k === "all" ? all : d.ids));
+      b.appendChild(h("span", null, d.name));
+      if (n > 1) { b.appendChild(h("span", "ct", String(n))); }
+      b.addEventListener("click", function () { setScope(d.k); });
+      regionsEl.appendChild(b);
+    });
+    syncButtons(); railState();
+  }
+  function syncButtons() {
+    Array.prototype.forEach.call(regionsEl.children, function (b) {
+      var on = b.getAttribute("data-k") === scope;
+      b.setAttribute("aria-pressed", String(on));
+      if (on && regionsEl.scrollWidth > regionsEl.clientWidth + 2 && window.innerWidth < 960) {
+        regionsEl.scrollTo({ left: b.offsetLeft - regionsEl.clientWidth / 2 + b.offsetWidth / 2, behavior: reduce ? "auto" : "smooth" });
+      }
+    });
+  }
+  function railState() {
+    var max = regionsEl.scrollWidth - regionsEl.clientWidth, l = regionsEl.scrollLeft > 6, r = regionsEl.scrollLeft < max - 6 && max > 6;
+    regionsEl.style.setProperty("--fl", l ? "28px" : "0px");
+    regionsEl.style.setProperty("--fr", r ? "28px" : "0px");
+    $("rnL").classList.toggle("on", l); $("rnR").classList.toggle("on", r);
+  }
+  /* 初めて開いたとき、スマホでは列を少しだけ右へ動かして戻し、横に続くことを見せる */
+  function nudgeRail() {
+    if (nudged || reduce || window.innerWidth >= 960) { return; }
+    if (regionsEl.scrollWidth <= regionsEl.clientWidth + 2) { return; }
+    nudged = true;
+    setTimeout(function () {
+      regionsEl.scrollTo({ left: 64, behavior: "smooth" });
+      setTimeout(function () { regionsEl.scrollTo({ left: 0, behavior: "smooth" }); }, 800);
+    }, 900);
+  }
+  regionsEl.addEventListener("scroll", railState, { passive: true });
+  $("rnL").addEventListener("click", function () { regionsEl.scrollBy({ left: -240, behavior: reduce ? "auto" : "smooth" }); });
+  $("rnR").addEventListener("click", function () { regionsEl.scrollBy({ left: 240, behavior: reduce ? "auto" : "smooth" }); });
+
+  /* ---------- 全国の右側: 流れる 1 枚 と 和の色見本帳 ---------- */
+  var SL = { i: 0, tm: null, paused: reduce, on: false, front: 0, imgs: null, list: [], cap: null, btn: null, pbtn: null };
+  var COLS = {}; /* 地方 → 伝統色の名前の並び（先頭が手前の札） */
+  function glow(k) {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-k]"), function (n) { n.classList.toggle("glow", !!k && n.getAttribute("data-k") === k); });
+  }
+  function stopSlide() { clearTimeout(SL.tm); SL.tm = null; SL.on = false; glow(null); }
+  function schedule() {
+    clearTimeout(SL.tm); SL.tm = null;
+    if (!SL.on || SL.paused || document.hidden || SL.list.length < 2) { return; }
+    SL.tm = setTimeout(function () { showSlide(SL.i + 1); }, 5500);
+  }
+  function showSlide(i) {
+    var n = SL.list.length; if (!n) { return; }
+    SL.i = (i % n + n) % n;
+    var s = SL.list[SL.i], back = SL.imgs[1 - SL.front], frontImg = SL.imgs[SL.front];
+    function swap() {
+      back.classList.add("on"); frontImg.classList.remove("on"); SL.front = 1 - SL.front;
+      schedule();
+    }
+    clearTimeout(SL.tm);
+    back.onload = swap; back.onerror = schedule;
+    back.alt = "";
+    back.src = BASE + s.src;
+    SL.cap.textContent = s.d.name + (s.n > 1 ? "・" + s.n + M.unit : "") + "・写真 " + s.photos + " 枚";
+    SL.btn.setAttribute("aria-label", s.d.name + "へ寄る。写真 " + s.photos + " 枚");
+    SL.btn.setAttribute("data-slide", s.d.k);
+    glow(s.d.k);
+  }
+
+  /* 写真の「印象の色」: 彩度の高い画素を重く数え、色相 12 群のうち最大の群の色を取る。
+     暗すぎる・明るすぎる・灰色に近い画素は外す。取れなければ null */
+  function dominant(data) {
+    function pass(minS, minV, maxV) {
+      var bins = [], i;
+      for (i = 0; i < 12; i++) { bins.push({ w: 0, r: 0, g: 0, b: 0 }); }
+      for (i = 0; i < data.length; i += 4) {
+        var r = data[i], g = data[i + 1], b = data[i + 2];
+        var mx = Math.max(r, g, b), mn = Math.min(r, g, b), v = mx / 255, s = mx ? (mx - mn) / mx : 0;
+        if (v < minV || v > maxV || s < minS) { continue; }
+        var d = mx - mn, hu;
+        if (mx === r) { hu = ((g - b) / d) % 6; } else if (mx === g) { hu = (b - r) / d + 2; } else { hu = (r - g) / d + 4; }
+        hu = (hu * 60 + 360) % 360;
+        var w = s * s * (1 - Math.abs(v - .62) * .9), bi = Math.floor(hu / 30) % 12;
+        bins[bi].w += w; bins[bi].r += w * r; bins[bi].g += w * g; bins[bi].b += w * b;
+      }
+      var best = -1, bw = 0;
+      for (i = 0; i < 12; i++) {
+        var sw = bins[i].w + .5 * (bins[(i + 11) % 12].w + bins[(i + 1) % 12].w);
+        if (sw > bw) { bw = sw; best = i; }
+      }
+      if (best < 0 || bw < 1.2) { return null; }
+      var A = bins[best], B = bins[(best + 11) % 12], C = bins[(best + 1) % 12];
+      var W = A.w + .5 * (B.w + C.w);
+      return [(A.r + .5 * (B.r + C.r)) / W, (A.g + .5 * (B.g + C.g)) / W, (A.b + .5 * (B.b + C.b)) / W];
+    }
+    var c = pass(.26, .22, .97) || pass(.14, .2, .98);
+    if (!c) { return null; }
+    var gray = (c[0] + c[1] + c[2]) / 3;
+    return c.map(function (x) { return Math.round(Math.max(0, Math.min(255, gray + (x - gray) * 1.3))); });
+  }
+  function loadColor(src, cb) {
+    var im = new Image();
+    im.onload = function () {
+      try {
+        var c = document.createElement("canvas"); c.width = 24; c.height = 24;
+        var x = c.getContext("2d"); x.drawImage(im, 0, 0, 24, 24);
+        cb(dominant(x.getImageData(0, 0, 24, 24).data));
+      } catch (e) { cb(null); }
+    };
+    im.onerror = function () { cb(null); };
+    im.src = BASE + src;
+  }
+  function computeColors() {
+    var my = mode, RAW = {}, left = 0;
+    regs.forEach(function (d) {
+      var vis = d.ids.filter(isVisit), pick = [];
+      var step = Math.max(1, vis.length / 3);
+      for (var q = 0; q < vis.length && pick.length < 3; q += step) { pick.push(vis[Math.floor(q)]); }
+      RAW[d.k] = []; left += pick.length;
+      pick.forEach(function (id, j) {
+        var th = repThumb(byId[id]);
+        function done(c) {
+          RAW[d.k][j] = c; left--;
+          if (left === 0 && mode === my) { assignColors(RAW); }
+        }
+        if (!th) { done(null); } else { loadColor(th, done); }
+      });
+    });
+  }
+  /* 全地方の色が出そろったら、伝統色へ寄せる。全体で同じ色名を二度使わない。
+     取れなかった地方は決め打ちの色を持ち続けるので、その色名は先に取り置く */
+  function assignColors(RAW) {
+    var used = {}, capRegs = [];
+    regs.forEach(function (d) {
+      var has = (RAW[d.k] || []).some(function (c) { return !!c; });
+      if (has) { capRegs.push(d); } else { (COLS[d.k] || []).forEach(function (n) { used[n] = 1; }); }
+    });
+    capRegs.forEach(function (d) {
+      var out = [], rgbs = (RAW[d.k] || []).filter(function (c) { return !!c; });
+      rgbs.forEach(function (rgb) {
+        if (out.length >= 3) { return; }
+        var rank = rankWashi(rgb);
+        for (var i = 0; i < rank.length; i++) {
+          if (!used[rank[i].n]) { used[rank[i].n] = 1; out.push(rank[i].n); break; }
+        }
+      });
+      var pad = rankWashi(rgbs[0]);
+      for (var j = 0; out.length < 2 && j < pad.length; j++) {
+        if (!used[pad[j].n]) { used[pad[j].n] = 1; out.push(pad[j].n); }
+      }
+      COLS[d.k] = out;
+    });
+    paintAll();
+  }
+  function paintBand(k) {
+    var sw = panel.querySelector('.sw[data-k="' + k + '"]'); if (!sw) { return; }
+    var names = COLS[k] || [], cls = ["c1", "c2", "c3"], i;
+    for (i = 0; i < 3; i++) {
+      var c = sw.querySelector("." + cls[i]), nm = names[i] || names[0], w = WBY[nm];
+      if (!c || !w) { continue; }
+      c.style.backgroundColor = w.hex;
+      if (i === 0) {
+        var cn = c.querySelector(".cn");
+        cn.textContent = nm; cn.style.color = w.lum > .5 ? "#3D2E52" : "#FFFFFF";
+      }
+    }
+    sw.setAttribute("aria-label", sw.getAttribute("data-name") + "へ寄る。写真の色は" + names.join("、"));
+  }
+  function paintAll() { Object.keys(COLS).forEach(paintBand); }
+  function renderAllPanel() {
+    var h2 = h("h2", null, mode === "jp" ? "歩いた日本" : "歩いた世界"); h2.tabIndex = -1; panel.appendChild(h2);
+    var nPref = items.filter(function (it) { return it.r.kind !== "theme"; }).length, nTheme = items.length - nPref;
+    panel.appendChild(h("p", "meta", (mode === "jp" ? "行った県 " + nPref + (nTheme ? "・夏フェス " + nTheme : "") : "行った国 " + items.length) + "。写真か色の札を押すと、その地方へ寄ります。"));
+
+    SL.list = [];
+    regs.forEach(function (d) {
+      var st = regionStat(d); if (!st.vis.length) { return; }
+      var ids = allIds(byId[st.vis[0]]); if (!ids.length) { return; }
+      SL.list.push({ d: d, n: st.vis.length, photos: st.photos, src: photos[ids[0]].src });
+    });
+    var slide = h("div", "slide");
+    var btn = h("button", "slidebtn"); btn.type = "button";
+    var a = document.createElement("img"), b = document.createElement("img");
+    a.alt = ""; b.alt = "";
+    btn.appendChild(a); btn.appendChild(b);
+    btn.addEventListener("click", function () { var k = btn.getAttribute("data-slide"); if (k) { setScope(k); } });
+    slide.appendChild(btn);
+    var cap = h("span", "scap"); slide.appendChild(cap);
+    var ctl = h("div", "sctl");
+    var pv = h("button", "ic", "‹"); pv.type = "button"; pv.setAttribute("aria-label", "前の一枚");
+    var ps = h("button", null, SL.paused ? "流す" : "止める"); ps.type = "button"; ps.setAttribute("aria-pressed", String(SL.paused));
+    ps.setAttribute("aria-label", "自動で切り替える動きを止める・再開する");
+    var nx = h("button", "ic", "›"); nx.type = "button"; nx.setAttribute("aria-label", "次の一枚");
+    pv.addEventListener("click", function () { showSlide(SL.i - 1); });
+    nx.addEventListener("click", function () { showSlide(SL.i + 1); });
+    ps.addEventListener("click", function () {
+      SL.paused = !SL.paused; ps.textContent = SL.paused ? "流す" : "止める"; ps.setAttribute("aria-pressed", String(SL.paused)); schedule();
+    });
+    ctl.appendChild(pv); ctl.appendChild(ps); ctl.appendChild(nx); slide.appendChild(ctl);
+    panel.appendChild(slide);
+    SL.imgs = [a, b]; SL.front = 1; SL.cap = cap; SL.btn = btn; SL.pbtn = ps;
+
+    /* 和の色見本帳: 淡い和紙の色紙を 3 枚重ねた札。手前の札に縦書きの色名（伝統色の名前） */
+    var ul = h("ul", "swatch"); ul.setAttribute("aria-label", "地方ごとの写真の色（和の伝統色）");
+    regs.forEach(function (d) {
+      var st = regionStat(d); if (!st.vis.length) { return; }
+      var li = h("li"), sw = h("button", "sw"); sw.type = "button"; sw.setAttribute("data-k", d.k); sw.setAttribute("data-name", d.name);
+      var cards = h("span", "cards");
+      var c3 = h("span", "c c3"), c2 = h("span", "c c2"), c1 = h("span", "c c1");
+      c1.appendChild(h("span", "cn", ""));
+      cards.appendChild(c3); cards.appendChild(c2); cards.appendChild(c1);
+      sw.appendChild(cards); sw.appendChild(h("span", "sn", d.name));
+      sw.addEventListener("click", function () { setScope(d.k); });
+      li.appendChild(sw); ul.appendChild(li);
+    });
+    panel.appendChild(ul);
+    paintAll();
+
+    SL.on = true; SL.front = 1;
+    showSlide(0);
+    return h2;
+  }
+
+  /* ---------- パネル ---------- */
+  function tile2(name, title, thumb, onClick) {
+    var li = h("li"), b = h("button", "tile2"); b.type = "button"; b.title = title; b.setAttribute("aria-label", title);
+    var ph = h("span", "ph");
+    if (thumb) { var im = document.createElement("img"); im.src = BASE + thumb; im.alt = ""; im.loading = "lazy"; ph.appendChild(im); }
+    b.appendChild(ph); b.appendChild(h("b", null, name));
+    b.addEventListener("click", onClick);
+    li.appendChild(b);
+    return li;
+  }
+  function crumb(parts) {
+    var n = h("nav", "crumb"); n.setAttribute("aria-label", "いまの場所");
+    parts.forEach(function (p, i) {
+      if (i) { n.appendChild(h("span", "sep", "/")); }
+      if (p.go) { var b = h("button", null, p.t); b.type = "button"; b.addEventListener("click", p.go); n.appendChild(b); }
+      else { n.appendChild(h("span", "here", p.t)); }
+    });
+    return n;
+  }
+  function renderPanel(focusIt) {
+    stopSlide();
+    panel.textContent = "";
+    var h2;
+    if (scope === "all" && !prefId) {
+      h2 = renderAllPanel();
+    } else if (!prefId) {
+      var d = regs.filter(function (x) { return x.k === scope; })[0], st2 = regionStat(d);
+      panel.appendChild(crumb([{ t: M.label, go: function () { setScope("all"); } }, { t: d.name }]));
+      h2 = h("h2", null, d.name); h2.tabIndex = -1; panel.appendChild(h2);
+      panel.appendChild(h("p", "meta", (mode === "jp" ? "行った県 " : "行った国 ") + st2.vis.length + "・写真 " + st2.photos + " 枚。花か写真を押してください。"));
+      /* 件数が少ないときは写真を大きく並べて、空白を作らない */
+      var nn = st2.vis.length, few = nn <= 3;
+      var ul2 = h("ul", "tiles" + (few ? " few" : ""));
+      ul2.style.setProperty("--cols", String(few ? nn : 5));
+      st2.vis.forEach(function (id) {
+        var r = byId[id], n = allIds(r).length;
+        ul2.appendChild(tile2(r.name, r.name + "。" + n + " 枚", repThumb(r), function () { choosePref(id, true); }));
+      });
+      panel.appendChild(ul2);
+    } else {
+      renderDetail();
+      h2 = panel.querySelector("h2");
+    }
+    if (focusIt && h2) { h2.focus({ preventScroll: true }); }
+  }
+  /* 県の詳細: 「場所の名前 + 枚数」がそのまま読める札にする。県そのものの写真は「代表」、地点は地点名 */
+  function renderDetail() {
+    var r = byId[prefId], tabR = byId[tab], t = tileBy[prefId];
+    var d = regs.filter(function (x) { return x.k === scope; })[0];
+    var parts = [{ t: M.label, go: function () { setScope("all"); } }];
+    if (d && d.ids.filter(isVisit).length > 1) { parts.push({ t: d.name, go: function () { setScope(d.k); } }); }
+    parts.push({ t: r.name });
+    panel.appendChild(crumb(parts));
+
+    var head = h("div", "head"); var stp = h("div", "stamp", t.ch); stp.setAttribute("aria-hidden", "true"); head.appendChild(stp);
+    var hb = h("div"); var nrow = h("div", "nrow");
+    var h2 = h("h2", null, r.name); h2.tabIndex = -1; nrow.appendChild(h2);
+    var spec = FL[prefId];
+    if (spec && spec.n) {
+      var fn = h("span", "fn"); fn.appendChild(flowerIcon(spec)); fn.appendChild(document.createTextNode(spec.n));
+      nrow.appendChild(fn);
+    }
+    hb.appendChild(nrow);
+    var ids = allIds(r), places = kids[prefId] || [];
+    var mp = h("p", "meta", "全 " + ids.length + " 枚"); mp.style.margin = "0"; hb.appendChild(mp);
+    head.appendChild(hb); panel.appendChild(head);
+
+    if (places.length) {
+      var tabs = h("div", "chips"); tabs.setAttribute("role", "group"); tabs.setAttribute("aria-label", r.name + "の写真を場所ごとに切り替える");
+      /* 「その他」は最後に置く */
+      var ps2 = places.filter(function (p) { return p.name !== "その他"; }).concat(places.filter(function (p) { return p.name === "その他"; }));
+      var tl = (r.photoIds.length ? [r] : []).concat(ps2);
+      tl.forEach(function (x) {
+        var label = (x === r ? "代表" : x.name) + " " + x.photoIds.length + " 枚";
+        var b = h("button", null, label); b.type = "button";
+        b.setAttribute("aria-pressed", String(x.id === tab));
+        b.addEventListener("click", function () { tab = x.id; idx = 0; renderPanel(false); });
+        tabs.appendChild(b);
+      });
+      panel.appendChild(tabs);
+    }
+
+    var pids = tabR.photoIds, p = photos[pids[idx]];
+    var box = h("div", "pbox");
+    var img = document.createElement("img");
+    img.alt = p.alt || (r.name + "の写真"); img.width = p.w; img.height = p.h;
+    img.className = "loading";
+    img.onload = function () { img.className = ""; };
+    img.src = BASE + p.src;
+    box.appendChild(img);
+    var pv = h("button", "pn p", "‹"); pv.type = "button"; pv.setAttribute("aria-label", "前の一枚"); pv.disabled = idx === 0;
+    var nx = h("button", "pn n", "›"); nx.type = "button"; nx.setAttribute("aria-label", "次の一枚"); nx.disabled = idx >= pids.length - 1;
+    pv.addEventListener("click", function () { idx--; renderPanel(false); });
+    nx.addEventListener("click", function () { idx++; renderPanel(false); });
+    box.appendChild(pv); box.appendChild(nx);
+    box.appendChild(h("span", "pcount", (idx + 1) + " / " + pids.length));
+    panel.appendChild(box);
+    if (p.caption) { panel.appendChild(h("p", "cap", p.caption)); }
+
+    if (pids.length > 1) {
+      var th = h("div", "thumbs");
+      pids.forEach(function (id, i) {
+        var q = photos[id], b = h("button", "th"); b.type = "button";
+        b.setAttribute("aria-pressed", String(i === idx)); b.setAttribute("aria-label", (i + 1) + "枚目");
+        var ti = document.createElement("img"); ti.src = BASE + q.thumb; ti.alt = ""; ti.height = 48; ti.width = Math.round(48 * q.w / q.h);
+        b.appendChild(ti);
+        b.addEventListener("click", function () { idx = i; renderPanel(false); });
+        th.appendChild(b);
+      });
+      panel.appendChild(th);
+    }
+  }
+
+  function counts() {
+    var nj = D.regions.filter(function (r) { return r.kind === "pref" || r.kind === "theme"; }).length;
+    var nw = D.regions.filter(function (r) { return r.kind === "country"; }).length;
+    $("nJp").textContent = String(nj); $("nWd").textContent = String(nw);
+    $("total").textContent = "写真 " + Object.keys(photos).length + " 枚";
+  }
+
+  function setMode(m) {
+    if (anim) { cancelAnimationFrame(anim); anim = null; }
+    mode = m; scope = "all"; prefId = null; tab = null; idx = 0;
+    $("bJp").setAttribute("aria-pressed", String(m === "jp"));
+    $("bWd").setAttribute("aria-pressed", String(m === "world"));
+    cont.classList.toggle("world", m === "world");
+    buildMap();
+    buildButtons();
+    setTargets();
+    jump();
+    markSel();
+    renderPanel(false);
+  }
+  $("bJp").addEventListener("click", function () { if (mode !== "jp") { setMode("jp"); } });
+  $("bWd").addEventListener("click", function () { if (mode !== "world") { setMode("world"); } });
+
+  /* ページが隠れている間は止める */
+  document.addEventListener("visibilitychange", function () { if (document.hidden) { clearTimeout(SL.tm); SL.tm = null; } else { schedule(); } });
+
+  /* 幅が変わったときだけ組み直す（スマホの URL バーの出入りでは、動きの途中を壊さない） */
+  var rt;
+  window.addEventListener("resize", function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      var w = cont.clientWidth;
+      if (w === lastW) { return; }
+      lastW = w; RV = {}; setTargets(); jump(); railState();
+    }, 140);
+  });
+
+  counts();
+  setMode("jp");
+  lastW = cont.clientWidth;
+  nudgeRail();
+})();
+</script>
+</body>
+</html>

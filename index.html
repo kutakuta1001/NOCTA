@@ -1,0 +1,2445 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOCTA — Creative</title>
+    <meta name="description" content="NOCTA — Music × Visual × Words × Tools。AIと人間が、遊ぶように創る複数領域クリエイティブスタジオ。">
+    <meta name="theme-color" content="#0A0906">
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    <!-- OGP（og:image は暫定で SILENCE #1。専用バナー制作後に 1200x630 へ差し替え） -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="NOCTA">
+    <meta property="og:title" content="NOCTA — Creative">
+    <meta property="og:description" content="Music × Visual × Words × Tools。AIと人間が、遊ぶように創る複数領域クリエイティブスタジオ。">
+    <meta property="og:url" content="https://kutakuta1001.github.io/NOCTA/">
+    <meta property="og:image" content="https://ipfs.io/ipfs/bafybeigjekudm2vahgkycl7zh4uyx72qymtpod2l2iny2v74ovroxh67zm">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="NOCTA — Creative">
+    <meta name="twitter:description" content="Music × Visual × Words × Tools。AIと人間が、遊ぶように創る複数領域クリエイティブスタジオ。">
+    <meta name="twitter:image" content="https://ipfs.io/ipfs/bafybeigjekudm2vahgkycl7zh4uyx72qymtpod2l2iny2v74ovroxh67zm">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg:        '#0A0906',
+                            bg2:       '#0F0D0A',
+                            primary:   '#B8B4AE',
+                            secondary: '#B8B4AE',
+                            highlight: '#E8E0D0',
+                            text:      '#E8E0D0',
+                            sub:       '#9A8A7A',
+                            gold:      '#B8B4AE',
+                            vgreen:    '#B8B4AE',
+                        }
+                    },
+                    fontFamily: {
+                        heading: ['Syne', 'sans-serif'],
+                        brand:   ['Syne', 'sans-serif'],
+                        body:    ['Noto Sans JP', 'sans-serif'],
+                        jp:      ['Noto Sans JP', 'sans-serif'],
+                        display: ['Bebas Neue', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glow-gold':   '0 0 50px rgba(184,180,174,0.40)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --blur-glass:   blur(20px);
+            --border-glass: 1px solid rgba(255,255,255,0.08);
+            --color-gold: #B8B4AE;
+            --color-lavender: #B8B4AE;
+            --color-vgreen: #B8B4AE;
+        }
+
+        * { scrollbar-width: thin; scrollbar-color: #B8B4AE transparent; }
+        *::-webkit-scrollbar { width: 4px; }
+        *::-webkit-scrollbar-thumb { background: #B8B4AE; border-radius: 9999px; }
+        *::-webkit-scrollbar-track { background: transparent; }
+
+        body { background-color: #0A0906; color: #E8E0D0; overflow-x: hidden; }
+
+        /* About center: living silver orb */
+        .nocta-orb {
+            background: radial-gradient(circle at 35% 28%,
+                #F2EEE4 0%, #C7C3BC 26%, #8E8A83 56%, #45413B 82%, #1C1A16 100%);
+            box-shadow: 0 0 55px rgba(184,180,174,0.40),
+                        inset -7px -9px 20px rgba(0,0,0,0.5),
+                        inset 5px 5px 14px rgba(255,255,255,0.22);
+            animation: orbFloat 6s ease-in-out infinite;
+        }
+        .nocta-orb::after {
+            content: '';
+            position: absolute; inset: 0;
+            border-radius: 9999px;
+            background: radial-gradient(circle at 32% 25%, rgba(255,255,255,0.5), transparent 38%);
+            animation: orbShine 7s ease-in-out infinite;
+        }
+        @keyframes orbFloat {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50%      { transform: translateY(-5px) scale(1.05); }
+        }
+        @keyframes orbShine {
+            0%, 100% { opacity: 0.6; transform: translate(0, 0); }
+            50%      { opacity: 1;   transform: translate(2px, 3px); }
+        }
+
+        /* Hero geometric loop (replaces decorative "2026") — seamless 10s master loop */
+        .hero-geo {
+            position: absolute;
+            right: -6vw; bottom: -6vw;
+            width: min(64vw, 640px);
+            aspect-ratio: 1 / 1;
+            pointer-events: none;
+        }
+        .hero-geo svg { width: 100%; height: 100%; overflow: visible; }
+        /* スマホ: 見出しが下に寄るぶん上が空くので、図を上の空白へ大きく置く */
+        @media (max-width: 767px) {
+            .hero-geo { top: 72px; bottom: auto; right: -18vw; width: 96vw; opacity: 0.9; }
+        }
+        .geo-el      { transform-box: fill-box; transform-origin: center; }
+        .geo-breathe { transform-box: fill-box; transform-origin: center; animation: geoBreathe 30s ease-in-out infinite; }
+        .geo-cw-10   { animation: geoSpinCW  30s linear infinite; }
+        .geo-ccw-10  { animation: geoSpinCCW 30s linear infinite; }
+        .geo-cw-5    { animation: geoSpinCW  15s linear infinite; }
+        .geo-ccw-5   { animation: geoSpinCCW 15s linear infinite; }
+        .geo-pulse   { animation: geoPulse   15s ease-in-out infinite; }
+        @keyframes geoSpinCW  { from { transform: rotate(0deg); }  to { transform: rotate(360deg); } }
+        @keyframes geoSpinCCW { from { transform: rotate(0deg); }  to { transform: rotate(-360deg); } }
+        @keyframes geoBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes geoPulse   { 0%, 100% { opacity: 0.2; }        50% { opacity: 0.55; } }
+        @media (prefers-reduced-motion: reduce) {
+            .geo-breathe, .geo-cw-10, .geo-ccw-10, .geo-cw-5, .geo-ccw-5, .geo-pulse { animation: none; }
+        }
+
+        /* Cat-paw watercolor motif (reusable: .paw-trail > .paw > .paw-svg use #cat-paw) */
+        .paw-trail { pointer-events: none; }
+        .paw       { position: absolute; display: block; }
+        .paw-svg   { width: 100%; height: auto; display: block; color: rgba(184,180,174,0.8); opacity: 0.55; transform-origin: center; }
+        .paw-trail.in-view .paw-svg {
+            animation-name: pawPress;
+            animation-duration: var(--paw-dur, 0.6s);
+            animation-timing-function: cubic-bezier(0.34,1.56,0.64,1);
+            animation-fill-mode: forwards;
+        }
+        @keyframes pawPress {
+            0%   { opacity: 0;    transform: scale(0.4) translateY(8px); }
+            60%  { opacity: 0.6;  transform: scale(1.12) translateY(0); }
+            100% { opacity: 0.5;  transform: scale(1); }
+        }
+
+        /* Cat silhouette scene (story origin: the cat dabs paint, then walks) */
+        .cat-scene { pointer-events: none; }
+        .cat-svg   { width: 100%; height: auto; display: block; color: rgba(184,180,174,0.22); }
+        .cat-fig   { opacity: 0; transform: translateY(14px); transition: opacity 1.1s ease, transform 1.1s ease; }
+        .cat-scene.in-view .cat-fig { opacity: 1; transform: translateY(0); }
+        .cat-breathe { transform-box: fill-box; transform-origin: 50% 100%; animation: catBreathe 6s ease-in-out infinite; }
+        @keyframes catBreathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        .cat-paint svg, .cat-paint { transform-box: fill-box; transform-origin: center; }
+        .cat-paint circle { fill: rgba(184,180,174,0.5); }
+        .cat-scene.in-view .cat-paint { animation: paintBloom 3.6s ease-in-out 0.9s infinite; }
+        @keyframes paintBloom {
+            0%, 30% { opacity: 0;   transform: scale(0.55); }
+            55%     { opacity: 0.9; transform: scale(1.08); }
+            80%,100%{ opacity: 0.45;transform: scale(1); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .paw-svg { opacity: 0.5; animation: none; }
+            .cat-fig { opacity: 1; transform: none; }
+            .cat-breathe, .cat-paint { animation: none; }
+            /* 動的な遊びは止めるが、物語の起点である静止した赤い足跡は残す。
+               .cat-scene.in-view .first-step の方が詳細度が高いのでセレクタを揃える */
+            .first-step,
+            .cat-scene.in-view .first-step { animation: none !important; opacity: 0.7; }
+            .paint-print svg { animation: none !important; }
+        }
+
+        /* ===== Statement: 言葉と猫の配置、訪問者が残す足跡 =====
+           PC は言葉が左・猫が右下で重ねない。スマホは言葉の下に猫。
+           足跡は固定4色からランダムに選び、5歩を目安に濃淡を落とす。 */
+        .statement-stage { position: relative; }
+        /* PC: 言葉が左・猫が右下。グリッドで場所を分けるので文字と猫は構造上重ならない。
+           スマホ: 1カラムになり、言葉の下に猫が来る */
+        .statement-grid { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: 48px; align-items: end; }
+        .statement-cat { position: relative; width: clamp(240px, 30vw, 420px); align-self: end; justify-self: end; }
+        .statement-cat img { width: 100%; height: auto; display: block; }
+        @media (max-width: 900px) {
+            .statement-grid { grid-template-columns: minmax(0,1fr); row-gap: 28px; }
+            .statement-cat { width: min(370px, 100%); justify-self: center; }
+        }
+        /* 足跡の判定は JS 側の allowed() が文字の矩形を除外しているので、
+           ここで pointer-events を切る必要はない。切ると中の操作ボタンまで押せなくなる */
+        .statement-copy  { position: relative; z-index: 2; }
+        /* 「彩ろう。」は語中で改行させない（CEO確定コピーの読みを守る） */
+        .statement-accent { font-style: italic; color: #B8B4AE; white-space: nowrap; }
+        .statement-day { position: relative; z-index: 2; display: inline-block; margin: 22px 0 16px; font-family: 'Noto Sans JP', sans-serif; font-size: 15px; line-height: 1.9; letter-spacing: 0.06em; color: #DCD6CC; border-bottom: 1px solid rgba(220,214,204,0.35); transition: color 0.3s ease, border-color 0.3s ease; }
+        .statement-day:hover { color: #E8E0D0; border-color: rgba(232,224,208,0.5); }
+        /* 元素材の右端に図解が写り込んでいるため、CSS で隠して猫だけを見せる */
+        .paint-cat-img { clip-path: polygon(0 0, 89% 0, 89% 70%, 94% 70%, 94% 100%, 0 100%); }
+        /* 物語の起点。動的な足跡と違い、常に赤で静止している */
+        .first-step {
+            position: absolute; width: 28px; color: #CC5B4A; opacity: 0;
+            transform: rotate(66deg); pointer-events: none;
+        }
+        .cat-scene.in-view .first-step { animation: firstPrint 1.6s ease both; }
+        .first-step svg { width: 100%; height: auto; display: block; }
+        @keyframes firstPrint { from { opacity: 0; transform: rotate(66deg) scale(0.86); } to { opacity: 0.7; transform: rotate(66deg) scale(1); } }
+
+        .paint-print { position: absolute; display: block; pointer-events: none; }
+        .paint-print svg {
+            display: block; width: 100%; height: 100%;
+            opacity: var(--print-opacity, 0.5);
+            animation: inkSettle 0.8s ease both;
+        }
+        @keyframes inkSettle { from { opacity: 0; transform: scale(0.82); } to { opacity: var(--print-opacity, 0.5); transform: scale(1); } }
+
+        .play-controls { position: relative; z-index: 3; max-width: 370px; margin-top: 44px; }
+        #one-step {
+            font-family: var(--font-jp, 'Noto Sans JP'), sans-serif; font-size: 14px; letter-spacing: 0.12em;
+            color: #E8E0D0; padding: 10px 20px; background: none;
+            border: 1px solid #726e64; border-radius: 9999px; cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        #one-step:hover { border-color: #B8B4AE; background: rgba(232,224,208,0.05); }
+        #one-step span { margin-left: 16px; color: #B8B4AE; }
+        #play-instruction { font-size: 11px; color: #9A8A7A; letter-spacing: 0.03em; margin: 12px 0 0; }
+        .paint-tools { display: flex; align-items: center; gap: 12px; margin-top: 10px; font-size: 10px; letter-spacing: 0.06em; color: #9A8A7A; }
+        /* 左の余白を 0 にして上の説明文と頭を揃える。右と上下は指で押せる幅を残す */
+        #clear-paint { font-size: 11px; color: #9A8A7A; letter-spacing: 0.06em; background: none; border: 0; padding: 10px 14px 10px 0; cursor: pointer; }
+        #clear-paint:hover { color: #E8E0D0; }
+        .play-controls button:disabled { opacity: 0.4; cursor: default; }
+        .play-controls button:focus-visible { outline: 2px solid #E8E0D0; outline-offset: 4px; }
+        .story-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+        /* ===== Visual: 1作品を大きく見てから一覧へ ===== */
+        .gallery-grid { display: grid; grid-template-columns: 1fr 1.1fr; column-gap: 72px; align-items: start; }
+        .gallery-work { margin: 0; position: relative; z-index: 2; }
+        .art-frame {
+            padding: 14px; background: #171511; border: 1px solid #38342d;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.27);
+            aspect-ratio: 3 / 4; display: flex; align-items: center; justify-content: center;
+        }
+        /* 作品の縦横比を壊さず全体を見せる（切り抜かない） */
+        .art-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .gallery-pagination { display: flex; align-items: center; justify-content: flex-end; gap: 18px; margin-top: 16px; }
+        .gallery-pagination button {
+            width: 44px; height: 44px; border: 1px solid #514c44; border-radius: 50%;
+            font-size: 18px; color: #E8E0D0; background: transparent; cursor: pointer;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+        .gallery-pagination button:hover { border-color: #B8B4AE; background: rgba(255,255,255,0.04); }
+        .gallery-pagination button:focus-visible,
+        .gallery-work:focus-visible { outline: 2px solid #B8B4AE; outline-offset: 5px; }
+        #gallery-position { font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 0.1em; min-width: 52px; text-align: center; color: #B8B4AE; }
+        .gallery-work figcaption { display: flex; justify-content: space-between; gap: 16px; padding-top: 14px; color: #9A8A7A; }
+        .gallery-work figcaption .g-title { font-family: 'Syne', sans-serif; font-size: 10px; letter-spacing: 0.1em; }
+        .gallery-work figcaption .g-caption { font-size: 10px; letter-spacing: 0.03em; max-width: 62%; text-align: right; line-height: 1.7; }
+        #gallery-error { font-size: 12px; line-height: 1.7; color: #9A8A7A; margin-top: 12px; }
+        .gallery-side { position: relative; padding-top: 40px; min-height: 320px; display: flex; flex-direction: column; }
+        .gallery-note { margin-top: auto; padding-top: 48px; }
+        #visual-all[hidden] { display: none; }
+        #gallery-title {
+            font-family: 'Shippori Mincho','Noto Sans JP',serif; font-weight: 600;
+            line-height: 1.5; letter-spacing: 0.03em; color: #E8E0D0; margin: 22px 0 14px;
+        }
+        #gallery-title em { font-style: normal; font-weight: 600; color: #B8B4AE; }
+        html[lang="ja"] #gallery-title { font-size: clamp(21px, 2.8vw, 40px); }
+        html[lang="en"] #gallery-title {
+            font-family: 'EB Garamond', serif; font-weight: 400; line-height: 1.15;
+            font-size: clamp(30px, 3.4vw, 50px); letter-spacing: -0.01em;
+        }
+        html[lang="en"] #gallery-title em { font-style: italic; }
+        /* 猫は作品（右側）の方を向く。素材は既存の座り猫のまま */
+        .gallery-cat { width: clamp(96px, 11vw, 150px); margin: 40px 0 0 6%; }
+        .gallery-cat img { width: 100%; height: auto; display: block; transform: scaleX(-1); }
+        .gallery-all-btn {
+            font-family: 'Syne', sans-serif; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+            color: #B8B4AE; background: none; border: 0; border-bottom: 1px solid #514c44;
+            padding: 10px 2px; cursor: pointer; transition: color 0.3s ease, border-color 0.3s ease;
+        }
+        .gallery-all-btn:hover { color: #E8E0D0; border-color: #B8B4AE; }
+        .gallery-all-btn:focus-visible { outline: 2px solid #B8B4AE; outline-offset: 4px; }
+        /* フッターの小さな足跡。その訪問中に最後に使った色を映す（既定は赤） */
+        #echo-paw {
+            position: absolute; z-index: 1; right: 22%; bottom: 18%; width: 24px;
+            transform: rotate(70deg); color: var(--last-paint, #CC5B4A); opacity: 0.4; pointer-events: none;
+        }
+        #echo-paw svg { width: 100%; height: auto; display: block; }
+        @media (max-width: 900px) {
+            .gallery-cat { margin: 24px 0 0 0; }
+            #echo-paw { right: 44%; bottom: 14%; width: 21px; }
+        }
+
+        /* 狭い幅の横スクロール対策。Blog のカテゴリフィルタが inline-flex のまま
+           折り返せず、320px で 37px・390px で 5px の横はみ出しを出していた */
+        @media (max-width: 520px) {
+            #blog .inline-flex.glass { display: flex; flex-wrap: wrap; justify-content: center; max-width: 100%; }
+            #about { overflow: hidden; }
+        }
+
+        @media (max-width: 900px) {
+            .gallery-grid { grid-template-columns: 1fr; row-gap: 40px; }
+            .gallery-side { padding-top: 0; min-height: 0; }
+            .gallery-note { padding-top: 0; }
+            .gallery-work { order: 2; }
+            .gallery-side { order: 1; }
+            .gallery-work figcaption { flex-wrap: wrap; }
+            .gallery-work figcaption .g-caption { max-width: 100%; text-align: left; }
+        }
+
+        /* Glass */
+        .glass {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: var(--blur-glass);
+            -webkit-backdrop-filter: var(--blur-glass);
+            border: var(--border-glass);
+        }
+        .glass-hover:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.14);
+        }
+
+        /* Gradient text */
+        .text-gradient {
+            background: linear-gradient(135deg, #B8B4AE 0%, #B8B4AE 45%, #B8B4AE 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .text-gradient-alt {
+            background: linear-gradient(90deg, #B8B4AE, #B8B4AE, #B8B4AE);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(36px);
+            transition: opacity 0.9s cubic-bezier(0.4,0,0.2,1),
+                        transform 0.9s cubic-bezier(0.4,0,0.2,1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.12s; }
+        .reveal-delay-2 { transition-delay: 0.24s; }
+        .reveal-delay-3 { transition-delay: 0.36s; }
+        .reveal-delay-4 { transition-delay: 0.48s; }
+
+        /* Particle canvas */
+        #particle-canvas {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        /* Noise overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.35;
+        }
+
+        /* Scrolling line animation */
+        @keyframes scrollLine {
+            0%   { transform: scaleY(0); transform-origin: top; }
+            49%  { transform: scaleY(1); transform-origin: top; }
+            50%  { transform: scaleY(1); transform-origin: bottom; }
+            100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+        .scroll-line { animation: scrollLine 2.2s ease-in-out infinite; }
+
+        /* Orbit rings */
+        @keyframes spinSlow  { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
+        @keyframes spinSlowR { from { transform: rotate(0deg); }   to { transform: rotate(-360deg); } }
+        .orbit-1 { animation: spinSlow  80s linear infinite; }
+        .orbit-2 { animation: spinSlowR 50s linear infinite; }
+        .orbit-3 { animation: spinSlow  30s linear infinite; }
+
+        /* Count-up numbers */
+        .stat-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(48px, 6vw, 72px);
+            line-height: 1;
+            background: linear-gradient(135deg, #B8B4AE, #B8B4AE, #B8B4AE);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Tag label */
+        .section-tag {
+            display: inline-flex; align-items: center; gap: 12px;
+            font-family: 'Syne', sans-serif;
+            font-size: 11px; font-weight: 600;
+            letter-spacing: 3px; text-transform: uppercase;
+            color: #B8B4AE; margin-bottom: 20px;
+        }
+        .section-tag::before {
+            content: ''; width: 24px; height: 1px;
+            background: #B8B4AE; flex-shrink: 0;
+        }
+
+        /* Visual フィルターピル */
+        .vfilter-pill {
+            padding: 0.35rem 1.1rem;
+            border-radius: 9999px;
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #9A8A7A;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: transparent;
+            border: none;
+        }
+        .vfilter-pill:hover, .vfilter-pill.active {
+            background: rgba(184,180,174,0.12);
+            color: #B8B4AE;
+        }
+
+        /* Work card hover */
+        /* Tools のコレクション表紙: カードより軽く、細い縦線で 3 つに区切った 1 行の帯 */
+        .apps-collections .ac-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .apps-collections .ac-item { position: relative; display: block; width: 100%; padding: 14px 20px 16px; text-align: left; cursor: pointer; background: transparent; color: inherit; transition: background-color 0.3s ease, opacity 0.3s ease; }
+        .apps-collections .ac-item + .ac-item { border-left: 1px solid rgba(255,255,255,0.08); }
+        .apps-collections .ac-item::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--ac); transform: scaleX(0); transform-origin: left; transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); }
+        .apps-collections .ac-item:hover { background: rgba(255,255,255,0.025); }
+        .apps-collections .ac-item:focus-visible { outline: 1px solid var(--ac); outline-offset: -1px; }
+        .apps-collections .ac-item[aria-pressed="true"] { background: rgba(255,255,255,0.035); }
+        .apps-collections .ac-item[aria-pressed="true"]::before { transform: scaleX(1); }
+        .apps-collections.is-filtered .ac-item[aria-pressed="false"] { opacity: 0.5; }
+        .apps-collections .ac-verb { display: block; font-size: 11px; letter-spacing: 0.18em; color: var(--ac); }
+        .apps-collections .ac-name { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; font-size: 17px; color: #E8E0D0; }
+        .apps-collections .ac-count { font-size: 11px; color: #B8B4AE; opacity: 0.7; }
+        .apps-collections .ac-desc { display: block; margin-top: 4px; font-size: 12px; line-height: 1.7; color: #B8B4AE; }
+        .apps-collections:not(.is-filtered) .ac-foot { display: none; }
+        .apps-collections .ac-foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 24px; white-space: nowrap; padding-top: 14px; font-size: 12px; letter-spacing: 0.08em; }
+        .apps-collections .ac-foot a, .apps-collections .ac-foot button { color: #B8B4AE; transition: color 0.3s ease; }
+        .apps-collections .ac-foot a:hover, .apps-collections .ac-foot button:hover { color: #E8E0D0; }
+        @media (max-width: 767px) {
+            .apps-collections .ac-item { padding: 12px 10px 13px; }
+            .apps-collections .ac-verb { font-size: 10px; letter-spacing: 0.1em; }
+            .apps-collections .ac-name { font-size: 14px; gap: 5px; }
+            .apps-collections .ac-desc { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .apps-collections .ac-item, .apps-collections .ac-item::before { transition: none; }
+        }
+        .work-card { transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s ease; }
+        .work-card:hover { transform: translateY(-8px); box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 40px rgba(184,180,174,0.16); }
+        .work-card .thumb-overlay {
+            opacity: 0; transition: opacity 0.3s ease;
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .work-card:hover .thumb-overlay { opacity: 1; }
+        .play-circle {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+        }
+        /* SVG play triangle */
+        .play-triangle {
+            width: 0; height: 0;
+            border-style: solid;
+            border-width: 9px 0 9px 16px;
+            border-color: transparent transparent transparent #fff;
+            margin-left: 4px;
+        }
+
+        /* Contact form */
+        .form-field {
+            width: 100%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 14px 18px;
+            color: #E8E0D0;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .form-field:focus {
+            border-color: #B8B4AE;
+            box-shadow: 0 0 0 3px rgba(184,180,174,0.14);
+            background: rgba(184,180,174,0.06);
+        }
+        .form-field::placeholder { color: rgba(255,255,255,0.18); }
+        .form-field option { background: #0F0D0A; }
+
+        /* Submit button */
+        .btn-submit {
+            width: 100%; padding: 16px;
+            background: #B8B4AE;
+            color: #0A0906; border: none; border-radius: 9999px;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 0 32px rgba(184,180,174,0.35), 0 0 20px rgba(184,180,174,0.2);
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 60px rgba(184,180,174,0.5), 0 0 30px rgba(184,180,174,0.35);
+        }
+
+        /* CTA buttons */
+        .btn-primary-cta {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 12px 28px;
+            font-family: 'Syne', sans-serif;
+            font-size: 10px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase;
+            background: transparent;
+            color: #B8B4AE;
+            border: 1px solid rgba(184,180,174,0.5);
+            border-radius: 9999px;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+        .btn-primary-cta:hover {
+            background: #B8B4AE;
+            color: #0A0906;
+            border-color: #B8B4AE;
+        }
+        .btn-glass-cta {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 12px 28px;
+            font-family: 'Syne', sans-serif;
+            font-size: 10px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase;
+            background: transparent;
+            color: rgba(240,234,216,0.45);
+            border: 1px solid rgba(240,234,216,0.15);
+            border-radius: 9999px;
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+        .btn-glass-cta:hover {
+            border-color: rgba(240,234,216,0.3);
+            color: #E8E0D0;
+        }
+
+        /* Thumb gradients — 単一シルバーシステム準拠（warm-black の面差のみで変化） */
+        /* Blog: 題名を縦書きにした表紙。細い枠と栞の紐で、本の表紙に見立てる */
+        .blog-cover { position: relative; overflow: hidden; }
+        .blog-cover::before {
+            content: ""; position: absolute; inset: 14px;
+            border: 1px solid rgba(184,180,174,0.16); pointer-events: none;
+        }
+        .blog-cover::after {
+            /* 紙の目 */
+            content: ""; position: absolute; inset: 0; opacity: 0.35; pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.72 0 0 0 0 0.70 0 0 0 0 0.68 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+        }
+        .blog-cover-title {
+            position: absolute; top: 30px; right: 13%;
+            writing-mode: vertical-rl; text-orientation: upright;
+            font-family: 'Shippori Mincho', 'EB Garamond', serif; font-weight: 600;
+            font-size: clamp(18px, 2vw, 22px); letter-spacing: 0.22em; line-height: 1.5;
+            color: #E8E0D0; max-height: calc(100% - 60px);
+        }
+        .blog-cover-kind {
+            position: absolute; left: 30px; top: 30px;
+            font-family: 'Syne', sans-serif; font-size: 9px; letter-spacing: 0.32em; text-transform: uppercase;
+            color: #B8B4AE;
+        }
+        .blog-cover-date {
+            position: absolute; left: 30px; bottom: 28px;
+            font-family: 'EB Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.08em;
+            color: rgba(232,224,208,0.55);
+        }
+        .blog-cover-ribbon {
+            position: absolute; top: 0; left: 40%; width: 3px; height: 34%;
+            background: #CC5B4A; opacity: 0.7;
+        }
+        .blog-cover-ribbon::after {
+            content: ""; position: absolute; left: 0; bottom: -5px; width: 3px; height: 6px;
+            background: inherit; clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 40%, 0 100%);
+        }
+        .work-card:hover .blog-cover-title { color: #fff; }
+
+        .thumb-1 { background: linear-gradient(135deg, #14110C, #262119); }
+        .thumb-2 { background: linear-gradient(160deg, #0F0D0A, #221E17); }
+        .thumb-3 { background: linear-gradient(120deg, #17130D, #2B251B); }
+        .thumb-4 { background: linear-gradient(150deg, #121009, #201C15); }
+        .thumb-5 { background: linear-gradient(135deg, #0F0D0A, #1B1712); }
+        .thumb-6 { background: linear-gradient(145deg, #16120B, #241F16); }
+
+        /* Social link */
+        .social-link {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 20px; border-radius: 12px;
+            border: var(--border-glass);
+            background: rgba(255,255,255,0.03);
+            transition: all 0.3s ease;
+        }
+        .social-link:hover {
+            background: rgba(255,255,255,0.07);
+            transform: translateX(6px);
+            border-color: rgba(255,255,255,0.14);
+        }
+        .social-platform {
+            font-family: 'Syne', sans-serif;
+            font-size: 13px; font-weight: 700;
+            color: #E8E0D0;
+        }
+        .social-desc {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 11px; color: #9A8A7A; margin-top: 1px;
+        }
+
+        /* 準備中の連絡先（リンクにしない・ホバーで動かさない） */
+        .social-link.is-soon:hover {
+            background: rgba(255,255,255,0.03);
+            transform: none;
+            border-color: inherit;
+        }
+        .social-link.is-soon svg { opacity: 0.55; }
+        .soon-pill {
+            display: inline-block; margin-left: 8px; padding: 2px 8px;
+            border: 1px solid rgba(184,180,174,0.35); border-radius: 9999px;
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 10px; font-weight: 500; letter-spacing: 0.5px;
+            color: #B8B4AE; vertical-align: 1px;
+        }
+        /* 準備中のもの: 閉じている間はフォーム列を取らず、1 列にする */
+        .contact-grid.is-closed { grid-template-columns: minmax(0, 1fr); }
+        /* hidden 属性を .flex などのクラスより優先する */
+        #contact-soon-social[hidden], #contact-soon-form[hidden] { display: none !important; }
+        .contact-soon-arrow { display: inline-block; transition: transform 0.3s ease; }
+        #contact-soon-toggle[aria-expanded="true"] .contact-soon-arrow { transform: rotate(180deg); }
+        .form-soon fieldset { opacity: 0.45; border: 0; padding: 0; margin: 0; min-width: 0; }
+        .form-soon .btn-submit,
+        .form-soon .btn-submit:hover {
+            cursor: default; transform: none; box-shadow: none;
+            background: transparent; color: #B8B4AE;
+            border: 1px solid rgba(184,180,174,0.35);
+        }
+
+        /* Footer */
+        footer a:hover { color: #E8E0D0; }
+
+        /* YouTube Modal */
+        #yt-modal {
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        #yt-modal .yt-frame-wrap {
+            position: relative; width: 100%; padding-top: 56.25%;
+        }
+        #yt-modal iframe {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            border-radius: 12px;
+        }
+
+        /* Lang toggle buttons */
+        #lang-btn {
+            font-family: 'Syne', sans-serif;
+            font-size: 11px; font-weight: 600; letter-spacing: 2px;
+            color: rgba(255,255,255,0.45);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 99px; padding: 4px 12px;
+            cursor: pointer; background: transparent;
+            transition: all 0.22s;
+        }
+        #lang-btn:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+        #lang-btn-mobile {
+            font-family: 'Syne', sans-serif;
+            font-size: 12px; font-weight: 600; letter-spacing: 2px;
+            color: rgba(255,255,255,0.45);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 99px; padding: 5px 14px;
+            cursor: pointer; background: transparent;
+            transition: all 0.22s; align-self: flex-start;
+        }
+
+        /* ABOUT: 跳ぶ点（凛・2026-10-18。drafts/design-team/nocta-about-play/full.html） */
+  .about-play svg{display:block;overflow:visible;}
+  .about-play .ap-label{font-family:'Bebas Neue',sans-serif;letter-spacing:.2em;fill:#B8B4AE;font-size:22px;}
+  .about-play .ap-edge{stroke:#B8B4AE;stroke-opacity:.3;stroke-width:1;}
+  @media (prefers-reduced-motion:reduce){
+    .about-play .ap-active{display:none;}
+  }
+  /* 跳び去った点の行き先に付く銀の足跡（Statement の銀猫への伏線） */
+  .about-paws{position:absolute;inset:auto 0 0 0;height:130px;pointer-events:none;z-index:1;}
+  .about-paws .paw{position:absolute;display:block;}
+  .about-paw-svg{width:100%;height:auto;display:block;color:#B8B4AE;opacity:0;transform-origin:center;}
+  .about-paws.stepped .about-paw-svg{animation:aboutPaw .55s cubic-bezier(0.34,1.56,0.64,1) forwards;}
+  @keyframes aboutPaw{0%{opacity:0;transform:scale(.4) translateY(-6px);}60%{opacity:.75;transform:scale(1.12);}100%{opacity:.6;transform:scale(1);}}
+  @media (max-width:767px){ .about-paws .paw{width:18px !important;} }
+  @media (prefers-reduced-motion:reduce){ .about-paws .about-paw-svg{opacity:.6;animation:none;} }
+    </style>
+</head>
+
+<body class="font-jp antialiased">
+
+<!-- =============================================
+     NAVIGATION
+     ============================================= -->
+<header id="navbar" class="fixed top-0 w-full z-50 transition-all duration-400">
+    <nav class="w-full px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+
+            <!-- Logo -->
+            <a href="#hero" class="font-brand text-2xl tracking-[6px] text-white hover:text-brand-secondary font-extrabold transition-colors duration-300">
+                NOCTA
+            </a>
+
+            <!-- Desktop links -->
+            <div class="hidden md:flex items-center gap-10 font-heading text-[12px] tracking-[2px] uppercase">
+                <a href="#about"    class="text-brand-sub hover:text-white transition-colors duration-300">About</a>
+                <a href="#apps"     class="text-brand-sub hover:text-white transition-colors duration-300">Tools</a>
+                <a href="#visual"   class="text-brand-sub hover:text-white transition-colors duration-300">Visual</a>
+                <a href="#blog" class="text-brand-sub hover:text-white transition-colors duration-300">Blog</a>
+                <a href="the-first-flower/index.html" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-1.5 text-brand-primary/70 hover:text-brand-primary transition-colors duration-300 font-heading text-[11px] tracking-[2px] uppercase border border-brand-primary/30 px-3 py-1 rounded-full hover:border-brand-primary/60">
+                    ✦ The First Flower
+                    <svg class="w-2.5 h-2.5 opacity-60" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 8.5L8.5 1.5M4.5 1.5h4v4"/></svg>
+                </a>
+                <button id="lang-btn" onclick="toggleLang()" aria-label="言語切替">JA</button>
+                <a href="#contact"
+                   class="px-6 py-2.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:border-brand-secondary/60 hover:shadow-glow-gold">
+                    Contact
+                </a>
+            </div>
+
+            <!-- Mobile hamburger -->
+            <button id="hamburger" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="メニュー">
+                <span class="w-6 h-[1.5px] bg-brand-text rounded block transition-all duration-300" id="hb-1"></span>
+                <span class="w-6 h-[1.5px] bg-brand-text rounded block transition-all duration-300" id="hb-2"></span>
+                <span class="w-6 h-[1.5px] bg-brand-text rounded block transition-all duration-300" id="hb-3"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden glass border-t border-white/8">
+        <div class="max-w-[1200px] mx-auto px-6 py-6 flex flex-col gap-5 font-heading text-[13px] tracking-widest uppercase">
+            <a href="#about"    class="text-brand-sub hover:text-white transition-colors">About</a>
+            <a href="#apps"     class="text-brand-sub hover:text-white transition-colors">Tools</a>
+            <a href="#visual"   class="text-brand-sub hover:text-white transition-colors">Visual</a>
+            <a href="#blog" class="text-brand-sub hover:text-white transition-colors">Blog</a>
+            <a href="the-first-flower/index.html" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-brand-primary/80 hover:text-brand-primary transition-colors">✦ The First Flower <svg class="w-2.5 h-2.5 opacity-60" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 8.5L8.5 1.5M4.5 1.5h4v4"/></svg></a>
+            <button id="lang-btn-mobile" onclick="toggleLang()" aria-label="言語切替">JA</button>
+            <a href="#contact"  class="text-brand-primary">Contact</a>
+        </div>
+    </div>
+</header>
+
+
+<!-- =============================================
+     01. HERO
+     ============================================= -->
+<section id="hero" class="relative min-h-screen flex flex-col justify-end pb-24 md:pb-32 overflow-hidden">
+
+    <!-- Geometric loop (decorative, seamless 10s) — replaces the old "2026" -->
+    <div class="hero-geo z-[0]" aria-hidden="true">
+        <svg viewBox="0 0 200 200" fill="none" stroke="rgba(184,180,174,0.28)">
+            <g class="geo-breathe">
+                <!-- rotating dashed rings -->
+                <circle class="geo-el geo-cw-10" cx="100" cy="100" r="92" stroke-dasharray="2 8" stroke-width="0.8"/>
+                <circle class="geo-el geo-ccw-10" cx="100" cy="100" r="84" stroke-dasharray="1 6" stroke-width="0.6" stroke="rgba(184,180,174,0.16)"/>
+                <!-- counter-rotating hexagon -->
+                <polygon class="geo-el geo-ccw-10" points="100,22 167.5,61 167.5,139 100,178 32.5,139 32.5,61" stroke-width="0.8"/>
+                <!-- spinning square (2 turns / 10s) -->
+                <rect class="geo-el geo-cw-5" x="55" y="55" width="90" height="90" stroke-width="0.7" stroke="rgba(184,180,174,0.22)"/>
+                <!-- triangle -->
+                <polygon class="geo-el geo-ccw-5" points="100,46 146.8,127 53.2,127" stroke-width="0.7" stroke="rgba(184,180,174,0.30)"/>
+                <!-- inner ring -->
+                <circle class="geo-el geo-cw-10" cx="100" cy="100" r="34" stroke-width="0.6" stroke="rgba(184,180,174,0.42)"/>
+                <!-- pulsing orbiting dots -->
+                <g class="geo-el geo-cw-5 geo-pulse">
+                    <circle cx="100" cy="64"  r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="131" cy="82"  r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="131" cy="118" r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="100" cy="136" r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="69"  cy="118" r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                    <circle cx="69"  cy="82"  r="1.6" fill="rgba(184,180,174,0.75)" stroke="none"/>
+                </g>
+            </g>
+        </svg>
+    </div>
+
+    <!-- Hero content: left-aligned -->
+    <div class="relative z-10 w-full max-w-[1200px] mx-auto px-6 lg:px-12">
+
+        <!-- Eyebrow -->
+        <div class="flex items-center gap-4 mb-10 reveal active">
+            <div style="width:36px; height:1px; background:#B8B4AE; flex-shrink:0;"></div>
+            <span style="font-family:'Syne',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#B8B4AE;">Creative — Est. 2026</span>
+        </div>
+
+        <!-- Heading: 3 lines, staggered reveal -->
+        <h1 class="reveal reveal-delay-1" style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:1.06; letter-spacing:0.04em; color:#E8E0D0; margin-bottom:6px;">
+            これからの
+        </h1>
+        <h1 class="reveal reveal-delay-2" style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(52px,9vw,104px); font-weight:600; line-height:1.06; letter-spacing:0.04em; color:#E8E0D0; margin-bottom:6px;">
+            人間の
+        </h1>
+        <h1 class="reveal reveal-delay-3" style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(52px,9vw,104px); font-weight:600; font-style:italic; line-height:1.06; letter-spacing:0.04em; color:#B8B4AE; margin-bottom:36px;">
+            遊び方。
+        </h1>
+
+        <!-- Horizontal rule -->
+        <div class="reveal reveal-delay-3" style="height:1px; background:#221c10; margin-bottom:24px;"></div>
+
+        <!-- Tagline + CTA -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 reveal reveal-delay-4">
+            <p style="font-family:'Noto Sans JP',sans-serif; font-size:14px; font-weight:300; letter-spacing:0.25em; color:#9A8A7A; line-height:1.9;" data-i18n-html="hero.tagline">
+                <span class="inline-block">消費するだけでも、</span><span class="inline-block">生産するだけでもなく。</span>
+            </p>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- =============================================
+     STATS BAR
+     ============================================= -->
+<div class="border-y border-white/5 bg-white/[0.015] backdrop-blur-sm">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8 py-10">
+        <div class="grid grid-cols-3 gap-8 text-center">
+            <div class="reveal">
+                <div class="stat-num" id="stat-visual">—</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.visual">ビジュアル数</div>
+            </div>
+            <div class="reveal reveal-delay-1">
+                <div class="stat-num" id="stat-blog">—</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.blog">ブログ数</div>
+            </div>
+            <div class="reveal reveal-delay-2">
+                <div class="stat-num" id="stat-apps">—</div>
+                <div class="font-jp text-[11px] text-brand-sub mt-1 tracking-wider" data-i18n="stats.apps">アプリ数</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- =============================================
+     02. ABOUT
+     ============================================= -->
+<section id="about" class="py-32 relative z-10 scroll-mt-20">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+
+            <!-- Text -->
+            <div class="order-2 lg:order-1">
+                <p class="section-tag reveal">About</p>
+                <h2 class="font-jp text-[clamp(28px,3.8vw,44px)] font-bold text-white leading-tight mb-8 reveal reveal-delay-1" data-i18n-html="about.h2">
+                    遊ぶように、作る。
+                </h2>
+                <p class="font-jp text-brand-sub text-[15px] leading-[2.1]" data-i18n-html="about.body">
+                    <span class="inline-block">AIが多くの仕事や消費を担う時代、</span><span class="inline-block">人間には新しい営みが必要になります。</span><br><br><span class="inline-block">NOCTAは、その問いに「創作」で答えます。</span><span class="inline-block">音楽、映像、画像、言葉——</span><span class="inline-block">すべてを一人で手がけることで、</span><span class="inline-block">「遊び」と「創造」の境界を探しています。</span>
+                </p>
+            </div>
+
+            <!-- Visual: 跳ぶ点。点は 1 つ、4 領域のどこへでも直接跳ぶ -->
+            <div class="about-play order-1 lg:order-2 flex items-center justify-center reveal reveal-delay-2">
+                <div class="w-full max-w-[420px]">
+                    <!-- 点は読み手が下へ進むと図を抜けて跳び去る（次の Statement の銀猫への伏線） -->
+                    <svg id="ap-fig" viewBox="0 0 400 380" width="100%" fill="none" role="img"
+                         aria-label="MUSIC VISUAL WORDS TOOLS の四点を、一つの点が順不同に行き来する図">
+                        <defs>
+                            <radialGradient id="ap-glow">
+                                <stop offset="0" stop-color="#E8E0D0" stop-opacity=".55"/>
+                                <stop offset=".45" stop-color="#E8E0D0" stop-opacity=".16"/>
+                                <stop offset="1" stop-color="#E8E0D0" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+                        <g id="ap-edges"></g>
+                        <line id="ap-active" class="ap-active" x1="0" y1="0" x2="0" y2="0" stroke-width="2.5" stroke-linecap="round" opacity="0"/>
+                        <g id="ap-halos"></g>
+                        <g id="ap-nodes"></g>
+                        <g id="ap-labels"></g>
+                        <!-- 主役の点: 光暈 + 本体(r=9) + 墨の縁取りで、静止でも背景から浮く -->
+                        <g id="ap-dot">
+                            <circle r="30" fill="url(#ap-glow)"/>
+                            <circle r="9" fill="#F4EEE0" stroke="#0A0906" stroke-width="2.5"/>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- 伏線: 跳び去った銀の点の行き先に、銀の足跡が 3 つ。点が消えた直後に順に付き、そのまま残る（動きを止める設定では最初から付いている） -->
+    <div class="about-paws" id="about-paws" aria-hidden="true">
+        <span class="paw" style="right:23%; bottom:92px; width:22px; transform:rotate(168deg);"><svg class="about-paw-svg" viewBox="0 0 100 100" style="animation-delay:0s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+        <span class="paw" style="right:19%; bottom:52px; width:22px; transform:rotate(192deg);"><svg class="about-paw-svg" viewBox="0 0 100 100" style="animation-delay:.35s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+        <span class="paw" style="right:22%; bottom:12px; width:22px; transform:rotate(170deg);"><svg class="about-paw-svg" viewBox="0 0 100 100" style="animation-delay:.7s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+    </div>
+</section>
+
+
+<!-- =============================================
+     STATEMENT BAND (voltage moment) — コピーは叩き台。自由に差し替えてください
+     ============================================= -->
+<!-- Cat-paw motif: reusable symbol + watercolor filter (usable anywhere via <use href="#cat-paw">) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+        <filter id="watercolor" x="-25%" y="-25%" width="150%" height="150%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.013 0.017" numOctaves="2" seed="7" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+            <feGaussianBlur stdDeviation="0.5"/>
+        </filter>
+        <symbol id="cat-paw" viewBox="0 0 100 100">
+            <g fill="currentColor">
+                <ellipse cx="50" cy="70" rx="27" ry="23"/>
+                <ellipse cx="23" cy="44" rx="8.5" ry="12"/>
+                <ellipse cx="41" cy="30" rx="9" ry="13"/>
+                <ellipse cx="59" cy="30" rx="9" ry="13"/>
+                <ellipse cx="77" cy="44" rx="8.5" ry="12"/>
+            </g>
+        </symbol>
+    </defs>
+</svg>
+
+<section id="statement" class="relative z-10 border-y border-white/5 bg-white/[0.02] backdrop-blur-sm overflow-hidden" aria-labelledby="statement-title">
+    <div class="statement-stage max-w-[1200px] mx-auto px-6 lg:px-12 py-28 md:py-36">
+        <!-- PLAY: 訪問者のポインタ/タップの軌跡に水彩の足跡が残る（「遊ぶことで彩る」の実演）。
+             色は固定4色からの偶然、最大60個で古いものから消える。文字と操作部の上には置かない -->
+        <div id="statement-paws" class="absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
+
+        <div class="statement-grid relative z-10">
+            <div class="statement-copy">
+                <p class="section-tag reveal">Statement</p>
+                <h2 id="statement-title" class="reveal reveal-delay-1"
+                    style="font-family:'EB Garamond','Shippori Mincho',serif; font-size:clamp(34px,6vw,76px); font-weight:600; line-height:1.2; letter-spacing:0.04em; color:#E8E0D0; max-width:640px; margin-top:24px;">
+                    遊ぶことで人生を<span class="statement-accent">彩ろう。</span>
+                </h2>
+                <!-- 昼と夜の対: The First Flower の結び「夜は NOCTA という名前で…」と鏡の一文 -->
+                <a href="the-first-flower/index.html" class="statement-day reveal reveal-delay-2" data-i18n-html="statement.day"><span class="inline-block">昼は The First Flower という名前で、</span><span class="inline-block">「いい人生とは」を考えています。<span aria-hidden="true"> →</span></span></a>
+                <!-- キーボードだけでも足跡を残せる導線。マウス/タップと同じ描画関数を使う -->
+                <div class="play-controls reveal reveal-delay-2">
+                    <button type="button" id="one-step" aria-describedby="play-instruction">
+                        <span data-i18n="play.step">余白に、ひと足。</span><span aria-hidden="true"> ↗</span>
+                    </button>
+                    <p id="play-instruction" data-i18n="play.hint">余白をなぞる、またはタップしてみてください。</p>
+                    <div class="paint-tools">
+                        <button type="button" id="clear-paint" data-i18n="play.clear" aria-label="足跡を消して最初から">やりなおす</button>
+                    </div>
+                    <span class="story-sr" role="status" id="paint-status"></span>
+                </div>
+            </div>
+
+            <!-- STORY ORIGIN: 銀猫が絵の具へ向かう水彩イラスト(透過PNG)。
+                 前足と皿の先に、物語の起点として静止した赤い足跡を1つ置く -->
+            <div class="cat-scene statement-cat" aria-hidden="true">
+                <img class="cat-fig paint-cat-img" src="img/cat/silver-paint.png" alt="" width="543" height="271">
+                <span class="first-step" style="left:87%; top:90%;">
+                    <svg viewBox="0 0 100 100"><use href="#cat-paw" filter="url(#watercolor)"/></svg>
+                </span>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     04. APPS / TOOLS
+     ============================================= -->
+<section id="apps" class="py-32 relative z-10 border-b border-white/5">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="relative text-center mb-16 reveal">
+            <!-- STORY: Statement の猫が右から歩いてきた短い足跡（もとは Portfolio の章扉にあった。2026-11-08 に章扉をたたんで移した）。
+                 足跡は見出しの 2 行の高さに収め、下のコレクションのタブにかけない -->
+            <div class="relative">
+            <div class="paw-trail absolute inset-0" aria-hidden="true">
+                <span class="paw" style="right:4%;  top:2%;  width:40px; transform:rotate(-20deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#CC5B4A; opacity:0.62; animation-delay:0s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+                <span class="paw" style="right:9%;  top:26%; width:36px; transform:rotate(-16deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#D9A441; opacity:0.5;  animation-delay:0.23s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+                <span class="paw" style="right:6%;  top:50%; width:33px; transform:rotate(-12deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#5586BE; opacity:0.39; animation-delay:0.46s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+                <span class="paw" style="right:12%; top:72%; width:30px; transform:rotate(-8deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#9472B8; opacity:0.28; animation-delay:0.69s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+                <span class="paw" style="right:16%; top:92%; width:27px; transform:rotate(-4deg);"><svg class="paw-svg" viewBox="0 0 100 100" style="color:#CC5B4A; opacity:0.17; animation-delay:0.92s"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+            </div>
+            <h2 class="relative z-10 font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">TOOLS</h2>
+            <p class="font-jp text-brand-sub text-[15px] tracking-wider mb-5">Web Applications</p>
+            </div>
+            <!-- コレクションの表紙 — apps-data.js の NOCTA_APP_COLLECTIONS から JS でレンダリング。押すとカードを絞り込む -->
+            <div id="apps-collections" class="apps-collections mt-8 max-w-[1040px] mx-auto text-left"></div>
+        </div>
+
+        <!-- Grid — apps-data.js から JS でレンダリング -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="apps-grid">
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     06. VISUAL PORTFOLIO
+     ============================================= -->
+<section id="visual" class="py-32 relative z-10 bg-black/30 border-y border-white/5">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <!-- ギャラリー: 1作品を大きく見てから一覧へ。見出しは Visual 固有の確定コピー（CEO指定） -->
+        <div class="gallery-grid mb-16">
+            <div class="gallery-side">
+                <p class="section-tag reveal">Visual（AI）</p>
+                <h2 id="gallery-title" class="reveal reveal-delay-1" data-i18n-html="visual.headline">やりたかったことを、<br><em>やりなさい。</em></h2>
+                <p class="font-jp text-brand-sub text-[13px] tracking-wider reveal reveal-delay-2">Art &amp; NFT Collection</p>
+
+                <!-- 座って作品を眺める銀猫（既存素材。右の作品の方を向く） -->
+                <div class="cat-scene gallery-cat" aria-hidden="true">
+                    <img class="cat-fig" src="img/cat/silver-sit.png" alt="" width="300" height="300">
+                </div>
+
+                <div class="gallery-note reveal">
+                    <button type="button" id="visual-all-toggle" class="gallery-all-btn"
+                            aria-expanded="false" aria-controls="visual-all">
+                        <span data-i18n="visual.all">作品一覧を見る</span><span aria-hidden="true"> ↓</span>
+                    </button>
+                </div>
+            </div>
+
+            <figure class="gallery-work reveal reveal-delay-1" role="group"
+                    aria-roledescription="カルーセル" aria-label="ビジュアルをひとつずつ眺める" tabindex="0">
+                <div class="art-frame">
+                    <img id="featured-image" src="" alt="" loading="eager" decoding="async">
+                </div>
+                <div class="gallery-pagination">
+                    <button type="button" id="gallery-prev" data-i18n-aria="visual.prev" aria-label="前の作品">&#8592;</button>
+                    <span id="gallery-position" aria-live="polite" aria-atomic="true">01 / 01</span>
+                    <button type="button" id="gallery-next" data-i18n-aria="visual.next" aria-label="次の作品">&#8594;</button>
+                </div>
+                <figcaption>
+                    <span class="g-title" id="featured-title"></span>
+                    <span class="g-caption" id="featured-caption"></span>
+                </figcaption>
+                <p id="gallery-error" role="status" data-i18n="visual.error" hidden>画像を表示できません。矢印で次の作品をご覧ください。</p>
+            </figure>
+        </div>
+
+        <!-- 全作品一覧。従来の Works / Art / Music とリンク・分類・i18n をそのまま保持し、
+             「作品一覧を見る」で開閉する -->
+        <div id="visual-all" hidden>
+        <!-- Works セクション -->
+        <div class="mb-16">
+            <div class="flex items-center gap-4 mb-8 reveal">
+                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Works</h3>
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="font-heading text-[10px] tracking-[2px] text-white/20">Concept &amp; Processed</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid-works">
+            </div>
+        </div>
+
+        <!-- Art セクション -->
+        <div class="mb-16">
+            <div class="flex items-center gap-4 mb-8 reveal">
+                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Art</h3>
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="font-heading text-[10px] tracking-[2px] text-white/20">AI Generated / Source</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="visual-grid-art">
+            </div>
+            <!-- Zora NFT link — Art の直下に配置（Art = Zora 出品作品のため） -->
+            <div class="mt-8 text-center reveal">
+                <a href="https://zora.co/@kutakuta1001" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-3 px-7 py-3.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 hover:border-white/30 transition-all duration-300 font-heading text-[11px] tracking-[3px] uppercase text-brand-sub hover:text-white">
+                    <svg class="w-4 h-4 opacity-60" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7 9l5 6 5-6" fill="none" stroke="#0A0906" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    View NFT Collection on Zora
+                    <svg class="w-3 h-3 opacity-50" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 10L10 2M5 2h5v5"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Music セクション（作品が入るまで JS で隠す） -->
+        <div class="mb-10" id="visual-music-block">
+            <div class="flex items-center gap-4 mb-8 reveal">
+                <h3 class="font-heading text-[11px] tracking-[4px] uppercase text-brand-sub">Music</h3>
+                <div class="flex-1 h-px bg-white/10"></div>
+                <span class="font-heading text-[10px] tracking-[2px] text-white/20">Song-linked Visual</span>
+            </div>
+            <div id="visual-grid-music">
+            </div>
+        </div>
+        </div>
+    </div>
+</section>
+
+<!-- =============================================
+     07. BLOG
+     ============================================= -->
+<section id="blog" class="py-32 relative z-10 border-b border-white/5">
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="relative text-center mb-8 reveal">
+            <!-- 絵の具付きで歩く銀猫(色付き足跡を残してタイトルへ) -->
+            <div class="cat-scene absolute left-[3%] md:left-[11%] -bottom-5 z-0 pointer-events-none" aria-hidden="true">
+                <img class="cat-fig" src="img/cat/silver-walk.png" alt="" style="width:clamp(112px,13vw,168px);">
+            </div>
+            <h2 class="relative z-10 font-display text-[clamp(52px,8vw,100px)] text-white tracking-[4px] mb-4">BLOG</h2>
+            <p class="relative z-10 font-jp text-brand-sub text-[15px] tracking-wider">Music & Essays</p>
+
+            <!-- Filter pills（.vfilter-pill） -->
+            <div class="mt-8 inline-flex bg-white/5 rounded-full p-1.5 gap-1 glass">
+                <button class="vfilter-pill active" data-bfilter="all">All</button>
+                <button class="vfilter-pill" data-bfilter="music">Music</button>
+                <button class="vfilter-pill" data-bfilter="essay">Essay</button>
+                <button class="vfilter-pill" data-bfilter="book">Book</button>
+            </div>
+        </div>
+
+        <!-- Grid — blog-data.js から JS でレンダリング -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7" id="blog-grid">
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     09. CONTACT
+     ============================================= -->
+<section id="contact" class="py-32 relative z-10 overflow-hidden">
+
+    <!-- Glow bg -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none"
+         style="background:radial-gradient(circle, rgba(184,180,174,0.07) 0%, transparent 70%); filter:blur(60px);"></div>
+
+    <div class="max-w-[1200px] mx-auto px-6 lg:px-8 relative z-10">
+        <div id="contact-grid" class="contact-grid is-closed grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-20 items-start">
+
+            <!-- Info -->
+            <div>
+                <p class="section-tag reveal">Contact</p>
+                <!-- 文節単位の inline-block で折り返し位置を制御（中途半端な位置での改行を防ぐ） -->
+                <h2 class="font-jp text-[clamp(30px,4.5vw,48px)] font-bold text-white leading-tight mb-5 reveal reveal-delay-1" data-i18n-html="contact.h2">
+                    <span class="inline-block">AIが多くを担う時代に、</span><br><span class="inline-block">人間に必要なのは</span><span class="inline-block">「<span class="text-gradient">遊び</span>」だ。</span>
+                </h2>
+                <p class="font-jp text-brand-sub text-[14px] leading-[2.2] mb-10 reveal reveal-delay-2" data-i18n-html="contact.subtitle">
+                    <span class="inline-block">効率でも、消費でもなく。</span><br><span class="inline-block">音楽・映像・言葉・コードを越えて、</span><span class="inline-block">遊ぶように創る。</span><br><span class="inline-block">その問いを面白がれる人を、</span><span class="inline-block">いつでも歓迎します。</span>
+                </p>
+
+                <!-- 準備中のもの: 普段は閉じておく。公開できたものから外へ出す -->
+                <button type="button" id="contact-soon-toggle" class="gallery-all-btn reveal reveal-delay-3"
+                        aria-expanded="false" aria-controls="contact-soon-social contact-soon-form">
+                    <span data-i18n="contact.soon.toggle">準備中のもの（X・note・Music・お問い合わせ）</span><span class="contact-soon-arrow" aria-hidden="true"> ↓</span>
+                </button>
+
+                <div id="contact-soon-social" class="flex flex-col gap-3 mt-6" hidden>
+                    <!-- TODO: アカウント公開後に <a href="https://x.com/..." class="social-link"> へ戻し、is-soon と準備中ラベルを外す -->
+                    <div class="social-link is-soon" aria-disabled="true">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8E0D0">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform">X (Twitter)<span class="soon-pill" data-i18n="contact.soon">準備中</span></div>
+                            <div class="social-desc" data-i18n="contact.social.x">最新情報をいち早く</div>
+                        </div>
+                    </div>
+                    <!-- TODO: アカウント公開後に <a href="https://note.com/..." class="social-link"> へ戻し、is-soon と準備中ラベルを外す -->
+                    <div class="social-link is-soon" aria-disabled="true">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8E0D0">
+                                <path d="M4 2h16a2 2 0 012 2v16a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zm2 5v2h12V7H6zm0 4v2h12v-2H6zm0 4v2h8v-2H6z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform">note<span class="soon-pill" data-i18n="contact.soon">準備中</span></div>
+                            <div class="social-desc" data-i18n="contact.social.note">制作ブログ・ライナーノーツ</div>
+                        </div>
+                    </div>
+                    <div class="social-link is-soon" aria-disabled="true">
+                        <div class="w-8 flex-shrink-0 flex items-center justify-center">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8E0D0" aria-hidden="true">
+                                <path d="M9 18V5l11-2v13" fill="none" stroke="#E8E0D0" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="social-platform">Music<span class="soon-pill" data-i18n="contact.soon">準備中</span></div>
+                            <div class="social-desc" data-i18n="contact.social.music">楽曲のリリース</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <!-- TODO: フォーム公開時は form-soon・案内文・fieldset の disabled を外し、contact.submit を「送信する」に戻す -->
+            <div id="contact-soon-form" class="glass rounded-2xl p-9 border border-white/8 form-soon" hidden>
+                <p class="font-jp text-[13px] leading-[2] text-brand-sub mb-6" data-i18n-html="contact.form.soon"><span class="inline-block">お問い合わせフォームは、ただいま準備中です。</span><span class="inline-block">受付開始まで、もう少しだけお待ちください。</span></p>
+                <form
+                    id="nocta-contact-form"
+                    name="contact"
+                    method="POST"
+                    data-netlify="true"
+                    data-netlify-honeypot="bot-field"
+                    action="./success.html"
+                >
+                    <!-- Netlify hidden fields -->
+                    <input type="hidden" name="form-name" value="contact"/>
+                    <p class="hidden" style="display:none;">
+                        <input name="bot-field"/>
+                    </p>
+
+                    <fieldset disabled>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.name">お名前 *</label>
+                            <input class="form-field" type="text" name="name" placeholder="山田 太郎" required data-i18n-ph="contact.ph.name"/>
+                        </div>
+                        <div>
+                            <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.company">会社名</label>
+                            <input class="form-field" type="text" name="company" placeholder="株式会社〇〇" data-i18n-ph="contact.ph.company"/>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.email">メールアドレス *</label>
+                        <input class="form-field" type="email" name="email" placeholder="hello@example.com" required/>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.service">ご依頼の種別</label>
+                        <select class="form-field" name="service">
+                            <option value="" data-i18n="contact.opt.default">選択してください</option>
+                            <option value="music" data-i18n="contact.opt.music">楽曲制作</option>
+                            <option value="pv" data-i18n="contact.opt.pv">PV・映像制作</option>
+                            <option value="marketing" data-i18n="contact.opt.marketing">マーケティング支援</option>
+                            <option value="pr" data-i18n="contact.opt.pr">PR・メディア展開</option>
+                            <option value="collab" data-i18n="contact.opt.collab">タイアップ・コラボ</option>
+                            <option value="media" data-i18n="contact.opt.media">取材・メディア掲載</option>
+                            <option value="other" data-i18n="contact.opt.other">その他</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block font-heading text-[10px] font-semibold tracking-[1.5px] uppercase text-brand-sub mb-2" data-i18n="contact.lbl.message">メッセージ *</label>
+                        <textarea class="form-field min-h-[120px] resize-y"
+                                  name="message"
+                                  placeholder="プロジェクトの内容・ご要望をお気軽にご記入ください"
+                                  data-i18n-ph="contact.ph.message"
+                                  required></textarea>
+                    </div>
+                    </fieldset>
+                    <button class="btn-submit" type="submit" id="submitBtn" data-i18n="contact.submit" disabled>準備中</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- =============================================
+     FOOTER
+     ============================================= -->
+<!-- STORY: 色付き足跡の区切り線（コンテンツとフッターの境界） -->
+<div class="cat-scene relative max-w-[760px] mx-auto px-6 py-10" aria-hidden="true">
+    <img class="cat-fig block w-full" src="img/cat/paw-divider.png" alt="">
+</div>
+
+<footer class="relative overflow-hidden border-t border-white/5 bg-[#0A0906] py-16">
+    <!-- STORY: この訪問で最後に使った絵の具の色を映す小さな足跡 -->
+    <span id="echo-paw" aria-hidden="true"><svg viewBox="0 0 100 100"><use href="#cat-paw" filter="url(#watercolor)"/></svg></span>
+    <!-- STORY END: 眠る銀猫（旅の終わり） -->
+    <div class="cat-scene absolute inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <img class="cat-fig" src="img/cat/silver-sleep.png" alt=""
+             style="position:absolute; right:4%; bottom:12%; width:clamp(150px,18vw,230px);">
+    </div>
+    <div class="relative z-10 max-w-[1200px] mx-auto px-6 lg:px-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-12 mb-14">
+            <div>
+                <div class="font-brand text-2xl tracking-[6px] text-white font-extrabold mb-4">NOCTA</div>
+                <p class="font-jp text-brand-sub text-[13px] leading-relaxed max-w-xs" data-i18n-html="footer.tagline">
+                    AIと人間が、遊ぶように創る。<br>
+                    音楽・映像・言葉・コードを越境して、<br>
+                    遊びが、人生を彩るまで。
+                </p>
+            </div>
+            <div>
+                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Creative</div>
+                <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
+                    <a href="#visual" class="hover:text-white transition-colors duration-200" data-i18n="footer.s2">映像・ビジュアル</a>
+                    <a href="#blog"   class="hover:text-white transition-colors duration-200" data-i18n="footer.s3">言葉・ブログ</a>
+                    <a href="#apps"   class="hover:text-white transition-colors duration-200" data-i18n="footer.s4">アプリ・ツール</a>
+                </div>
+            </div>
+            <div>
+                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">Company</div>
+                <div class="flex flex-col gap-3 font-jp text-[13px] text-brand-sub">
+                    <a href="#about"   class="hover:text-white transition-colors duration-200">About</a>
+                    <a href="#contact" class="hover:text-white transition-colors duration-200">Contact</a>
+                </div>
+            </div>
+            <div>
+                <div class="font-heading font-bold text-[10px] tracking-[2px] uppercase text-brand-sub mb-5">The First Flower</div>
+                <div class="flex flex-col gap-3 font-jp text-[13px]">
+                    <a href="the-first-flower/index.html" class="text-brand-primary/70 hover:text-brand-primary transition-colors duration-200" data-i18n="footer.tff.link">✦ いい人生とは</a>
+                    <p class="text-brand-sub text-[11px] leading-relaxed" data-i18n-html="footer.tff.desc">人生観・詩・思い・感動を<br>つづるパーソナルサイト</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-white/5 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="font-heading text-[11px] text-brand-sub tracking-wide">✦ © 2026 NOCTA. All rights reserved.</div>
+            <div class="font-heading text-[11px] text-brand-sub tracking-wide" style="color:#B8B4AE">✦ Music × Visual × Words × Tools ✦</div>
+        </div>
+
+    </div>
+</footer>
+
+
+<!-- =============================================
+     YOUTUBE MODAL
+     ============================================= -->
+<div id="yt-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"
+     onclick="if(event.target===this)closeYouTube()">
+    <div class="relative w-full max-w-[900px]">
+        <button onclick="closeYouTube()"
+                class="absolute -top-9 right-0 font-heading text-[11px] tracking-[2px] uppercase text-brand-sub hover:text-white transition-colors duration-200">
+            ESC / CLOSE ✕
+        </button>
+        <div class="yt-frame-wrap">
+            <iframe id="yt-iframe"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+
+<!-- =============================================
+     VISUAL MODAL (LIGHTBOX)
+     ============================================= -->
+<div id="visual-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"
+     onclick="if(event.target===this)closeVisual()">
+    <div class="absolute inset-0 bg-black/85 backdrop-blur-sm" onclick="closeVisual()"></div>
+    <div class="relative w-full max-w-[900px] z-10">
+        <button onclick="closeVisual()"
+                class="absolute -top-9 right-0 font-heading text-[11px] tracking-[2px] uppercase text-brand-sub hover:text-white transition-colors duration-200">
+            ESC / CLOSE ✕
+        </button>
+        <img id="visual-modal-img" src="" alt=""
+             class="w-full rounded-2xl object-contain max-h-[70vh] bg-black/40">
+        <div class="mt-4">
+            <div class="flex items-center gap-3 mb-2">
+                <span id="visual-modal-badge"
+                      class="text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider"></span>
+                <h3 id="visual-modal-title"
+                    class="font-heading font-bold text-[17px] text-white"></h3>
+            </div>
+            <p id="visual-modal-desc"
+               class="font-jp text-[13px] text-brand-sub leading-relaxed"></p>
+        </div>
+    </div>
+</div>
+
+        <!-- =============================================
+             APP MODAL
+             ============================================= -->
+        <div id="app-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4"
+             onclick="if(event.target===this)closeApp()">
+            <div class="absolute inset-0 bg-black/85 backdrop-blur-sm" onclick="closeApp()"></div>
+            <div class="relative w-full max-w-[640px] z-10">
+                <button onclick="closeApp()"
+                        class="absolute -top-9 right-0 font-heading text-[11px] tracking-[2px] uppercase text-brand-sub hover:text-white transition-colors duration-200">
+                    ESC / CLOSE ✕
+                </button>
+                <img id="app-modal-img" src="" alt=""
+                     class="w-full aspect-video rounded-2xl object-cover" style="display:none">
+                <div id="app-modal-thumb" class="thumb-1 w-full aspect-video rounded-2xl flex items-center justify-center">
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                        <circle cx="24" cy="24" r="22" stroke="rgba(184,180,174,0.35)" stroke-width="1"/>
+                        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(184,180,174,0.55)"/>
+                    </svg>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span id="app-modal-badge"
+                              class="text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider"></span>
+                        <h3 id="app-modal-title"
+                            class="font-heading font-bold text-[17px] text-white"></h3>
+                    </div>
+                    <p id="app-modal-desc"
+                       class="font-jp text-[13px] text-brand-sub leading-relaxed mb-4"></p>
+                    <a id="app-modal-link" href="" target="_blank" rel="noopener noreferrer"
+                       class="inline-flex items-center gap-2 font-heading text-[12px] tracking-[2px] uppercase text-brand-primary hover:text-white transition-colors duration-200">
+                        アプリを開く →
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+<!-- =============================================
+     JAVASCRIPT
+     ============================================= -->
+<!-- IPFS ゲートウェイのフォールバック。
+     ipfs.io は Cloudflare のボット判定でブラウザからの画像要求に 403 を返すことがあり、
+     その応答が cross-origin-resource-policy: same-origin を持つため
+     Chromium では ERR_BLOCKED_BY_RESPONSE.NotSameOrigin として画像が出なくなる。
+     visual-data.js は正本のまま置き、表示できなかったときだけ別ゲートウェイへ差し替える。
+     img の error はバブルしないので capture で受ける -->
+<script>
+(function () {
+    var GATEWAYS = ['https://gateway.pinata.cloud/ipfs/', 'https://ipfs.filebase.io/ipfs/'];
+    document.addEventListener('error', function (e) {
+        var img = e.target;
+        if (!img || img.tagName !== 'IMG' || !img.getAttribute('src')) return;
+        var m = img.src.match(/\/ipfs\/(ba[a-z2-7]+|Qm[1-9A-HJ-NP-Za-km-z]+)/);
+        if (!m) return;
+        var tried = Number(img.dataset.ipfsTry || 0);
+        if (tried >= GATEWAYS.length) { img.dataset.ipfsExhausted = '1'; return; }
+        img.dataset.ipfsTry = String(tried + 1);
+        img.src = GATEWAYS[tried] + m[1];
+    }, true);
+})();
+</script>
+<script src="visual-data.js"></script>
+<script src="apps-data.js"></script>
+<script src="blog-data.js"></script>
+
+<!-- Stats bar: データ配列から件数を動的カウント -->
+<script>
+    (function () {
+        // data-count を設定 → 後段の Count-up スクリプトがスクロール到達時に駆け上がりアニメーション
+        function setCount(id, n) {
+            var el = document.getElementById(id);
+            if (el && typeof n === 'number') { el.setAttribute('data-count', n); el.textContent = '0'; }
+        }
+        setCount('stat-blog',  typeof NOCTA_BLOG  !== 'undefined' ? NOCTA_BLOG.length  : null);
+        setCount('stat-apps',  typeof NOCTA_APPS  !== 'undefined' ? NOCTA_APPS.length  : null);
+
+        // ビジュアル数 = Works + Art + Music の3配列を合算
+        var vw = typeof NOCTA_VISUALS_WORKS !== 'undefined' ? NOCTA_VISUALS_WORKS.length : 0;
+        var va = typeof NOCTA_VISUALS_ART   !== 'undefined' ? NOCTA_VISUALS_ART.length   : 0;
+        var vm = typeof NOCTA_VISUALS_MUSIC !== 'undefined' ? NOCTA_VISUALS_MUSIC.length : 0;
+        setCount('stat-visual', vw + va + vm);
+    })();
+</script>
+<script>
+/* ---- Navbar scroll ---- */
+(function () {
+    const nav = document.getElementById('navbar');
+    window.addEventListener('scroll', function () {
+        if (window.scrollY > 60) {
+            nav.style.cssText = 'background:rgba(10,9,6,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07);';
+        } else {
+            nav.style.cssText = '';
+        }
+    });
+})();
+
+
+/* ---- Hamburger ---- */
+(function () {
+    const btn  = document.getElementById('hamburger');
+    const menu = document.getElementById('mobile-menu');
+    const hb1  = document.getElementById('hb-1');
+    const hb2  = document.getElementById('hb-2');
+    const hb3  = document.getElementById('hb-3');
+    let open   = false;
+    btn.addEventListener('click', function () {
+        open = !open;
+        menu.classList.toggle('hidden', !open);
+        hb1.style.transform = open ? 'translateY(6.5px) rotate(45deg)'  : '';
+        hb2.style.opacity   = open ? '0' : '1';
+        hb3.style.transform = open ? 'translateY(-6.5px) rotate(-45deg)' : '';
+    });
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+        open = false; menu.classList.add('hidden');
+        hb1.style.transform = ''; hb2.style.opacity = '1'; hb3.style.transform = '';
+    }));
+})();
+
+
+/* ---- Scroll Reveal ---- */
+(function () {
+    const els = document.querySelectorAll('.reveal');
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add('active'); obs.unobserve(e.target); }
+        });
+    }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => obs.observe(el));
+})();
+
+
+/* ---- Count-up ---- */
+(function () {
+    const nums = document.querySelectorAll('[data-count]');
+    const obs  = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (!e.isIntersecting) return;
+            const target = parseInt(e.target.getAttribute('data-count'));
+            const dur    = 1400;
+            const start  = performance.now();
+            function tick(now) {
+                const p = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1 - p, 3);
+                e.target.textContent = Math.round(ease * target);
+                if (p < 1) requestAnimationFrame(tick);
+                else e.target.textContent = target;
+            }
+            requestAnimationFrame(tick);
+            obs.unobserve(e.target);
+        });
+    }, { threshold: 0.5 });
+    nums.forEach(n => obs.observe(n));
+})();
+
+
+
+
+/* ---- Smooth scroll ---- */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', function (e) {
+        const el = document.querySelector(this.getAttribute('href'));
+        if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+    });
+});
+
+
+/* ---- Visual: データ配列からカードをレンダリング ---- */
+(function () {
+    var section = document.getElementById('visual');
+    if (!section) return;
+    if (typeof NOCTA_VISUALS_WORKS === 'undefined' && typeof NOCTA_VISUALS_ART === 'undefined' && typeof NOCTA_VISUALS_MUSIC === 'undefined') return;
+
+    function makeCard(v, i) {
+        var col    = i % 3;
+        var delay  = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
+        var dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
+        var imgUrl = v.imgUrl || '';
+        var zoraLink = v.zoraUrl
+            ? '<a href="' + v.zoraUrl + '" target="_blank" rel="noopener"' +
+              '   onclick="event.stopPropagation()"' +
+              '   class="inline-flex items-center gap-1 mt-3 text-[11px] font-heading tracking-wider text-brand-sub hover:text-white transition-colors">' +
+              'View on Zora ↗</a>'
+            : '';
+        var onclick = ' onclick="openVisual(' +
+            '\'' + imgUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+            '\'' + v.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+            '\'' + v.badge + '\',' +
+            '\'' + v.badgeColorClass + '\',' +
+            '\'' + v.descJa.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' +
+            ')"';
+
+        return [
+            '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"' + dstyle + onclick + '>',
+            '  <div class="relative aspect-[3/4] overflow-hidden">',
+            '    <img src="' + imgUrl + '" alt="' + v.title.replace(/"/g, '&quot;') + '"',
+            '         loading="lazy"',
+            '         class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">',
+            '    <div class="thumb-overlay"></div>',
+            '  </div>',
+            '  <div class="p-5">',
+            '    <div class="flex justify-between items-start mb-2">',
+            '      <h3 class="font-heading font-bold text-[15px] text-white leading-tight">' + v.title + '</h3>',
+            '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded shrink-0 ml-2 ' + v.badgeColorClass + ' tracking-wider">' + v.badge + '</span>',
+            '    </div>',
+            '    <p class="font-jp text-[12px] text-brand-sub leading-relaxed" data-desc-ja="' + v.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (v.descEn||v.descJa).replace(/"/g,'&quot;') + '">' + v.descJa + '</p>',
+            '    ' + zoraLink,
+            '  </div>',
+            '</div>'
+        ].join('\n');
+    }
+
+    // Works グリッド
+    var gridW = document.getElementById('visual-grid-works');
+    if (gridW && typeof NOCTA_VISUALS_WORKS !== 'undefined' && NOCTA_VISUALS_WORKS.length > 0) {
+        gridW.innerHTML = NOCTA_VISUALS_WORKS.map(makeCard).join('\n');
+    }
+
+    // Art グリッド
+    var gridA = document.getElementById('visual-grid-art');
+    if (gridA && typeof NOCTA_VISUALS_ART !== 'undefined' && NOCTA_VISUALS_ART.length > 0) {
+        gridA.innerHTML = NOCTA_VISUALS_ART.map(makeCard).join('\n');
+    }
+
+    // Music グリッド
+    var gridM = document.getElementById('visual-grid-music');
+    if (gridM) {
+        if (typeof NOCTA_VISUALS_MUSIC !== 'undefined' && NOCTA_VISUALS_MUSIC.length > 0) {
+            gridM.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7';
+            gridM.innerHTML = NOCTA_VISUALS_MUSIC.map(makeCard).join('\n');
+        } else {
+            var musicBlock = document.getElementById('visual-music-block');
+            if (musicBlock) musicBlock.style.display = 'none';
+        }
+    }
+
+    // Scroll Reveal を適用
+    var obs2 = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('active'); obs2.unobserve(e.target); }
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    section.querySelectorAll('.reveal').forEach(function (el) { obs2.observe(el); });
+})();
+
+/* ---- Apps: データ配列からカードをレンダリング ---- */
+    (function () {
+        var section = document.getElementById('apps');
+        var grid = document.getElementById('apps-grid');
+        if (!grid || typeof NOCTA_APPS === 'undefined') return;
+
+        // 空配列時はセクションごと非表示
+        if (NOCTA_APPS.length === 0) {
+            if (section) section.style.display = 'none';
+            return;
+        }
+
+        var COLS = typeof NOCTA_APP_COLLECTIONS !== 'undefined' ? NOCTA_APP_COLLECTIONS : [];
+        function collectionOf(a) {
+            for (var k = 0; k < COLS.length; k++) if (COLS[k].key === a.collection) return COLS[k];
+            return null;
+        }
+
+        // 表紙の帯と同じ順（NuWord → HiNa → Yori）に並べる。同じコレクションの中はデータの順のまま
+        function colIndex(a) {
+            for (var k = 0; k < COLS.length; k++) if (COLS[k].key === a.collection) return k;
+            return COLS.length;
+        }
+        var ordered = NOCTA_APPS.map(function (a, i) { return { a: a, i: i }; })
+            .sort(function (x, y) { return (colIndex(x.a) - colIndex(y.a)) || (x.i - y.i); })
+            .map(function (x) { return x.a; });
+
+        grid.innerHTML = ordered.map(function (a, i) {
+            var c      = collectionOf(a);
+            var badge  = c ? c.label : 'App';
+            var bclass = c ? c.badgeClass : 'bg-brand-highlight/20 text-brand-highlight';
+            var col    = i % 3;
+            var delay  = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
+            var dstyle = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
+            var imgArg = a.imgUrl ? '\'' + a.imgUrl.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' : '\'\'';
+            var descEnArg = a.descEn ? '\'' + a.descEn.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\'' : '\'\'';
+            var onclick = ' onclick="openApp(' +
+                '\'' + a.url.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+                '\'' + a.title.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+                '\'' + a.thumbClass + '\',' +
+                '\'' + badge + '\',' +
+                '\'' + bclass + '\',' +
+                '\'' + a.descJa.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + '\',' +
+                imgArg + ',' +
+                descEnArg +
+                ')"';
+
+            return [
+                '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"',
+                '     data-acat="' + a.cat + '" data-collection="' + (c ? c.key : '') + '"' + dstyle + onclick + '>',
+                '  <div class="relative aspect-video overflow-hidden">',
+                '    <div class="' + a.thumbClass + ' w-full h-full flex items-center justify-center">',
+                '      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">',
+                '        <circle cx="24" cy="24" r="22" stroke="rgba(184,180,174,0.35)" stroke-width="1"/>',
+                '        <path d="M20 16 L34 24 L20 32 Z" fill="rgba(184,180,174,0.55)"/>',
+                '      </svg>',
+                '    </div>',
+                a.imgUrl ? '    <img src="' + a.imgUrl + '" alt="' + a.title.replace(/"/g, '&quot;') + '" loading="lazy" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.style.display=\'none\'">' : '',
+                '    <div class="thumb-overlay"></div>',
+                '  </div>',
+                '  <div class="p-6">',
+                '    <div class="flex justify-between items-start mb-2">',
+                '      <h3 class="font-heading font-bold text-[17px] text-white">' + a.title + '</h3>',
+                '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + bclass + ' tracking-wider">' + badge + '</span>',
+                '    </div>',
+                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed" data-desc-ja="' + a.descJa.replace(/"/g,'&quot;') + '" data-desc-en="' + (a.descEn||a.descJa).replace(/"/g,'&quot;') + '">' + a.descJa + '</p>',
+                '  </div>',
+                '</div>'
+            ].join('\n');
+        }).join('\n');
+
+        // Scroll Reveal（obs / obs2 は既存コードで使用済みのため appsObserver を使用）
+        var appsObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('active'); appsObserver.unobserve(e.target); }
+            });
+        }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+        grid.querySelectorAll('.reveal').forEach(function (el) { appsObserver.observe(el); });
+
+        // コレクションの表紙: 押すとそのコレクションのカードだけを残す。もう一度押すか「すべて表示」で戻す。
+        // 分類のないカードは全表示のときだけ出る。選んだ状態は #apps-<key> に残す
+        var wrap = document.getElementById('apps-collections');
+        if (!wrap || COLS.length === 0) return;
+        function esc(v) { return String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+        function tx(ja, en) { return '<span data-desc-ja="' + esc(ja) + '" data-desc-en="' + esc(en) + '">' + esc(ja) + '</span>'; }
+        wrap.innerHTML = '<div class="ac-row">' + COLS.map(function (c) {
+            var n = NOCTA_APPS.filter(function (a) { return a.collection === c.key; }).length;
+            return '<button type="button" class="ac-item" aria-pressed="false" data-collection="' + esc(c.key) + '" style="--ac:' + esc(c.accent) + '">' +
+                '<span class="ac-verb font-jp">' + tx(c.verbJa, c.verbEn) + '</span>' +
+                '<span class="ac-name font-heading font-bold">' + esc(c.label) + '<span class="ac-count font-jp font-normal">' + n + '</span></span>' +
+                '<span class="ac-desc font-jp">' + tx(c.descJa, c.descEn) + '</span>' +
+                '</button>';
+        }).join('') + '</div>' +
+            '<div class="ac-foot font-jp">' +
+            '<a class="ac-page" hidden href="#">' + tx('コレクションのページへ →', 'Collection page →') + '</a>' +
+            '<button type="button" class="ac-all" hidden>' + tx('すべて表示', 'Show all') + '</button>' +
+            '</div>';
+        var items = wrap.querySelectorAll('.ac-item');
+        var pageLink = wrap.querySelector('.ac-page');
+        var allBtn = wrap.querySelector('.ac-all');
+        var current = '';
+
+        // スマホでは表紙の帯をタブとして使い、いつもどれか 1 つのコレクションだけを出す（縦に長くなりすぎないように）
+        var mobileQuery = window.matchMedia('(max-width: 767px)');
+        var autoSelected = false;
+
+        function select(key, silent) {
+            var c = null;
+            for (var k = 0; k < COLS.length; k++) if (COLS[k].key === key) c = COLS[k];
+            current = c ? key : '';
+            wrap.classList.toggle('is-filtered', !!current);
+            items.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.collection === current ? 'true' : 'false'); });
+            grid.querySelectorAll(':scope > [data-collection]').forEach(function (card) {
+                card.classList.toggle('hidden', !!current && card.dataset.collection !== current);
+            });
+            allBtn.hidden = !current;
+            pageLink.hidden = !(c && c.pageUrl);
+            if (c && c.pageUrl) {
+                // 行き先がコレクションのコンセプトを説明するページだと分かるよう、名前入りの文言にする
+                var label = pageLink.firstChild;
+                label.dataset.descJa = c.title + ' のコンセプトを読む →';
+                label.dataset.descEn = 'Read about the ' + c.title + ' →';
+                label.textContent = (typeof currentLang !== 'undefined' && currentLang === 'en') ? label.dataset.descEn : label.dataset.descJa;
+                pageLink.href = c.pageUrl;
+                if (/^https?:/.test(c.pageUrl)) { pageLink.target = '_blank'; pageLink.rel = 'noopener noreferrer'; }
+                else { pageLink.removeAttribute('target'); pageLink.removeAttribute('rel'); }
+            }
+            if (!silent && history.replaceState) history.replaceState(null, '', current ? '#apps-' + current : '#apps');
+        }
+        items.forEach(function (b) {
+            b.addEventListener('click', function () {
+                autoSelected = false;
+                // スマホのタブは、選んでいるものをもう一度押しても外さない
+                if (mobileQuery.matches && b.dataset.collection === current) return;
+                select(b.dataset.collection === current ? '' : b.dataset.collection);
+            });
+        });
+        allBtn.addEventListener('click', function () { autoSelected = false; select(''); });
+
+        function applyLayout() {
+            if (mobileQuery.matches && !current) { select(COLS[0].key, true); autoSelected = true; }
+            else if (!mobileQuery.matches && autoSelected) { select('', true); autoSelected = false; }
+        }
+        if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', applyLayout);
+        else if (mobileQuery.addListener) mobileQuery.addListener(applyLayout);
+
+        var m = /^#apps-([a-z]+)$/.exec(location.hash);
+        if (m && COLS.some(function (c) { return c.key === m[1]; })) {
+            select(m[1]);
+            section.scrollIntoView();
+        }
+        applyLayout();
+    })();
+
+    /* ---- Blog: データ配列からカードをレンダリング ---- */
+    (function () {
+        function esc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        var section = document.getElementById('blog');
+        var grid = document.getElementById('blog-grid');
+        if (!grid || typeof NOCTA_BLOG === 'undefined') return;
+
+        // 空配列時はセクションごと非表示
+        if (NOCTA_BLOG.length === 0) {
+            if (section) section.style.display = 'none';
+            return;
+        }
+
+        grid.innerHTML = NOCTA_BLOG.map(function (b, i) {
+            var col      = i % 3;
+            var delay    = col === 1 ? ' reveal-delay-1' : col === 2 ? ' reveal-delay-2' : '';
+            var dstyle   = col > 0 ? ' style="transition-delay:' + (col * 0.1) + 's"' : '';
+            var thumbNum = (i % 6) + 1;
+            var badgeClass = b.cat === 'music'
+                ? 'bg-brand-primary/20 text-brand-primary'
+                : b.cat === 'book'
+                ? 'bg-brand-vgreen/20 text-brand-vgreen'
+                : 'bg-brand-secondary/20 text-brand-secondary';
+            var badge = b.cat === 'music' ? 'Music' : b.cat === 'book' ? 'Book' : 'Essay';
+            var slug  = b.slug.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            var onclick = ' onclick="window.open(\'blog/post.html?slug=' + slug + '\', \'_blank\')"';
+
+            return [
+                '<div class="work-card glass rounded-2xl overflow-hidden border border-white/5 cursor-pointer reveal' + delay + '"',
+                '     data-bcat="' + b.cat + '"' + dstyle + onclick + '>',
+                '  <div class="relative aspect-video overflow-hidden">',
+                // 画像を使わず、題名を縦書きにした本の表紙のような面を組む
+                '    <div class="thumb-' + thumbNum + ' blog-cover w-full h-full" aria-hidden="true">',
+                '      <span class="blog-cover-ribbon"></span>',
+                '      <p class="blog-cover-kind">' + (b.cat === 'book' ? 'Book Note' : badge) + '</p>',
+                '      <p class="blog-cover-title">' + esc(b.title) + '</p>',
+                '      <p class="blog-cover-date">' + esc(b.date.replace(/-/g, '.')) + '</p>',
+                '    </div>',
+                '    <div class="thumb-overlay"></div>',
+                '  </div>',
+                '  <div class="p-6">',
+                '    <div class="flex justify-between items-start mb-2">',
+                '      <h3 class="font-heading font-bold text-[17px] text-white">' + esc(b.title) + '</h3>',
+                '      <span class="text-[10px] font-heading font-bold px-2.5 py-1 rounded ' + badgeClass + ' tracking-wider">' + badge + '</span>',
+                '    </div>',
+                '    <p class="font-jp text-[13px] text-brand-sub leading-relaxed line-clamp-2">' + esc(b.excerpt) + '</p>',
+                '  </div>',
+                '</div>'
+            ].join('\n');
+        }).join('\n');
+
+        // Scroll Reveal（obs / obs2 / appsObserver は使用済みのため blogObserver を使用）
+        var blogObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('active'); blogObserver.unobserve(e.target); }
+            });
+        }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+        grid.querySelectorAll('.reveal').forEach(function (el) { blogObserver.observe(el); });
+
+        // Blog フィルター（.vfilter-pill[data-bfilter] と カード[data-bcat] を照合）
+        var bpills = document.querySelectorAll('.vfilter-pill');
+        var bcards = grid.querySelectorAll('[data-bcat]');
+        bpills.forEach(function (pill) {
+            pill.addEventListener('click', function () {
+                bpills.forEach(function (p) { p.classList.remove('active'); });
+                this.classList.add('active');
+                var f = this.getAttribute('data-bfilter');
+                bcards.forEach(function (card) {
+                    var show = f === 'all' || card.getAttribute('data-bcat') === f;
+                    if (show) {
+                        card.style.display = '';
+                        requestAnimationFrame(function () {
+                            card.style.transitionDelay = '0s';
+                            card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                            card.style.opacity = '1';
+                            card.style.transform = '';
+                        });
+                    } else {
+                        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(12px)';
+                        setTimeout(function () { card.style.display = 'none'; }, 320);
+                    }
+                });
+            });
+        });
+    })();
+
+/* ---- Visual Lightbox ---- */
+function openVisual(imgUrl, title, badge, badgeClass, desc) {
+    var modal = document.getElementById('visual-modal');
+    document.getElementById('visual-modal-img').src = imgUrl;
+    document.getElementById('visual-modal-title').textContent = title;
+    var badgeEl = document.getElementById('visual-modal-badge');
+    badgeEl.textContent = badge;
+    badgeEl.className = 'text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider ' + badgeClass;
+    document.getElementById('visual-modal-desc').textContent = desc;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeVisual() {
+    var modal = document.getElementById('visual-modal');
+    if (!modal) return;
+    document.getElementById('visual-modal-img').src = '';
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+/* ---- App Modal ---- */
+    function openApp(url, title, thumbClass, badge, badgeClass, desc, imgUrl, descEn) {
+        desc = (typeof currentLang !== 'undefined' && currentLang === 'en' && descEn) ? descEn : desc;
+        var modal = document.getElementById('app-modal');
+        var thumb = document.getElementById('app-modal-thumb');
+        var modalImg = document.getElementById('app-modal-img');
+        if (imgUrl && modalImg) {
+            modalImg.src = imgUrl;
+            modalImg.style.display = 'block';
+            thumb.style.display = 'none';
+        } else {
+            if (modalImg) modalImg.style.display = 'none';
+            thumb.style.display = '';
+            thumb.className = thumbClass + ' w-full aspect-video rounded-2xl flex items-center justify-center';
+        }
+        document.getElementById('app-modal-title').textContent = title;
+        var badgeEl = document.getElementById('app-modal-badge');
+        badgeEl.textContent = badge;
+        badgeEl.className = 'text-[10px] font-heading font-bold px-2.5 py-1 rounded tracking-wider ' + badgeClass;
+        document.getElementById('app-modal-desc').textContent = desc;
+        document.getElementById('app-modal-link').href = url;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeApp() {
+        var modal = document.getElementById('app-modal');
+        if (!modal) return;
+        var modalImg = document.getElementById('app-modal-img');
+        if (modalImg) { modalImg.src = ''; modalImg.style.display = 'none'; }
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+/* ---- YouTube Modal ---- */
+function openYouTube(id, title) {
+    var modal  = document.getElementById('yt-modal');
+    var iframe = document.getElementById('yt-iframe');
+    iframe.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeYouTube() {
+    var modal  = document.getElementById('yt-modal');
+    var iframe = document.getElementById('yt-iframe');
+    iframe.src = '';
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { closeYouTube(); closeVisual(); closeApp(); }
+});
+
+
+/* ---- Contact: 準備中のものを開閉 ---- */
+(function () {
+    var btn = document.getElementById('contact-soon-toggle');
+    if (!btn) return;
+    var grid = document.getElementById('contact-grid');
+    var parts = ['contact-soon-social', 'contact-soon-form'].map(function (id) { return document.getElementById(id); });
+    btn.addEventListener('click', function () {
+        var open = btn.getAttribute('aria-expanded') !== 'true';
+        btn.setAttribute('aria-expanded', String(open));
+        parts.forEach(function (el) { if (el) el.hidden = !open; });
+        if (grid) grid.classList.toggle('is-closed', !open);
+    });
+})();
+
+/* ---- Netlify Form submit ---- */
+const noctaForm = document.getElementById('nocta-contact-form');
+if (noctaForm) {
+    noctaForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('submitBtn');
+        const formData = new FormData(noctaForm);
+
+        // バリデーション
+        const name    = formData.get('name')    || '';
+        const email   = formData.get('email')   || '';
+        const message = formData.get('message') || '';
+        if (!name.trim() || !email.trim() || !message.trim()) {
+            btn.textContent = '必須項目を入力してください';
+            btn.style.opacity = '0.75';
+            setTimeout(() => {
+                btn.textContent = '送信する';
+                btn.style.opacity = '';
+            }, 2500);
+            return;
+        }
+
+        // 送信中ステート
+        btn.textContent = '送信中...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+
+        fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(formData).toString()
+        })
+        .then(response => {
+            if (response.ok) {
+                // 送信成功
+                btn.textContent = '✦ 送信完了しました';
+                btn.style.boxShadow = '0 0 40px rgba(184,180,174,0.5)';
+                btn.style.opacity = '1';
+                noctaForm.reset();
+                setTimeout(() => {
+                    btn.textContent = '送信する';
+                    btn.style.boxShadow = '';
+                    btn.disabled = false;
+                }, 5000);
+            } else {
+                throw new Error('送信失敗');
+            }
+        })
+        .catch(() => {
+            btn.textContent = '送信エラー — 再度お試しください';
+            btn.style.opacity = '1';
+            btn.disabled = false;
+            setTimeout(() => {
+                btn.textContent = '送信する';
+            }, 3500);
+        });
+    });
+}
+</script>
+
+<!-- i18n -->
+<script>
+const I18N = {
+  ja: {
+    'hero.tagline': '<span class="inline-block">消費するだけでも、</span><span class="inline-block">生産するだけでもなく。</span>',
+    'hero.cta.works': '作品を見る',
+    'hero.cta.contact': 'お問い合わせ',
+    'portfolio.subtitle': 'AIと感性が生んだ、作品たち',
+    'stats.visual': 'ビジュアル数',
+    'stats.blog': 'ブログ数',
+    'stats.apps': 'アプリ数',
+    'about.h2': '遊ぶように、作る。',
+    'about.body': '<span class="inline-block">AIが多くの仕事や消費を担う時代、</span><span class="inline-block">人間には新しい営みが必要になります。</span><br><br><span class="inline-block">NOCTAは、その問いに「創作」で答えます。</span><span class="inline-block">音楽、映像、画像、言葉——</span><span class="inline-block">すべてを一人で手がけることで、</span><span class="inline-block">「遊び」と「創造」の境界を探しています。</span>',
+    'visual.headline': 'やりたかったことを、<br><em>やりなさい。</em>',
+    'visual.all': '作品一覧を見る',
+    'visual.allClose': '作品一覧を閉じる',
+    'visual.prev': '前の作品',
+    'visual.next': '次の作品',
+    'visual.error': '画像を表示できません。矢印で次の作品をご覧ください。',
+    'play.step': '余白に、ひと足。',
+    'play.hint': '余白をなぞる、またはタップしてみてください。',
+    'play.hintReduced': '動きを減らす設定に合わせ、静かな足跡を展示しています。',
+    'play.clear': 'やりなおす',
+    'contact.h2': '<span class="inline-block">AIが多くを担う時代に、</span><br><span class="inline-block">人間に必要なのは</span><span class="inline-block">「<span class="text-gradient">遊び</span>」だ。</span>',
+    'contact.subtitle': '<span class="inline-block">効率でも、消費でもなく。</span><br><span class="inline-block">音楽・映像・言葉・コードを越えて、</span><span class="inline-block">遊ぶように創る。</span><br><span class="inline-block">その問いを面白がれる人を、</span><span class="inline-block">いつでも歓迎します。</span>',
+    'contact.social.x': '最新情報をいち早く',
+    'contact.social.note': '制作ブログ・ライナーノーツ',
+    'contact.lbl.name': 'お名前 *', 'contact.ph.name': '山田 太郎',
+    'contact.lbl.company': '会社名', 'contact.ph.company': '株式会社〇〇',
+    'contact.lbl.email': 'メールアドレス *',
+    'contact.lbl.service': 'ご依頼の種別',
+    'contact.opt.default': '選択してください',
+    'contact.opt.music': '楽曲制作', 'contact.opt.pv': 'PV・映像制作',
+    'contact.opt.marketing': 'マーケティング支援', 'contact.opt.pr': 'PR・メディア展開',
+    'contact.opt.collab': 'タイアップ・コラボ', 'contact.opt.media': '取材・メディア掲載',
+    'contact.opt.other': 'その他',
+    'contact.lbl.message': 'メッセージ *',
+    'contact.ph.message': 'プロジェクトの内容・ご要望をお気軽にご記入ください',
+    'contact.submit': '準備中',
+    'contact.soon': '準備中',
+    'contact.soon.toggle': '準備中のもの（X・note・Music・お問い合わせ）',
+    'contact.social.music': '楽曲のリリース',
+    'contact.form.soon': '<span class="inline-block">お問い合わせフォームは、ただいま準備中です。</span><span class="inline-block">受付開始まで、もう少しだけお待ちください。</span>',
+    'footer.tagline': 'AIと人間が、遊ぶように創る。<br>音楽・映像・言葉・コードを越境して、<br>遊びが、人生を彩るまで。',
+    'footer.s1': '音楽（Coming Soon）', 'footer.s2': '映像・ビジュアル', 'footer.s3': '言葉・ブログ', 'footer.s4': 'アプリ・ツール',
+    'statement.day': '<span class="inline-block">昼は The First Flower という名前で、</span><span class="inline-block">「いい人生とは」を考えています。<span aria-hidden="true"> →</span></span>',
+    'footer.tff.link': '✦ いい人生とは',
+    'footer.tff.desc': '人生観・詩・思い・感動を<br>つづるパーソナルサイト',
+  },
+  en: {
+    'hero.tagline': '<span class="inline-block">消費するだけでも、</span><span class="inline-block">生産するだけでもなく。</span>',
+    'hero.cta.works': 'View Works',
+    'hero.cta.contact': 'Contact Us',
+    'portfolio.subtitle': 'Works born from AI and human creativity.',
+    'stats.visual': 'Visuals',
+    'stats.blog': 'Posts',
+    'stats.apps': 'Apps',
+    'about.h2': '遊ぶように、作る。',
+    'about.body': 'In an era where AI handles much of our work and consumption, people need new ways to live. NOCTA answers that question through creation — music, video, images, and words. Crafting every medium single-handedly, we explore the boundary between play and creativity.',
+    'visual.headline': 'Do what you&rsquo;ve<br><em>always wanted to do.</em>',
+    'visual.all': 'See all works',
+    'visual.allClose': 'Close the list',
+    'visual.prev': 'Previous work',
+    'visual.next': 'Next work',
+    'visual.error': 'This image could not be shown. Use the arrows to see the next work.',
+    'play.step': 'One step in the margin.',
+    'play.hint': 'Trace the margin, or tap it.',
+    'play.hintReduced': 'Reduced motion is on, so a still paw print is shown instead.',
+    'play.clear': 'Start over',
+    'contact.h2': "In an age where AI does so much,<br>what humans need is <span class=\"text-gradient\">play</span>.",
+    'contact.subtitle': 'Not efficiency, not consumption —<br>creating as if at play, across music, video, words and code.<br>Anyone who finds that question fun is always welcome.',
+    'contact.social.x': 'Latest news, first.',
+    'contact.social.note': 'Production blog & liner notes',
+    'contact.lbl.name': 'Name *', 'contact.ph.name': 'John Doe',
+    'contact.lbl.company': 'Company', 'contact.ph.company': 'Company Inc.',
+    'contact.lbl.email': 'Email *',
+    'contact.lbl.service': 'Service Type',
+    'contact.opt.default': 'Please select',
+    'contact.opt.music': 'Music Production', 'contact.opt.pv': 'PV / Video Production',
+    'contact.opt.marketing': 'Marketing Support', 'contact.opt.pr': 'PR & Media',
+    'contact.opt.collab': 'Tie-up / Collaboration', 'contact.opt.media': 'Press / Media Coverage',
+    'contact.opt.other': 'Other',
+    'contact.lbl.message': 'Message *',
+    'contact.ph.message': "Tell us about your project and what you're looking for.",
+    'contact.submit': 'Coming soon',
+    'contact.soon': 'Coming soon',
+    'contact.soon.toggle': 'Coming soon (X, note, Music, Contact form)',
+    'contact.social.music': 'Music releases',
+    'contact.form.soon': "Our contact form is still being prepared. It'll open soon — thank you for your patience.",
+    'footer.tagline': 'AI and humans, creating as if at play.<br>Across music, visuals, words and code —<br>until play colors life itself.',
+    'footer.s1': 'Music (Coming Soon)', 'footer.s2': 'Visual', 'footer.s3': 'Words', 'footer.s4': 'Tools',
+    'statement.day': 'By day, as The First Flower, I think about what makes a good life.<span aria-hidden="true"> →</span>',
+    'footer.tff.link': '✦ What is a good life?',
+    'footer.tff.desc': 'A personal site for life philosophy,<br>poetry, and moments that move us.',
+  }
+};
+
+let currentLang = localStorage.getItem('nocta-lang') || 'ja';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('nocta-lang', lang);
+  document.documentElement.lang = lang;
+  const dict = I18N[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.dataset.i18n;
+    if (dict[k] !== undefined) el.textContent = dict[k];
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.dataset.i18nHtml;
+    if (dict[k] !== undefined) el.innerHTML = dict[k];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.dataset.i18nPh;
+    if (dict[k] !== undefined) el.placeholder = dict[k];
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const k = el.dataset.i18nAria;
+    if (dict[k] !== undefined) el.setAttribute('aria-label', dict[k]);
+  });
+  document.querySelectorAll('[data-desc-ja]').forEach(el => {
+    el.textContent = lang === 'en' && el.dataset.descEn ? el.dataset.descEn : el.dataset.descJa;
+  });
+  const btn = document.getElementById('lang-btn');
+  const btnM = document.getElementById('lang-btn-mobile');
+  if (btn) btn.textContent = lang === 'ja' ? 'EN' : 'JA';
+  if (btnM) btnM.textContent = lang === 'ja' ? 'EN' : 'JA';
+}
+
+function toggleLang() {
+  setLang(currentLang === 'ja' ? 'en' : 'ja');
+}
+
+document.addEventListener('DOMContentLoaded', () => setLang(currentLang));
+</script>
+<!-- Statement band: 訪問者が「彩る」— ポインタ移動/タップ/キーボードで水彩の足跡を残す
+     色は固定4色からの偶然、最大60個で古い順に消える。文字と操作部の上には置かない。
+     旧実装（5色の順送り・タッチでも pointerdown 発火）からの置き換えで、二重登録はしていない -->
+<script>
+(function () {
+    var band  = document.getElementById('statement');
+    var stage = band && band.querySelector('.statement-stage');
+    var layer = document.getElementById('statement-paws');
+    var copy  = band && band.querySelector('.statement-copy');
+    var ctrls = band && band.querySelector('.play-controls');
+    var echo  = document.getElementById('echo-paw');
+    var hint  = document.getElementById('play-instruction');
+    var status = document.getElementById('paint-status');
+    var stepBtn = document.getElementById('one-step');
+    var clearBtn = document.getElementById('clear-paint');
+    if (!band || !stage || !layer || !copy || !ctrls) return;
+
+    // About の4本柱と同じ固定色から、1歩ごとにランダムに選ぶ（DESIGN-NOTES.md §7）。
+    // 緑 #4FA597 は Portfolio の足跡にのみ残し、この遊びでは4色に絞っている
+    var COLORS = ['#CC5B4A', '#D9A441', '#5586BE', '#9472B8'];
+    var NAMES  = { '#CC5B4A': '赤', '#D9A441': '黄', '#5586BE': '青', '#9472B8': '紫' };
+    var NAMES_EN = { '#CC5B4A': 'red', '#D9A441': 'yellow', '#5586BE': 'blue', '#9472B8': 'purple' };
+    var MAX_PAWS = 60, MIN_DIST = 58, TAP_MS = 600, TAP_SLOP = 12;
+    var FADE = [0.66, 0.53, 0.40, 0.29, 0.19];   // 5歩を目安に濃淡を落とす
+    var step = 0, count = 0, last = null, touchStart = null;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function inRect(x, y, r, pad) {
+        pad = pad || 0;
+        return x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+    }
+    // 文字と操作部の上には足跡を置かない
+    function allowed(x, y) {
+        var r = stage.getBoundingClientRect();
+        return inRect(x, y, r) && !inRect(x, y, copy.getBoundingClientRect(), 15)
+                               && !inRect(x, y, ctrls.getBoundingClientRect(), 12);
+    }
+    function addPaw(clientX, clientY, angle) {
+        if (reduce.matches || !allowed(clientX, clientY)) return false;
+        var r = layer.getBoundingClientRect();
+        var color = COLORS[Math.floor(Math.random() * COLORS.length)];
+        var phase = step % 5;
+        var size = 30 - phase * 1.3;
+        var paw = document.createElement('span');
+        paw.className = 'paint-print';
+        paw.style.cssText = 'left:' + (clientX - r.left - size / 2) + 'px;top:' + (clientY - r.top - size / 2) +
+            'px;width:' + size + 'px;height:' + size + 'px;transform:rotate(' + (angle || 45) +
+            'deg);color:' + color + ';--print-opacity:' + FADE[phase];
+        paw.innerHTML = '<svg viewBox="0 0 100 100"><use href="#cat-paw" filter="url(#watercolor)"/></svg>';
+        layer.appendChild(paw);
+        while (layer.children.length > MAX_PAWS) layer.removeChild(layer.firstElementChild);
+        step++; count++;
+        if (echo) echo.style.setProperty('--last-paint', color);
+        if (status) {
+            var en = document.documentElement.lang === 'en';
+            status.textContent = en ? ('A ' + NAMES_EN[color] + ' paw print was left.')
+                                    : (NAMES[color] + 'の足跡を残しました。');
+        }
+        return true;
+    }
+
+    band.addEventListener('pointermove', function (e) {
+        if (e.pointerType === 'touch' || reduce.matches) return;   // タッチはタップのみ（スクロールを妨げない）
+        if (!allowed(e.clientX, e.clientY)) { last = null; return; }
+        var dx = last ? e.clientX - last.x : 0, dy = last ? e.clientY - last.y : 0;
+        if (last && Math.sqrt(dx * dx + dy * dy) < MIN_DIST) return;
+        // 進行方向へ向け、左右交互に少しずらして歩いた跡に見せる
+        var angle = last ? Math.atan2(dy, dx) * 180 / Math.PI + 90 : 45;
+        var rad = (angle - 90) * Math.PI / 180;
+        var side = (step % 2) ? 9 : -9;
+        if (addPaw(e.clientX - Math.sin(rad) * side, e.clientY + Math.cos(rad) * side, angle)) {
+            last = { x: e.clientX, y: e.clientY };
+        }
+    });
+    band.addEventListener('pointerleave', function () { last = null; });
+    band.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('button, a, input, textarea, select')) return;
+        if (e.pointerType === 'touch') {
+            touchStart = { x: e.clientX, y: e.clientY, t: (window.performance || Date).now() };
+        } else {
+            addPaw(e.clientX, e.clientY, 45);
+        }
+    });
+    // 短いタップだけを拾う。スクロールやスワイプでは足跡をばらまかない
+    band.addEventListener('pointerup', function (e) {
+        if (e.pointerType === 'touch' && touchStart) {
+            var dt = (window.performance || Date).now() - touchStart.t;
+            var dx = e.clientX - touchStart.x, dy = e.clientY - touchStart.y;
+            if (dt < TAP_MS && Math.sqrt(dx * dx + dy * dy) < TAP_SLOP) addPaw(e.clientX, e.clientY, 45);
+        }
+        touchStart = null;
+    });
+    band.addEventListener('pointercancel', function () { touchStart = null; });
+
+    if (stepBtn) stepBtn.addEventListener('click', function () {
+        var r = stage.getBoundingClientRect();
+        var y = copy.getBoundingClientRect().bottom + 45 + (count % 3) * 28;
+        if (y > r.bottom - 20) y = r.bottom - 40 - (count % 3) * 26;
+        addPaw(r.left + r.width * (0.62 + (count % 4) * 0.07), y, 55);
+    });
+    if (clearBtn) clearBtn.addEventListener('click', function () {
+        layer.replaceChildren();
+        count = 0; step = 0; last = null;
+        if (echo) echo.style.setProperty('--last-paint', '#CC5B4A');
+        if (status) status.textContent = document.documentElement.lang === 'en' ? 'Paw prints cleared.' : '足跡を消しました。';
+    });
+
+    // 設定を実行中に変えても追従する。止めるのは動的な遊びだけで、起点の足跡は残る
+    function syncMotion() {
+        if (stepBtn) stepBtn.disabled = reduce.matches;
+        if (clearBtn) clearBtn.disabled = reduce.matches;
+        if (hint) hint.setAttribute('data-i18n', reduce.matches ? 'play.hintReduced' : 'play.hint');
+        if (reduce.matches) { layer.replaceChildren(); last = null; count = 0; step = 0; }
+        if (typeof setLang === 'function' && typeof currentLang === 'string') setLang(currentLang);
+    }
+    if (reduce.addEventListener) reduce.addEventListener('change', syncMotion);
+    else if (reduce.addListener) reduce.addListener(syncMotion);
+    syncMotion();
+})();
+</script>
+
+<!-- Visual: 1作品を大きく見て、矢印で切り替え、必要なら全作品一覧へ。
+     作品は visual-data.js を唯一のデータ源にしている -->
+<script>
+(function () {
+    var img = document.getElementById('featured-image');
+    var titleEl = document.getElementById('featured-title');
+    var capEl = document.getElementById('featured-caption');
+    var posEl = document.getElementById('gallery-position');
+    var errEl = document.getElementById('gallery-error');
+    var figure = document.querySelector('.gallery-work');
+    var prev = document.getElementById('gallery-prev');
+    var next = document.getElementById('gallery-next');
+    if (!img || !figure || !posEl) return;
+
+    // 展示する作品は CEO 指定の4点（この順序）。作品名で visual-data.js を引くので、
+    // URL・説明・バッジはデータ側にしか置かない
+    var PICKS = ['Art and information flood', 'wisteria flowers', 'Witch girl Sunny afternoon', 'SILENCE'];
+    var pool = [];
+    if (typeof NOCTA_VISUALS_WORKS !== 'undefined') pool = pool.concat(NOCTA_VISUALS_WORKS);
+    if (typeof NOCTA_VISUALS_ART !== 'undefined') pool = pool.concat(NOCTA_VISUALS_ART);
+    if (typeof NOCTA_VISUALS_MUSIC !== 'undefined') pool = pool.concat(NOCTA_VISUALS_MUSIC);
+    var works = PICKS.map(function (t) {
+        for (var i = 0; i < pool.length; i++) if (pool[i] && pool[i].title === t) return pool[i];
+        if (window.console && console.warn) console.warn('Visual: 指定の作品が visual-data.js に見つかりません — ' + t);
+        return null;
+    }).filter(function (w) { return w && w.imgUrl; });
+    // 指定が全て取れなかったときは、落とすのではなく既存データの先頭から補う
+    if (!works.length) works = pool.filter(function (w) { return w && w.imgUrl; }).slice(0, 4);
+    if (!works.length) { figure.hidden = true; return; }
+
+    var index = 0;
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    function show(n) {
+        index = (n + works.length) % works.length;
+        var w = works[index];
+        if (errEl) errEl.hidden = true;
+        img.alt = w.title;
+        delete img.dataset.ipfsTry;
+        delete img.dataset.ipfsExhausted;
+        img.src = w.imgUrl;
+        titleEl.textContent = w.title;
+        // 既存の言語切替（[data-desc-ja] のループ）にそのまま乗せる
+        capEl.setAttribute('data-desc-ja', w.descJa || '');
+        capEl.setAttribute('data-desc-en', w.descEn || w.descJa || '');
+        capEl.textContent = (document.documentElement.lang === 'en' && w.descEn) ? w.descEn : (w.descJa || '');
+        posEl.textContent = pad(index + 1) + ' / ' + pad(works.length);
+    }
+    // ゲートウェイのフォールバックが残っている間はエラー文を出さない
+    img.addEventListener('error', function () {
+        if (errEl && img.dataset.ipfsExhausted === '1') errEl.hidden = false;
+    });
+    if (prev) prev.addEventListener('click', function () { show(index - 1); });
+    if (next) next.addEventListener('click', function () { show(index + 1); });
+    figure.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); show(index - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); show(index + 1); }
+    });
+    show(0);   // 自動送りはしない。見る時間は訪問者が決める
+
+    // 全作品一覧の開閉
+    var toggle = document.getElementById('visual-all-toggle');
+    var all = document.getElementById('visual-all');
+    if (toggle && all) {
+        var label = toggle.querySelector('span[data-i18n]');
+        toggle.addEventListener('click', function () {
+            var open = all.hidden;
+            all.hidden = !open;
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            if (label) {
+                label.setAttribute('data-i18n', open ? 'visual.allClose' : 'visual.all');
+                if (typeof setLang === 'function' && typeof currentLang === 'string') setLang(currentLang);
+            }
+            if (open) all.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+})();
+</script>
+<!-- Cat-paw trails: reveal one-by-one when scrolled into view -->
+<script>
+    (function () {
+        var trails = document.querySelectorAll('.paw-trail, .cat-scene');
+        if (!trails.length || !('IntersectionObserver' in window)) {
+            trails.forEach(function (t) { t.classList.add('in-view'); });
+            return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) { e.target.classList.add('in-view'); io.unobserve(e.target); }
+            });
+        }, { threshold: 0.25 });
+        trails.forEach(function (t) { io.observe(t); });
+    })();
+</script>
+<script>
+(function(){
+  var fig = document.getElementById('ap-fig');
+  if (!fig) return;
+  var NS = 'http://www.w3.org/2000/svg';
+  var N = [
+    {x:96,  y:116, c:'#CC5B4A', l:'MUSIC',  lx:96,  ly:86},
+    {x:300, y:84,  c:'#D9A441', l:'VISUAL', lx:300, ly:54},
+    {x:316, y:296, c:'#5586BE', l:'WORDS',  lx:316, ly:340},
+    {x:112, y:316, c:'#9472B8', l:'TOOLS',  lx:112, ly:360}
+  ];
+  function mk(t, a, p){ var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); p.appendChild(e); return e; }
+  var gE = document.getElementById('ap-edges'), gH = document.getElementById('ap-halos'),
+      gN = document.getElementById('ap-nodes'), gL = document.getElementById('ap-labels');
+  for (var i = 0; i < 4; i++) for (var j = i + 1; j < 4; j++) mk('line', {x1:N[i].x, y1:N[i].y, x2:N[j].x, y2:N[j].y, 'class':'ap-edge'}, gE);
+  /* 現在地の輪(常時) と 到着の波紋 を領域ごとに 1 組 */
+  var rings  = N.map(function(n){ return mk('circle', {cx:n.x, cy:n.y, r:15, stroke:n.c, 'stroke-width':2.5, opacity:0}, gH); });
+  var pulses = N.map(function(n){ return mk('circle', {cx:n.x, cy:n.y, r:9, stroke:n.c, 'stroke-width':1.5, opacity:0}, gH); });
+  N.forEach(function(n){
+    mk('circle', {cx:n.x, cy:n.y, r:8, fill:n.c}, gN);
+    var t = mk('text', {x:n.lx, y:n.ly, 'text-anchor':'middle', 'class':'ap-label'}, gL); t.textContent = n.l;
+  });
+  var dot = document.getElementById('ap-dot'), act = document.getElementById('ap-active');
+  var seq = [0,2,1,3,2,0,3,1], MOVE = 1.5, DWELL = 1.1, LEG = MOVE + DWELL;
+  function ease(p){ return p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2; }
+
+  function frame(t){
+    var i = Math.floor(t / LEG) % seq.length, lt = t % LEG;
+    var ai = seq[i], bi = seq[(i + 1) % seq.length], a = N[ai], b = N[bi];
+    var p = lt < MOVE ? ease(lt / MOVE) : 1;
+    var x = a.x + (b.x - a.x) * p, y = a.y + (b.y - a.y) * p;
+    dot.setAttribute('transform', 'translate(' + x.toFixed(2) + ' ' + y.toFixed(2) + ')');
+    var fade = lt < MOVE ? 1 : 1 - (lt - MOVE) / DWELL;
+    act.setAttribute('x1', a.x); act.setAttribute('y1', a.y); act.setAttribute('x2', x); act.setAttribute('y2', y);
+    act.setAttribute('stroke', a.c); act.setAttribute('opacity', (.9 * Math.max(fade, 0)).toFixed(3));
+    for (var k = 0; k < 4; k++){ rings[k].setAttribute('opacity', 0); pulses[k].setAttribute('opacity', 0); }
+    if (lt < MOVE) {            /* 出発側の輪が消えていく */
+      rings[ai].setAttribute('opacity', Math.max(0, 1 - lt / .4).toFixed(3));
+    } else {                    /* 到着側の輪が点き、波紋が広がる */
+      var d = (lt - MOVE) / DWELL;
+      rings[bi].setAttribute('opacity', 1);
+      pulses[bi].setAttribute('r', 9 + 22 * d); pulses[bi].setAttribute('opacity', (.8 * (1 - d)).toFixed(3));
+    }
+  }
+  function still(){            /* 静止: 点は MUSIC 上、その輪が点いている。尾・波紋なし */
+    frame(0);
+    dot.setAttribute('transform', 'translate(' + N[0].x + ' ' + N[0].y + ')');
+    act.setAttribute('opacity', 0);
+    for (var k = 0; k < 4; k++) pulses[k].setAttribute('opacity', 0);
+    rings[0].setAttribute('opacity', 1);
+  }
+
+  var rm = matchMedia('(prefers-reduced-motion: reduce)');
+  var raf = 0, last = 0, clock = 0, visible = true;
+  /* 伏線: 読み手が ABOUT を下へ抜けるとき、点は図を抜けて下（Statement の銀猫の方）へ跳び去る。
+     スクロールで戻ると、MUSIC にふっと戻って跳び回りを再開する */
+  var mode = 'play', leaveT = 0, from = null;
+  function leaveFrame(dt){
+    leaveT += dt;
+    var p = Math.min(leaveT / .9, 1);
+    var x0 = from.x, y0 = from.y, cx = x0 + 30, cy = y0 - 70, x1 = x0 + 60, y1 = 380 + 160;
+    var q = 1 - p, x = q*q*x0 + 2*q*p*cx + p*p*x1, y = q*q*y0 + 2*q*p*cy + p*p*y1;
+    dot.setAttribute('transform', 'translate(' + x.toFixed(2) + ' ' + y.toFixed(2) + ')');
+    dot.setAttribute('opacity', (1 - Math.max(0, (p - .55) / .45)).toFixed(3));
+    act.setAttribute('opacity', 0);
+    for (var k = 0; k < 4; k++){ rings[k].setAttribute('opacity', 0); pulses[k].setAttribute('opacity', 0); }
+    if (p >= 1) { mode = 'gone'; var pw = document.getElementById('about-paws'); if (pw) pw.classList.add('stepped'); }
+  }
+  function checkScroll(){
+    if (rm.matches) return;
+    var r = fig.getBoundingClientRect(), vh = window.innerHeight;
+    if (mode === 'play' && r.bottom < vh * .25) {
+      var m = /translate\(([-\d.]+) ([-\d.]+)\)/.exec(dot.getAttribute('transform') || '');
+      from = m ? {x: +m[1], y: +m[2]} : {x: N[0].x, y: N[0].y};
+      mode = 'leave'; leaveT = 0;
+    } else if ((mode === 'gone' || mode === 'leave') && r.bottom > vh * .35) {
+      mode = 'play'; clock = 0; dot.setAttribute('opacity', 1);
+    }
+  }
+  window.addEventListener('scroll', checkScroll, {passive: true});
+
+  function loop(ts){
+    if (!last) last = ts;
+    var dt = Math.min((ts - last) / 1000, .1); last = ts;   /* タブ復帰時の飛びを防ぐ */
+    if (mode === 'play') { clock += dt; frame(clock); }
+    else if (mode === 'leave') leaveFrame(dt);
+    raf = requestAnimationFrame(loop);
+  }
+  function update(){
+    cancelAnimationFrame(raf); raf = 0; last = 0;
+    if (rm.matches) { mode = 'play'; dot.setAttribute('opacity', 1); still(); return; }
+    if (visible && !document.hidden) raf = requestAnimationFrame(loop);   /* 画面外・タブ裏は止める */
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function(es){ visible = es[0].isIntersecting; update(); }, {threshold:0}).observe(fig);
+  }
+  document.addEventListener('visibilitychange', update);
+  if (rm.addEventListener) rm.addEventListener('change', update); else if (rm.addListener) rm.addListener(update);
+  update();
+})();
+</script>
+</body>
+</html>

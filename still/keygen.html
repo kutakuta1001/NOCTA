@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>still — ライセンスキー管理（CEO専用）</title>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#09090f; color:rgba(255,255,255,0.8); font-family:'Courier New',monospace; padding:2rem; min-height:100vh; }
+    h1 { font-size:1rem; letter-spacing:0.3em; color:rgba(255,255,255,0.4); margin-bottom:2rem; }
+    .section { margin-bottom:2.4rem; }
+    label { display:block; font-size:0.75rem; letter-spacing:0.15em; color:rgba(255,255,255,0.4); margin-bottom:0.5rem; }
+    input, textarea {
+      width:100%; max-width:480px;
+      background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.16);
+      border-radius:6px; padding:0.6rem 0.9rem;
+      color:rgba(255,255,255,0.85); font-family:'Courier New',monospace; font-size:0.85rem;
+      outline:none;
+    }
+    textarea { height:120px; resize:vertical; }
+    button {
+      margin-top:0.7rem;
+      background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2);
+      border-radius:6px; padding:0.45rem 1.2rem;
+      color:rgba(255,255,255,0.7); font-size:0.8rem; letter-spacing:0.1em;
+      cursor:pointer; transition:all 0.2s;
+    }
+    button:hover { background:rgba(255,255,255,0.16); color:#fff; }
+    .result {
+      margin-top:0.8rem; padding:0.6rem 0.9rem;
+      background:rgba(255,255,255,0.04); border-radius:6px;
+      font-size:0.82rem; word-break:break-all; color:rgba(100,255,180,0.85);
+      max-width:480px;
+    }
+    .note { font-size:0.72rem; color:rgba(255,255,255,0.3); margin-top:0.4rem; line-height:1.7; }
+    hr { border:none; border-top:1px solid rgba(255,255,255,0.08); margin:2rem 0; }
+  </style>
+</head>
+<body>
+<h1>STILL — LICENSE KEY MANAGER</h1>
+
+<div class="section">
+  <label>ライセンスキー → SHA-256ハッシュ変換</label>
+  <input id="key-input" type="text" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX">
+  <button onclick="convertKey()">ハッシュを生成</button>
+  <div class="result" id="hash-result" style="display:none;"></div>
+  <p class="note">Gumroadで発行されたライセンスキーを貼り付けてください。<br>生成されたハッシュを licenses.json の "hashes" 配列に追加してください。</p>
+</div>
+
+<hr>
+
+<div class="section">
+  <label>現在の licenses.json の内容を確認</label>
+  <button onclick="loadLicenses()">licenses.json を読み込む</button>
+  <textarea id="json-view" readonly style="margin-top:0.7rem; display:none;"></textarea>
+</div>
+
+<hr>
+
+<div class="section">
+  <label>licenses.json 更新手順</label>
+  <p class="note">
+    1. 上でハッシュを生成する<br>
+    2. <code>website/still/licenses.json</code> の "hashes" 配列に追加する<br>
+    3. sw.js の CACHE バージョンを still-v4, v5... とインクリメントする<br>
+    4. <code>git add website/still/licenses.json website/still/sw.js</code><br>
+    5. <code>git commit -m "feat(still): ライセンスキー追加"</code><br>
+    6. <code>git push origin main</code>
+  </p>
+</div>
+
+<script>
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function convertKey() {
+  const val = document.getElementById('key-input').value.trim().toUpperCase();
+  if (!val) return;
+  const hash = await sha256(val);
+  const el = document.getElementById('hash-result');
+  el.style.display = 'block';
+  el.textContent = hash;
+}
+
+async function loadLicenses() {
+  try {
+    const r = await fetch('./licenses.json?t=' + Date.now());
+    const text = await r.text();
+    const el = document.getElementById('json-view');
+    el.style.display = 'block';
+    el.value = text;
+  } catch(e) {
+    alert('licenses.json の読み込みに失敗しました: ' + e.message);
+  }
+}
+
+document.getElementById('key-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') convertKey();
+});
+</script>
+</body>
+</html>

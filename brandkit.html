@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NOCTA — Brand Guide</title>
+<meta name="description" content="NOCTA ブランドガイド。Music × Visual × Words × Tools の複数領域クリエイティブスタジオの色・書体・ロゴ・適用例。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#0A0906;
+  --surface:#0F0D0A;
+  --surface-2:#13110C;
+  --border:#221c10;
+  --accent:#B8B4AE;          /* cool silver — the single brand voltage */
+  --ink:#E8E0D0;             /* off-white type */
+  --muted:#9A8A7A;           /* warm-grey subtext */
+  --on-accent:#0A0906;
+  --glow:rgba(184,180,174,0.40);
+  --works-amber:#fbbf24;     /* Works visual badge only */
+  --serif:'EB Garamond',Georgia,serif;
+  --label:'Syne',sans-serif;
+  --display:'Bebas Neue',sans-serif;
+  --jp:'Noto Sans JP',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--canvas);
+  color:var(--ink);
+  font-family:var(--jp);
+  font-weight:300;
+  line-height:1.8;
+  -webkit-font-smoothing:antialiased;
+  position:relative;
+  overflow-x:hidden;
+}
+/* Grain-noise field — a permanent brand signature */
+body::before{
+  content:"";
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+  opacity:0.04;mix-blend-mode:overlay;
+}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 28px;}
+::selection{background:var(--accent);color:var(--on-accent);}
+
+/* Scrollbar — silver brand signature */
+body::-webkit-scrollbar{width:10px;}
+body::-webkit-scrollbar-track{background:var(--canvas);}
+body::-webkit-scrollbar-thumb{background:#3a352c;border-radius:8px;}
+body::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+
+/* ── Hero ── */
+.hero{padding:140px 0 96px;border-bottom:1px solid var(--border);}
+.hero .eyebrow{
+  font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:4px;
+  text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:14px;margin-bottom:34px;
+}
+.hero .eyebrow::before{content:"";width:36px;height:1px;background:var(--accent);}
+.hero h1{
+  font-family:var(--display);font-weight:400;font-size:clamp(76px,16vw,184px);
+  line-height:0.86;letter-spacing:2px;color:var(--ink);margin-bottom:30px;
+}
+.hero h1 .dot{color:var(--accent);}
+.hero .tagline{
+  font-family:var(--serif);font-style:italic;font-size:clamp(20px,3.6vw,34px);
+  color:var(--ink);line-height:1.4;max-width:18ch;margin-bottom:22px;
+}
+.hero .lede{font-size:14px;color:var(--muted);max-width:46ch;}
+.hero .meta{
+  margin-top:48px;display:flex;gap:40px;flex-wrap:wrap;
+  font-family:var(--label);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+}
+.hero .meta b{color:var(--ink);font-weight:600;}
+
+/* ── Section scaffold ── */
+section.block{padding:92px 0;border-bottom:1px solid var(--border);}
+.sec-tag{
+  font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--accent);display:flex;align-items:center;gap:12px;margin-bottom:14px;
+}
+.sec-tag::before{content:"";width:24px;height:1px;background:var(--accent);}
+.sec-title{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5vw,46px);line-height:1.1;color:var(--ink);margin-bottom:18px;}
+.sec-intro{font-size:14px;color:var(--muted);max-width:52ch;margin-bottom:48px;}
+
+/* ── Glass card ── */
+.card{
+  background:rgba(255,255,255,0.022);
+  border:1px solid var(--border);
+  border-radius:16px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  padding:30px;
+}
+.grid{display:grid;gap:18px;}
+.g2{grid-template-columns:repeat(2,1fr);}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g4{grid-template-columns:repeat(4,1fr);}
+@media(max-width:760px){.g2,.g3,.g4{grid-template-columns:1fr;}.hero{padding-top:104px;}}
+
+/* ── Color swatches ── */
+.swatch{display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.swatch .chip{height:120px;}
+.swatch .info{padding:16px 18px;background:var(--surface);}
+.swatch .nm{font-family:var(--label);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);}
+.swatch .hex{font-family:var(--label);font-size:11px;letter-spacing:1px;color:var(--muted);margin-top:4px;}
+.swatch .role{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6;}
+
+.retired{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px;align-items:center;}
+.retired .r{display:flex;align-items:center;gap:10px;font-family:var(--label);font-size:11px;letter-spacing:1px;color:var(--muted);}
+.retired .r .x{width:26px;height:26px;border-radius:50%;position:relative;opacity:0.5;filter:grayscale(0.4);}
+.retired .r .x::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,255,255,0.2);}
+
+/* ── Type specimens ── */
+.type-row{display:flex;align-items:baseline;gap:28px;padding:24px 0;border-top:1px solid var(--border);flex-wrap:wrap;}
+.type-row:first-child{border-top:none;}
+.type-row .glyph{min-width:120px;color:var(--ink);line-height:0.9;}
+.type-row .desc .fn{font-family:var(--label);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink);}
+.type-row .desc .use{font-size:12px;color:var(--muted);margin-top:6px;}
+
+/* ── Logo lockups ── */
+.logo-stage{display:flex;align-items:center;justify-content:center;min-height:170px;border-radius:14px;border:1px solid var(--border);}
+.stage-dark{background:var(--canvas);}
+.stage-surface{background:var(--surface-2);}
+.stage-light{background:var(--ink);}
+.wordmark{font-family:var(--display);font-weight:400;letter-spacing:8px;font-size:46px;line-height:1;}
+.wordmark.on-dark{color:var(--ink);}
+.wordmark.on-dark .dot{color:var(--accent);}
+.wordmark.on-light{color:var(--canvas);}
+.wordmark.on-light .dot{color:#7a766f;}
+.stage-cap{font-family:var(--label);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:center;margin-top:14px;}
+
+/* ── Domains ── */
+.domain{padding:28px;border-radius:16px;border:1px solid var(--border);background:var(--surface);position:relative;overflow:hidden;}
+.domain .idx{font-family:var(--display);font-size:64px;line-height:0.8;color:var(--border);position:absolute;top:14px;right:18px;}
+.domain .dt{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.domain .de{font-family:var(--label);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+.domain p{font-size:13px;color:var(--muted);position:relative;z-index:1;}
+
+/* ── Web header mockup ── */
+.mock{border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.mock .bar{height:64px;background:rgba(10,9,6,0.92);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);}
+.mock .bar .bm{font-family:var(--display);font-size:22px;letter-spacing:5px;color:var(--ink);}
+.mock .bar .bm .dot{color:var(--accent);}
+.mock .nav{display:flex;align-items:center;gap:26px;font-family:var(--label);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.mock .pill{padding:9px 22px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:700;}
+.mock .stage{padding:64px 28px;background:var(--surface);text-align:center;}
+.mock .stage .et{font-family:var(--label);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+.mock .stage h3{font-family:var(--serif);font-weight:600;font-size:clamp(28px,6vw,52px);line-height:1.05;color:var(--ink);}
+.mock .stage h3 em{font-style:italic;color:var(--accent);}
+.mock .stage .sub{font-size:13px;color:var(--muted);margin-top:18px;}
+
+/* ── Business card ── */
+.bizcard{aspect-ratio:91/55;border-radius:12px;border:1px solid var(--border);background:linear-gradient(145deg,#0c0b08,#0f0d0a);padding:24px 26px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;}
+.bizcard .corner{position:absolute;top:0;left:0;width:48px;height:48px;pointer-events:none;}
+.bizcard .corner i{position:absolute;background:linear-gradient(var(--dir,to bottom),var(--accent),transparent);}
+.bizcard .bm{font-family:var(--display);font-size:26px;letter-spacing:6px;color:var(--ink);}
+.bizcard .bm .dot{color:var(--accent);}
+.bizcard .role{font-family:var(--label);font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-top:4px;}
+.bizcard .nm{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink);}
+.bizcard .ttl{font-family:var(--label);font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+.bizcard .contact{font-family:var(--label);font-size:8px;letter-spacing:1px;color:var(--muted);line-height:1.9;margin-top:14px;}
+.bizcard.back{align-items:center;justify-content:center;}
+
+/* ── SNS icons ── */
+.sns{display:flex;flex-direction:column;align-items:center;gap:10px;}
+.sns .ic{width:74px;height:74px;border-radius:18px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:box-shadow .3s,border-color .3s;}
+.sns:hover .ic{border-color:var(--accent);box-shadow:0 0 32px var(--glow);}
+.sns .nm{font-family:var(--label);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+
+/* ── Do / Don't ── */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:760px){.rules{grid-template-columns:1fr;}}
+.rules .col{padding:26px;border-radius:16px;border:1px solid var(--border);background:var(--surface);}
+.rules .col h4{font-family:var(--label);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;}
+.rules .do h4{color:var(--accent);}
+.rules .dont h4{color:var(--muted);}
+.rules ul{list-style:none;}
+.rules li{font-size:13px;color:var(--muted);line-height:1.7;padding:7px 0 7px 22px;position:relative;border-top:1px solid var(--border);}
+.rules li:first-child{border-top:none;}
+.rules .do li::before{content:"+";position:absolute;left:0;color:var(--accent);font-family:var(--label);font-weight:700;}
+.rules .dont li::before{content:"\00d7";position:absolute;left:0;color:#6a655c;font-family:var(--label);}
+
+/* ── Footer ── */
+footer{padding:64px 0 90px;text-align:center;}
+footer .fm{font-family:var(--display);font-size:34px;letter-spacing:7px;color:var(--ink);}
+footer .fm .dot{color:var(--accent);}
+footer .fc{font-family:var(--label);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:14px;}
+footer a{color:var(--accent);text-decoration:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ════ HERO ════ -->
+  <header class="hero">
+    <p class="eyebrow">Brand Guide — Est. 2026</p>
+    <h1>NOCTA<span class="dot">.</span></h1>
+    <p class="tagline">遊ぶことで、人生を彩ろう。</p>
+    <p class="lede">Music × Visual × Words × Tools。CEO と AI エージェントチームで企画から公開までを完結させる、スタッフゼロ型の複数領域クリエイティブスタジオ。本ページはその色・書体・ロゴ・適用例をまとめたブランドガイドです。</p>
+    <div class="meta">
+      <span><b>4</b> Domains</span>
+      <span><b>1</b> Accent — Silver</span>
+      <span><b>0A0906</b> Canvas</span>
+    </div>
+  </header>
+
+  <!-- ════ 01 ESSENCE ════ -->
+  <section class="block">
+    <p class="sec-tag">01 — Essence</p>
+    <h2 class="sec-title">ひとつの声、四つの領域</h2>
+    <p class="sec-intro">NOCTA は「楽曲制作会社」から多領域スタジオへ発展した。アウトプットは音楽・ビジュアル・言葉・コードに広がるが、トーンはひとつ ── 暗くて静かなエディトリアル。AI が多くを担う時代に、人間に必要なのは遊びだ、という思想が全領域を貫く。</p>
+    <div class="grid g3">
+      <div class="card">
+        <p class="sec-tag" style="margin-bottom:12px;">Positioning</p>
+        <p style="font-family:var(--serif);font-size:19px;color:var(--ink);">Music × Visual × Words × Tools</p>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px;">領域横断のクリエイティブスタジオ。各領域は独立した並行ストリームとして進む。</p>
+      </div>
+      <div class="card">
+        <p class="sec-tag" style="margin-bottom:12px;">Tagline</p>
+        <p style="font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink);">遊ぶことで人生を彩ろう</p>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px;">AIが多くを担う時代に、人間に必要なのは遊びだ。</p>
+      </div>
+      <div class="card">
+        <p class="sec-tag" style="margin-bottom:12px;">Tone</p>
+        <p style="font-family:var(--serif);font-size:19px;color:var(--ink);">Dark editorial, serif-led</p>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px;">雑誌の見開きのように、余白と単一のシルバーで間を取る。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 02 COLOR ════ -->
+  <section class="block">
+    <p class="sec-tag">02 — Color System</p>
+    <h2 class="sec-title">単一アクセントの規律</h2>
+    <p class="sec-intro">ブランドの電圧は複数のネオンや色の壁からではなく、warm-black の上に置かれた一色のクール・シルバーから生まれる。シルバーは CTA・セクションタグ・ホバーグロウだけに、控えめに使う。第二のアクセントは持たない。</p>
+    <div class="grid g3">
+      <div class="swatch"><div class="chip" style="background:#0A0906;"></div><div class="info"><div class="nm">Canvas</div><div class="hex">#0A0906</div><div class="role">既定の warm-black。すべての面の床。</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#0F0D0A;"></div><div class="info"><div class="nm">Surface</div><div class="hex">#0F0D0A</div><div class="role">カード・インセットパネル（グラス処理）。</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#221c10;"></div><div class="info"><div class="nm">Border</div><div class="hex">#221C10</div><div class="role">罫線・セカンダリボタンの輪郭。</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#B8B4AE;box-shadow:inset 0 0 60px var(--glow);"></div><div class="info"><div class="nm">Accent — Silver</div><div class="hex">#B8B4AE</div><div class="role">唯一のブランド電圧色。CTA・タグ・ホバーグロウに少量。</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#E8E0D0;"></div><div class="info"><div class="nm">Ink</div><div class="hex">#E8E0D0</div><div class="role">オフホワイトの本文・見出し・ロゴ。</div></div></div>
+      <div class="swatch"><div class="chip" style="background:#9A8A7A;"></div><div class="info"><div class="nm">Muted</div><div class="hex">#9A8A7A</div><div class="role">warm-grey のサブテキスト・キャプション。</div></div></div>
+    </div>
+    <div class="card" style="margin-top:22px;">
+      <p style="font-size:13px;color:var(--muted);line-height:2;">
+        <strong style="color:var(--ink);">Works バッジのみの例外:</strong> Visual セクションの「Works」バッジには amber <span style="color:var(--works-amber);font-family:var(--label);letter-spacing:1px;">#FBBF24</span> を使う。Art / Music バッジはシルバー。それ以外でアクセントを増やさない。
+      </p>
+      <div class="retired">
+        <span style="font-family:var(--label);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">廃止済み（再導入しない）:</span>
+        <span class="r"><span class="x" style="background:#C4942A;"></span>Gold #C4942A</span>
+        <span class="r"><span class="x" style="background:#39FF6A;"></span>Neon #39FF6A</span>
+        <span class="r"><span class="x" style="background:#C8A2FF;"></span>Lavender #C8A2FF</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 03 TYPOGRAPHY ════ -->
+  <section class="block">
+    <p class="sec-tag">03 — Typography</p>
+    <h2 class="sec-title">サイズとコントラストで語る</h2>
+    <p class="sec-intro">強調はウェイトではなくサイズとシルバーのコントラストに委ねる。セリフ見出しは 600 が上限 ── 太字で押し切らない。本文は Noto Sans JP 300/400 を 14px で通す。</p>
+    <div class="type-row">
+      <div class="glyph" style="font-family:var(--serif);font-weight:600;font-size:64px;">Aa</div>
+      <div class="desc"><div class="fn">EB Garamond</div><div class="use">Display / Serif — 見出し・タグライン・本文の品格。斜体は引用やタグラインに。</div></div>
+    </div>
+    <div class="type-row">
+      <div class="glyph" style="font-family:var(--label);font-weight:800;font-size:48px;">Aa</div>
+      <div class="desc"><div class="fn">Syne</div><div class="use">Headings / Labels — セクションタグ・ナビ・ボタン・全大文字ラベル（3px トラッキング）。</div></div>
+    </div>
+    <div class="type-row">
+      <div class="glyph" style="font-family:var(--display);font-size:56px;letter-spacing:4px;">NOCTA</div>
+      <div class="desc"><div class="fn">Bebas Neue</div><div class="use">Wordmark / Numerals — NOCTA ロゴと大きな数字表示・ポートフォリオ面。</div></div>
+    </div>
+    <div class="type-row">
+      <div class="glyph" style="font-family:var(--jp);font-weight:400;font-size:40px;">遊び</div>
+      <div class="desc"><div class="fn">Noto Sans JP</div><div class="use">Body JP — 日本語本文・説明文。300/400 を基本、700 は稀な強調のみ。</div></div>
+    </div>
+  </section>
+
+  <!-- ════ 04 LOGO ════ -->
+  <section class="block">
+    <p class="sec-tag">04 — Logo &amp; Mark</p>
+    <h2 class="sec-title">単色のワードマーク</h2>
+    <p class="sec-intro">ロゴは Bebas Neue のオフホワイト。多色グラデーションは廃止し、ピリオドのシルバー一点だけがアクセント。dark 面が基本で、light 面では canvas 色に反転する。</p>
+    <div class="grid g3">
+      <div>
+        <div class="logo-stage stage-dark"><span class="wordmark on-dark">NOCTA<span class="dot">.</span></span></div>
+        <p class="stage-cap">Primary — on Canvas</p>
+      </div>
+      <div>
+        <div class="logo-stage stage-surface"><span class="wordmark on-dark">NOCTA<span class="dot">.</span></span></div>
+        <p class="stage-cap">on Surface</p>
+      </div>
+      <div>
+        <div class="logo-stage stage-light"><span class="wordmark on-light">NOCTA<span class="dot">.</span></span></div>
+        <p class="stage-cap">on Light</p>
+      </div>
+    </div>
+    <div class="grid g3" style="margin-top:18px;">
+      <div>
+        <div class="logo-stage stage-dark">
+          <svg width="92" height="92" viewBox="0 0 92 92" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="46" cy="46" r="40" fill="none" stroke="#B8B4AE" stroke-opacity="0.35" stroke-width="0.8"/>
+            <circle cx="46" cy="46" r="31" fill="none" stroke="#B8B4AE" stroke-opacity="0.18" stroke-width="0.6" stroke-dasharray="3 5"/>
+            <text x="46" y="47" font-family="'Bebas Neue',sans-serif" font-size="42" text-anchor="middle" dominant-baseline="central" fill="#E8E0D0">N</text>
+            <circle cx="71" cy="21" r="3" fill="#B8B4AE"/>
+          </svg>
+        </div>
+        <p class="stage-cap">Symbol Mark — Orbital N</p>
+      </div>
+      <div>
+        <div class="logo-stage stage-surface"><span style="font-family:var(--label);font-weight:800;font-size:22px;letter-spacing:1px;color:var(--ink);">N<span style="color:var(--accent);">×</span>V<span style="color:var(--accent);">×</span>W<span style="color:var(--accent);">×</span>C</span></div>
+        <p class="stage-cap">Domain Lockup</p>
+      </div>
+      <div>
+        <div class="logo-stage stage-light">
+          <svg width="92" height="92" viewBox="0 0 92 92" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="46" cy="46" r="40" fill="none" stroke="#0A0906" stroke-opacity="0.3" stroke-width="0.8"/>
+            <text x="46" y="47" font-family="'Bebas Neue',sans-serif" font-size="42" text-anchor="middle" dominant-baseline="central" fill="#0A0906">N</text>
+            <circle cx="71" cy="21" r="3" fill="#7a766f"/>
+          </svg>
+        </div>
+        <p class="stage-cap">Symbol Mark — Light</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 05 DOMAINS ════ -->
+  <section class="block">
+    <p class="sec-tag">05 — The Four Domains</p>
+    <h2 class="sec-title">並行する4つのストリーム</h2>
+    <p class="sec-intro">各領域は独立して出力を続ける。ひとつが止まっても他は進む ── スタジオの強さは横断にある。</p>
+    <div class="grid g4">
+      <div class="domain"><div class="idx">01</div><div class="de">Music</div><div class="dt">音楽</div><p>オリジナル楽曲の企画・制作・リリース。Synthesizer V とアレンジ。</p></div>
+      <div class="domain"><div class="idx">02</div><div class="de">Visual</div><div class="dt">ビジュアル</div><p>AI アート・PV・NFT 連動。生成プロンプトと映像編集。</p></div>
+      <div class="domain"><div class="idx">03</div><div class="de">Words</div><div class="dt">言葉</div><p>ブログ・コピー・物語。スタジオの思想を綴る発信。</p></div>
+      <div class="domain"><div class="idx">04</div><div class="de">Tools</div><div class="dt">ツール</div><p>HP・ウェブアプリ。遊びを形にするプロダクト。</p></div>
+    </div>
+  </section>
+
+  <!-- ════ 06 APPLICATIONS ════ -->
+  <section class="block">
+    <p class="sec-tag">06 — Applications</p>
+    <h2 class="sec-title">適用例</h2>
+    <p class="sec-intro">web ヘッダー・名刺・SNS アイコン。すべて warm-black とシルバー一色で統一する。</p>
+
+    <!-- Web header -->
+    <p style="font-family:var(--label);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:0 0 12px;">Web Header</p>
+    <div class="mock">
+      <div class="bar">
+        <span class="bm">NOCTA<span class="dot">.</span></span>
+        <span class="nav">
+          <span>About</span><span>Works</span><span>Visual</span>
+          <span class="pill">Contact</span>
+        </span>
+      </div>
+      <div class="stage">
+        <p class="et">Music × Visual × Words × Tools</p>
+        <h3>遊ぶことで、<em>人生を彩ろう。</em></h3>
+        <p class="sub">AIが多くを担う時代に、人間に必要なのは遊びだ。</p>
+      </div>
+    </div>
+
+    <!-- Business card -->
+    <p style="font-family:var(--label);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:42px 0 12px;">Business Card — 91 × 55 mm</p>
+    <div class="grid g2">
+      <div class="bizcard">
+        <div class="corner"><i style="top:0;left:0;width:1px;height:34px;--dir:to bottom;"></i><i style="top:0;left:0;height:1px;width:34px;--dir:to right;"></i></div>
+        <div>
+          <div class="bm">NOCTA<span class="dot">.</span></div>
+          <div class="role">Creative Studio</div>
+        </div>
+        <div>
+          <div class="nm">山田 太郎</div>
+          <div class="ttl">Creative Director</div>
+          <div class="contact">hello@nocta.studio &nbsp; kutakuta1001.github.io/NOCTA</div>
+        </div>
+      </div>
+      <div class="bizcard back">
+        <svg width="150" height="140" viewBox="0 0 150 140" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="75" cy="70" r="58" fill="none" stroke="#B8B4AE" stroke-opacity="0.14" stroke-width="0.8"/>
+          <circle cx="75" cy="70" r="42" fill="none" stroke="#B8B4AE" stroke-opacity="0.1" stroke-width="0.6" stroke-dasharray="3 6"/>
+          <line x1="75" y1="70" x2="75" y2="12" stroke="#B8B4AE" stroke-opacity="0.25" stroke-width="0.5"/>
+          <line x1="75" y1="70" x2="126" y2="98" stroke="#B8B4AE" stroke-opacity="0.2" stroke-width="0.5"/>
+          <line x1="75" y1="70" x2="24" y2="98" stroke="#B8B4AE" stroke-opacity="0.2" stroke-width="0.5"/>
+          <circle cx="75" cy="12" r="2.6" fill="#B8B4AE"/>
+          <circle cx="126" cy="98" r="2.2" fill="#B8B4AE" opacity="0.8"/>
+          <circle cx="24" cy="98" r="2.2" fill="#B8B4AE" opacity="0.8"/>
+          <text x="75" y="74" font-family="'Bebas Neue',sans-serif" font-size="15" letter-spacing="3" text-anchor="middle" fill="#E8E0D0">PLAY</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- SNS icons -->
+    <p style="font-family:var(--label);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:42px 0 16px;">SNS Icons — 500 × 500 px</p>
+    <div class="grid g4">
+      <div class="sns"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="#B8B4AE"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div><div class="nm">X</div></div>
+      <div class="sns"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#B8B4AE" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="#B8B4AE" stroke="none"/></svg></div><div class="nm">Instagram</div></div>
+      <div class="sns"><div class="ic"><svg width="32" height="32" viewBox="0 0 24 24" fill="#B8B4AE"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0C.488 3.45.029 5.804 0 12c.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0C23.512 20.55 23.971 18.196 24 12c-.029-6.185-.484-8.549-4.385-8.816zM9 16V8l8 3.993L9 16z"/></svg></div><div class="nm">YouTube</div></div>
+      <div class="sns"><div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="#B8B4AE"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg></div><div class="nm">Spotify</div></div>
+    </div>
+  </section>
+
+  <!-- ════ 07 USAGE ════ -->
+  <section class="block">
+    <p class="sec-tag">07 — Usage</p>
+    <h2 class="sec-title">守ること・避けること</h2>
+    <div class="rules">
+      <div class="col do">
+        <h4>Do</h4>
+        <ul>
+          <li>シルバー #B8B4AE を唯一のアクセントとして、少量に使う</li>
+          <li>強調はウェイトより先にサイズとコントラストで</li>
+          <li>warm-black の余白とグレインノイズを残す（ブランド署名）</li>
+          <li>セクションタグ + シルバーの罫線プレフィックスで見出しを開く</li>
+          <li>プライマリ CTA はシルバーのピル、1ビューに最大1つ</li>
+        </ul>
+      </div>
+      <div class="col dont">
+        <h4>Don't</h4>
+        <ul>
+          <li>第二のアクセント色を足さない（gold / neon / lavender は廃止）</li>
+          <li>セリフ見出しを 600 より太くしない</li>
+          <li>白背景・明るいグラデーション・オーロラを使わない</li>
+          <li>Space Grotesk / Inter を使わない（EB Garamond / Syne へ）</li>
+          <li>多色グラデーションのロゴを復活させない</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ FOOTER ════ -->
+  <footer>
+    <div class="fm">NOCTA<span class="dot">.</span></div>
+    <p class="fc">Brand Guide · 2026 · <a href="./index.html">nocta home</a></p>
+  </footer>
+
+</div>
+</body>
+</html>

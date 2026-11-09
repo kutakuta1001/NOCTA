@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hare | NOCTA Tools</title>
+<meta name="description" content="Hare — 日本の伝統色48色を、色に浸りながら静かに眺める図鑑。色名の物語と配色をたずさえた、NOCTAの第7のWebアプリ。">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="./iro-data.js"></script>
+<script src="../zukan/zukan-core.js?v=2"></script>
+<script src="./fude.js?v=3"></script>
+<style>
+  :root { --iro: #B8B4AE; --ink: #F2EBDD; }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:#0A0906; color:#E8E0D0;
+    font-family:'Noto Sans JP',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .font-display{ font-family:'EB Garamond','Shippori Mincho',serif; }
+  .font-mincho{ font-family:'Shippori Mincho','EB Garamond',serif; }
+  .font-heading{ font-family:'Syne',sans-serif; }
+  .font-jp{ font-family:'Noto Sans JP',sans-serif; }
+  .text-sub{ color:#9A8A7A; }
+
+  /* 粒子ノイズ質感（NOCTA本体と同一の余白哲学の一部）— 色面の上では和紙の肌理になる */
+  .grain{
+    position:fixed; inset:0; z-index:5; pointer-events:none; opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity 0.9s ease, transform 0.9s ease; }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+
+  /* 色セクション — 背景そのものが伝統色 */
+  .iro-section{ background:var(--iro); color:var(--ink); }
+  .iro-name-v{
+    writing-mode:vertical-rl; text-orientation:upright;
+    font-family:'Shippori Mincho',serif; font-weight:600;
+    font-size:clamp(52px,11vh,110px); letter-spacing:0.16em; line-height:1;
+    color:var(--ink-name, var(--ink)); max-height:70vh;
+    text-shadow:0 0 34px var(--name-glow, transparent), 0 0 2px var(--name-glow, transparent);
+  }
+  .iro-panel{
+    background:var(--veil); border:1px solid var(--ink-line);
+    border-radius:4px; padding:30px 32px 26px; max-width:520px;
+  }
+  .iro-kana{ font-family:'Shippori Mincho',serif; font-size:15px; letter-spacing:0.3em; color:var(--ink); opacity:0.85; }
+  .iro-story{ font-size:15px; line-height:2.05; color:var(--ink); }
+  .iro-chip{
+    border:1px solid var(--ink-line); color:var(--ink); background:transparent;
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.1em; font-weight:700; text-transform:uppercase;
+    padding:7px 14px; border-radius:999px; cursor:pointer; transition:transform 0.25s ease, background 0.25s ease;
+  }
+  .iro-chip:hover{ transform:translateY(-1px); background:var(--veil); }
+  .iro-chip--static{ cursor:default; }
+  .iro-chip--static:hover{ transform:none; background:transparent; }
+
+  /* 「この色で筆あそび」CTA — 他chipから独立・その色の塗りで主役化 */
+  .fude-cta{
+    display:inline-flex; align-items:center; gap:10px;
+    padding:11px 20px 11px 16px; border-radius:999px;
+    background:var(--iro); color:var(--ink-name, var(--ink));
+    border:1px solid var(--ink-line); cursor:pointer;
+    font-family:'Shippori Mincho','EB Garamond',serif;
+    font-size:14px; letter-spacing:0.14em; font-weight:600;
+    box-shadow:0 8px 24px -12px rgba(10,9,6,0.35);
+    transition:transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
+    position:relative; overflow:hidden;
+  }
+  .fude-cta::before{
+    content:""; position:absolute; inset:0; border-radius:inherit;
+    background:linear-gradient(120deg, transparent 30%, rgba(255,252,244,0.22) 50%, transparent 70%);
+    transform:translateX(-100%); transition:transform 0.7s ease;
+  }
+  .fude-cta:hover{
+    transform:translateY(-2px); box-shadow:0 14px 28px -10px rgba(10,9,6,0.45);
+    filter:brightness(1.05);
+  }
+  .fude-cta:hover::before{ transform:translateX(100%); }
+  .fude-cta-ico{ width:18px; height:18px; flex:none; }
+  .fude-cta-arrow{
+    font-family:'Syne',sans-serif; font-size:16px; margin-left:2px; opacity:0.85;
+    transition:transform 0.3s ease;
+  }
+  .fude-cta:hover .fude-cta-arrow{ transform:translateX(3px); }
+  @media (prefers-reduced-motion:reduce){
+    .fude-cta, .fude-cta:hover{ transform:none; }
+    .fude-cta::before{ display:none; }
+  }
+
+  /* 配色（かさね） */
+  .kasane-band{
+    display:flex; height:26px; border-radius:999px; overflow:hidden;
+    box-shadow:inset 0 0 0 1px var(--ink-line); margin-bottom:10px; max-width:360px;
+  }
+  .kasane-band span{ flex:1; }
+  .kasane-band span:first-child{ flex:1.6; }
+  .kasane-btn{
+    display:inline-flex; align-items:center; gap:9px;
+    border:1px solid var(--ink-line); border-radius:999px; background:transparent;
+    padding:6px 14px 6px 7px; cursor:pointer; color:var(--ink);
+    transition:transform 0.25s ease, background 0.25s ease;
+  }
+  .kasane-btn:hover{ transform:translateY(-1px); background:var(--veil); }
+  .kasane-swatch{ width:20px; height:20px; border-radius:50%; flex:none; box-shadow:inset 0 0 0 1px rgba(10,9,6,0.15); }
+  .kasane-name{ font-family:'Shippori Mincho',serif; font-size:13px; letter-spacing:0.12em; }
+
+  /* お気に入り（肉球）— 色面上ではinkに追随 */
+  .fav-btn{
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--ink-line);
+    background:transparent; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+    padding:0; transition:border-color 0.3s, transform 0.3s; flex:none;
+  }
+  .fav-btn:hover{ transform:scale(1.1); }
+  .fav-btn svg{ width:15px; height:15px; color:var(--ink); opacity:0.4; transition:opacity 0.3s; display:block; }
+  .fav-btn.faved{ border-color:var(--ink); }
+  .fav-btn.faved svg{ opacity:1; }
+
+  /* サイドレール */
+  #iro-rail{ position:fixed; right:22px; top:50%; transform:translateY(-50%); z-index:40; display:none; flex-direction:column; gap:6px; max-height:88vh; }
+  @media (min-width:900px){ #iro-rail{ display:flex; } }
+  .rail-dot{
+    width:6px; height:6px; border-radius:50%; background:rgba(184,180,174,0.3);
+    cursor:pointer; transition:transform 0.3s ease, box-shadow 0.3s ease; border:none; padding:0; flex:none;
+  }
+  .rail-dot:hover{ transform:scale(1.5); }
+  .rail-dot.active{ background:var(--dot-color,#B8B4AE); transform:scale(1.6); box-shadow:0 0 0 3px rgba(10,9,6,0.35); }
+
+  .scroll-cue{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px; border:1px solid rgba(184,180,174,0.3); border-radius:50%;
+    animation:cueBob 2.4s ease-in-out infinite;
+  }
+  @keyframes cueBob{ 0%,100%{ transform:translateY(0); opacity:0.6; } 50%{ transform:translateY(6px); opacity:1; } }
+
+  /* 今日の一色 */
+  .today-card{
+    display:inline-flex; align-items:center; gap:18px; margin-top:44px; padding:16px 26px 16px 16px;
+    border:1px solid rgba(184,180,174,0.22); border-radius:2px;
+    background:rgba(10,9,6,0.45); cursor:pointer; text-align:left;
+    transition:border-color 0.4s ease, transform 0.4s ease;
+  }
+  .today-card:hover{ border-color:var(--iro); transform:translateY(-2px); }
+  .today-swatch{ width:58px; height:58px; border-radius:2px; flex:none; box-shadow:0 8px 20px -8px rgba(0,0,0,0.6); }
+
+  /* 目次ボタン・オーバーレイ（gems/floraと同パターン） */
+  #index-btn{
+    position:fixed; left:22px; bottom:22px; z-index:45;
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.18em; font-weight:700; text-transform:uppercase;
+    color:#9A8A7A; border:1px solid rgba(184,180,174,0.25); border-radius:999px;
+    padding:9px 18px; cursor:pointer; background:rgba(10,9,6,0.6); backdrop-filter:blur(4px);
+    transition:color 0.3s, border-color 0.3s;
+  }
+  #index-btn:hover{ color:#E8E0D0; border-color:rgba(184,180,174,0.5); }
+  #index-overlay{
+    position:fixed; inset:0; z-index:60; background:rgba(10,9,6,0.97);
+    overflow-y:auto; padding:84px 24px 60px;
+  }
+  #index-overlay[hidden]{ display:none; }
+  .month-chip{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.12em; font-weight:700; text-transform:uppercase;
+    color:#9A8A7A; border:1px solid rgba(184,180,174,0.22); border-radius:999px;
+    padding:6px 13px; cursor:pointer; background:transparent; transition:all 0.3s;
+  }
+  .month-chip:hover{ color:#E8E0D0; border-color:rgba(184,180,174,0.5); }
+  .month-chip.active{ color:#0A0906; background:#B8B4AE; border-color:#B8B4AE; }
+  .chip-row-label{
+    font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.2em; font-weight:700; text-transform:uppercase;
+    color:#9A8A7A; margin:24px 0 8px;
+  }
+  .index-item{
+    display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+    padding:11px 12px; border:none; border-bottom:1px solid rgba(184,180,174,0.08);
+    background:transparent; cursor:pointer; transition:background 0.3s;
+  }
+  .index-item:hover{ background:rgba(184,180,174,0.06); }
+  .index-dot{ width:16px; height:16px; border-radius:50%; flex:none; box-shadow:inset 0 0 0 1px rgba(232,224,208,0.12); }
+  .idx-fav{ width:12px; height:12px; flex:none; margin-left:6px; }
+  .idx-fav svg{ width:100%; height:100%; display:block; }
+  .index-close{
+    position:fixed; top:18px; right:22px; z-index:61;
+    width:40px; height:40px; border-radius:50%; border:1px solid rgba(184,180,174,0.3);
+    color:#E8E0D0; background:rgba(10,9,6,0.6); font-size:16px; cursor:pointer;
+    transition:border-color 0.3s;
+  }
+  .index-close:hover{ border-color:rgba(232,224,208,0.7); }
+
+  /* 私のパレット */
+  #palette-wrap[hidden]{ display:none; }
+  .palette-strip{ display:flex; flex-wrap:wrap; gap:0; border-radius:4px; overflow:hidden; margin-top:10px; }
+  .palette-swatch{
+    flex:1 1 64px; min-width:64px; height:72px; border:none; cursor:pointer; position:relative;
+    display:flex; align-items:flex-end; justify-content:center; padding-bottom:6px;
+    font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.06em; font-weight:700;
+    transition:flex-grow 0.3s ease;
+  }
+  .palette-swatch:hover{ flex-grow:1.6; }
+
+  /* 筆あそび（浸るモードから進化） — その色の小さな書斎 */
+  #immerse{ position:fixed; inset:0; z-index:70; }
+  #immerse[hidden]{ display:none; }
+  .fude-stage{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    padding:clamp(20px,4vw,64px); background-repeat:repeat; background-size:auto;
+  }
+  .fude-close{
+    position:absolute; top:18px; right:22px; z-index:5;
+    width:40px; height:40px; border-radius:50%;
+    border:1px solid rgba(28,26,23,0.35); color:#1C1A17;
+    background:rgba(245,239,224,0.75); backdrop-filter:blur(4px);
+    font-size:16px; cursor:pointer; transition:border-color 0.3s;
+  }
+  .fude-close:hover{ border-color:rgba(28,26,23,0.7); }
+  .fude-paper{
+    position:relative; width:min(88vw, 720px); aspect-ratio:3/4;
+    max-height:82vh; border-radius:2px; overflow:hidden;
+    box-shadow:0 24px 80px -20px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(28,26,23,0.06);
+  }
+  /* 紙の内側の縁を回る文様帯（絵巻の縁取りのように書き場は真ん中に残す）
+     inset 0 の絶対配置＋ maskで中央のみくり抜くことで、上下左右の細い帯だけ表示する */
+  .fude-paper-border{
+    position:absolute; inset:0; pointer-events:none; z-index:1;
+    background-repeat:repeat; background-size:auto;
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+            mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite:exclude;
+    padding:min(6vw, 42px);
+    opacity:0.78;
+  }
+  .fude-canvas{
+    position:absolute; inset:0; width:100%; height:100%; display:block;
+    cursor:crosshair; touch-action:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  }
+  /* なぞり手本レイヤ — canvasの下に敷いて上からなぞる（canvas背景は元々ノイズだけで透明度が高いので薄墨が透ける） */
+  .fude-tegami{
+    position:absolute; inset:0; pointer-events:none;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity 0.5s ease;
+  }
+  .fude-tegami.on{ opacity:1; }
+  .fude-tegami svg{
+    width:64%; height:64%; display:block; overflow:visible;
+    color:rgba(28,26,23,0.18);   /* 薄墨のお手本 */
+  }
+  /* 「まっさらに」リセットアニメ — 紙色の帯が左から右へ拭き取るように通り過ぎる */
+  .fude-sweep{
+    position:absolute; inset:-4% 0; z-index:3; pointer-events:none;
+    background:linear-gradient(105deg,
+      transparent 0%,
+      var(--paper-color, #F5EFE0) 22%,
+      var(--paper-color, #F5EFE0) 78%,
+      transparent 100%);
+    box-shadow:0 0 24px rgba(28,26,23,0.05);
+    transform:translateX(-140%);
+    opacity:0;
+  }
+  .fude-sweep.animate{
+    animation:fude-sweep 900ms cubic-bezier(0.5, 0.1, 0.4, 1) forwards;
+  }
+  @keyframes fude-sweep{
+    0%   { transform:translateX(-140%); opacity:0; }
+    15%  { opacity:1; }
+    50%  { transform:translateX(-20%); opacity:1; }
+    85%  { opacity:1; }
+    100% { transform:translateX(140%); opacity:0; }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .fude-sweep.animate{ animation:fude-sweep-fade 300ms ease forwards; }
+    @keyframes fude-sweep-fade{
+      0% { transform:none; opacity:0; }
+      50% { transform:none; opacity:0.6; }
+      100% { transform:none; opacity:0; }
+    }
+  }
+  .fude-cornername{
+    position:absolute; right:14px; bottom:12px; text-align:right; pointer-events:none;
+    color:rgba(28,26,23,0.55);
+  }
+  .fude-cn-name{
+    display:block; font-family:'Shippori Mincho',serif; font-size:15px; letter-spacing:0.2em; font-weight:600;
+  }
+  .fude-cn-kana{
+    display:block; font-family:'Shippori Mincho',serif; font-size:10px; letter-spacing:0.28em; opacity:0.7; margin-top:2px;
+  }
+  .fude-bar{
+    position:absolute; left:50%; bottom:22px; transform:translateX(-50%);
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap; justify-content:center;
+    padding:10px 14px; border-radius:999px;
+    background:rgba(245,239,224,0.85); backdrop-filter:blur(6px);
+    box-shadow:0 12px 32px -12px rgba(0,0,0,0.35);
+    width:max-content; max-width:min(92vw, 640px);
+  }
+  .fude-inks, .fude-pens, .fude-actions{ display:flex; gap:6px; align-items:center; }
+  .fude-inks{ padding-right:12px; border-right:1px solid rgba(28,26,23,0.15); }
+  .fude-pens{ padding-right:12px; border-right:1px solid rgba(28,26,23,0.15); }
+  .fude-ink{
+    width:26px; height:26px; border-radius:50%; border:2px solid rgba(28,26,23,0.15);
+    cursor:pointer; padding:0; transition:transform 0.2s, border-color 0.2s;
+  }
+  .fude-ink:hover{ transform:scale(1.08); }
+  .fude-ink.active{ border-color:#1C1A17; transform:scale(1.12); }
+  .fude-pen, .fude-btn{
+    font-family:'Shippori Mincho',serif; font-size:12px; letter-spacing:0.12em;
+    color:#1C1A17; border:1px solid rgba(28,26,23,0.25); border-radius:999px;
+    padding:5px 12px; background:transparent; cursor:pointer;
+    transition:background 0.2s, border-color 0.2s;
+  }
+  .fude-pen:hover, .fude-btn:hover{ background:rgba(28,26,23,0.06); border-color:rgba(28,26,23,0.5); }
+  .fude-pen.active{ background:#1C1A17; color:#F5EFE0; border-color:#1C1A17; }
+  .fude-btn{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.14em; font-weight:700; text-transform:uppercase;
+  }
+  @media (max-width:600px){
+    .fude-paper{ width:94vw; max-height:70vh; }
+    .fude-bar{ width:92vw; gap:8px; padding:8px 10px; bottom:14px; border-radius:22px; }
+    .fude-inks, .fude-pens{ padding-right:8px; }
+    .fude-pen, .fude-btn{ font-size:11px; padding:4px 10px; }
+  }
+
+  /* 銀猫: 肉球トレイル */
+  .paw-trail{ pointer-events:none; }
+  .paw{ position:absolute; display:block; }
+  .paw-svg{ width:100%; height:auto; display:block; opacity:0.5; }
+
+  .lang-btn{
+    font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.1em; font-weight:700;
+    color:#9A8A7A; border:1px solid rgba(184,180,174,0.25); border-radius:999px;
+    padding:6px 14px; cursor:pointer; background:transparent; transition:color 0.3s, border-color 0.3s;
+  }
+  .lang-btn:hover{ color:#E8E0D0; border-color:rgba(184,180,174,0.5); }
+
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .scroll-cue{ animation:none; }
+    .today-card, .today-card:hover{ transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<!-- 肉球シンボル（NOCTA本体と共通の再利用可能なSVG） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="watercolor" x="-25%" y="-25%" width="150%" height="150%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.013 0.017" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="0.5"/>
+    </filter>
+    <symbol id="cat-paw" viewBox="0 0 100 100">
+      <g fill="currentColor">
+        <ellipse cx="50" cy="70" rx="27" ry="23"/>
+        <ellipse cx="23" cy="44" rx="8.5" ry="12"/>
+        <ellipse cx="41" cy="30" rx="9" ry="13"/>
+        <ellipse cx="59" cy="30" rx="9" ry="13"/>
+        <ellipse cx="77" cy="44" rx="8.5" ry="12"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ミニマルナビ -->
+<nav id="site-nav" class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-10 py-5" style="background:linear-gradient(to bottom, rgba(10,9,6,0.85), transparent);">
+  <a href="../index.html#apps" class="font-heading text-[11px] tracking-[2px] uppercase text-sub hover:text-[#E8E0D0] transition-colors" data-i18n="nav.back">← NOCTA</a>
+  <button class="lang-btn" id="lang-btn" onclick="toggleLang()" aria-label="Switch language to English">EN</button>
+</nav>
+
+<!-- サイドレール -->
+<nav id="iro-rail" aria-label="色セクションへ移動"></nav>
+
+<!-- 目次ボタン -->
+<button id="index-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="index-overlay" data-i18n="index.open">目次</button>
+
+<!-- カバー -->
+<section id="cover" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+  <div id="cover-paws" class="paw-trail absolute inset-0 z-0 overflow-hidden" aria-hidden="true"></div>
+  <div class="relative z-10 text-center px-6 max-w-[680px]">
+    <h1 class="font-mincho text-[clamp(44px,9vw,92px)] font-semibold leading-[1.08]" style="color:#E8E0D0;" data-i18n="cover.title">Hare</h1>
+    <p class="font-jp text-[14px] leading-[2] text-sub mt-6" data-i18n="cover.tagline">遊ぶことで人生を彩ろう。日本の美しい色の名前に、ただ静かに浸るための図鑑。</p>
+    <div id="today-slot"></div>
+    <div class="mt-12 flex justify-center">
+      <span class="scroll-cue text-sub font-heading text-[13px]" aria-hidden="true">↓</span>
+    </div>
+  </div>
+</section>
+
+<!-- 色セクション（JSでレンダリング） -->
+<main id="iro-root"></main>
+
+<!-- 目次オーバーレイ -->
+<div id="index-overlay" role="dialog" aria-modal="true" aria-labelledby="index-heading" hidden>
+  <button class="index-close" type="button" id="index-close" aria-label="目次を閉じる">×</button>
+  <div class="max-w-[760px] mx-auto">
+    <p class="font-heading text-[10px] tracking-[3px] uppercase text-sub" data-i18n="index.eyebrow">Index</p>
+    <h2 id="index-heading" class="font-mincho text-[clamp(28px,5vw,40px)] font-semibold mt-1" style="color:#E8E0D0;" data-i18n="index.title">目次 — 色をえらぶ</h2>
+    <p class="font-jp text-[12px] text-sub mt-2 leading-relaxed" data-i18n="index.note">季節・色系統・お気に入りで、色をしぼりこめます。</p>
+    <div id="palette-wrap" hidden>
+      <p class="chip-row-label" data-i18n="index.palette">私のパレット — 選んでHEXを写す</p>
+      <div id="palette-strip" class="palette-strip"></div>
+    </div>
+    <p class="chip-row-label" data-i18n="index.seasonLabel">季節</p>
+    <div id="season-chips" class="flex flex-wrap gap-2"></div>
+    <p class="chip-row-label" data-i18n="index.familyLabel">色系統</p>
+    <div id="family-chips" class="flex flex-wrap gap-2"></div>
+    <div id="index-list" class="mt-8 mb-4"></div>
+  </div>
+</div>
+
+<!-- 筆あそび（浸るモードから進化） — その色の小さな書斎 -->
+<div id="immerse" role="dialog" aria-modal="true" aria-label="その色で筆あそび" tabindex="-1" hidden></div>
+
+<!-- フッター -->
+<footer id="site-footer" class="relative border-t border-white/5 py-16 px-6 text-center overflow-hidden">
+  <div id="footer-cat" class="reveal absolute left-1/2 -translate-x-1/2 -top-6" aria-hidden="true">
+    <img src="../img/cat/silver-paint.png" alt="" style="width:clamp(96px,12vw,150px); opacity:0.9;">
+  </div>
+  <p class="font-jp text-[13px] text-sub mt-24 max-w-sm mx-auto leading-relaxed" data-i18n="footer.tagline">すべての色は、叩き台です。眺め方は自由に。</p>
+  <p class="font-jp text-[10px] max-w-md mx-auto mt-5 leading-relaxed" style="color:rgba(232,224,208,0.4);" data-i18n="footer.note">色の値（HEX/RGB）は出典により揺れがある慣用値の一例です。由来の物語は言い伝えに基づく表現です。</p>
+  <a href="../index.html" class="inline-block mt-6 font-heading text-[11px] tracking-[2px] uppercase text-sub hover:text-[#E8E0D0] transition-colors" data-i18n="footer.back">NOCTA ホームへ戻る</a>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var Z = window.NoctaZukan;
+  if (!Z) { if (window.console && console.error) console.error('NoctaZukan core (../zukan/zukan-core.js) が読み込めませんでした'); return; }
+  var escHtml = Z.escHtml, escAttr = Z.escAttr;
+  var MONTHS_EN = Z.MONTHS_EN;
+
+  var STRINGS = {
+    "nav.back":          { ja: "← NOCTA",                                                              en: "← NOCTA" },
+    "cover.title":       { ja: "Hare",                                                                  en: "Hare" },
+    "cover.tagline":     { ja: "遊ぶことで人生を彩ろう。日本の美しい色の名前に、ただ静かに浸るための図鑑。", en: "Color your life through play. A quiet catalogue for immersing yourself in Japan's beautiful color names." },
+    "footer.tagline":    { ja: "すべての色は、叩き台です。眺め方は自由に。",                              en: "Every color here is a starting point. Look at it however you like." },
+    "footer.note":       { ja: "色の値（HEX/RGB）は出典により揺れがある慣用値の一例です。由来の物語は言い伝えに基づく表現です。", en: "HEX/RGB values are conventional examples that vary between sources. The stories are traditional expressions." },
+    "footer.back":       { ja: "NOCTA ホームへ戻る",                                                    en: "Back to NOCTA Home" },
+    "today.eyebrow":     { ja: "今日の一色",                                                            en: "Color of the Day" },
+    "today.cta":         { ja: "この色に浸る ↓",                                                        en: "Immerse in this color ↓" },
+    "index.open":        { ja: "目次",                                                                  en: "Index" },
+    "index.eyebrow":     { ja: "Index",                                                                 en: "Index" },
+    "index.title":       { ja: "目次 — 色をえらぶ",                                                     en: "Index — Choose a Color" },
+    "index.note":        { ja: "季節・色系統・お気に入りで、色をしぼりこめます。",                         en: "Filter the colors by season, family, or favorites." },
+    "index.palette":     { ja: "私のパレット — 選んでHEXを写す",                                         en: "My Palette — select to copy the hex" },
+    "index.seasonLabel": { ja: "季節",                                                                  en: "Season" },
+    "index.familyLabel": { ja: "色系統",                                                                en: "Color Family" },
+    "index.all":         { ja: "すべて",                                                                en: "All" },
+    "index.fav":         { ja: "お気に入り",                                                            en: "Favorites" },
+    "meta.season":       { ja: "季節",                                                                  en: "Season" },
+    "meta.kasane":       { ja: "配色 — かさね",                                                         en: "Pairing — Kasane" },
+    "meta.immerse":      { ja: "この色で筆あそび",                                                        en: "Play with this color" },
+    "copy.done":         { ja: "写しました",                                                            en: "Copied" },
+    "copy.fail":         { ja: "写せませんでした",                                                      en: "Copy failed" }
+  };
+
+  var SEASONS = ["春", "夏", "秋", "冬"];
+  var SEASON_EN = { "春": "Spring", "夏": "Summer", "秋": "Autumn", "冬": "Winter" };
+
+  var FAMILY_ORDER = ["red", "pink", "orange", "brown", "yellow", "green", "blue", "purple", "white", "gray", "black"];
+  var FAMILY_LABELS = {
+    red:    { ja: "赤",   en: "Red" },
+    pink:   { ja: "桃",   en: "Pink" },
+    orange: { ja: "橙",   en: "Orange" },
+    brown:  { ja: "茶",   en: "Brown" },
+    yellow: { ja: "黄",   en: "Yellow" },
+    green:  { ja: "緑",   en: "Green" },
+    blue:   { ja: "青",   en: "Blue" },
+    purple: { ja: "紫",   en: "Purple" },
+    white:  { ja: "白",   en: "White" },
+    gray:   { ja: "鼠",   en: "Gray" },
+    black:  { ja: "黒",   en: "Black" }
+  };
+
+  /* ---- インク選定（WCAG相対輝度・薄い和紙のヴェールを敷いた上で判定）
+     縦書き色名と全画面モードはヴェールなしの生背景に載るため、生背景基準のnameInkを別に持つ */
+  var INK_DARK = "#2A2118", INK_LIGHT = "#F2EBDD";
+  var L_DARK = 0.0165, L_LIGHT = 0.837;
+  var VEIL_DARK = "rgba(10,9,6,0.22)", VEIL_LIGHT = "rgba(255,252,244,0.28)";
+
+  function inkFor(hex) {
+    var L = Z.luminance(hex);
+    var blendForLight = 0.78 * L + 0.22 * 0.003;   /* 墨ヴェール下の背景輝度 */
+    var blendForDark = 0.72 * L + 0.28 * 0.965;    /* 胡粉ヴェール下の背景輝度 */
+    var ratioLight = Z.contrastRatio(L_LIGHT, blendForLight);
+    var ratioDark = Z.contrastRatio(L_DARK, blendForDark);
+    var result;
+    if (ratioLight >= ratioDark) {
+      result = { ink: INK_LIGHT, veil: VEIL_DARK, line: "rgba(242,235,221,0.35)", ratio: ratioLight };
+    } else {
+      result = { ink: INK_DARK, veil: VEIL_LIGHT, line: "rgba(42,33,24,0.35)", ratio: ratioDark };
+    }
+    var rawLightWins = Z.contrastRatio(L_LIGHT, L) >= Z.contrastRatio(L_DARK, L);
+    result.nameInk = rawLightWins ? INK_LIGHT : INK_DARK;
+    result.nameGlow = rawLightWins ? "rgba(10,9,6,0.35)" : "rgba(255,252,244,0.45)";
+    return result;
+  }
+
+  function hexToRgbText(hex) {
+    return 'R' + parseInt(hex.slice(1, 3), 16) + ' G' + parseInt(hex.slice(3, 5), 16) + ' B' + parseInt(hex.slice(5, 7), 16);
+  }
+
+  /* 色名 → データindex の解決（配色ジャンプ用） */
+  var nameToIndex = {};
+  var SLUGS = (typeof NOCTA_IRO !== 'undefined') ? NOCTA_IRO.map(function (c) { return Z.slugify(c.romaji); }) : [];
+
+  var indexDialog = null, immerseDialog = null;
+
+  /* Hare演出: カバーの遊びを色の雫に。和紙コラージュの5色をそのまま流用（琥珀・抹茶・紺・紫・金） */
+  var COVER_TRAIL_COLORS = ['#C97B5C', '#8FA06B', '#2C4A63', '#8074A0', '#D4A93B'];
+
+  var app = Z.createApp({
+    strings: STRINGS,
+    idPrefix: 'iro',
+    railId: 'iro-rail',
+    sectionClass: 'iro-section',
+    favKey: 'nocta-iro-favs',
+    solidDots: true,
+    pawColors: COVER_TRAIL_COLORS,
+    coverTrail: { type: 'droplet', colors: COVER_TRAIL_COLORS },
+    slugs: SLUGS,
+    inertIds: ['site-nav', 'cover', 'iro-root', 'iro-rail', 'index-btn', 'site-footer'],
+    onFavChange: function () {
+      renderPalette();
+      if (favOnly) filterIndex();
+    }
+  });
+
+  var sectionCount = 0;
+
+  /* ---- 色セクションのレンダリング ---- */
+  function renderIro() {
+    var root = document.getElementById('iro-root');
+    if (!root || typeof NOCTA_IRO === 'undefined') return;
+
+    var total = NOCTA_IRO.length;
+    sectionCount = total;
+
+    NOCTA_IRO.forEach(function (c, i) { nameToIndex[c.name] = i; });
+
+    NOCTA_IRO.forEach(function (c, i) {
+      var reverse = i % 2 === 1;
+      var num = String(i + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+      var inks = inkFor(c.hex);
+
+      var section = document.createElement('section');
+      section.className = 'iro-section relative min-h-screen flex items-center py-24 px-6 md:px-12 overflow-hidden';
+      section.id = 'iro-' + (i + 1);
+      section.style.setProperty('--iro', c.hex);
+      section.style.setProperty('--ink', inks.ink);
+      section.style.setProperty('--ink-line', inks.line);
+      section.style.setProperty('--veil', inks.veil);
+      section.style.setProperty('--ink-name', inks.nameInk);
+      section.style.setProperty('--name-glow', inks.nameGlow);
+
+      var kasaneHtml = '';
+      var bandHtml = '<span style="background:' + escAttr(c.hex) + ';"></span>';
+      (c.kasane || []).forEach(function (pairName) {
+        var pi = nameToIndex[pairName];
+        if (pi === undefined) return;
+        var p = NOCTA_IRO[pi];
+        bandHtml += '<span style="background:' + escAttr(p.hex) + ';"></span>';
+        kasaneHtml +=
+          '<button type="button" class="kasane-btn" data-jump="' + pi + '">' +
+            '<span class="kasane-swatch" style="background:' + escAttr(p.hex) + ';"></span>' +
+            '<span class="kasane-name" data-ja="' + escAttr(p.name) + '" data-en="' + escAttr(p.romaji) + '">' + escHtml(p.name) + '</span>' +
+          '</button>';
+      });
+      /* 配色帯: 本色＋かさね2色をひと目で見せる（装飾用） */
+      var kasaneBand = '<div class="kasane-band" aria-hidden="true">' + bandHtml + '</div>';
+
+      section.innerHTML =
+        '<div class="relative z-10 max-w-[1180px] mx-auto w-full grid md:grid-cols-[auto_1fr] gap-12 md:gap-20 items-center' + (reverse ? ' md:[direction:rtl]' : '') + '">' +
+          '<div class="reveal flex justify-center' + (reverse ? ' md:[direction:ltr]' : '') + '">' +
+            /* 縦書き色名は装飾用（アクセシブル名はパネル内のh2が提供） */
+            '<p class="iro-name-v" aria-hidden="true">' + escHtml(c.name) + '</p>' +
+          '</div>' +
+          '<div class="reveal' + (reverse ? ' md:[direction:ltr]' : '') + '" style="transition-delay:0.15s;">' +
+            '<div class="iro-panel">' +
+              '<p class="font-heading text-[11px] tracking-[3px] uppercase" style="color:var(--ink); opacity:0.65;">' + num + '</p>' +
+              '<h2 class="font-mincho text-[clamp(26px,3.4vw,36px)] font-semibold mt-2" style="color:var(--ink);" data-ja="' + escAttr(c.name) + '" data-en="' + escAttr(c.romaji) + '">' + escHtml(c.name) + '</h2>' +
+              '<p class="iro-kana mt-1">' + escHtml(c.kana) + ' — <span class="font-heading text-[11px] tracking-[2px] uppercase">' + escHtml(c.romaji) + '</span></p>' +
+              '<p class="iro-story font-jp mt-5" data-ja="' + escAttr(c.storyJa) + '" data-en="' + escAttr(c.storyEn) + '">' + escHtml(c.storyJa) + '</p>' +
+              '<div class="mt-6">' +
+                '<p class="font-heading text-[10px] tracking-[2px] uppercase mb-2" style="color:var(--ink); opacity:0.65;" data-i18n="meta.kasane">配色 — かさね</p>' +
+                kasaneBand +
+                '<div class="flex flex-wrap gap-2">' + kasaneHtml + '</div>' +
+              '</div>' +
+              '<div class="flex flex-wrap items-center gap-2 mt-6">' +
+                '<button type="button" class="fav-btn" data-fav="' + escAttr(c.name) + '" aria-pressed="false" aria-label="' + escAttr('お気に入り: ' + c.name) + '"><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#cat-paw"/></svg></button>' +
+                '<button type="button" class="iro-chip" data-copy="' + escAttr(c.hex) + '">' + escHtml(c.hex) + '</button>' +
+                '<button type="button" class="iro-chip" data-copy="' + escAttr(hexToRgbText(c.hex)) + '">' + escHtml(hexToRgbText(c.hex)) + '</button>' +
+                '<span class="iro-chip iro-chip--static"><span data-i18n="meta.season">季節</span>: <span data-ja="' + escAttr(c.season) + '" data-en="' + escAttr(SEASON_EN[c.season]) + '">' + escHtml(c.season) + '</span></span>' +
+              '</div>' +
+              /* 遊びのCTA — 他のchipから独立させて主役化（塗り・筆アイコン・大きめ） */
+              '<div class="mt-5' + (reverse ? ' md:flex md:justify-end' : '') + '">' +
+                '<button type="button" class="fude-cta" data-immerse="' + i + '" aria-label="' + escAttr(c.name + 'で筆あそび') + '">' +
+                  '<svg class="fude-cta-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L14 10 L18 14 L8 20 Z M14 10 L18 6 L20 8 L18 10 L18 14 Z" fill="currentColor" opacity="0.9"/><circle cx="6.5" cy="17.5" r="1.3" fill="currentColor"/></svg>' +
+                  '<span data-i18n="meta.immerse">この色で筆あそび</span>' +
+                  '<span class="fude-cta-arrow" aria-hidden="true">→</span>' +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      root.appendChild(section);
+      app.trackSection(section, c.hex, c.romaji);
+    });
+  }
+
+  /* ---- 今日の一色 ---- */
+  function renderToday() {
+    var slot = document.getElementById('today-slot');
+    if (!slot || typeof NOCTA_IRO === 'undefined' || !NOCTA_IRO.length) return;
+    var idx = Z.todayIndex(NOCTA_IRO.length);
+    var c = NOCTA_IRO[idx];
+    var d = new Date();
+    var dateJa = (d.getMonth() + 1) + '月' + d.getDate() + '日';
+    var dateEn = MONTHS_EN[d.getMonth() + 1] + ' ' + d.getDate();
+
+    var card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'today-card';
+    card.style.setProperty('--iro', c.hex);
+    card.innerHTML =
+      '<span class="today-swatch" style="background:' + escAttr(c.hex) + ';" aria-hidden="true"></span>' +
+      '<span>' +
+        '<span class="font-heading text-[10px] tracking-[3px] uppercase text-sub block">' +
+          '<span data-i18n="today.eyebrow">今日の一色</span> · <span data-ja="' + escAttr(dateJa) + '" data-en="' + escAttr(dateEn) + '">' + escHtml(dateJa) + '</span>' +
+        '</span>' +
+        '<span class="font-mincho text-[24px] font-semibold block mt-1" style="color:#E8E0D0;" data-ja="' + escAttr(c.name) + '" data-en="' + escAttr(c.romaji) + '">' + escHtml(c.name) + '</span>' +
+        '<span class="font-mincho text-[12px] tracking-[0.25em] text-sub block">' + escHtml(c.kana) + ' · ' + escHtml(c.hex) + '</span>' +
+        '<span class="font-heading text-[10px] tracking-[2px] uppercase text-sub block mt-2" data-i18n="today.cta">この色に浸る ↓</span>' +
+      '</span>';
+    card.addEventListener('click', function () { app.jumpTo(idx); });
+    slot.appendChild(card);
+  }
+
+  /* ---- 目次オーバーレイ＋季節・色系統・お気に入りフィルタ ---- */
+  var activeSeason = '';  /* '' = すべて */
+  var activeFamily = '';
+  var favOnly = false;
+
+  function renderPalette() {
+    var wrap = document.getElementById('palette-wrap');
+    var strip = document.getElementById('palette-strip');
+    if (!wrap || !strip) return;
+    strip.innerHTML = '';
+    var favColors = NOCTA_IRO.filter(function (c) { return app.favs.has(c.name); });
+    wrap.hidden = favColors.length === 0;
+    favColors.forEach(function (c) {
+      var inks = inkFor(c.hex);
+      var sw = document.createElement('button');
+      sw.type = 'button';
+      sw.className = 'palette-swatch';
+      sw.style.background = c.hex;
+      sw.style.color = inks.nameInk;
+      sw.style.textShadow = '0 0 18px ' + inks.nameGlow + ', 0 0 2px ' + inks.nameGlow;
+      sw.textContent = c.hex;
+      sw.setAttribute('aria-label', c.name + ' ' + c.hex + ' をコピー');
+      sw.addEventListener('click', function () { app.copyText(c.hex, sw); });
+      strip.appendChild(sw);
+    });
+  }
+
+  function buildIndex() {
+    var seasonWrap = document.getElementById('season-chips');
+    var familyWrap = document.getElementById('family-chips');
+    var list = document.getElementById('index-list');
+    if (!seasonWrap || !familyWrap || !list || typeof NOCTA_IRO === 'undefined') return;
+
+    var allChip = document.createElement('button');
+    allChip.type = 'button';
+    allChip.className = 'month-chip active';
+    allChip.dataset.season = '';
+    allChip.setAttribute('data-i18n', 'index.all');
+    allChip.setAttribute('aria-pressed', 'true');
+    allChip.textContent = STRINGS['index.all'][app.lang()];
+    seasonWrap.appendChild(allChip);
+
+    SEASONS.forEach(function (s) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'month-chip';
+      chip.dataset.season = s;
+      chip.setAttribute('data-ja', s);
+      chip.setAttribute('data-en', SEASON_EN[s]);
+      chip.setAttribute('aria-pressed', 'false');
+      chip.textContent = s;
+      seasonWrap.appendChild(chip);
+    });
+
+    seasonWrap.addEventListener('click', function (e) {
+      var chip = e.target.closest('.month-chip');
+      if (!chip) return;
+      activeSeason = chip.dataset.season;
+      if (activeSeason === '') { /* すべて = 全フィルタ解除 */
+        activeFamily = '';
+        favOnly = false;
+        familyWrap.querySelectorAll('.month-chip').forEach(function (c) { app.setChip(c, false); });
+      }
+      seasonWrap.querySelectorAll('.month-chip').forEach(function (c) {
+        app.setChip(c, c === chip);
+      });
+      filterIndex();
+    });
+
+    var familiesPresent = {};
+    NOCTA_IRO.forEach(function (c) { familiesPresent[c.family] = true; });
+    FAMILY_ORDER.forEach(function (key) {
+      if (!familiesPresent[key]) return;
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'month-chip';
+      chip.dataset.family = key;
+      chip.setAttribute('data-ja', FAMILY_LABELS[key].ja);
+      chip.setAttribute('data-en', FAMILY_LABELS[key].en);
+      chip.setAttribute('aria-pressed', 'false');
+      chip.textContent = FAMILY_LABELS[key][app.lang()];
+      familyWrap.appendChild(chip);
+    });
+
+    var favChip = document.createElement('button');
+    favChip.type = 'button';
+    favChip.className = 'month-chip';
+    favChip.dataset.favChip = '1';
+    favChip.setAttribute('data-i18n', 'index.fav');
+    favChip.setAttribute('aria-pressed', 'false');
+    favChip.textContent = STRINGS['index.fav'][app.lang()];
+    familyWrap.appendChild(favChip);
+
+    familyWrap.addEventListener('click', function (e) {
+      var chip = e.target.closest('.month-chip');
+      if (!chip) return;
+      if (chip.dataset.favChip) {
+        favOnly = !favOnly;
+        app.setChip(chip, favOnly);
+      } else {
+        activeFamily = chip.dataset.family === activeFamily ? '' : chip.dataset.family;
+        familyWrap.querySelectorAll('.month-chip[data-family]').forEach(function (c) {
+          app.setChip(c, c.dataset.family === activeFamily);
+        });
+      }
+      filterIndex();
+    });
+
+    NOCTA_IRO.forEach(function (c, i) {
+      var isFav = app.favs.has(c.name);
+      var item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'index-item';
+      item.dataset.season = c.season;
+      item.dataset.family = c.family;
+      item.dataset.id = c.name;
+      item.innerHTML =
+        '<span class="index-dot" style="background:' + escAttr(c.hex) + ';"></span>' +
+        '<span class="font-mincho text-[17px] font-semibold" style="color:#E8E0D0;" data-ja="' + escAttr(c.name) + '" data-en="' + escAttr(c.romaji) + '">' + escHtml(c.name) + '</span>' +
+        '<span class="font-mincho text-[11px] tracking-[0.2em] text-sub">' + escHtml(c.kana) + '</span>' +
+        '<span class="idx-fav" style="color:' + escAttr(c.hex) + ';"' + (isFav ? '' : ' hidden') + '><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#cat-paw"/></svg></span>' +
+        '<span class="ml-auto font-heading text-[10px] tracking-[1px] uppercase text-sub" data-ja="' + escAttr(c.season + ' · ' + c.hex) + '" data-en="' + escAttr(SEASON_EN[c.season] + ' · ' + c.hex) + '">' + escHtml(c.season + ' · ' + c.hex) + '</span>';
+      item.addEventListener('click', function () {
+        indexDialog.close();
+        app.jumpTo(i);
+      });
+      list.appendChild(item);
+    });
+
+    renderPalette();
+  }
+
+  function filterIndex() {
+    document.querySelectorAll('.index-item').forEach(function (item) {
+      var show =
+        (!activeSeason || item.dataset.season === activeSeason) &&
+        (!activeFamily || item.dataset.family === activeFamily) &&
+        (!favOnly || app.favs.has(item.dataset.id));
+      item.style.display = show ? '' : 'none';
+    });
+  }
+
+  /* ---- 筆あそび（浸るモードから進化） ---- */
+  /* 開閉・フォーカス・ロックはcoreが担い、中身の生成・破棄はNoctaFudeが担う */
+  var fudeInstance = null;
+
+  function populateImmerse(i) {
+    var c = NOCTA_IRO[i];
+    var im = document.getElementById('immerse');
+    if (!c || !im) return;
+    /* かさねのhex解決 */
+    var hexes = (c.kasane || []).map(function (n) {
+      var idx = nameToIndex[n];
+      return idx !== undefined ? NOCTA_IRO[idx].hex : c.hex;
+    });
+    /* 前回のインスタンスがあれば破棄 */
+    if (fudeInstance) { fudeInstance.detach(); fudeInstance = null; }
+    /* NoctaFudeで筆あそび画面を構築 */
+    fudeInstance = window.NoctaFude.mount(im, {
+      name: c.name, kana: c.kana, romaji: c.romaji, hex: c.hex,
+      season: c.season, kasane: c.kasane || [], hexes: hexes,
+      slug: (SLUGS && SLUGS[i]) ? SLUGS[i] : (c.romaji || 'iro').toLowerCase()
+    });
+    /* onOpenはcoreのhidden=false前に呼ばれるため、rAF×2でレイアウト確定を待ってからresize
+       （setTimeoutより低速端末で安定・初回1x1描画を防ぐ） */
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        if (fudeInstance) fudeInstance.resize();
+      });
+    });
+  }
+
+  function teardownImmerse() {
+    if (fudeInstance) { fudeInstance.detach(); fudeInstance = null; }
+    var im = document.getElementById('immerse');
+    if (im) im.innerHTML = '';
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    renderIro();
+    renderToday();
+
+    indexDialog = app.registerDialog('index', {
+      el: document.getElementById('index-overlay'),
+      closeBtn: document.getElementById('index-close'),
+      trigger: document.getElementById('index-btn')
+    });
+    /* 筆あそび画面のダイアログ登録
+       - onOpenでNoctaFudeマウント（.fude-closeがHTMLに現れる）
+       - onCloseでNoctaFudeを破棄
+       - 閉じるボタンは動的生成なのでイベント委譲で処理
+       - 背景クリック閉じるは廃止（canvas描画と衝突するため）— ESCと×ボタンのみで閉じる */
+    immerseDialog = app.registerDialog('immerse', {
+      el: document.getElementById('immerse'),
+      closeBtn: null,
+      onOpen: populateImmerse,
+      onClose: teardownImmerse,
+      backdropClose: false
+    });
+    document.getElementById('immerse').addEventListener('click', function (e) {
+      if (e.target.closest('.fude-close')) immerseDialog.close();
+    });
+
+    buildIndex();
+    app.initObservers();
+    app.initCoverPaws();
+    app.initKeyboardNav();
+
+    document.getElementById('iro-root').addEventListener('click', function (e) {
+      var fav = e.target.closest('.fav-btn');
+      if (fav) { app.favs.toggle(fav.getAttribute('data-fav')); return; }
+      var copyBtn = e.target.closest('[data-copy]');
+      if (copyBtn) { app.copyText(copyBtn.getAttribute('data-copy'), copyBtn); return; }
+      var imm = e.target.closest('[data-immerse]');
+      if (imm) { immerseDialog.open(parseInt(imm.getAttribute('data-immerse'), 10)); return; }
+      var jump = e.target.closest('[data-jump]');
+      if (jump) { app.jumpTo(parseInt(jump.getAttribute('data-jump'), 10)); return; }
+    });
+
+    app.favs.initDom();
+    app.applyLang();
+    app.initHashDeepLink();
+  });
+})();
+</script>
+</body>
+</html>

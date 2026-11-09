@@ -1,0 +1,750 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiNa | NOCTA Tools</title>
+<meta name="description" content="HiNa — 宝石と花と色と紋と思考、そして知らない国の窓の静かなコレクション。">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=EB+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="./hina-birth-data.js?v=1"></script>
+<script src="./birth-hina.js?v=1"></script>
+<style>
+  :root{
+    --hina-silver:#B8B4AE;
+    /* 標本便箋の紙質に使う微細ノイズ（.grain と誕生カードの紙面で共用） */
+    --hina-noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:#0A0906; color:#E8E0D0; overflow-x:hidden;
+    font-family:'Noto Sans JP',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .font-display{ font-family:'EB Garamond','Shippori Mincho',serif; }
+  .font-mincho{ font-family:'Shippori Mincho','EB Garamond',serif; }
+  .font-heading{ font-family:'Syne',sans-serif; }
+  .font-jp{ font-family:'Noto Sans JP',sans-serif; }
+  .text-sub{ color:#9A8A7A; }
+
+  /* 粒子ノイズ質感（NOCTA本体・図鑑コレクションと同一の余白哲学の一部） */
+  .grain{
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0.05; mix-blend-mode:overlay;
+    background-image:var(--hina-noise);
+  }
+
+  /* 銀メタリックグラデ — HiNaワードマーク専用の唯一の見せ場 */
+  .hina-gradient{
+    background:linear-gradient(160deg,#F2EEE4 0%,#C7C3BC 26%,#8E8A83 56%,#45413B 82%,#1C1A16 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  }
+
+  /* 順次フェード（ページ読み込み・スクロールで初出時） */
+  .reveal{ opacity:0; transform:translateY(20px); transition:opacity 0.9s cubic-bezier(0.4,0,0.2,1), transform 0.9s cubic-bezier(0.4,0,0.2,1); }
+  .reveal.active{ opacity:1; transform:translateY(0); }
+  .reveal-d1{ transition-delay:0.12s; }
+  .reveal-d2{ transition-delay:0.24s; }
+  .reveal-d3{ transition-delay:0.36s; }
+  .reveal-d4{ transition-delay:0.48s; }
+
+  .section-tag{
+    display:inline-flex; align-items:center; gap:12px;
+    font-family:'Syne',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:0.24em; text-transform:uppercase; color:var(--hina-silver);
+  }
+  .section-tag::before{ content:''; width:22px; height:1px; background:var(--hina-silver); flex-shrink:0; }
+
+  /* コレクション — 目次のような静かな列 */
+  .act-row{ border-top:1px solid rgba(184,180,174,0.1); }
+  .act-num{
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(40px,5vw,56px); line-height:1;
+    color:rgba(184,180,174,0.35);
+  }
+  .act-label{
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.22em; text-transform:uppercase; color:var(--hina-silver);
+  }
+  .act-name{ font-family:'Shippori Mincho','EB Garamond',serif; font-weight:600; color:#E8E0D0; }
+  .act-kana{ font-family:'Noto Sans JP',sans-serif; font-weight:400; color:#9A8A7A; font-size:0.5em; letter-spacing:0.1em; margin-left:0.5em; }
+  .act-line{ font-family:'EB Garamond','Shippori Mincho',serif; font-style:italic; color:#B8B4AE; }
+  .act-mode-label{ font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:#9A8A7A; }
+  .act-open{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:#9A8A7A; border-bottom:1px solid transparent; padding-bottom:3px;
+    transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .act-open:hover{ color:#E8E0D0; border-color:rgba(232,224,208,0.4); }
+  .act-open-arrow{ transition:transform 0.3s ease; display:inline-block; }
+  .act-open:hover .act-open-arrow{ transform:translateX(3px); }
+
+  /* 画面イメージ（.act-shot） — 各アプリの実画面を縮約再現した図。
+     写真やスクリーンショットは使わず、HTML/CSS/インラインSVGだけで組む（外部リクエストを
+     増やさず、どの幅でも潰れず、文字も選択できる状態を保つため）。
+     数値・文言・配色はすべて実データから取っている:
+       Gyu  = gems/gems-data.js（ルビー 02/36・#9B111E）
+       Ichi = flora/flora-data.js（梅 02/24・#F7C6D4）
+       Hare = iro/iro-data.js（甕覗 16/48・#A2D7DD・かさね 藍色/白鼠）
+       Kihi = kihi/data.js（30紋・織田木瓜ほか。紋は実物と同じ幾何を SVG で描画）
+       Kai  = strategy/content.js（18題・孫子 謀攻篇「戦う前に、目的へ。」） */
+  .act-shot{
+    position:relative; margin-top:24px; overflow:hidden; max-width:560px;
+    border:1px solid rgba(184,180,174,0.14);
+    background:#0A0906; color:#E8E0D0;
+    aspect-ratio:16/10;
+    container-type:inline-size;
+  }
+  @supports not (container-type:inline-size){ .act-shot{ min-height:230px; } }
+
+  /* 実画面キャプチャ版（Gyu / Ichi）。枠と同じ 16:10 で撮っているので object-fit の切り落としは起きない */
+  .act-shot--cap img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+
+  .shot-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:7px 11px; border-bottom:1px solid rgba(184,180,174,0.08);
+  }
+  .shot-brand{ font-family:'Syne',sans-serif; font-size:7px; letter-spacing:0.22em; text-transform:uppercase; color:rgba(184,180,174,0.55); }
+  .shot-en{
+    font-family:'Syne',sans-serif; font-size:6px; letter-spacing:0.18em; color:rgba(184,180,174,0.5);
+    border:1px solid rgba(184,180,174,0.22); border-radius:99px; padding:2px 6px;
+  }
+  .shot-pill{
+    position:absolute; left:10px; bottom:8px;
+    font-family:'Noto Sans JP',sans-serif; font-size:5.5px; letter-spacing:0.08em; color:rgba(232,224,208,0.6);
+    border:1px solid rgba(184,180,174,0.2); border-radius:99px; padding:2.5px 7px;
+  }
+
+  /* ---- Hare の枠組み（色そのものが画面を満たす実画面に合わせる） ---- */
+  .shot-body{ position:relative; display:flex; height:calc(100% - 27px); }
+  .shot-chips{ display:flex; flex-wrap:wrap; gap:4px; margin-top:7px; justify-content:flex-end; align-items:center; }
+  .shot-paw{ width:11px; height:11px; border-radius:50%; border:1px solid rgba(184,180,174,0.25); display:inline-block; }
+  .shot-chip{
+    font-family:'Noto Sans JP',sans-serif; font-size:5.5px; letter-spacing:0.04em;
+    border:1px solid rgba(184,180,174,0.22); border-radius:99px; padding:2.5px 6px;
+    color:rgba(232,224,208,0.62); white-space:nowrap;
+  }
+  .shot-chip--on{ color:#E8E0D0; }
+  .shot-cta{
+    font-family:'Noto Sans JP',sans-serif; font-size:6px; letter-spacing:0.08em;
+    border:1px solid currentColor; border-radius:99px; padding:3.5px 9px; margin-top:7px; white-space:nowrap;
+  }
+  .shot-rail{ position:absolute; right:7px; top:10px; bottom:10px; display:flex; flex-direction:column; justify-content:space-between; align-items:center; }
+  .shot-rail i{ width:2px; height:2px; border-radius:50%; background:rgba(184,180,174,0.3); }
+
+  /* ---- Hare は色そのものが画面を満たす（実画面と同じく地が色、文字は濃色） ---- */
+  .act-shot--iro{ color:#2B302E; }
+  .act-shot--iro .shot-bar{ border-bottom-color:rgba(0,0,0,0.08); }
+  .act-shot--iro .shot-brand,
+  .act-shot--iro .shot-en{ color:rgba(43,48,46,0.6); }
+  .act-shot--iro .shot-en{ border-color:rgba(43,48,46,0.25); }
+  .act-shot--iro .shot-pill{ color:rgba(43,48,46,0.6); border-color:rgba(43,48,46,0.22); }
+  .shot-card{
+    position:absolute; left:14px; top:12px; width:58%;
+    background:rgba(255,255,255,0.26); border:1px solid rgba(255,255,255,0.4);
+    padding:10px 12px 11px; display:flex; flex-direction:column; gap:2px;
+  }
+  .shot-iro-idx{ font-family:'Syne',sans-serif; font-size:6.5px; letter-spacing:0.24em; color:rgba(43,48,46,0.55); }
+  .shot-iro-name{ font-family:'Shippori Mincho',serif; font-size:20px; letter-spacing:0.08em; color:#22261F; margin:1px 0 0; }
+  .shot-iro-kana{ font-family:'Noto Sans JP',sans-serif; font-size:6px; letter-spacing:0.18em; color:rgba(43,48,46,0.6); }
+  .shot-iro-line{ font-family:'Noto Sans JP',sans-serif; font-size:6.5px; line-height:1.8; color:rgba(43,48,46,0.78); margin-top:5px; }
+  .shot-kasane-l{ font-family:'Noto Sans JP',sans-serif; font-size:5.5px; letter-spacing:0.14em; color:rgba(43,48,46,0.55); margin-top:7px; }
+  .shot-kasane{ display:flex; height:9px; border-radius:99px; overflow:hidden; margin-top:3px; }
+  .shot-kasane i{ flex:1; }
+  .shot-iro-pills{ display:flex; gap:5px; margin-top:6px; }
+  .shot-iro-pill{
+    display:inline-flex; align-items:center; gap:4px;
+    font-family:'Noto Sans JP',sans-serif; font-size:5.5px; color:rgba(43,48,46,0.8);
+    background:rgba(255,255,255,0.5); border-radius:99px; padding:2.5px 7px 2.5px 3px;
+  }
+  .shot-iro-pill b{ width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .act-shot--iro .shot-chips{ justify-content:flex-start; margin-top:7px; }
+  .act-shot--iro .shot-chip{ color:rgba(43,48,46,0.8); border-color:rgba(43,48,46,0.22); }
+  .act-shot--iro .shot-paw{ border-color:rgba(43,48,46,0.25); }
+  .act-shot--iro .shot-cta{ align-self:flex-end; color:#22261F; background:rgba(255,255,255,0.45); }
+  .shot-vert{
+    position:absolute; right:26px; top:50%; transform:translateY(-50%);
+    writing-mode:vertical-rl; font-family:'Shippori Mincho',serif; font-size:40px;
+    letter-spacing:0.06em; color:rgba(34,38,31,0.9); line-height:1;
+  }
+  .shot-rail--iro i{ background:rgba(43,48,46,0.28); }
+
+  /* ---- Kihi は一覧グリッド ---- */
+  .shot-head{ padding:10px 12px 0 14px; }
+  .shot-eyebrow{ font-family:'EB Garamond',serif; font-size:6px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(184,180,174,0.6); }
+  .shot-h{ font-family:'Shippori Mincho',serif; font-size:13px; letter-spacing:0.06em; color:#E8E0D0; margin-top:4px; }
+  /* グリッド版は縦フレックスにして、一覧が枠の残りの高さを満たす（実画面の切り取りとして見せる） */
+  .act-shot--grid{ display:flex; flex-direction:column; }
+  .act-shot--grid .shot-head{ flex:none; }
+  .shot-grid{
+    display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); grid-auto-rows:1fr;
+    gap:1px; background:rgba(184,180,174,0.1); margin:9px 12px 12px 14px; flex:1; min-height:0;
+  }
+  .shot-cell{ background:#0A0906; padding:8px 2px; text-align:center; display:flex; flex-direction:column; justify-content:center; }
+  .shot-cell--on{ background:rgba(232,224,208,0.07); box-shadow:inset 0 -1px 0 rgba(232,224,208,0.55); }
+  .shot-cell svg{ width:40px; height:40px; display:block; margin:0 auto 8px; }
+  .shot-mon{ font-family:'Shippori Mincho',serif; font-size:6.5px; color:#E8E0D0; letter-spacing:0.04em; }
+  .shot-clan{ font-family:'Noto Sans JP',sans-serif; font-size:5px; color:rgba(184,180,174,0.55); margin-top:1px; }
+  .shot-count{ font-family:'Noto Sans JP',sans-serif; font-size:5.5px; color:rgba(184,180,174,0.55); }
+
+  /* ---- Kai は思考の棚。図のカードが主役 ---- */
+  .shot-field{
+    font-family:'Noto Sans JP',sans-serif; font-size:5.5px; color:rgba(184,180,174,0.5);
+    border:1px solid rgba(184,180,174,0.2); padding:3.5px 7px; white-space:nowrap;
+  }
+  .shot-diagram{ position:relative; margin:9px 14px 0; border:1px solid rgba(184,180,174,0.12); background:rgba(255,255,255,0.012); }
+  .shot-diagram svg{ display:block; width:100%; height:auto; }
+  .shot-meta{ font-family:'Noto Sans JP',sans-serif; font-size:5.5px; letter-spacing:0.08em; color:rgba(184,180,174,0.6); margin:8px 14px 0; }
+  .shot-kai-h{ font-family:'Shippori Mincho',serif; font-size:15px; letter-spacing:0.05em; color:#E8E0D0; margin:4px 14px 0; }
+  .shot-src{ font-family:'Noto Sans JP',sans-serif; font-size:5.5px; color:rgba(184,180,174,0.5); margin:5px 14px 0; }
+
+  /* 実寸が小さいほど細部を間引いて潰れを防ぐ */
+  @container (max-width:460px){
+    .shot-chips{ display:none; }
+    .shot-cta{ display:none; }
+    .shot-card{ width:64%; }
+    .shot-iro-name{ font-size:15px; }
+    .shot-vert{ font-size:26px; right:20px; }
+    .shot-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .shot-cell:nth-child(n+9){ display:none; }
+    .shot-cell svg{ width:28px; height:28px; }
+    .shot-kai-h{ font-size:12px; }
+    .shot-field:nth-child(n+3){ display:none; }
+  }
+
+  /* キーボード操作の現在位置を示す(主要な操作要素のみ) */
+  .act-open:focus-visible,
+  .hina-birth-m:focus-visible,
+  .hina-birth-save:focus-visible,
+  .hbo-link:focus-visible{
+    outline:1px solid #E8E0D0;
+    outline-offset:4px;
+  }
+
+  /* 誕生HiNa — 12ヶ月の贈り物棚 */
+  #birth-shelf{ min-height:120px; }
+
+  .hina-birth-nav{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:14px 22px;
+    margin-bottom:56px; padding:0 4px;
+  }
+  .hina-birth-m{
+    background:none; border:none; padding:6px 2px; cursor:pointer;
+    display:flex; align-items:baseline; gap:3px;
+    font-family:'Bebas Neue',sans-serif; color:#9A8A7A;
+    border-bottom:2px solid transparent;
+    transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .hina-birth-m .hbm-num{ font-size:18px; letter-spacing:0.02em; }
+  .hina-birth-m .hbm-suffix{ font-family:'Noto Sans JP',sans-serif; font-size:11px; letter-spacing:0.04em; color:inherit; }
+  .hina-birth-m:hover{ color:#B8B4AE; }
+  /* 選択状態は色に加えて下線(不透明・太め)でも示す(色覚・小サイズ対応)。aria-pressedはJS側で付与 */
+  .hina-birth-m.is-on{ color:#E8E0D0; border-color:#E8E0D0; }
+
+  .hina-birth-stage{ display:flex; justify-content:center; padding:0 8px; }
+
+  /* 誕生カード — 標本便箋(botanical/mineral specimen × letterpress letter)。
+     isolation:isolateでカード自身が新しいスタッキングコンテキストを作る。これが無いと
+     position:relativeだけでは子要素の負z-indexが「カードの外側」の祖先コンテキストで
+     解決されてしまい、紙質(.hbc-grain)や二重内枠(.hbc-frame-outer/inner)がページ背景の
+     下に沈んでDOM上で見えなくなる不具合があった(Codex C1: DOM≠PNG)。isolateした上で、
+     装飾(紙のノイズ・二重ヘアライン内枠・四隅tick)はz-index:0の実要素(aria-hidden)、
+     本文(花名・標本・祝福文など)は.hbc-contentにまとめてz-index:1にすることで、
+     isolateされたスタッキングコンテキスト内では装飾(z:0)が本文(z:1)より必ず背面になる
+     (DOM順に依存しない・z-index操作の細工なしで「常に背面」を保証する設計)。 */
+  .hina-birth-card{
+    position:relative; isolation:isolate; overflow:hidden;
+    width:100%; max-width:380px;
+    color:#2A2118; border-radius:14px;
+    background-image:
+      radial-gradient(ellipse 76% 64% at 50% 38%, rgba(0,0,0,0) 58%, rgba(42,33,24,0.07) 100%),
+      linear-gradient(178deg, #F4EEDF 0%, #EBE2CE 100%);
+    padding:clamp(32px,7vw,52px) clamp(24px,6vw,40px) clamp(36px,7vw,48px);
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,0.55),
+      0 1px 0 rgba(255,253,247,0.45) inset,
+      0 -1px 0 rgba(42,33,24,0.07) inset,
+      0 0 0 1px rgba(42,33,24,0.14);
+    text-align:center;
+  }
+  .hbc-grain, .hbc-frame-outer, .hbc-frame-inner, .hbc-ticks{ position:absolute; z-index:0; pointer-events:none; }
+  .hbc-content{ position:relative; z-index:1; }
+  .hbc-grain{
+    inset:0; opacity:0.045; mix-blend-mode:overlay;
+    background-image:var(--hina-noise); background-size:130px 130px;
+  }
+  .hbc-frame-outer{ inset:4%; border:1px solid rgba(42,33,24,0.18); border-radius:3px; }
+  .hbc-frame-inner{ inset:5.6%; border:1px solid rgba(42,33,24,0.10); border-radius:2px; }
+  /* 四隅tick(標本便箋の角ディテール・Codex W3) — .hbc-frame-outerと同じ4%インセットの
+     矩形の四隅に、同色2色linear-gradient(=ソリッド矩形塗り)を水平1本+垂直1本ずつ背中合わせに
+     置いてL字を作る。Canvas側drawHairlineFrameの角tick(12px*S)と対応(こちらは12px基準)。 */
+  .hbc-ticks{
+    inset:4%;
+    background-repeat:no-repeat;
+    background-image:
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30)),
+      linear-gradient(rgba(42,33,24,0.30),rgba(42,33,24,0.30));
+    background-position:
+      top left, top left,
+      top right, top right,
+      bottom right, bottom right,
+      bottom left, bottom left;
+    background-size:
+      12px 1.4px, 1.4px 12px,
+      12px 1.4px, 1.4px 12px,
+      12px 1.4px, 1.4px 12px,
+      12px 1.4px, 1.4px 12px;
+  }
+
+  .hbc-eyebrow{
+    display:flex; align-items:center; justify-content:center; gap:11px;
+    font-family:'Syne',sans-serif; font-size:10px; letter-spacing:0.28em; text-transform:uppercase;
+    color:#7A6F5E; margin:0;
+  }
+  .hbc-eyebrow-rule{ width:20px; height:1px; background:rgba(42,33,24,0.24); flex:0 0 auto; }
+  .hbc-flower{
+    font-family:'Shippori Mincho','EB Garamond',serif; font-weight:600; letter-spacing:0.06em;
+    font-size:clamp(38px,8.6vw,54px); color:#2A2118; margin:20px 0 0; line-height:1.15;
+    /* 長い花名(「チューリップ」等)でも必ず1行に収める。CSSのclamp()はビューポート幅基準で
+       カード幅そのものは考慮しないため、実測して収まらない場合はJS(fitFlowerName)が
+       font-sizeを直接縮小する。overflow/text-overflowはJSが効かない場合の保険。 */
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+
+  /* 花紋エンブレム — 誕生花(hanaForm)・誕生石(ファセットの芯)・HiNa誕生色を1つの紋章に
+     融合した手続き生成のcanvas(drawEmblem。website/hina/birth-hina.js)。旧・実写標本3点
+     (.hbc-specimens)を1つのヒーロー丸に統合して撤去した。表示サイズはCSSのclampで制御し、
+     canvas自体のバッキングストア(400x400・JS側)はこの上限より大きく取って簡易的な
+     高解像度描画にしている(drawImageの補間はブラウザに委ねる)。 */
+  .hbc-emblem{
+    display:block; margin:26px auto 0;
+    width:clamp(112px,29vw,138px); height:clamp(112px,29vw,138px);
+  }
+  /* エンブレム下のラベル1行 — 「誕生花 ○○ ・ 誕生石 ○○ ・ 誕生色 ○○」。名前情報は視覚的には
+     ここが担うが、読み上げは.hel-sr(sr-only・render()で月ごとにtextContentを設定)に
+     一本化しており、.hel-item(タグ+名前1単位)はaria-hiddenの装飾テキストになっている
+     (エンブレムのcanvas自体もaria-hidden)。<p>要素(.hbc-emblem-label)自体へのaria-label付与は
+     一部のスクリーンリーダーで安定して読み上げられずラベルが空扱いになるリスクがあったため
+     使わず、視覚的には隠すが読み上げは確実にされるsr-onlyテキストに切り替えた
+     (Codex 2周目 W1)。.hel-itemはwhite-space:nowrapでタグ+名前が行の途中で
+     不自然に割れないようにしつつ、コンテナのflex-wrapで狭幅では自然な2行折り返しを許容する
+     (以前は狭幅でフォントを7px/10pxまで縮小して1行に押し込もうとしていたが、それでも320px幅では
+     結局2行化しDOM/PNGの見た目が分岐する一方、7pxは可読性面で問題があったため撤去した。
+     折り返しは許容し、フォントは常に読める大きさを保つ)。 */
+  .hbc-emblem-label{
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:baseline;
+    gap:4px 5px; margin:14px 0 0; padding:0;
+  }
+  .hel-item{ white-space:nowrap; }
+  /* 視覚的には隠すが読み上げは可能な標準的なsr-onlyユーティリティ(Codex 2周目 W1)。
+     .hel-sr(誕生花・誕生石・誕生色の完全な文言をまとめて読み上げる)に使う。 */
+  .sr-only{
+    position:absolute; width:1px; height:1px; overflow:hidden;
+    clip:rect(0 0 0 0); white-space:nowrap; border:0; padding:0; margin:-1px;
+  }
+  .hel-tag{
+    font-family:'Syne',sans-serif; font-size:8px; font-weight:700;
+    letter-spacing:0.08em; text-transform:uppercase; color:#7A6F5E;
+  }
+  .hel-name{
+    font-family:'Shippori Mincho','Noto Sans JP',serif; font-weight:600;
+    font-size:11px; letter-spacing:0.01em; color:#2A2118;
+  }
+  .hel-sep{ font-family:'Noto Sans JP',sans-serif; font-size:11px; color:#9A8A7A; }
+  @media (max-width:400px){
+    .hbc-emblem{ width:clamp(100px,27vw,124px); height:clamp(100px,27vw,124px); margin-top:22px; }
+    /* フォントサイズは縮小しない(.hel-tag 8px・.hel-name/.hel-sep 11pxを維持)。狭幅では
+       .hbc-emblem-labelのflex-wrapによる2行折り返しに委ねる(Codex W1+W2)。 */
+  }
+
+  .hbc-blessing-mark{
+    display:block; width:5px; height:5px; border-radius:50%;
+    background:rgba(42,33,24,0.26); margin:42px auto 0;
+  }
+  .hbc-blessing{
+    font-family:'EB Garamond','Shippori Mincho',serif; font-style:italic; font-weight:500;
+    font-size:clamp(16px,3.6vw,19px); letter-spacing:0.01em; line-height:1.9; color:#2A2118;
+    margin:22px 0 0;
+    /* measureはカード自身のpaddingに委ねる(明示max-widthは短い祝福文で1〜2文字の
+       孤立行(widow)を生むため付けない。カード幅(最大380px)+paddingで十分に読みやすい行幅になる)。 */
+  }
+
+  /* 落款 — 蝋封/印の趣で控えめに右下へ。二重リング(外枠+内側リング)＋月数字(Bebas)。 */
+  .hbc-stamp{
+    display:flex; align-items:center; justify-content:flex-end;
+    margin:38px 0 0;
+  }
+  .hbc-stamp-num{
+    position:relative;
+    display:inline-flex; align-items:center; justify-content:center;
+    width:58px; height:58px; border-radius:50%; border:1px solid rgba(42,33,24,0.34);
+    font-family:'Bebas Neue',sans-serif; font-size:19px; letter-spacing:0.02em; color:#2A2118;
+  }
+  .hbc-stamp-num::before{
+    content:''; position:absolute; inset:6px; border-radius:50%;
+    border:1px solid rgba(42,33,24,0.16); pointer-events:none;
+  }
+
+  .hina-birth-actions{ text-align:center; margin-top:36px; }
+  .hina-birth-save{
+    background:none; border:none; cursor:pointer; padding:0 0 4px;
+    font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:#9A8A7A; border-bottom:1px solid transparent; transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .hina-birth-save:hover{ color:#E8E0D0; border-color:rgba(232,224,208,0.4); }
+  .hina-birth-save:disabled{ opacity:0.45; cursor:default; }
+
+  .hina-birth-open{
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:10px 18px;
+    margin-top:20px;
+  }
+  .hbo-tag{ font-family:'Syne',sans-serif; font-size:9px; letter-spacing:0.18em; text-transform:uppercase; color:#71685d; }
+  .hbo-link{
+    font-family:'Syne',sans-serif; font-size:11px; letter-spacing:0.08em; color:#9A8A7A;
+    display:inline-flex; align-items:baseline; gap:4px; border-bottom:1px solid transparent;
+    transition:color 0.3s ease, border-color 0.3s ease;
+  }
+  .hbo-link:hover{ color:#E8E0D0; border-color:rgba(232,224,208,0.4); }
+  .hbo-jp{ font-family:'Noto Sans JP',sans-serif; font-size:11px; color:#83766a; }
+
+  footer a:hover{ color:#E8E0D0; }
+
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .act-open-arrow{ transition:none; transform:none; }
+    .act-open:hover .act-open-arrow{ transform:none; }
+    .shot-brush path{ animation:none !important; }
+    .act-open,
+    .hina-birth-m,
+    .hina-birth-save,
+    .hbo-link,
+    nav a,
+    footer a{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<!-- ミニマルナビ -->
+<nav class="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-6 md:px-10 py-5" style="background:linear-gradient(to bottom, rgba(10,9,6,0.85), transparent);">
+  <a href="../index.html" class="font-heading text-[11px] tracking-[2px] uppercase text-sub hover:text-[#E8E0D0] transition-colors">← NOCTA</a>
+</nav>
+
+<!-- ヒーロー -->
+<section id="hero" class="relative min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+  <p class="reveal section-tag mb-8">HiNa Collection</p>
+  <h1 class="reveal reveal-d1 hina-gradient font-display font-semibold" style="font-size:clamp(88px,20vw,240px); line-height:0.92; letter-spacing:0.01em;">HiNa</h1>
+  <p class="reveal reveal-d2 font-display" style="font-style:italic; font-size:clamp(20px,3.4vw,32px); color:#B8B4AE; margin-top:20px; letter-spacing:0.02em;">
+    眺めることも、あそび。
+  </p>
+  <p class="reveal reveal-d3 font-jp text-sub" style="font-size:14px; letter-spacing:0.08em; line-height:1.9; margin-top:18px; max-width:32em;">
+    銀猫が見つけた、宝石と花と色と紋、そして思考の静かな図鑑。
+  </p>
+</section>
+
+<!-- 序（銀猫） -->
+<section class="relative py-24 md:py-32 px-6 border-t border-white/5">
+  <div class="max-w-[640px] mx-auto text-center">
+    <p class="reveal font-display" style="font-size:clamp(20px,2.6vw,26px); line-height:2; color:#E8E0D0;">
+      銀猫は、美しいものを集めて、静かに眺める。<br>
+      <span class="reveal reveal-d1" style="display:inline-block; margin-top:2px;">ときどき手を伸ばすと、それはあそびになる。</span>
+    </p>
+    <!-- 「手を伸ばす」その姿。前足を右へ伸ばした銀猫を言葉の下に置き、
+         次のコレクションへ視線を送る。既存の猫（座る・歩く・眠る）とは別ポーズの新素材 -->
+    <img class="reveal reveal-d2" src="../img/cat/silver-reach.png" alt=""
+         width="760" height="380" loading="lazy" decoding="async"
+         style="display:block; width:clamp(210px,32vw,360px); height:auto; opacity:0.9; margin:40px auto 0;">
+  </div>
+</section>
+
+<!-- コレクション -->
+<section id="trilogy" class="relative py-20 md:py-28 px-6 border-t border-white/5">
+  <div class="max-w-[820px] mx-auto">
+    <p class="reveal section-tag mb-14 justify-center w-full" style="justify-content:center;">Collection</p>
+
+    <!-- 第一部 — HiNa Gyu(宝石) -->
+    <div class="act-row reveal py-12 md:py-16">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2">
+          <span class="act-num">01</span>
+          <span class="act-label">第一部</span>
+        </div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);">HiNa Gyu<span class="act-kana">「宝石」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">世界の宝石を、手のひらで光にかざす。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">石言葉・誕生石の図鑑</span></p>
+            <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">かざす（光にきらめく）</span></p>
+          </div>
+
+          <!-- 画面イメージ: Gyu「光にかざす」の実キャプチャ（1120x700・16:10）。
+               石を押して 3D ジェムを傾けられる画面。パストレーシングが収束した状態で撮っている
+               （PBR で 60fps 表示 → 手を止めると多重反射を積んだ静止画へ現像される実装）。
+               3D ジェムは手続き生成のメッシュなので、写真素材は含まれていない -->
+          <figure class="act-shot act-shot--cap" role="img" aria-label="Gyu の画面イメージ。石を押したあとの「光にかざす」画面。3Dのルビーを指で傾けられ、3Dジェムと写真の切り替え、光の向き、アウラ、背景の黒白を選べる。">
+            <img src="../images/hina-gyu-3d.jpg" alt="" width="1120" height="700" loading="lazy" decoding="async">
+          </figure>
+          <a href="../gems/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第二部 — HiNa Ichi(花) -->
+    <div class="act-row reveal py-12 md:py-16">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2">
+          <span class="act-num">02</span>
+          <span class="act-label">第二部</span>
+        </div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);">HiNa Ichi<span class="act-kana">「花」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">季節の花を、なぞって咲かせる。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">花言葉・誕生花の図鑑</span></p>
+            <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">咲かせる（庭が育つ）</span></p>
+          </div>
+
+          <!-- 画面イメージ: Ichi「咲かせる」の実キャプチャ（1120x700・16:10）。
+               桜の「この花を咲かせる」から入り、なぞって花を咲かせた状態。
+               花・葉・草はすべて Canvas 2D の手続き生成なので、写真素材は含まれていない -->
+          <figure class="act-shot act-shot--cap" role="img" aria-label="Ichi の画面イメージ。「この花を咲かせる」から入った咲かせる画面。指でなぞった軌跡に桜が咲き、葉と草が添う。下に真っさらにする・音を添える・押し花にするの操作がある。">
+            <img src="../images/hina-ichi-bloom.jpg" alt="" width="1120" height="700" loading="lazy" decoding="async">
+          </figure>
+          <a href="../flora/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第三部 — HiNa Hare(色) -->
+    <div class="act-row reveal py-12 md:py-16">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2">
+          <span class="act-num">03</span>
+          <span class="act-label">第三部</span>
+        </div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);">HiNa Hare<span class="act-kana">「色」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">日本の伝統色に、筆で遊ぶ。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">色の物語・かさねの図鑑</span></p>
+            <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">筆あそび（選んだ色のインク）</span></p>
+          </div>
+
+          <!-- 画面イメージ: Hare の鑑賞画面（iro-data.js の 16/48 甕覗）。
+               実画面と同じく地が色そのもので満たされ、文字は濃色、右に縦書きの色名が立つ -->
+          <figure class="act-shot act-shot--iro" style="background:#A2D7DD;" role="img" aria-label="Hare の画面イメージ。全面が甕覗の色で、左のカードに番号・色名・読み・一文・かさねの配色帯・16進値と季節の札・この色で筆あそびの入口、右に縦書きの大きな色名、右端に48色のドットレール。">
+            <div class="shot-bar"><span class="shot-brand">&larr; NOCTA</span><span class="shot-en">EN</span></div>
+            <div class="shot-body">
+              <div class="shot-card">
+                <span class="shot-iro-idx">16 / 48</span>
+                <p class="shot-iro-name">甕覗</p>
+                <span class="shot-iro-kana">かめのぞき &mdash; Kamenozoki</span>
+                <p class="shot-iro-line">藍甕をほんの一度だけ覗かせた、<br>いちばん淡い藍。</p>
+                <span class="shot-kasane-l">配色 &mdash; かさね</span>
+                <div class="shot-kasane"><i style="background:#A2D7DD"></i><i style="background:#165E83"></i><i style="background:#B4B4B4"></i></div>
+                <div class="shot-iro-pills">
+                  <span class="shot-iro-pill"><b style="background:#165E83"></b>藍色</span>
+                  <span class="shot-iro-pill"><b style="background:#B4B4B4"></b>白鼠</span>
+                </div>
+                <div class="shot-chips">
+                  <span class="shot-paw"></span>
+                  <span class="shot-chip">#A2D7DD</span>
+                  <span class="shot-chip">季節: 夏</span>
+                </div>
+                <span class="shot-cta">この色で筆あそび →</span>
+              </div>
+              <p class="shot-vert">甕覗</p>
+              <div class="shot-rail shot-rail--iro"><i></i><i></i><i></i><i></i><i></i><i style="background:rgba(34,38,31,0.75);width:3px;height:3px"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <span class="shot-pill">目次</span>
+          </figure>
+          <a href="../iro/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+    <!-- 第四部 — HiNa Kihi(紋) -->
+    <div class="act-row reveal py-12 md:py-16">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2"><span class="act-num">04</span><span class="act-label">第四部</span></div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);">HiNa Kihi<span class="act-kana">「紋」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">家紋のかたちに、思いをあずける。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">武家ゆかりの三十の紋</span></p>
+            <p><span class="act-mode-label">作る</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">しつらえる（色と余白の一枚）</span></p>
+          </div>
+
+          <!-- 画面イメージ: Kihi の一覧画面（kihi/data.js の30紋）。
+               紋は実物と同じ幾何（武田菱・六連銭・三つ鱗ほか）をインライン SVG で描いている -->
+          <figure class="act-shot act-shot--grid" role="img" aria-label="Kihi の画面イメージ。上に見出しと分類の札、下に家紋を並べた一覧。先頭の織田木瓜が選ばれている。">
+            <div class="shot-head">
+              <p class="shot-eyebrow">The Little Collection</p>
+              <p class="shot-h">三十の紋、三十の気配。</p>
+              <div class="shot-chips" style="margin-top:7px;justify-content:flex-start;">
+                <span class="shot-chip shot-chip--on" style="background:rgba(232,224,208,0.12);">すべて</span>
+                <span class="shot-chip">花と葉</span>
+                <span class="shot-chip">鳥と蝶</span>
+                <span class="shot-chip">円と線</span>
+                <span class="shot-count" style="margin-left:auto;">30 紋</span>
+              </div>
+            </div>
+            <div class="shot-grid"><div class="shot-cell shot-cell--on"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><ellipse cx="50" cy="22" rx="15" ry="17"/><ellipse cx="77" cy="42" rx="15" ry="17" transform="rotate(72 77 42)"/><ellipse cx="66" cy="76" rx="15" ry="17" transform="rotate(144 66 76)"/><ellipse cx="34" cy="76" rx="15" ry="17" transform="rotate(216 34 76)"/><ellipse cx="23" cy="42" rx="15" ry="17" transform="rotate(288 23 42)"/><circle cx="50" cy="52" r="17" fill="#0A0906"/><circle cx="50" cy="52" r="13"/><circle cx="50" cy="52" r="5" fill="#0A0906"/></g></svg><p class="shot-mon">織田木瓜</p><p class="shot-clan">織田家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><path d="M50 8 66 30 50 52 34 30Z"/><path d="M50 48 66 70 50 92 34 70Z"/><path d="M26 28 42 50 26 72 10 50Z"/><path d="M74 28 90 50 74 72 58 50Z"/></g></svg><p class="shot-mon">武田菱</p><p class="shot-clan">武田家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="24" cy="34" r="13"/><circle cx="50" cy="34" r="13"/><circle cx="76" cy="34" r="13"/><circle cx="24" cy="70" r="13"/><circle cx="50" cy="70" r="13"/><circle cx="76" cy="70" r="13"/><g fill="#0A0906"><rect x="19" y="29" width="10" height="10"/><rect x="45" y="29" width="10" height="10"/><rect x="71" y="29" width="10" height="10"/><rect x="19" y="65" width="10" height="10"/><rect x="45" y="65" width="10" height="10"/><rect x="71" y="65" width="10" height="10"/></g></g></svg><p class="shot-mon">六連銭</p><p class="shot-clan">真田家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><path d="M50 12 71 48H29Z"/><path d="M27 52 48 88H6Z"/><path d="M73 52 94 88H52Z"/></g></svg><p class="shot-mon">三つ鱗</p><p class="shot-clan">北条家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="50" cy="50" r="38" fill="none" stroke="#B8B4AE" stroke-width="8"/><rect x="45" y="14" width="10" height="72"/><rect x="14" y="45" width="72" height="10"/></g></svg><p class="shot-mon">丸に十の字</p><p class="shot-clan">島津家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><rect x="16" y="22" width="68" height="9"/><circle cx="50" cy="52" r="11"/><circle cx="26" cy="76" r="11"/><circle cx="74" cy="76" r="11"/></g></svg><p class="shot-mon">一文字三星</p><p class="shot-clan">毛利家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="50" cy="50" r="15"/><circle cx="50" cy="19" r="8.5"/><circle cx="72" cy="28" r="8.5"/><circle cx="81" cy="50" r="8.5"/><circle cx="72" cy="72" r="8.5"/><circle cx="50" cy="81" r="8.5"/><circle cx="28" cy="72" r="8.5"/><circle cx="19" cy="50" r="8.5"/><circle cx="28" cy="28" r="8.5"/></g></svg><p class="shot-mon">九曜</p><p class="shot-clan">細川家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="50" cy="50" r="35"/><circle cx="50" cy="50" r="14" fill="#0A0906"/></g></svg><p class="shot-mon">蛇の目</p><p class="shot-clan">加藤家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><circle cx="50" cy="50" r="35"/></svg><p class="shot-mon">白餅</p><p class="shot-clan">黒田家</p></div><div class="shot-cell"><svg viewBox="0 0 100 100" fill="#B8B4AE" aria-hidden="true"><g><circle cx="50" cy="19" r="15"/><circle cx="79" cy="40" r="15"/><circle cx="68" cy="75" r="15"/><circle cx="32" cy="75" r="15"/><circle cx="21" cy="40" r="15"/><circle cx="50" cy="51" r="10"/></g></svg><p class="shot-mon">加賀梅鉢</p><p class="shot-clan">前田家</p></div></div>
+          </figure>
+          <a href="../kihi/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第五部 — Kai（表示名は strategy/config.js と sync-brand.mjs で同期） -->
+    <div class="act-row reveal py-12 md:py-16">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2"><span class="act-num">05</span><span class="act-label">第五部</span></div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);"><!-- strategy-name:start -->HiNa Kai<!-- strategy-name:end --><span class="act-kana">「思考」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">遠い日の判断を、今日の余白に。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">たどる</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">古典と歴史、十八の思考の地図</span></p>
+            <p><span class="act-mode-label">拾う</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">言葉・問い・仕事への手掛かり</span></p>
+          </div>
+
+          <!-- 画面イメージ: Kai の思考の棚（strategy/content.js の18題）。
+               図は「目的と手段の見取り図」（孫子・謀攻篇）の実際の構図をなぞっている -->
+          <figure class="act-shot" role="img" aria-label="Kai の画面イメージ。上に思考の棚の見出しと絞り込み、下に一題の図。左に自分の側、右に相手の城を置いた見取り図と、題名「戦う前に、目的へ。」。">
+            <div class="shot-head">
+              <p class="shot-h" style="margin-top:0;">思考の棚</p>
+              <div class="shot-chips" style="margin-top:8px;gap:5px;justify-content:flex-start;">
+                <span class="shot-field">言葉・人物で探す</span>
+                <span class="shot-field">すべての時代</span>
+                <span class="shot-field">栞のある題だけ</span>
+                <span class="shot-count" style="margin-left:auto;">18 / 18 題</span>
+              </div>
+            </div>
+            <div class="shot-diagram">
+              <svg viewBox="0 0 300 122" fill="none" aria-hidden="true">
+                <text x="150" y="13" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="6" fill="rgba(184,180,174,0.5)">目的と手段の見取り図</text>
+                <g stroke="rgba(184,180,174,0.13)" stroke-width="0.8">
+                  <path d="M6 44c48-15 96 12 144-3s96-12 144 5"/>
+                  <path d="M6 56c48-15 96 12 144-3s96-12 144 5"/>
+                  <path d="M6 68c48-15 96 12 144-3s96-12 144 5"/>
+                  <path d="M6 80c48-15 96 12 144-3s96-12 144 5"/>
+                  <path d="M6 92c48-15 96 12 144-3s96-12 144 5"/>
+                </g>
+                <path d="M9 22h7M9 22v7M291 112h-7M291 112v-7" stroke="rgba(184,180,174,0.25)" stroke-width="0.9"/>
+                <circle cx="70" cy="56" r="4" fill="rgba(232,224,208,0.85)"/>
+                <text x="70" y="70" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="6" fill="rgba(232,224,208,0.72)">自分の側</text>
+                <rect x="194" y="40" width="40" height="30" fill="none" stroke="rgba(196,153,136,0.5)" stroke-width="0.9"/>
+                <path d="M214 48.5 221 55l-7 6.5-7-6.5Z" fill="#C49988"/>
+                <text x="214" y="82" text-anchor="middle" font-family="'Noto Sans JP',sans-serif" font-size="6" fill="rgba(232,224,208,0.72)">相手の城</text>
+              </svg>
+            </div>
+            <p class="shot-meta">中国古典 ・ 目的</p>
+            <p class="shot-kai-h">戦う前に、目的へ。</p>
+            <p class="shot-src">孫子・謀攻篇</p>
+          </figure>
+          <a href="../strategy/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第六部 — Mado -->
+    <div class="act-row reveal py-12 md:py-16" style="border-bottom:1px solid rgba(184,180,174,0.1);">
+      <div class="grid md:grid-cols-[auto_1fr] gap-6 md:gap-12 items-start">
+        <div class="flex md:flex-col items-baseline md:items-start gap-3 md:gap-2"><span class="act-num">06</span><span class="act-label">第六部</span></div>
+        <div>
+          <h2 class="act-name" style="font-size:clamp(24px,3vw,32px);">HiNa Mado<span class="act-kana">「世界」</span></h2>
+          <p class="act-line mt-3" style="font-size:16px;">知らない国の窓を、ひとつ開ける。</p>
+          <div class="flex flex-wrap gap-x-8 gap-y-2 mt-6">
+            <p><span class="act-mode-label">眺める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">言葉と考えと風習</span></p>
+            <p><span class="act-mode-label">集める</span><span class="font-jp text-sub" style="font-size:13px; margin-left:8px;">旅券に押す印</span></p>
+          </div>
+          <figure class="act-shot act-shot--cap" role="img" aria-label="Mado の画面イメージ。夕暮れのバオバブの並木を背に、マダガスカル語のことわざと和訳が浮かぶ窓。">
+            <img src="../images/hina-mado-cap.jpg" alt="" width="1120" height="700" loading="lazy" decoding="async">
+          </figure>
+          <p class="font-jp text-sub" style="font-size:11px; margin-top:8px;">写真 <a href="https://commons.wikimedia.org/wiki/File:Avenue_of_the_Baobabs_at_Sunset.jpg" target="_blank" rel="noopener" style="text-decoration:underline; text-underline-offset:3px;">Gavinevans</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener" style="text-decoration:underline; text-underline-offset:3px;">CC BY-SA 3.0</a>（Wikimedia Commons）</p>
+          <a href="../mado/" class="act-open mt-8">ひらく <span class="act-open-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 共通の背骨 -->
+<section class="relative py-24 md:py-28 px-6">
+  <div class="max-w-[560px] mx-auto text-center">
+    <p class="reveal font-jp text-sub" style="font-size:14px; line-height:2.1; letter-spacing:0.04em;">
+      今日のひとつから、まだ知らない美しさへ。<br>
+      気に入ったものは、一枚の絵として持ち帰れる。
+    </p>
+  </div>
+</section>
+
+<!-- 誕生HiNa（Task2で#birth-shelfを実装） -->
+<section id="birth" class="relative py-24 md:py-32 px-6 border-t border-white/5">
+  <div class="max-w-[720px] mx-auto text-center">
+    <p class="reveal section-tag mb-6" style="justify-content:center;">誕生HiNa</p>
+    <h2 class="reveal reveal-d1 font-display font-semibold" style="font-size:clamp(28px,4.2vw,44px); color:#E8E0D0;">12ヶ月の、贈り物棚。</h2>
+    <p class="reveal reveal-d2 font-jp text-sub mt-5" style="font-size:14px; line-height:2; letter-spacing:0.03em;">
+      生まれた月をえらぶと、花と石と色が、一枚のカードになる。
+    </p>
+  </div>
+  <div id="birth-shelf" class="reveal reveal-d3 max-w-[960px] mx-auto mt-16" aria-live="polite"></div>
+</section>
+
+<!-- フッター -->
+<footer class="relative border-t border-white/5 py-16 px-6 text-center">
+  <div class="reveal max-w-sm mx-auto">
+    <img src="../img/cat/silver-sit.png" alt="" style="width:clamp(72px,9vw,104px); opacity:0.85; margin:0 auto 20px;">
+    <p class="font-jp text-sub" style="font-size:13px; line-height:1.9;">すべての図鑑は、叩き台です。眺め方は自由に。</p>
+    <a href="../index.html" class="inline-block mt-6 font-heading text-[11px] tracking-[2px] uppercase text-sub hover:text-[#E8E0D0] transition-colors">NOCTA ホームへ戻る</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+
+  if (reduceMotion) {
+    els.forEach(function (el) { el.classList.add('active'); });
+    return;
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('active'); });
+    return;
+  }
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  els.forEach(function (el) { observer.observe(el); });
+})();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (window.NoctaBirthHina) {
+    window.NoctaBirthHina.mount(document.getElementById('birth-shelf'));
+  }
+});
+</script>
+</body>
+</html>

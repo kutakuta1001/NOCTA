@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The First Flower ～いい人生とは～</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Serif+JP:wght@300;400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap&text=%E3%80%81%E3%80%82%E3%80%8C%E3%80%8D%E3%81%82%E3%81%84%E3%81%86%E3%81%88%E3%81%8B%E3%81%8C%E3%81%8D%E3%81%8F%E3%81%91%E3%81%92%E3%81%93%E3%81%94%E3%81%95%E3%81%97%E3%81%99%E3%81%9A%E3%81%9B%E3%81%9F%E3%81%A1%E3%81%A3%E3%81%A4%E3%81%A6%E3%81%A7%E3%81%A8%E3%81%A9%E3%81%AA%E3%81%AB%E3%81%AE%E3%81%AF%E3%81%B6%E3%82%80%E3%82%82%E3%82%84%E3%82%89%E3%82%8A%E3%82%8B%E3%82%8C%E3%82%8D%E3%82%92%E3%82%93%E4%B8%80%E4%BA%86%E4%BA%BA%E4%BB%96%E4%BC%9A%E4%BD%93%E5%87%BA%E5%88%86%E5%8B%95%E5%8B%99%E5%8C%96%E5%8F%B3%E5%90%8D%E5%96%9C%E5%9B%9E%E5%A3%B0%E5%A4%89%E5%A6%BB%E5%AD%90%E5%AF%8C%E5%B7%A6%E5%BA%A6%E5%BC%B5%E5%BD%A9%E5%BF%83%E6%83%85%E6%84%8F%E6%84%9F%E6%85%8B%E6%89%8B%E6%8C%81%E6%8C%AF%E6%8F%8F%E6%95%AC%E6%96%B9%E6%99%82%E6%A0%84%E6%A5%BD%E6%AD%A9%E6%AE%B5%E7%8F%BE%E7%90%86%E7%94%9F%E7%94%B1%E7%95%B0%E7%9A%84%E7%9B%AE%E7%9B%B8%E7%AC%91%E7%AD%94%E7%B7%92%E7%B8%9B%E7%BE%A9%E8%80%83%E8%80%85%E8%81%9E%E8%87%AA%E8%89%AF%E8%A1%8C%E8%A6%8B%E8%A7%A3%E8%A9%B1%E8%BA%AB%E8%BC%9D%E9%81%8A%E9%81%8E%E9%81%93%E9%96%93%E9%AD%85%EF%BC%9F" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        tff: {
+                            base:    '#FCFBF5',
+                            dark:    '#705E92',
+                            deep:    '#3D2E52',
+                            text:    '#3D2E52',
+                            sub:     '#9A86B0',
+                            accent:  '#B168A8',
+                            rose:    '#EEA4C0',
+                            pink:    '#FDD9D9',
+                            mint:    '#B8E3B7',
+                            teal:    '#A6DDD6',
+                        }
+                    },
+                    fontFamily: {
+                        serif:   ['Cormorant Garamond', 'Noto Serif JP', 'serif'],
+                        jp:      ['Noto Sans JP', 'sans-serif'],
+                        jpserif: ['Noto Serif JP', 'serif'],
+                        display: ['Bebas Neue', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+        /* スマホで装飾がはみ出しても横スクロールを出さない（保険） */
+        /* clip: hidden だと後半の花びらの栞（sticky）が止まる */
+        html { overflow-x: clip; }
+        body {
+            background: #FCFBF5;
+            color: #3D2E52;
+            overflow-x: clip;
+        }
+
+        /* ── Photo section base ── */
+        .photo-section {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+        .photo-overlay {
+            position: absolute;
+            inset: 0;
+        }
+        .photo-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Hero ── */
+        /* 写真: Flickr 25831760540（元サイトと同じ青いカーネーション） */
+        .hero-bg {
+            background: #3D2E52 url('img/hero.jpg') center / cover no-repeat;
+        }
+
+        /* ── Profile ── */
+        /* 写真を追加するときは background-image: url('img/profile-bg.jpg'); に変更してください */
+        .profile-bg {
+            background: linear-gradient(135deg,
+                #FFFFFF 0%,
+                #FEF2F5 20%,
+                #FCFBF5 40%,
+                #EFF8F7 60%,
+                #F3FAF3 80%,
+                #FFFFFF 100%
+            );
+            background-size: 300% 300%;
+            animation: tffProfileMesh 38s ease infinite;
+        }
+
+        /* Gallery lightbox */
+        #tff-lightbox {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: center;
+            padding: 56px 16px;
+            background: rgba(30, 22, 42, 0.88);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s;
+        }
+        #tff-lightbox.open { opacity: 1; visibility: visible; }
+        /* hidden 属性を inline-block などのクラスより優先する（強みの図では Flickr への案内を出さない） */
+        #tff-lightbox [hidden] { display: none !important; }
+        #tff-lightbox figure { margin: 0; max-width: min(1024px, 100%); text-align: center; }
+        #tff-lightbox img {
+            max-width: 100%; max-height: calc(100vh - 180px);
+            border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            display: block; margin: 0 auto;
+        }
+        .tff-lb-btn {
+            position: absolute; width: 44px; height: 44px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.8); font-size: 22px; line-height: 1;
+            background: rgba(61,46,82,0.6); border: 1px solid rgba(238,164,192,0.25);
+            transition: background 0.2s, color 0.2s;
+        }
+        .tff-lb-btn:hover { background: rgba(177,104,168,0.55); color: #fff; }
+        .tff-lb-close { top: 16px; right: 16px; }
+        .tff-lb-prev  { left: 16px;  top: 50%; transform: translateY(-50%); }
+        .tff-lb-next  { right: 16px; top: 50%; transform: translateY(-50%); }
+        @media (max-width: 640px) {
+            .tff-lb-prev, .tff-lb-next { top: auto; bottom: 16px; transform: none; }
+        }
+
+        /* 左の現在地ドット（元サイトのセクションナビ） */
+        #tff-dots {
+            position: fixed; left: 20px; top: 50%; transform: translateY(-50%);
+            z-index: 40; display: flex; flex-direction: column; gap: 14px;
+        }
+        #tff-dots a {
+            position: relative; display: block; width: 12px; height: 12px; border-radius: 50%;
+            background: rgba(61,46,82,0.55);
+            border: 2px solid rgba(255,255,255,0.75);
+            transition: background 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+        }
+        #tff-dots a:hover { transform: scale(1.2); }
+        #tff-dots a.active { background: #fff; border-color: #B168A8; transform: scale(1.15); }
+        #tff-dots a span {
+            position: absolute; left: 22px; top: 50%; transform: translateY(-50%);
+            white-space: nowrap; font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.08em;
+            color: #fff; background: rgba(61,46,82,0.8); padding: 2px 10px; border-radius: 9999px;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+        }
+        #tff-dots a:hover span, #tff-dots a:focus-visible span { opacity: 1; }
+        /* T-4: 動きを減らす設定では、飾りの動き・出現アニメーションをすべて止め、内容を最初から見せる */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+            .tff-reveal { opacity: 1 !important; transform: none !important; }
+            #tff-profile-canvas { display: none; }
+        }
+        /* T-4: スマホでは現在地の点が本文（credo の縦書き・引用・ブログ）に重なり、9px で押しにくいため出さない */
+        @media (max-width: 640px) {
+            #tff-dots { display: none; }
+        }
+        @media (max-width: 640px) {
+            #tff-dots { left: 8px; gap: 10px; }
+            #tff-dots a { width: 9px; height: 9px; border-width: 1.5px; }
+        }
+
+        /* 写真の上の文字を囲む紫の半透明パネル */
+        .tff-veil {
+            background: rgba(61, 46, 82, 0.62);
+            border: 1px solid rgba(238, 164, 192, 0.18);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 6px;
+        }
+        .tff-text-glow { text-shadow: 0 2px 18px rgba(61,46,82,0.85), 0 0 2px rgba(61,46,82,0.6); }
+
+
+
+        /* ── いい人生とは（答え）: 生成りの紙に、手書き風の縦書き ── */
+        .tff-credo {
+            position: relative; background: #F7F2E9; color: #3D2E52;
+            padding: 96px 0 88px; overflow: hidden;
+        }
+        .tff-credo::before {
+            /* 紙の目 */
+            content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.38 0 0 0 0 0.30 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+        }
+        .tff-credo-scroll { position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 0 24px 10px; }
+        .tff-credo-poem {
+            writing-mode: vertical-rl; text-orientation: mixed;
+            height: min(600px, 72vh); margin: 0 auto; display: block;
+            font-family: 'Klee One', 'Noto Serif JP', serif; font-weight: 400;
+            font-size: clamp(16px, 1.75vw, 19px); line-height: 2.35; letter-spacing: 0.16em; color: #3D2E52;
+        }
+        .tff-credo-poem .t { display: block; font-weight: 600; font-size: clamp(28px, 3.4vw, 36px); letter-spacing: 0.22em; margin-left: 1.4em; }
+        .tff-credo-poem .l { display: block; margin-left: 0.5em; }
+        .tff-credo-poem .p { display: inline-block; }
+        @media (max-width: 767px) { .tff-credo-scroll { padding-left: 34px; } }
+        .tff-credo-poem .end { display: block; margin-right: 1.2em; font-size: clamp(18px, 2vw, 22px); color: #B168A8; }
+        .tff-credo-hint { display: none; position: relative; text-align: center; font-size: 12px; color: #705E92; margin-top: 12px; letter-spacing: 0.1em; }
+        /* スマホ: 結びの一行は縦書きの列の外に出し、横書きで下に置く（横にたどらなくても目に入るように） */
+        .tff-credo-coda-sp { display: none; position: relative; text-align: center; margin: 22px 24px 0; font-family: 'Klee One', 'Noto Serif JP', serif; font-size: 19px; letter-spacing: 0.18em; color: #B168A8; }
+        @media (max-width: 767px) {
+            .tff-credo-hint, .tff-credo-coda-sp { display: block; }
+            .tff-credo-poem .end { display: none; }
+        }
+
+        /* ── Self Portrait（色・強み・性格） ── */
+        .tff-self { background: linear-gradient(180deg, #DDF0F3 0%, #C9E7EC 100%); color: #3D2E52; }  /* 瓶覗（#A2D7DD）に寄せた地。Profile の淡い地と境目を付ける */
+        .tff-self-card { background: rgba(255,255,255,0.72); border: 1px solid rgba(162,215,221,0.55); border-radius: 6px; padding: 28px 28px 30px; }
+        .tff-self-label { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.25em; color: #6FA8B0; text-transform: uppercase; }
+        .tff-self-title { font-family: 'Noto Serif JP', serif; font-size: 20px; letter-spacing: 0.08em; margin-top: 6px; color: #3D2E52; }
+        /* 色の札（色面＋縦書きの色名＋澄んだ水）。Self Portrait の主役なので画面幅の 1 枚 */
+        .tff-kame-plate { margin: 0; border-radius: 6px; overflow: hidden; box-shadow: 0 16px 40px rgba(76,140,150,0.22); }
+        .tff-kame-field { position: relative; background: #A2D7DD; height: clamp(260px, 34vw, 380px); display: flex; align-items: center; justify-content: center; }
+        .tff-kame-label { position: absolute; left: 22px; bottom: 16px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.3em; color: rgba(255,255,255,0.85); text-transform: uppercase; }
+        /* 縦書き: 右の列に色名、左の列に読み仮名 */
+        .tff-kame-name { writing-mode: vertical-rl; color: #fff; margin: 0; }
+        .tff-kame-name .k { display: block; font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: clamp(44px, 6vw, 68px); letter-spacing: 0.18em; line-height: 1.25; }
+        .tff-kame-name .r { display: block; font-family: 'Noto Serif JP', serif; font-size: clamp(12px, 1.4vw, 15px); letter-spacing: 0.32em; line-height: 1.6; margin-top: 14px; opacity: 0.95; }
+        .tff-kame-water { display: block; width: 100%; height: clamp(110px, 16vw, 190px); object-fit: cover; }
+        .tff-kame-text { max-width: 640px; margin: 36px auto 0; text-align: center; }
+        .tff-kame-note { font-family: 'Noto Sans JP', sans-serif; font-size: 12px; letter-spacing: 0.08em; color: #5f7f85; }
+        .tff-kame-lead { font-family: 'Noto Serif JP', serif; font-size: 20px; letter-spacing: 0.14em; color: #3D2E52; margin-top: 18px; }
+        .tff-kame-body { font-family: 'Noto Sans JP', sans-serif; font-size: 15px; line-height: 2.2; color: #3f5357; margin-top: 12px; text-align: left; }
+        .tff-strengths { list-style: none; margin: 16px 0 0; padding: 0; counter-reset: s; }
+        .tff-strengths li { display: grid; grid-template-columns: 34px 1fr; align-items: baseline; padding: 9px 0; border-top: 1px dashed rgba(111,168,176,0.4); font-family: 'Noto Sans JP', sans-serif; font-size: 14px; }
+        .tff-strengths li:first-child { border-top: 0; }
+        .tff-strengths li::before { counter-increment: s; content: counter(s); font-family: 'Cormorant Garamond', serif; font-size: 22px; color: #6FA8B0; }
+        .tff-strengths b { font-weight: 500; letter-spacing: 0.04em; }
+        .tff-strengths:not(.is-open) li.is-more { display: none; }
+        .tff-self-more { margin-top: 14px; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; letter-spacing: 0.08em; color: #4E8A93; border-bottom: 1px solid rgba(78,138,147,0.45); padding: 6px 0 2px; }
+        .tff-self-more:hover { color: #3D2E52; border-color: #3D2E52; }
+        /* 強みの全体像（ChatGPT で清書した図）。押すと拡大 */
+        .tff-map-thumb { position: relative; display: block; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; margin-top: 12px; border: 1px solid rgba(111,168,176,0.35); background: #FBFAF6; cursor: zoom-in; }
+        .tff-map-thumb img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s ease; }
+        .tff-map-zoom { position: absolute; right: 8px; bottom: 8px; z-index: 1; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; line-height: 1; color: #fff; background: rgba(61,46,82,0.7); }
+        .tff-map-thumb:hover img { transform: scale(1.04); }
+        .tff-map-credit { font-family: 'Noto Sans JP', sans-serif; font-size: 11px; color: #6f8a8f; margin-top: 8px; letter-spacing: 0.04em; }
+        .tff-strengths span { color: #7a8a8e; font-size: 12px; margin-left: 6px; }
+
+        /* トップ写真の上に重ねるフィルムの粒と、四隅をわずかに落とす周辺減光 */
+        .tff-film-grain {
+            position: absolute; inset: 0; pointer-events: none; z-index: 0;
+            background-image:
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"),
+                radial-gradient(ellipse 85% 75% at 50% 50%, transparent 50%, rgba(61,46,82,0.6) 100%);
+            background-size: 180px 180px, 100% 100%;
+            mix-blend-mode: overlay; opacity: 0.55;
+        }
+
+        /* ── Profile photo placeholders ── */
+        .profile-photo-placeholder {
+            background: linear-gradient(135deg, rgba(238,164,192,0.15), rgba(166,221,214,0.15));
+            border: 1px solid rgba(177,104,168,0.2);
+        }
+
+        /* ── Nav ── */
+        .tff-header {
+            background: rgba(252, 251, 245, 0.90);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(177,104,168,0.15);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .tff-header.on-photo {
+            background: rgba(61, 46, 82, 0.72);
+            border-bottom-color: rgba(238, 164, 192, 0.12);
+        }
+
+        /* Nav link color switching */
+        .tff-nav-link {
+            color: rgba(61, 46, 82, 0.55);
+            transition: color 0.2s;
+        }
+        .tff-nav-link:hover { color: #3D2E52; }
+        .tff-header.on-photo .tff-nav-link { color: rgba(255,255,255,0.60); }
+        .tff-header.on-photo .tff-nav-link:hover { color: rgba(255,255,255,0.92); }
+
+        .tff-back-link {
+            color: rgba(61, 46, 82, 0.55);
+            transition: color 0.2s;
+        }
+        .tff-back-link:hover { color: #3D2E52; }
+        .tff-header.on-photo .tff-back-link { color: rgba(255,255,255,0.70); }
+        .tff-header.on-photo .tff-back-link:hover { color: rgba(255,255,255,0.95); }
+
+        .tff-brand-link {
+            color: rgba(61, 46, 82, 0.80);
+            transition: color 0.2s;
+        }
+        .tff-brand-link:hover { color: #3D2E52; }
+        .tff-header.on-photo .tff-brand-link { color: rgba(255,255,255,0.90); }
+        .tff-header.on-photo .tff-brand-link:hover { color: #fff; }
+
+        /* 昼と夜のヘッダー（2026-11-08 CEO が H-B を採用。drafts/design-team/tff-header-nav/）。
+           昼はクリームの帯に小さな日。夜（日暮れの帯の半ばから下）は帯がほどけて上から暗がりが降り、細く低くなり、日が三日月に変わる */
+        .tff-header { transition: background 0.6s ease, border-color 0.6s ease, padding 0.4s ease; }
+        .tff-brand-link { position: relative; transition: color 0.6s ease, letter-spacing 0.4s ease, font-size 0.4s ease; }
+        .tff-nav-link, .tff-back-link { transition: color 0.6s ease; }
+        /* 印は題字の左の外に置く（形が変わっても題字が動かない） */
+        .tff-sky-mark { position: absolute; right: calc(100% + 9px); top: 50%; width: 9px; height: 9px; margin-top: -5px; border-radius: 50%;
+            background: #F3AFC8; box-shadow: 0 0 8px rgba(243,175,200,0.8); transition: background 0.6s ease, box-shadow 0.6s ease, transform 0.6s ease; }
+        .tff-header.is-night {
+            background: linear-gradient(180deg, rgba(20,15,30,0.97) 0%, rgba(20,15,30,0.92) 62%, rgba(20,15,30,0) 100%);
+            border-bottom-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
+            padding-top: 10px; padding-bottom: 22px;
+        }
+        .tff-header.is-night .tff-brand-link { color: rgba(255,255,255,0.94); font-size: 13px; letter-spacing: 4px; text-shadow: 0 1px 10px rgba(20,15,30,0.9); }
+        .tff-header.is-night .tff-nav-link { color: rgba(255,255,255,0.78); text-shadow: 0 1px 10px rgba(20,15,30,0.9); }
+        .tff-header.is-night .tff-nav-link:hover, .tff-header.is-night .tff-brand-link:hover { color: #fff; }
+        .tff-header.is-night .tff-back-link { color: rgba(255,255,255,0.8); text-shadow: 0 1px 10px rgba(20,15,30,0.9); }
+        .tff-header.is-night .tff-sky-mark { width: 11px; height: 11px; margin-top: -6px; background: transparent; box-shadow: inset -3px 1px 0 0 #F6C9DA; transform: rotate(-25deg); }
+        @media (min-width: 768px) { .tff-header.is-night .tff-brand-link { letter-spacing: 6px; } }
+
+        /* スマホの節ナビ（2026-11-08 CEO が A＋「6 / 8」を採用。drafts/design-review/jury-2026-11-08-spnav/report.md）。
+           ヘッダーの右に「目次」と今いる節の番号。押すと上から 8 節の一覧が降りる。767px 以下だけ（PC は上のナビと左の点） */
+        .tff-toc-btn, #tff-toc, .tff-toc-scrim { display: none; }
+        @media (max-width: 767px) {
+            .tff-header { padding-left: 16px; padding-right: 6px; }
+            .tff-header .tff-brand-link { letter-spacing: 2px; }
+            .tff-header.is-night .tff-brand-link { letter-spacing: 2px; }
+            /* 印は題字の左に並べる（外に出すと「← NOCTA」に近づく） */
+            .tff-sky-mark, .tff-header.is-night .tff-sky-mark { position: relative; display: inline-block; vertical-align: middle; right: auto; top: -1px; margin: 0 7px 0 0; }
+            .tff-toc-btn { display: flex; align-items: center; gap: 9px; min-height: 44px; margin: -10px 0; padding: 0 10px; color: rgba(61,46,82,0.85); }
+            .tff-header.on-photo .tff-toc-btn, .tff-header.is-night .tff-toc-btn { color: rgba(255,255,255,0.92); }
+            #tff-toc { display: block; }
+            .tff-toc-scrim { display: block; }
+            /* 狭い画面（〜380px）は題字を一回り小さくして、1 行と左右の空きを保つ */
+            @media (max-width: 380px) {
+                .tff-header .tff-brand-link, .tff-header.is-night .tff-brand-link { font-size: 12.5px; letter-spacing: 1.5px; }
+                .tff-header .tff-back-link { font-size: 12px; letter-spacing: 2px; }
+            }
+            @media (max-width: 340px) {
+                .tff-header .tff-brand-link, .tff-header.is-night .tff-brand-link { font-size: 11px; letter-spacing: 1px; }
+                .tff-header .tff-back-link { letter-spacing: 1px; }
+                .tff-sky-mark, .tff-header.is-night .tff-sky-mark { margin-right: 5px; }
+            }
+            /* 目次から移った先の見出しが、ヘッダーの下に隠れないように */
+            section[id] { scroll-margin-top: 56px; }
+        }
+        /* 2 本線。開くと × になる */
+        .tff-toc-ico { position: relative; width: 16px; height: 9px; flex: none; }
+        .tff-toc-ico::before, .tff-toc-ico::after { content: ""; position: absolute; left: 0; right: 0; height: 1px; background: currentColor; transition: transform 0.3s ease, top 0.3s ease; }
+        .tff-toc-ico::before { top: 0; }
+        .tff-toc-ico::after { top: 8px; }
+        .tff-toc-btn[aria-expanded="true"] .tff-toc-ico::before { top: 4px; transform: rotate(45deg); }
+        .tff-toc-btn[aria-expanded="true"] .tff-toc-ico::after { top: 4px; transform: rotate(-45deg); }
+        /* 文字の幅を固定して、節が変わってもヘッダーが動かないようにする */
+        .tff-toc-lbl { display: flex; flex-direction: column; align-items: flex-start; width: 36px; line-height: 1.2; }
+        .tff-toc-lbl b { font-family: 'Noto Sans JP', sans-serif; font-weight: 400; font-size: 12px; letter-spacing: 0.2em; }
+        .tff-toc-lbl i { font-family: 'Cormorant Garamond', serif; font-size: 13px; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        /* ヘッダーのすぐ下から。画面が低いときは一覧の中をスクロールできる */
+        #tff-toc { position: fixed; z-index: 45; left: 0; right: 0; top: var(--tff-hh, 56px); max-height: calc(100vh - var(--tff-hh, 56px)); max-height: calc(100dvh - var(--tff-hh, 56px)); overflow-y: auto; overscroll-behavior: contain; background: #FCFBF5; color: #3D2E52; border-bottom: 1px solid rgba(177,104,168,0.28);
+            box-shadow: 0 18px 40px rgba(61,46,82,0.18); transform: translateY(-100%); visibility: hidden; transition: transform 0.35s ease, visibility 0.35s; }
+        #tff-toc.is-open { transform: none; visibility: visible; }
+        #tff-toc:not(.is-open) { transform: translateY(calc(-100% - var(--tff-hh, 56px))); }
+        html.tff-dark #tff-toc { background: #231A33; color: #fff; border-bottom-color: rgba(238,164,192,0.32); box-shadow: 0 18px 40px rgba(0,0,0,0.4); }
+        #tff-toc ol { list-style: none; margin: 0; padding: 4px 0 12px; }
+        #tff-toc a { position: relative; display: flex; align-items: center; gap: 14px; min-height: 48px; padding: 6px 24px; color: inherit; border-top: 1px solid rgba(177,104,168,0.16); }
+        html.tff-dark #tff-toc a { border-top-color: rgba(238,164,192,0.18); }
+        #tff-toc li:first-child a { border-top: 0; }
+        #tff-toc .tff-toc-no { width: 22px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: 0.1em; opacity: 0.75; }
+        #tff-toc .tff-toc-name { font-family: 'Cormorant Garamond', 'Noto Serif JP', serif; font-size: 19px; letter-spacing: 0.06em; }
+        #tff-toc .tff-toc-name.is-jp { font-family: 'Noto Serif JP', serif; font-size: 17px; }
+        #tff-toc a[aria-current] .tff-toc-no { opacity: 0; }
+        #tff-toc a[aria-current]::before { content: ""; position: absolute; left: 30px; top: 50%; width: 9px; height: 9px; margin-top: -5px; border-radius: 80% 0 80% 0; background: #EEA4C0; transform: rotate(-20deg); }
+        /* 開いているあいだ後ろを沈める（昼は紫寄りの薄い陰、夜は暗く）。押すと閉じる */
+        .tff-toc-scrim { position: fixed; inset: 0; z-index: 44; background: rgba(61,46,82,0.2); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s; }
+        html.tff-dark .tff-toc-scrim { background: rgba(10,8,16,0.5); }
+        .tff-toc-scrim.is-open { opacity: 1; visibility: visible; }
+        /* フォーカスの枠: 昼は紫、夜は桜色（クリームと紫のどちらの地でも 3:1 以上） */
+        .tff-toc-btn:focus-visible, #tff-toc a:focus-visible { outline: 2px solid #3D2E52; outline-offset: -4px; }
+        .tff-header.on-photo .tff-toc-btn:focus-visible, .tff-header.is-night .tff-toc-btn:focus-visible, html.tff-dark #tff-toc a:focus-visible { outline-color: #F6C9DA; }
+
+        /* ── Divider ── */
+        .tff-divider {
+            width: 48px;
+            height: 1px;
+            background: #EEA4C0;
+            margin: 16px auto;
+        }
+
+        /* ── Noise overlay ── */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.25;
+        }
+
+        /* ── Reveal animation ── */
+        .tff-reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .tff-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════
+           DYNAMIC EFFECTS
+        ═══════════════════════════════════ */
+
+        /* Profile: particle canvas */
+        #tff-profile-canvas {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 2;
+        }
+
+        /* Profile: shimmer heading (on light bg — darker palette) */
+        @keyframes tffShimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position:  200% center; }
+        }
+        .tff-shimmer-profile {
+            background: linear-gradient(90deg,
+                #705E92 0%, #B168A8 20%, #EEA4C0 35%,
+                #A6DDD6 50%, #B8E3B7 65%, #B168A8 80%, #705E92 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: tffShimmer 10s linear infinite;
+        }
+
+        /* Profile: floating symbols (adapted for light bg) */
+        @keyframes tffSym {
+            0%,100% { transform: translateY(0) rotate(0deg);         opacity: 0.38; }
+            50%      { transform: translateY(-16px) rotate(20deg);    opacity: 0.70; }
+        }
+        @keyframes tffSym2 {
+            0%,100% { transform: translateY(0) rotate(0deg) scale(1);      opacity: 0.25; }
+            50%      { transform: translateY(-22px) rotate(-15deg) scale(1.2); opacity: 0.58; }
+        }
+        @keyframes tffSym3 {
+            0%,100% { transform: translateY(0) rotate(0deg);        opacity: 0.30; }
+            40%      { transform: translateY(-10px) rotate(10deg);   opacity: 0.62; }
+            80%      { transform: translateY(-5px) rotate(-5deg);    opacity: 0.42; }
+        }
+        .tff-sym-1 { animation: tffSym   5s  ease-in-out infinite; }
+        .tff-sym-2 { animation: tffSym2  7s  ease-in-out infinite; animation-delay: 1.5s; }
+        .tff-sym-3 { animation: tffSym   6s  ease-in-out infinite; animation-delay: 3s;   }
+        .tff-sym-4 { animation: tffSym2  8s  ease-in-out infinite; animation-delay: 0.8s; }
+        .tff-sym-5 { animation: tffSym3  5.5s ease-in-out infinite; animation-delay: 2.2s; }
+
+        /* Profile: glow orbs */
+        @keyframes tffOrb {
+            0%,100% { transform: translate(0,0) scale(1);         opacity: 0.22; }
+            33%      { transform: translate(28px,-20px) scale(1.08); opacity: 0.32; }
+            66%      { transform: translate(-16px,14px) scale(0.94); opacity: 0.18; }
+        }
+        @keyframes tffOrb2 {
+            0%,100% { transform: translate(0,0) scale(1);           opacity: 0.18; }
+            40%      { transform: translate(-22px,-28px) scale(1.1);  opacity: 0.28; }
+            70%      { transform: translate(20px,10px) scale(0.92);   opacity: 0.14; }
+        }
+        .tff-orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(70px); pointer-events: none;
+        }
+        .tff-orb-1 { animation: tffOrb  9s  ease-in-out infinite; }
+        .tff-orb-2 { animation: tffOrb2 11s ease-in-out infinite; animation-delay: 2s;   }
+        .tff-orb-3 { animation: tffOrb  13s ease-in-out infinite; animation-delay: 4.5s; }
+
+        /* Quotes: twinkling stars */
+        @keyframes tffTwinkle {
+            0%,100% { opacity: 0.12; transform: scale(0.8); }
+            50%      { opacity: 0.72; transform: scale(1.15); }
+        }
+        @keyframes tffTwinkle2 {
+            0%,100% { opacity: 0.08; transform: scale(1) rotate(0deg); }
+            50%      { opacity: 0.62; transform: scale(1.2) rotate(45deg); }
+        }
+        .tff-tw-1 { animation: tffTwinkle  3s   ease-in-out infinite; }
+        .tff-tw-2 { animation: tffTwinkle2 4s   ease-in-out infinite; animation-delay: 0.8s; }
+        .tff-tw-3 { animation: tffTwinkle  5s   ease-in-out infinite; animation-delay: 1.5s; }
+        .tff-tw-4 { animation: tffTwinkle2 3.5s ease-in-out infinite; animation-delay: 2.2s; }
+        .tff-tw-5 { animation: tffTwinkle  4.5s ease-in-out infinite; animation-delay: 0.5s; }
+        .tff-tw-6 { animation: tffTwinkle2 6s   ease-in-out infinite; animation-delay: 3s;   }
+
+        /* Hero: falling sakura petals (slow, multi-stage sway) */
+        @keyframes sakura-a {
+            0%   { transform: translateY(-20px) translateX(0)    rotate(0deg);   opacity: 0; }
+            6%   { opacity: 0.72; }
+            25%  { transform: translateY(25vh)  translateX(32px) rotate(70deg);  }
+            50%  { transform: translateY(52vh)  translateX(-18px) rotate(170deg); }
+            75%  { transform: translateY(78vh)  translateX(28px) rotate(290deg); opacity: 0.32; }
+            100% { transform: translateY(112vh) translateX(-10px) rotate(400deg); opacity: 0; }
+        }
+        @keyframes sakura-b {
+            0%   { transform: translateY(-20px) translateX(0)    rotate(15deg);  opacity: 0; }
+            8%   { opacity: 0.65; }
+            30%  { transform: translateY(28vh)  translateX(-28px) rotate(80deg); }
+            55%  { transform: translateY(56vh)  translateX(22px) rotate(185deg); }
+            78%  { transform: translateY(82vh)  translateX(-30px) rotate(300deg); opacity: 0.25; }
+            100% { transform: translateY(112vh) translateX(12px) rotate(420deg); opacity: 0; }
+        }
+        @keyframes sakura-c {
+            0%   { transform: translateY(-20px) translateX(0)    rotate(-8deg);  opacity: 0; }
+            7%   { opacity: 0.68; }
+            20%  { transform: translateY(20vh)  translateX(20px) rotate(55deg);  }
+            45%  { transform: translateY(46vh)  translateX(-24px) rotate(160deg); }
+            70%  { transform: translateY(72vh)  translateX(18px) rotate(270deg); opacity: 0.28; }
+            100% { transform: translateY(112vh) translateX(-8px) rotate(380deg); opacity: 0; }
+        }
+        /* フッター用: vh ではなくフッターの高さで落とす */
+        @keyframes sakura-foot-a {
+            0%   { transform: translateY(-20px) translateX(0)    rotate(0deg);   opacity: 0; }
+            10%  { opacity: 0.72; }
+            50%  { transform: translateY(170px) translateX(-18px) rotate(170deg); }
+            100% { transform: translateY(380px) translateX(10px) rotate(380deg); opacity: 0; }
+        }
+        @keyframes sakura-foot-b {
+            0%   { transform: translateY(-20px) translateX(0)    rotate(15deg);  opacity: 0; }
+            10%  { opacity: 0.65; }
+            50%  { transform: translateY(180px) translateX(22px) rotate(185deg); }
+            100% { transform: translateY(380px) translateX(-12px) rotate(420deg); opacity: 0; }
+        }
+        /* 写真の上でも花びらが埋もれないよう縁取る */
+        #top .tff-sk-sm, #top .tff-sk-md, #top .tff-sk-lg { filter: drop-shadow(0 0 3px rgba(61,46,82,0.55)); }
+        .tff-sk-sm { position: absolute; top: 0; line-height: 1; font-size: 10px; pointer-events: none; }
+        .tff-sk-md { position: absolute; top: 0; line-height: 1; font-size: 17px; pointer-events: none; }
+        .tff-sk-lg { position: absolute; top: 0; line-height: 1; font-size: 25px; pointer-events: none; }
+
+        /* Profile: gradient mesh shift */
+        @keyframes tffProfileMesh {
+            0%   { background-position: 0%   50%; }
+            25%  { background-position: 50%  0%;  }
+            50%  { background-position: 100% 50%; }
+            75%  { background-position: 50%  100%; }
+            100% { background-position: 0%   50%; }
+        }
+
+        /* Blog: aurora drift */
+        @keyframes tffAuroraA {
+            0%   { transform: translate(-10%, -5%)  scale(1);    opacity: 0.7; }
+            33%  { transform: translate(5%,   10%)  scale(1.1);  opacity: 1;   }
+            66%  { transform: translate(15%,  -8%)  scale(0.95); opacity: 0.8; }
+            100% { transform: translate(-5%,  15%)  scale(1.05); opacity: 0.9; }
+        }
+        @keyframes tffAuroraB {
+            0%   { transform: translate(8%,   5%)   scale(1.05); opacity: 0.6; }
+            50%  { transform: translate(-12%, -8%)  scale(0.9);  opacity: 1;   }
+            100% { transform: translate(5%,   12%)  scale(1.1);  opacity: 0.7; }
+        }
+
+        /* Blog: ripple rings */
+        @keyframes tffRipple {
+            0%   { transform: scale(0.08); opacity: 0; }
+            15%  { opacity: 0.75; }
+            60%  { opacity: 0.40; }
+            100% { transform: scale(1);    opacity: 0; }
+        }
+        .tff-ripple {
+            position: absolute; border-radius: 50%;
+            border: 2px solid; pointer-events: none;
+            animation: tffRipple ease-out infinite;
+        }
+
+        /* ═══ 後半（Text Overlays〜Connection）とフッター: 日暮れから夜へ（2026-11-08 デザインチーム華の案 2・完成版。drafts/design-team/tff-second-half/full.html） ═══ */
+.tff-after .photo-section { position: relative; background-size: cover; background-position: center; }
+.tff-after .photo-overlay { position: absolute; inset: 0; pointer-events: none; }
+/* スマホ: 左 44px は栞（左 8〜22px の線と花びら）と写真・本文の間をあけるため（2026-11-09 案 B） */
+.tff-after .photo-content { position: relative; z-index: 2; max-width: 1040px; margin: 0 auto; padding-left: 44px; padding-right: 24px; }
+.tff-after .tff-text-glow { text-shadow: 0 2px 18px rgba(30,22,42,.9), 0 0 2px rgba(30,22,42,.7); }
+
+/* 見出し（花びらの印つき） */
+.tff-after .tff-tag { display: flex; align-items: center; gap: 10px; font-family: 'Cormorant Garamond', 'Noto Serif JP', serif; font-style: italic; font-size: 14px; letter-spacing: .25em; margin-bottom: 10px; color: #D9C6E6; }
+.tff-after .tff-petal { display: inline-block; width: 9px; height: 9px; border-radius: 80% 0 80% 0; background: #EEA4C0; transform: rotate(-20deg); flex: none; }
+.tff-after .tff-h2 { font-family: 'Cormorant Garamond', 'Noto Serif JP', serif; font-weight: 400; line-height: 1; letter-spacing: .04em; color: #fff; }
+.tff-after .tff-divider { width: 48px; height: 1px; background: #EEA4C0; margin: 16px 0; }
+/* ═══ 後半の幕。花びらの栞はこの幕を貫く ═══ */
+.tff-after { position: relative; }
+/* スマホ: 左 8px の細い帯（本番はスマホで現在地ドットを出さない）。PC: ドット（x 20〜32）から 36px 以上離し、本文の手前の余白に置く */
+.tff-after .tff-thread { position: absolute; z-index: 5; top: 0; bottom: 0; left: 8px; width: 14px; pointer-events: none; }
+/* 流れる引用の帯の上では栞（線と花びら）を引っ込める。--gap-a / --gap-b は JS が帯の上端・下端を入れる */
+.tff-after .tff-thread.has-gap {
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(var(--gap-a) - 40px), transparent var(--gap-a), transparent var(--gap-b), #000 calc(var(--gap-b) + 40px));
+          mask-image: linear-gradient(180deg, #000 calc(var(--gap-a) - 40px), transparent var(--gap-a), transparent var(--gap-b), #000 calc(var(--gap-b) + 40px)); }
+.tff-after .tff-thread::before { content: ""; position: absolute; left: 6px; top: 0; bottom: 0; width: 1px; background: linear-gradient(180deg, rgba(238,164,192,0) 0, rgba(238,164,192,.75) 140px, rgba(238,164,192,.75) 100%); }
+.tff-after .tff-rider { position: sticky; top: 46vh; display: block; width: 14px; height: 14px; }
+.tff-after .tff-rider i { display: block; width: 14px; height: 14px; border-radius: 80% 0 80% 0; background: #EEA4C0; box-shadow: 0 0 14px rgba(238,164,192,.7); animation: tffSway 5s ease-in-out infinite alternate; }
+@media (max-width: 640px) { .tff-after .tff-rider i { box-shadow: 0 0 6px rgba(238,164,192,.55); } }
+@keyframes tffSway { from { transform: rotate(-30deg); } to { transform: rotate(18deg) translateX(1px); } }
+
+/* ── 日暮れ（主役）。短く、日は丘の向こうへ沈みきる ── */
+.tff-after .tff-dusk { position: relative; height: clamp(340px, 52vh, 500px); overflow: hidden;
+  background: linear-gradient(180deg, #C9E7EC 0%, #E7DDE9 20%, #F6CBD7 36%, #BD93B8 56%, #5E4A7B 80%, #2E2342 100%); }
+.tff-after .tff-stars { position: absolute; inset: 0; opacity: .85;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 52%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 27% 66%, #F6C9DA 50%, transparent 52%),
+    radial-gradient(1.8px 1.8px at 41% 56%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 63% 70%, #fff 50%, transparent 52%),
+    radial-gradient(1.6px 1.6px at 76% 54%, #F6C9DA 50%, transparent 52%), radial-gradient(1.2px 1.2px at 88% 66%, #fff 50%, transparent 52%),
+    radial-gradient(1.4px 1.4px at 94% 48%, #fff 50%, transparent 52%), radial-gradient(1.2px 1.2px at 6% 72%, #fff 50%, transparent 52%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 35%, #000 70%); mask-image: linear-gradient(180deg, transparent 35%, #000 70%); }
+.tff-after .tff-sun { position: absolute; z-index: 1; left: 50%; top: 0; width: 92px; height: 92px; margin-left: -46px; border-radius: 50%;
+  background: radial-gradient(circle at 50% 45%, #FFF6EC 0%, #FBD3DC 55%, #F3AFC8 100%);
+  box-shadow: 0 0 60px 24px rgba(246,171,201,.45);
+  transform: translateY(var(--sun-y, 30%)); opacity: var(--sun-o, 1); will-change: transform, opacity; }
+/* 丘: 日がこの向こうへ隠れる。塗りは quotes の地と同じ #2E2342 なので、下の境目は出ない */
+.tff-after .tff-hill { position: absolute; z-index: 2; left: 0; right: 0; bottom: -1px; height: 30%; min-height: 110px; display: block; width: 100%; }
+
+/* ═══ quotes（写真。上端は日暮れの終端色から入り、下は Gallery の夜へ抜ける） ═══ */
+.tff-after .quotes-bg { color: #fff; padding: 0 0 100px;
+  background:
+    linear-gradient(180deg, #2E2342 0, rgba(46,35,66,0) 150px),
+    linear-gradient(160deg, rgba(61,46,82,.92) 0%, rgba(78,61,114,.88) 40%, rgba(112,94,146,.86) 80%, rgba(61,46,82,.94) 100%),
+    #3D2E52 url('img/quotes-bg.jpg') center / cover no-repeat; }
+.tff-after .quotes-bg::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 120px; background: linear-gradient(180deg, rgba(35,26,51,0), #231A33); pointer-events: none; }
+.tff-after .tff-quotes-head { position: relative; text-align: center; padding-bottom: 34px; }
+.tff-after .tff-quotes-head .tff-tag { justify-content: center; }
+.tff-after .tff-quotes-head .tff-h2 { font-size: clamp(42px, 8vw, 56px); }
+.tff-after .tff-quotes-head .tff-divider { margin: 18px auto; }
+.tff-after .tff-quotes-lead { font-size: 13px; color: rgba(255,255,255,.88); }
+.tff-after .tff-quotes-hint { font-size: 11px; color: rgba(255,255,255,.8); margin-top: 8px; letter-spacing: .08em; }
+/* 引用を止めるボタン（記号は CSS で描く。絵文字にならない） */
+.tff-after .tff-quotes-pause { position: absolute; right: 0; top: 0; width: 44px; height: 44px; border: 1px solid rgba(238,164,192,.65); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.tff-after .tff-quotes-pause:hover { background: rgba(238,164,192,.16); }
+.tff-after .tff-pause-ico { display: block; width: 10px; height: 12px; border-left: 3px solid #F6C9DA; border-right: 3px solid #F6C9DA; }
+.tff-after .tff-quotes-pause.is-paused .tff-pause-ico { width: 0; height: 0; border: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 11px solid #F6C9DA; margin-left: 3px; }
+.tff-after .marquee-inner { position: relative; z-index: 2; overflow: hidden; margin-bottom: 16px; -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%); mask-image: linear-gradient(to right, transparent 0%, #000 9%, #000 91%, transparent 100%); }
+.tff-after .marquee-track { display: flex; align-items: center; width: max-content; }
+.tff-after .marquee-left { animation: tffScrollLeft  var(--dur, 360s) linear infinite; }
+.tff-after .marquee-right { animation: tffScrollRight var(--dur, 440s) linear infinite; }
+@keyframes tffScrollLeft  { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes tffScrollRight { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+.tff-after .marquee-track:hover, .tff-after .marquee-inner.is-paused .marquee-track { animation-play-state: paused; }
+/* 箱は敷かない。細線と花びらの印、読ませるのは影 */
+.tff-after .quote-card { flex: none; position: relative; width: min(var(--qw, 380px), 86vw); padding: 22px 26px; margin-right: 16px; border: 1px solid rgba(238,164,192,.42); border-radius: 4px; text-shadow: 0 1px 14px rgba(30,22,42,.95), 0 0 2px rgba(30,22,42,.8); }
+.tff-after .quote-card::before { content: ""; position: absolute; top: -5px; left: 18px; width: 9px; height: 9px; border-radius: 80% 0 80% 0; background: #EEA4C0; transform: rotate(-20deg); }
+.tff-after .quote-card .q-text { font-family: 'Noto Serif JP', serif; font-size: .95rem; line-height: 1.9; color: #fff; margin-bottom: 12px; }
+.tff-after .quote-card .q-source { font-size: .75rem; color: #F6C9DA; letter-spacing: .06em; }
+
+/* ═══ gallery（無地の夜。写真は並べる中身だけ。本番は JS が .tff-gallery-item を並べる） ═══ */
+.tff-after .gallery-bg { background: #231A33; color: #fff; padding: 12px 0 28px; }
+.tff-after .tff-gallery-head .tff-h2 { font-size: clamp(36px, 6vw, 44px); }
+.tff-after .tff-gallery-lead { font-size: 13px; line-height: 2; color: rgba(255,255,255,.85); margin: 18px 0 30px; }
+.tff-after .tff-gallery-lead span { display: inline-block; }
+/* 全部同じ大きさの正方形（改修前の並べ方に戻した。2026-11-08 CEO）。スマホは 3 列 */
+.tff-after .tff-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+@media (max-width: 480px) { .tff-after .tff-gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; } }
+.tff-after .tff-gallery-item { position: relative; display: block; overflow: hidden; aspect-ratio: 1 / 1; border-radius: 2px; background: #1a1327; }
+.tff-after .tff-gallery-grid:not(.is-open) .tff-gallery-item.is-extra { display: none; }
+.tff-after .tff-gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.tff-after .tff-gallery-item::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(238,164,192,0); transition: box-shadow .3s ease; }
+.tff-after .tff-gallery-item:hover img { transform: scale(1.05); }
+.tff-after .tff-gallery-item:hover::after { box-shadow: inset 0 0 0 2px rgba(238,164,192,.85); }
+.tff-after .tff-gallery-actions { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px 34px; margin-top: 26px; }
+.tff-after #tff-gallery-more { font-size: 14px; letter-spacing: .12em; color: #fff; border-bottom: 1px solid #EEA4C0; padding: 6px 0; }
+.tff-after #tff-gallery-more:hover { color: #F6C9DA; }
+.tff-after .tff-gallery-flickr { font-size: 12px; letter-spacing: .2em; color: rgba(255,255,255,.85); }
+.tff-after .tff-gallery-flickr:hover { color: #fff; text-decoration: underline; }
+
+/* ═══ blog（写真。上は Gallery の夜からにじみ、下は Connection の夜の色へ沈む） ═══ */
+.tff-after .blog-bg { color: #fff; padding: 100px 0 150px;
+  background:
+    linear-gradient(180deg, #231A33 0, rgba(35,26,51,0) 130px),
+    linear-gradient(180deg, rgba(30,22,42,.72) 0%, rgba(30,22,42,.84) 100%),
+    #3D2E52 url('img/blog-bg.jpg') center / cover no-repeat; }
+.tff-after .blog-bg::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 220px; background: linear-gradient(180deg, rgba(15,12,22,0), #0F0C16); pointer-events: none; }
+.tff-after .tff-blog-head .tff-h2 { font-size: clamp(34px, 5.4vw, 40px); }
+.tff-after .tff-blog-lead { font-size: 13px; color: rgba(255,255,255,.9); margin-top: 14px; }
+.tff-after .tff-blog-cards { display: grid; gap: 34px; margin: 40px 0; }
+.tff-after .tff-blog-card { display: block; position: relative; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.5); text-shadow: 0 1px 12px rgba(30,22,42,.9), 0 0 2px rgba(30,22,42,.7); transition: transform .3s ease, border-color .3s ease; }
+.tff-after .tff-blog-card::before { content: ""; position: absolute; top: -5px; left: 0; width: 9px; height: 9px; border-radius: 80% 0 80% 0; background: #EEA4C0; transform: rotate(-20deg); }
+.tff-after .tff-blog-card:hover, .tff-after .tff-blog-card:focus-visible { border-top-color: #EEA4C0; transform: translateY(-3px); }
+.tff-after .tff-blog-date { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; letter-spacing: .12em; color: rgba(255,255,255,.85); }
+.tff-after .tff-blog-card h3 { font-family: 'Noto Serif JP', serif; font-weight: 400; font-size: 18px; line-height: 1.5; margin: 8px 0 12px; color: #fff; }
+.tff-after .tff-blog-card p { font-family: 'Noto Serif JP', serif; font-size: 13px; line-height: 1.9; color: rgba(255,255,255,.92); }
+.tff-after .tff-blog-more { display: inline-block; margin-top: 14px; font-size: 12px; letter-spacing: .2em; color: #FDD9D9; }
+.tff-after .tff-blog-btns { display: flex; flex-direction: column; gap: 14px; }
+.tff-after .tff-blog-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 28px; border: 1px solid rgba(255,255,255,.5); color: rgba(255,255,255,.92); text-shadow: 0 1px 12px rgba(30,22,42,.9); transition: background-color .3s, border-color .3s; }
+.tff-after .tff-blog-btn:hover { background: rgba(255,255,255,.1); border-color: #EEA4C0; color: #fff; }
+.tff-after .tff-blog-btn.is-now { border-color: rgba(238,164,192,.85); }
+.tff-after .tff-blog-btn-main { font-size: 13px; letter-spacing: .2em; }
+.tff-after .tff-blog-btn-sub { font-size: 11px; letter-spacing: .12em; color: rgba(255,255,255,.82); }
+
+/* ═══ connection（夜の底）。上端は blog の下端と同じ #0F0C16 から始まり、境目がない。
+   写真は下側の窓にだけ明るく見せ、文字の載る範囲では暗く退く（紫のパネルは使わない） ═══ */
+.tff-after .connection-bg { background: #0F0C16; padding: 30px 0 300px; overflow: hidden; color: #fff; }
+.tff-after .tff-conn-photo { position: absolute; left: 0; right: 0; bottom: 0; height: min(100%, max(100vw, 780px));
+  background: url('img/connection-bg.jpg') center / cover no-repeat;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 160px); mask-image: linear-gradient(180deg, transparent 0, #000 160px); }
+/* 暗幕: 上端は不透明な夜の色、文字の範囲は .84、文字が終わる所から写真が戻る */
+.tff-after .connection-bg .photo-overlay { z-index: 1;
+  background: linear-gradient(180deg, #0F0C16 0, rgba(15,12,22,.88) 160px, rgba(15,12,22,.84) calc(100% - 300px), rgba(15,12,22,.1) calc(100% - 120px), rgba(15,12,22,0) 100%); }
+.tff-after .connection-bg::after { content: ""; position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; height: 190px; background: linear-gradient(180deg, rgba(112,94,146,0), #705E92); pointer-events: none; }
+.tff-after .tff-conn-head .tff-h2 { font-size: clamp(26px, 4.4vw, 30px); }
+.tff-after .tff-conn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 14px; margin-top: 36px; max-width: 760px; }
+.tff-after .tff-conn { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.tff-after .tff-conn img { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,.6); margin-bottom: 6px; transition: transform .35s ease; }
+.tff-after .tff-conn:hover img { transform: translateY(-4px) rotate(-3deg); }
+.tff-after .tff-conn-name { font-family: 'Noto Serif JP', serif; color: #fff; font-size: 15px; letter-spacing: .06em; }
+.tff-after .tff-conn-name .inline-block { display: inline-block; }
+.tff-after .tff-conn-sub { color: rgba(255,255,255,.84); font-size: 11px; }
+.tff-after .tff-another-wrap { margin-top: 56px; }
+.tff-after .tff-conn-label { display: flex; align-items: center; gap: 10px; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 13px; letter-spacing: .25em; text-transform: uppercase; color: #D9C6E6; }
+.tff-after .tff-conn-title { font-family: 'Noto Serif JP', serif; font-size: 20px; letter-spacing: .08em; margin-top: 6px; }
+.tff-after .tff-another-grid { display: grid; gap: 30px; margin-top: 24px; }
+.tff-after .tff-another { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: start; position: relative; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.5); transition: border-color .3s, transform .3s; }
+.tff-after .tff-another::before { content: ""; position: absolute; top: -5px; left: 0; width: 9px; height: 9px; border-radius: 80% 0 80% 0; background: #EEA4C0; transform: rotate(-20deg); }
+.tff-after .tff-another:hover { border-top-color: #EEA4C0; transform: translateY(-3px); }
+.tff-after .tff-another img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+.tff-after .tff-another .tff-self-label { color: #D9C6E6; }
+.tff-after .tff-another-title { font-family: 'Noto Serif JP', serif; font-size: 17px; letter-spacing: .06em; margin-top: 4px; }
+.tff-after .tff-another-body { font-size: 13px; line-height: 1.95; color: rgba(255,255,255,.92); margin-top: 8px; }
+.tff-after .tff-another-body .inline-block { display: inline-block; }
+.tff-after .tff-another-link { font-size: 12px; color: #F6C9DA; margin-top: 10px; }
+.tff-after .tff-another:hover .tff-another-link { text-decoration: underline; }
+.tff-after .tff-another-credit { font-size: 11px; color: rgba(255,255,255,.8); margin-top: 4px; }
+/* ═══ footer（夜明けの紫。花びらは栞と同じ形） ═══ */
+.tff-footer { position: relative; overflow: hidden; background: #705E92; text-align: center; padding: 28px 24px 56px; }
+.tff-footer-sakura { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.tff-sk { position: absolute; top: 8%; width: 14px; height: 14px; border-radius: 80% 0 80% 0; animation: tffFall 10s ease-in-out infinite; }
+/* 左右の端の帯だけを、外側へ流れながら降りる（字にかからない） */
+/* 狭い画面は端から px で置く。広い画面（1024px〜）は左右に広げる */
+.tff-sk:nth-child(1) { left: 4px; } .tff-sk:nth-child(2) { left: 12px; } .tff-sk:nth-child(3) { left: 20px; }
+.tff-sk:nth-child(4) { right: 20px; } .tff-sk:nth-child(5) { right: 12px; } .tff-sk:nth-child(6) { right: 4px; }
+@media (max-width: 340px) { .tff-sk:nth-child(3), .tff-sk:nth-child(4) { display: none; } }
+@media (min-width: 1024px) {
+  .tff-sk:nth-child(1) { left: 4%; } .tff-sk:nth-child(2) { left: 10%; } .tff-sk:nth-child(3) { left: 16%; }
+  .tff-sk:nth-child(4) { right: 16%; } .tff-sk:nth-child(5) { right: 10%; } .tff-sk:nth-child(6) { right: 4%; }
+}
+@keyframes tffFall { 0% { transform: translate(0,-20px) rotate(-20deg); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(var(--dx, 0), 230px) rotate(200deg); opacity: 0; } }
+.tff-closing { position: relative; z-index: 1; max-width: 640px; margin: 24px auto 56px; }
+.tff-closing-q { font-family: 'Klee One', 'Noto Serif JP', serif; font-weight: 600; font-size: clamp(24px, 3.4vw, 32px); letter-spacing: .12em; color: #fff; }
+.tff-footer .tff-closing-q span { display: inline-block; }
+.tff-closing-mirror { display: inline-block; margin-top: 52px; font-size: 13px; line-height: 2; letter-spacing: .06em; color: rgba(255,255,255,.9); border-bottom: 1px solid transparent; transition: border-color .3s; }
+.tff-closing-mirror:hover { border-color: rgba(255,255,255,.7); }
+.tff-closing-mirror span.inline-block { display: inline-block; }
+.tff-copy { position: relative; z-index: 1; font-size: 11px; letter-spacing: .08em; color: rgba(255,255,255,.88); }
+@media (min-width: 641px) {
+  .tff-after .tff-thread { left: clamp(68px, calc(50vw - 520px), 340px); }
+  .tff-after .photo-content { padding-left: 112px; padding-right: 112px; }
+}
+@media (min-width: 760px) {
+  .tff-after .tff-blog-cards { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .tff-after .tff-blog-btns { flex-direction: row; }
+  .tff-after .tff-blog-btn { min-width: 220px; }
+  .tff-after .tff-conn-grid { grid-template-columns: repeat(4, 1fr); }
+  .tff-after .tff-conn img { width: 104px; height: 104px; }
+  .tff-after .tff-another-grid { grid-template-columns: repeat(2, 1fr); gap: 36px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tff-after .tff-rider i { transform: rotate(-20deg); }
+  .tff-after .marquee-inner { overflow-x: auto; -webkit-mask-image: none; mask-image: none; }
+  .tff-after .tff-quotes-pause { display: none; }
+  .tff-sk { opacity: .75; }
+}
+/* 明るい地でも暗い地でも見えるフォーカスの二重の縁（後半とフッター・self） */
+.tff-self :focus-visible, .tff-after :focus-visible, .tff-footer :focus-visible { outline: 2px solid #3D2E52; outline-offset: 3px; box-shadow: 0 0 0 5px rgba(255,255,255,.92); }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════
+         HEADER
+    ═══════════════════════════════════ -->
+    <header id="tff-header" class="tff-header on-photo fixed top-0 left-0 right-0 z-50 px-6 lg:px-10 py-4 flex justify-between items-center">
+        <!-- Back to NOCTA -->
+        <a href="../index.html"
+           class="tff-back-link font-display text-[13px] tracking-[3px] uppercase flex items-center gap-2">
+            ← NOCTA
+        </a>
+
+        <!-- Brand -->
+        <a href="#top" class="tff-brand-link font-serif text-[15px] tracking-[3px]">
+            <span class="tff-sky-mark" aria-hidden="true"></span>THE FIRST FLOWER
+        </a>
+
+        <!-- Nav -->
+        <nav class="hidden md:flex items-center gap-6">
+            <a href="#profile" class="tff-nav-link font-jp text-[11px] tracking-[2px]">PROFILE</a>
+            <a href="#quotes"  class="tff-nav-link font-jp text-[11px] tracking-[2px]">TEXT OVERLAYS</a>
+            <a href="#gallery" class="tff-nav-link font-jp text-[11px] tracking-[2px]">GALLERY</a>
+            <a href="#blog"    class="tff-nav-link font-jp text-[11px] tracking-[2px]">BLOG</a>
+        </nav>
+
+        <!-- スマホの節ナビ: 目次と今いる節の番号（「目次」の 2 文字は 2026-11-09 に CEO 確認済み） -->
+        <button type="button" class="tff-toc-btn" id="tff-toc-btn" aria-expanded="false" aria-controls="tff-toc">
+            <span class="tff-toc-ico" aria-hidden="true"></span>
+            <span class="tff-toc-lbl"><b>目次</b><i id="tff-toc-pos">1 / 8</i></span>
+        </button>
+    </header>
+
+    <div class="tff-toc-scrim" id="tff-toc-scrim" aria-hidden="true"></div>
+    <nav id="tff-toc" aria-label="目次">
+        <ol>
+            <li><a href="#top"><span class="tff-toc-no" aria-hidden="true">01</span><span class="tff-toc-name">Top</span></a></li>
+            <li><a href="#credo"><span class="tff-toc-no" aria-hidden="true">02</span><span class="tff-toc-name is-jp">いい人生とは</span></a></li>
+            <li><a href="#profile"><span class="tff-toc-no" aria-hidden="true">03</span><span class="tff-toc-name">Profile</span></a></li>
+            <li><a href="#self"><span class="tff-toc-no" aria-hidden="true">04</span><span class="tff-toc-name">Self Portrait</span></a></li>
+            <li><a href="#quotes"><span class="tff-toc-no" aria-hidden="true">05</span><span class="tff-toc-name">Text Overlays</span></a></li>
+            <li><a href="#gallery"><span class="tff-toc-no" aria-hidden="true">06</span><span class="tff-toc-name">Gallery</span></a></li>
+            <li><a href="#blog"><span class="tff-toc-no" aria-hidden="true">07</span><span class="tff-toc-name">Blog</span></a></li>
+            <li><a href="#connection"><span class="tff-toc-no" aria-hidden="true">08</span><span class="tff-toc-name">Connection</span></a></li>
+        </ol>
+    </nav>
+
+    <!-- 左の現在地ドット -->
+    <nav id="tff-dots" aria-label="ページ内の位置">
+        <a href="#top"><span>Top</span></a>
+        <a href="#credo"><span>いい人生とは</span></a>
+        <a href="#profile"><span>Profile</span></a>
+        <a href="#self"><span>Self Portrait</span></a>
+        <a href="#quotes"><span>Text Overlays</span></a>
+        <a href="#gallery"><span>Gallery</span></a>
+        <a href="#blog"><span>Blog</span></a>
+        <a href="#connection"><span>Connection</span></a>
+    </nav>
+
+    <!-- ═══════════════════════════════════
+         HERO
+    ═══════════════════════════════════ -->
+    <section id="top" class="photo-section hero-bg min-h-screen flex items-center justify-center text-center">
+        <div class="photo-overlay" style="background: radial-gradient(ellipse 60% 45% at 50% 50%, rgba(61,46,82,0.55) 0%, rgba(61,46,82,0.18) 70%, rgba(61,46,82,0.30) 100%);"></div>
+        <!-- 写真の荒さを、フィルムの粒の質感として見せる -->
+        <div class="tff-film-grain" aria-hidden="true"></div>
+        <!-- Falling sakura petals (slow sway) -->
+        <div class="absolute inset-0 pointer-events-none z-[1] overflow-hidden" aria-hidden="true">
+            <!-- small -->
+            <span class="tff-sk-sm absolute" style="left:4%;animation:sakura-a 22s ease-in-out -4s infinite;color:rgba(238,164,192,0.75);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:14%;animation:sakura-b 18s ease-in-out -10s infinite;color:rgba(253,217,217,0.65);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:28%;animation:sakura-c 26s ease-in-out -14s infinite;color:rgba(238,164,192,0.60);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:52%;animation:sakura-a 20s ease-in-out -2s infinite;color:rgba(253,217,217,0.70);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:67%;animation:sakura-b 24s ease-in-out -8s infinite;color:rgba(238,164,192,0.55);">✿</span>
+            <span class="tff-sk-sm absolute" style="left:80%;animation:sakura-c 19s ease-in-out -6s infinite;color:rgba(253,217,217,0.60);">❀</span>
+            <span class="tff-sk-sm absolute" style="left:92%;animation:sakura-a 28s ease-in-out -17s infinite;color:rgba(238,164,192,0.50);">✿</span>
+            <!-- medium -->
+            <span class="tff-sk-md absolute" style="left:8%;animation:sakura-b 25s ease-in-out -7s infinite;color:rgba(238,164,192,0.55);">✿</span>
+            <span class="tff-sk-md absolute" style="left:22%;animation:sakura-c 21s ease-in-out -13s infinite;color:rgba(253,217,217,0.50);">❀</span>
+            <span class="tff-sk-md absolute" style="left:38%;animation:sakura-a 23s ease-in-out -19s infinite;color:rgba(238,164,192,0.60);">✿</span>
+            <span class="tff-sk-md absolute" style="left:58%;animation:sakura-b 18s ease-in-out -3s infinite;color:rgba(253,217,217,0.45);">❀</span>
+            <span class="tff-sk-md absolute" style="left:74%;animation:sakura-c 27s ease-in-out -9s infinite;color:rgba(238,164,192,0.50);">✿</span>
+            <span class="tff-sk-md absolute" style="left:88%;animation:sakura-a 20s ease-in-out -15s infinite;color:rgba(253,217,217,0.55);">❀</span>
+            <span class="tff-sk-md absolute" style="left:46%;animation:sakura-c 22s ease-in-out -11s infinite;color:rgba(238,164,192,0.45);">✿</span>
+            <!-- large -->
+            <span class="tff-sk-lg absolute" style="left:18%;animation:sakura-a 28s ease-in-out -5s infinite;color:rgba(238,164,192,0.40);">✿</span>
+            <span class="tff-sk-lg absolute" style="left:44%;animation:sakura-b 24s ease-in-out -12s infinite;color:rgba(253,217,217,0.38);">❀</span>
+            <span class="tff-sk-lg absolute" style="left:72%;animation:sakura-c 26s ease-in-out -2s infinite;color:rgba(238,164,192,0.35);">✿</span>
+            <span class="tff-sk-lg absolute" style="left:95%;animation:sakura-a 21s ease-in-out -18s infinite;color:rgba(253,217,217,0.42);">❀</span>
+        </div>
+        <div class="photo-content px-6 tff-text-glow">
+            <p class="font-serif italic text-white/85 text-[13px] tracking-[4px] mb-6 tff-reveal">— what is a good life —</p>
+            <h1 class="font-serif text-white leading-none mb-4 tff-reveal" style="font-size: clamp(48px, 9vw, 110px); letter-spacing: 0.04em;">
+                The First Flower
+            </h1>
+            <div class="tff-divider tff-reveal"></div>
+            <p class="font-jpserif text-white/75 text-[18px] tracking-[6px] mt-4 tff-reveal">〜 いい人生とは 〜</p>
+            <p class="font-jp text-white/80 text-[12px] tracking-[2px] mt-10 tff-reveal">scroll ↓</p>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         いい人生とは（作者の答え）— 縦書き・右から左へ
+    ═══════════════════════════════════ -->
+    <section id="credo" class="tff-credo" aria-label="いい人生とは">
+        <div class="tff-credo-scroll" id="tff-credo-scroll">
+            <p class="tff-credo-poem tff-reveal"><span class="t">いい人生とは</span><span class="l"><span class="p">自由であること</span></span><span class="l"><span class="p">妻や子どもたちとたくさん笑い、</span><span class="p">話し、</span><span class="p">過ごす時間があること</span></span><span class="l"><span class="p">自身の感情や行動が他者の態度や行動に左右されないこと</span></span><span class="l"><span class="p">異なる見え方や描き方に魅了され、</span><span class="p">自身の変化を楽しむこと</span></span><span class="l"><span class="p">時間に縛られず回り道をすること</span></span><span class="l"><span class="p">富や名声は目的ではなく、</span><span class="p">手段であること</span></span><span class="l"><span class="p">自身の答えに振り回されず、</span><span class="p">敬意を持って人の話を聞き、</span><span class="p">相手を理解すること</span></span><span class="l"><span class="p">見栄を張らず、</span><span class="p">良心を体現すること</span></span><span class="l"><span class="p">人生を義務と考えず、</span><span class="p">笑って目を輝かせて歩むこと</span></span><span class="l"><span class="p">いいものを見つけたとき、</span><span class="p">出会った人に分けてあげて、</span><span class="p">一緒に喜ぶこと</span></span><span class="end">遊ぶことで　人生を彩ろう</span></p>
+        </div>
+        <p class="tff-credo-hint font-jp">← 右から左へ、指でたどれます</p>
+        <p class="tff-credo-coda-sp">遊ぶことで　人生を彩ろう</p>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         PROFILE
+    ═══════════════════════════════════ -->
+    <section id="profile" class="photo-section profile-bg py-24 px-6 overflow-hidden">
+        <!-- Particle canvas (moved from hero) -->
+        <canvas id="tff-profile-canvas"></canvas>
+        <!-- Floating symbols (moved from hero, softer for light bg) -->
+        <div class="absolute inset-0 pointer-events-none z-[3] overflow-hidden">
+            <span class="tff-sym-1 absolute" style="top:12%;left:5%;font-size:14px;color:rgba(177,104,168,0.45);">✿</span>
+            <span class="tff-sym-2 absolute" style="top:22%;right:7%;font-size:10px;color:rgba(166,221,214,0.50);">✦</span>
+            <span class="tff-sym-3 absolute" style="top:58%;left:10%;font-size:9px;color:rgba(238,164,192,0.42);">❀</span>
+            <span class="tff-sym-4 absolute" style="top:18%;right:18%;font-size:11px;color:rgba(177,104,168,0.38);">✧</span>
+            <span class="tff-sym-5 absolute" style="bottom:22%;right:5%;font-size:15px;color:rgba(238,164,192,0.35);">✿</span>
+            <span class="tff-sym-1 absolute" style="bottom:28%;left:4%;font-size:8px;color:rgba(166,221,214,0.40);">✦</span>
+            <span class="tff-sym-3 absolute" style="top:42%;left:2%;font-size:12px;color:rgba(184,227,183,0.38);">✧</span>
+            <span class="tff-sym-2 absolute" style="top:8%;left:45%;font-size:7px;color:rgba(177,104,168,0.42);">❀</span>
+        </div>
+        <!-- Glow orbs -->
+        <div class="absolute inset-0 pointer-events-none z-0">
+            <div class="tff-orb tff-orb-1" style="width:520px;height:520px;top:-160px;left:-140px;background:radial-gradient(circle,rgba(238,164,192,0.25),transparent 70%);"></div>
+            <div class="tff-orb tff-orb-2" style="width:420px;height:420px;top:40%;right:-120px;background:radial-gradient(circle,rgba(166,221,214,0.22),transparent 70%);"></div>
+            <div class="tff-orb tff-orb-3" style="width:360px;height:360px;bottom:-90px;left:35%;background:radial-gradient(circle,rgba(184,227,183,0.20),transparent 70%);"></div>
+        </div>
+        <div class="max-w-5xl mx-auto relative z-10">
+
+            <!-- Title -->
+            <div class="text-center mb-16 tff-reveal">
+                <p class="font-serif text-tff-sub text-[13px] tracking-[4px] mb-3"><span lang="ru">Кто это?</span><span class="font-jp tracking-[2px] text-[11px] ml-1">（これはなに?）</span></p>
+                <h2 class="font-serif text-tff-dark text-[42px] lg:text-[56px] leading-none tracking-wide">Profile</h2>
+                <div class="tff-divider" style="background: #B168A8;"></div>
+            </div>
+
+            <!-- Two column layout -->
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+
+                <!-- Left: Photos -->
+                <div class="space-y-4 tff-reveal">
+                    <!-- 写真1: img/profile-photo1.jpg を追加し tff-profile-data.js の photos[0].src を設定してください -->
+                    <div id="tff-photo-1" class="profile-photo-placeholder rounded-lg aspect-video flex items-center justify-center">
+                        <p class="font-jp text-tff-sub text-[12px] tracking-widest">photo 01</p>
+                    </div>
+                    <!-- 写真2: img/profile-photo2.jpg を追加し tff-profile-data.js の photos[1].src を設定してください -->
+                    <div id="tff-photo-2" class="profile-photo-placeholder rounded-lg aspect-video flex items-center justify-center">
+                        <p class="font-jp text-tff-sub text-[12px] tracking-widest">photo 02</p>
+                    </div>
+                </div>
+
+                <!-- Right: Bio -->
+                <div class="tff-reveal">
+                    <!-- Bio section -->
+                    <div class="mb-10">
+                        <p class="font-serif italic text-tff-accent text-[12px] tracking-[4px] mb-3 uppercase">Personal</p>
+                        <p id="tff-bio" class="font-jp text-tff-text text-[15px] leading-[2.2] mb-4">
+                            東京生まれ東京育ち。関西弁に憧れて関西へ行き自分を捨てられるようになりました。また、2015年まで秋田に赴任していました。食べ物の美味しさと人のやさしさに感動し、いつかは田舎に住むのを夢みています。子供ができたことで、よりいっそう仕事以外の人生に興味を持ち、今を生きようと思いました。どうぞよろしくお願いいたします。
+                        </p>
+                        <a href="kandou/index.html"
+                           class="inline-block mt-2 font-jp text-[12px] tracking-[3px] text-tff-dark border border-tff-accent/40 px-8 py-3 hover:bg-tff-accent/10 transition-all duration-300">
+                            感動したことを読む →
+                        </a>
+                    </div>
+
+                    <!-- Hobbies section -->
+                    <div>
+                        <p class="font-serif italic text-tff-accent text-[12px] tracking-[4px] mb-3 uppercase">Hobby</p>
+                        <p id="tff-hobbies-line" class="font-jp text-tff-sub text-[13px] tracking-[2px] mb-4">
+                            読書 &nbsp;|&nbsp; アニメ &nbsp;|&nbsp; 漫画 &nbsp;|&nbsp; 旅行 &nbsp;|&nbsp; 夏フェス &nbsp;|&nbsp; 日本酒 &nbsp;|&nbsp; ポケモン
+                        </p>
+                        <p id="tff-hobby-detail" class="font-jp text-tff-text text-[14px] leading-[2.2]">
+                            SFや児童小説、自己啓発の本が好きです。自己啓発の本の中では、NVCとThe Artist's Wayにはまっています。が、興味がころころ変わるので、次に書くときは別のものになっているかも。アニメは深夜アニメを、漫画も何でも読みます。旅行が好きで、気が付くと日本一周していました。海外旅行も年に一度は行っていました。子供ができたことで人生のZ軸ができ、より人生が彩られました。
+                        </p>
+                        <a href="journey/index.html"
+                           class="inline-block mt-6 font-jp text-[12px] tracking-[3px] text-tff-dark border border-tff-accent/40 px-8 py-3 hover:bg-tff-accent/10 transition-all duration-300">
+                            旅の一枚を見る →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════
+         SELF PORTRAIT — 色・強み・性格
+         主役は瓶覗の札（画面幅の 1 枚）。ストレングスと ENFP はその下の脇役
+    ═══════════════════════════════════ -->
+    <section id="self" class="tff-self py-24 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12 tff-reveal">
+                <p class="font-serif italic text-[13px] tracking-[4px] mb-3" style="color:#5E97A0;">— colors &amp; strengths —</p>
+                <h2 class="font-serif text-tff-dark text-[42px] lg:text-[56px] leading-none tracking-wide">Self Portrait</h2>
+                <div class="tff-divider" style="background:#7FBFC8;"></div>
+                <p class="font-jp text-[13px] mt-4" style="color:#5f7f85;">色と、強みと、性格と。</p>
+            </div>
+
+            <!-- 色の札: 上に瓶覗の色面と縦書きの色名、下に澄んだ水（写真は本人の Flickr 5488599948 の一部） -->
+            <figure class="tff-kame-plate tff-reveal" aria-label="瓶覗（かめのぞき）色">
+                <div class="tff-kame-field">
+                    <p class="tff-kame-name"><span class="k">瓶覗</span><span class="r">かめのぞき</span></p>
+                    <p class="tff-kame-label">My color</p>
+                </div>
+                <img src="img/kamenozoki-water.jpg" alt="" class="tff-kame-water" width="1008" height="318" loading="lazy">
+            </figure>
+            <div class="tff-kame-text tff-reveal">
+                <p class="tff-kame-note">好きな色は、瓶覗（かめのぞき）。藍染のなかで、いちばん淡い色です。</p>
+                <p class="tff-kame-lead">私は瓶覗色です。</p>
+                <p class="tff-kame-body">瓶に水が張ってあり、そこに映る空の色を覗き見るように、私と関わる物や人すべてを覗き見ては儚く消えていく、その見た時の一瞬の喜びを、ふと見つけた何か捉えどころのないふんわりした印象を感じさせます。</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mt-14 items-start">
+                <!-- ストレングスファインダー -->
+                <div class="tff-self-card tff-reveal">
+                    <p class="tff-self-label">Strengths</p>
+                    <p class="tff-self-title">ストレングスファインダー 上位の資質</p>
+                    <ol class="tff-strengths" id="tff-strengths">
+                        <li><p><b>Woo</b><span>社交性（Winning Others Over）</span></p></li>
+                        <li><p><b>Input</b><span>収集心</span></p></li>
+                        <li><p><b>Learner</b><span>学習欲</span></p></li>
+                        <li><p><b>Strategic</b><span>戦略性</span></p></li>
+                        <li><p><b>Positivity</b><span>ポジティブ</span></p></li>
+                        <li class="is-more"><p><b>Empathy</b><span>共感性</span></p></li>
+                        <li class="is-more"><p><b>Ideation</b><span>着想</span></p></li>
+                        <li class="is-more"><p><b>Significance</b><span>自我</span></p></li>
+                        <li class="is-more"><p><b>Command</b><span>指令性</span></p></li>
+                        <li class="is-more"><p><b>Includer</b><span>包含</span></p></li>
+                    </ol>
+                    <button type="button" id="tff-strengths-more" class="tff-self-more" aria-expanded="false" aria-controls="tff-strengths">6〜10 位も見る ↓</button>
+                </div>
+                <div class="flex flex-col gap-6 tff-reveal">
+                    <!-- 強みの全体像（作者のメモを ChatGPT で清書した図） -->
+                    <div class="tff-self-card tff-map-card flex-1">
+                        <p class="tff-self-label">Strengths Map</p>
+                        <button type="button" id="tff-map-open" class="tff-map-thumb" aria-label="強みの全体像の図を大きく見る">
+                            <span class="tff-map-zoom" aria-hidden="true">＋</span>
+                            <img src="img/strengths-map.jpg" alt="ストレングスファインダー上位 10 の資質と、それらがどうつながって自分を動かしているかを描いた図" width="1448" height="1086" loading="lazy">
+                        </button>
+                        <p class="tff-map-credit">自分のメモを ChatGPT で清書した図です。</p>
+                    </div>
+                    <!-- 16Personalities -->
+                    <a href="https://www.16personalities.com/ja/enfp%E5%9E%8B%E3%81%AE%E6%80%A7%E6%A0%BC" target="_blank" rel="noopener" class="tff-self-card block hover:bg-white transition-colors duration-300 group">
+                        <p class="tff-self-label">16 Personalities</p>
+                        <p class="tff-self-title">ENFP <span class="text-[15px] tracking-[2px]">運動家</span></p>
+                        <p class="font-jp text-[13px] leading-[1.9] mt-3" style="color:#4d5d61;">好奇心と情熱で、人や新しいことに飛び込んでいくタイプ。可能性を見つけると、わくわくして周りも巻き込みます。</p>
+                        <p class="font-jp text-[12px] mt-3 group-hover:underline" style="color:#5E97A0;">16Personalities で ENFP 型を読む ↗</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ 後半: 日暮れ → Text Overlays → Gallery → Blog → Connection（花びらの栞が貫く） ═══ -->
+    <div class="tff-after">
+      <!-- 飾りの栞（押せない）。押せる現在地ドットとは位置も形も分ける -->
+      <div class="tff-thread" aria-hidden="true"><span class="tff-rider"><i></i></span></div>
+
+      <!-- 日暮れ: 水色の昼 → 夕焼け → 夜の紫。日は丘の向こうへ沈みきる -->
+      <div class="tff-dusk" id="tff-dusk" aria-hidden="true">
+        <div class="tff-stars"></div>
+        <div class="tff-sun" id="tff-sun"></div>
+        <svg class="tff-hill" viewBox="0 0 1440 120" preserveAspectRatio="none" focusable="false"><path d="M0,82 C180,60 320,94 520,66 C640,50 800,50 920,68 C1100,94 1260,60 1440,80 L1440,121 L0,121 Z" fill="#2E2342"/></svg>
+      </div>
+
+      <!-- TEXT OVERLAYS -->
+      <section id="quotes" class="photo-section quotes-bg">
+        <div class="photo-content">
+          <div class="tff-quotes-head tff-reveal tff-text-glow">
+            <button type="button" class="tff-quotes-pause" id="tff-quotes-pause" aria-pressed="false" aria-label="引用の流れを止める"><span class="tff-pause-ico" aria-hidden="true"></span></button>
+            <p class="tff-tag"><span class="tff-petal"></span>words that move me</p>
+            <h2 class="tff-h2">Text Overlays</h2>
+            <div class="tff-divider"></div>
+            <p class="tff-quotes-lead">感動した言葉を、流れるように。</p>
+            <p class="tff-quotes-hint">触れると止まります</p>
+          </div>
+        </div>
+        <div class="marquee-inner" id="tff-mq1"><div class="marquee-track marquee-left" id="stream-row1"></div></div>
+        <div class="marquee-inner" id="tff-mq2"><div class="marquee-track marquee-right" id="stream-row2"></div></div>
+      </section>
+
+      <!-- GALLERY -->
+      <section id="gallery" class="photo-section gallery-bg">
+        <div class="photo-content">
+          <div class="tff-gallery-head tff-reveal">
+            <p class="tff-tag"><span class="tff-petal"></span>moments on film</p>
+            <h2 class="tff-h2">Gallery</h2>
+            <p class="tff-gallery-lead"><span>いつかの思い出だけでなく</span><span>思考や音や考えが</span><br><span>ぽっと湧き上がりますように</span></p>
+          </div>
+          <!-- 写真は JS が並べる（tff-gallery-data.js ＋ Flickr の新しい 20 枚） -->
+          <div class="tff-gallery-grid tff-reveal" id="tff-gallery-grid" aria-live="polite"></div>
+          <p id="tff-gallery-status" class="font-jp text-white/80 text-[12px] mt-6 hidden"></p>
+          <div class="tff-gallery-actions tff-reveal">
+            <button type="button" id="tff-gallery-more" class="hidden" aria-expanded="false" aria-controls="tff-gallery-grid"></button>
+            <a class="tff-gallery-flickr" href="https://www.flickr.com/photos/kutakuta1001/" target="_blank" rel="noopener">Flickr ですべて見る →</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gallery lightbox -->
+      <div id="tff-lightbox" role="dialog" aria-modal="true" aria-label="写真の拡大表示" aria-hidden="true">
+          <button type="button" class="tff-lb-btn tff-lb-close" aria-label="閉じる">×</button>
+          <button type="button" class="tff-lb-btn tff-lb-prev" aria-label="前の写真">‹</button>
+          <figure>
+              <img id="tff-lb-img" src="" alt="">
+              <figcaption class="mt-4">
+                  <p id="tff-lb-title" class="font-jpserif text-white/85 text-[14px]"></p>
+                  <a id="tff-lb-link" href="https://www.flickr.com/photos/kutakuta1001/" target="_blank" rel="noopener"
+                     class="inline-block mt-2 font-jp text-[11px] tracking-[2px] text-[#EEA4C0]/80 hover:text-[#EEA4C0]">Flickr で見る →</a>
+              </figcaption>
+          </figure>
+          <button type="button" class="tff-lb-btn tff-lb-next" aria-label="次の写真">›</button>
+      </div>
+
+      <!-- BLOG -->
+      <section id="blog" class="photo-section blog-bg">
+        <div class="photo-content">
+          <div class="tff-blog-head tff-reveal tff-text-glow">
+            <p class="tff-tag"><span class="tff-petal"></span>感動を書く</p>
+            <h2 class="tff-h2">Blog</h2>
+            <p class="tff-blog-lead">脳の整理。出会いとのわくわく。感動し乗り越えろ。</p>
+          </div>
+          <div class="tff-blog-cards">
+            <a href="old-blog/2013-sayonara.html" class="tff-blog-card tff-reveal">
+              <time class="tff-blog-date" datetime="2013-03-05">2013.03.05</time>
+              <h3>さよなら</h3>
+              <p>もしも別れがなかったら、人の心はどうなっていくのだろう。楽しい事や嬉しい事を、充実していることと捉えがちだった社会人１年目。</p>
+              <span class="tff-blog-more">続きを読む<span aria-hidden="true"> →</span></span>
+            </a>
+            <a href="old-blog/2011-ma.html" class="tff-blog-card tff-reveal" style="transition-delay:0.1s">
+              <time class="tff-blog-date" datetime="2011-10-14">2011.10.14</time>
+              <h3>間だそこにあってほしい、</h3>
+              <p>多分僕が昔より失ったものは「間」なんだとおもう。隙間の時間。考えたこと。</p>
+              <span class="tff-blog-more">続きを読む<span aria-hidden="true"> →</span></span>
+            </a>
+            <a href="old-blog/2009-finale.html" class="tff-blog-card tff-reveal" style="transition-delay:0.2s">
+              <time class="tff-blog-date" datetime="2009-12-12">2009.12.12</time>
+              <h3>いつの間にかフィナーレ</h3>
+              <p>１番感じたことは、あなたは何をしてましたか？といわれたときに勉強です。っていえるようになりたいと思ったことです。</p>
+              <span class="tff-blog-more">続きを読む<span aria-hidden="true"> →</span></span>
+            </a>
+          </div>
+          <div class="tff-blog-btns tff-reveal">
+            <a href="https://ameblo.jp/kutakuta-1001/" target="_blank" rel="noopener" class="tff-blog-btn">
+              <span class="tff-blog-btn-main">過去のブログ<span aria-hidden="true"> ↗</span></span>
+              <span class="tff-blog-btn-sub">Ameblo・2009〜</span>
+            </a>
+            <a href="../index.html#blog" class="tff-blog-btn is-now">
+              <span class="tff-blog-btn-main">今のブログ<span aria-hidden="true"> →</span></span>
+              <span class="tff-blog-btn-sub">NOCTA で書いています</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONNECTION -->
+      <section id="connection" class="photo-section connection-bg">
+        <div class="tff-conn-photo" aria-hidden="true"></div>
+        <div class="photo-overlay" aria-hidden="true"></div>
+        <div class="photo-content tff-text-glow">
+          <div class="tff-conn-head tff-reveal">
+            <p class="tff-tag"><span class="tff-petal"></span>elsewhere</p>
+            <h2 class="tff-h2">Connection</h2>
+          </div>
+          <div class="tff-conn-grid tff-reveal">
+            <a href="https://www.flickr.com/photos/kutakuta1001/" target="_blank" rel="noopener" class="tff-conn">
+              <img src="img/icon-flickr.jpg" alt="" width="120" height="120">
+              <span class="tff-conn-name">Flickr</span>
+              <span class="tff-conn-sub">66枚のフォトアーカイブ</span>
+            </a>
+            <a href="https://ameblo.jp/kutakuta-1001/" target="_blank" rel="noopener" class="tff-conn">
+              <img src="img/icon-old-blog.jpg" alt="" width="120" height="120">
+              <span class="tff-conn-name">Old Blog</span>
+              <span class="tff-conn-sub">Ameblo の過去ブログ</span>
+            </a>
+            <a href="https://booklog.jp/users/nrc56424" target="_blank" rel="noopener" class="tff-conn">
+              <img src="img/icon-booklog.jpg" alt="" width="120" height="120">
+              <span class="tff-conn-name"><span class="inline-block">ブクログ</span> <span class="inline-block">読書所感</span></span>
+              <span class="tff-conn-sub">277冊 · 149レビュー</span>
+            </a>
+            <a href="https://7witches.wraptas.site/" target="_blank" rel="noopener" class="tff-conn">
+              <img src="img/icon-7witches.jpg" alt="" width="120" height="120">
+              <span class="tff-conn-name">7Witches Trade</span>
+              <span class="tff-conn-sub">FX トレードのサイト</span>
+            </a>
+          </div>
+
+          <!-- self から移した「もうひとつの顔」 -->
+          <div class="tff-another-wrap tff-reveal">
+            <p class="tff-conn-label"><span class="tff-petal"></span>Another side</p>
+            <p class="tff-conn-title">もうひとつの顔</p>
+            <div class="tff-another-grid">
+              <a href="https://x.com/pokeasako" target="_blank" rel="noopener" class="tff-another">
+                <img src="img/another-pokeca.jpg" alt="ポケモンカードのイラスト（X のアイコン）" width="400" height="400" loading="lazy">
+                <div>
+                  <p class="tff-self-label">Pokémon Card</p>
+                  <p class="tff-another-title">ポケカで遊ぶ</p>
+                  <p class="tff-another-body">ポケモンカードにはまった<span class="inline-block">30代。</span>友だちと都内のあちこちで対戦し、子どもと遊び、可愛いイラストを集めています。好きなポケモンはエーフィ、テールナー、ロコン。</p>
+                  <p class="tff-another-link">X @pokeasako ↗</p>
+                  <p class="tff-another-credit">アイコン: カヲルさん（@kwr_pkc）</p>
+                </div>
+              </a>
+              <a href="https://x.com/hanata19086" target="_blank" rel="noopener" class="tff-another">
+                <img src="img/another-fx.jpg" alt="土地神様のイラスト（X のアイコン）" width="560" height="560" loading="lazy">
+                <div>
+                  <p class="tff-self-label">Crypto FX</p>
+                  <p class="tff-another-title">仮想通貨 FX をトレードする</p>
+                  <p class="tff-another-body"><span class="inline-block">トレード歴4年目。</span>インジケーターとアラートを生かした、時間をかけないトレード。半裁量の bot 通知サービスを細々と続け、FX トレードのサイト「7Witches Trade」もつくっています。</p>
+                  <p class="tff-another-link">X @hanata19086 ↗</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="tff-footer">
+      <div class="tff-footer-sakura" aria-hidden="true">
+        <!-- 花びらは左右の端だけを降りる（問いと NOCTA への一文の字にかからない） -->
+        <span class="tff-sk" style="--dx:-16px;background:rgba(253,217,217,.85);animation-delay:-2s"></span>
+        <span class="tff-sk" style="--dx:-16px;background:rgba(238,164,192,.9);animation-delay:-6s;top:26%"></span>
+        <span class="tff-sk" style="--dx:-16px;background:rgba(253,217,217,.8);animation-delay:-4s"></span>
+        <span class="tff-sk" style="--dx:16px;background:rgba(238,164,192,.85);animation-delay:-8s;top:22%"></span>
+        <span class="tff-sk" style="--dx:16px;background:rgba(253,217,217,.85);animation-delay:-1s"></span>
+        <span class="tff-sk" style="--dx:16px;background:rgba(238,164,192,.9);animation-delay:-5s;top:30%"></span>
+      </div>
+      <div class="tff-closing">
+        <p class="tff-closing-q"><span>あなたにとっての</span><span>「いい人生」は？</span></p>
+        <a href="../index.html" class="tff-closing-mirror"><span class="inline-block">夜は NOCTA という名前で、</span><span class="inline-block">音楽や映像、言葉や道具をつくっています。<span aria-hidden="true"> →</span></span></a>
+      </div>
+      <p class="tff-copy">© The First Flower</p>
+    </footer>
+
+    <!-- ═══════════════════════════════════
+         SCRIPTS
+    ═══════════════════════════════════ -->
+    <script src="tff-profile-data.js"></script>
+    <script src="tff-quotes.js"></script>
+    <script src="tff-gallery-data.js"></script>
+    <script>
+    (function () {
+
+        /* ── Header: switch style when leaving hero ── */
+        var header = document.getElementById('tff-header');
+        var hero   = document.getElementById('top');
+
+        var dusk   = document.getElementById('tff-dusk');
+
+        function updateHeader() {
+            var heroBottom = hero.getBoundingClientRect().bottom;
+            if (heroBottom <= 80) {
+                header.classList.remove('on-photo');
+            } else {
+                header.classList.add('on-photo');
+            }
+            // 夜: 日暮れの帯の半ばがヘッダーの下端を過ぎたら
+            if (dusk) {
+                var d = dusk.getBoundingClientRect();
+                header.classList.toggle('is-night', header.offsetHeight - d.top >= d.height * 0.55);
+            }
+            // 目次の一覧の昼と夜（hero の写真の上も夜の色）
+            document.documentElement.classList.toggle('tff-dark', header.classList.contains('is-night') || header.classList.contains('on-photo'));
+        }
+        window.addEventListener('scroll', updateHeader, { passive: true });
+        window.addEventListener('resize', updateHeader);
+
+        /* ── Reveal on scroll ── */
+        var revealObs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    revealObs.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        function initReveal() {
+            document.querySelectorAll('.tff-reveal').forEach(function (el) {
+                revealObs.observe(el);
+            });
+        }
+
+        /* ── Quote stream ── */
+        function buildStream() {
+            if (typeof TFF_QUOTES === 'undefined') return;
+
+            var half  = Math.floor(TFF_QUOTES.length / 2);
+            var row1q = TFF_QUOTES.slice(0, half);
+            var row2q = TFF_QUOTES.slice(half);
+
+            function makeCard(q) {
+                var div = document.createElement('div');
+                div.className = 'quote-card';
+                // 長い言葉ほど横に広げ、おおむね 4〜5 行に収める（段の高さが極端に伸びないように）
+                var w = Math.max(280, Math.min(600, 52 + 15 * Math.ceil(q.text.length / 4.5)));
+                div.style.setProperty('--qw', w + 'px');
+                div.innerHTML =
+                    '<p class="q-text">' + q.text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</p>' +
+                    '<p class="q-source">— ' + q.source.replace(/^—\s*/, '').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</p>';
+                return div;
+            }
+
+            function fillRow(rowId, qs) {
+                var track = document.getElementById(rowId);
+                if (!track) return;
+                [qs, qs].forEach(function (set, round) {
+                    set.forEach(function (q) {
+                        var card = makeCard(q);
+                        if (round === 1) card.setAttribute('aria-hidden', 'true');
+                        track.appendChild(card);
+                    });
+                });
+            }
+
+            fillRow('stream-row1', row1q);
+            fillRow('stream-row2', row2q);
+            // 長さに合わせて流れる速さをそろえる（1 秒あたり 26px / 20px）
+            [['stream-row1', 26], ['stream-row2', 20]].forEach(function (r) {
+                var t = document.getElementById(r[0]);
+                if (t) requestAnimationFrame(function () { t.style.setProperty('--dur', Math.round(t.scrollWidth / 2 / r[1]) + 's'); });
+            });
+            var reduceQ = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            // 流れている間は Tab を止めない。動きを減らす設定のときだけ、横にたどるため Tab で届くようにする
+            if (reduceQ) document.querySelectorAll('.marquee-inner').forEach(function (m) { m.tabIndex = 0; m.setAttribute('role', 'region'); m.setAttribute('aria-label', '引用'); });
+            var pb = document.getElementById('tff-quotes-pause');
+            if (pb) pb.addEventListener('click', function () {
+                var on = pb.getAttribute('aria-pressed') !== 'true';
+                pb.setAttribute('aria-pressed', String(on));
+                pb.classList.toggle('is-paused', on);
+                pb.setAttribute('aria-label', on ? '引用を流す' : '引用の流れを止める');
+                document.querySelectorAll('.marquee-inner').forEach(function (m) { m.classList.toggle('is-paused', on); });
+            });
+
+            // スマホにはホバーがないので、触れたら止め、もう一度触れたら流す
+            document.querySelectorAll('.marquee-inner').forEach(function (row) {
+                row.addEventListener('click', function () { row.classList.toggle('is-paused'); });
+            });
+        }
+
+        /* ── 日暮れ: 日は丘の向こうへ沈みきる。帯の下端が画面の 7 割に来るまでに終わる ── */
+        (function () {
+            var dusk = document.getElementById('tff-dusk'), sun = document.getElementById('tff-sun');
+            if (!dusk || !sun) return;
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                sun.style.setProperty('--sun-y', (dusk.offsetHeight * 0.3) + 'px');
+                return;
+            }
+            var tick = false;
+            function upd() {
+                tick = false;
+                var r = dusk.getBoundingClientRect(), vh = window.innerHeight;
+                var q = Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (r.height * 0.9 + vh * 0.2)));
+                sun.style.setProperty('--sun-y', (r.height * (0.03 + q * 0.88)).toFixed(1) + 'px');
+                sun.style.setProperty('--sun-o', (1 - Math.min(1, Math.max(0, (q - 0.8) / 0.2))).toFixed(2));
+            }
+            window.addEventListener('scroll', function () { if (!tick) { tick = true; requestAnimationFrame(upd); } }, { passive: true });
+            window.addEventListener('resize', upd);
+            upd();
+        })();
+
+        /* ── 栞: 流れる引用の帯（2 段）の上だけ線と花びらを消す。帯の位置は文字の量と画面幅で変わるので測り直す ── */
+        (function () {
+            var thread = document.querySelector('.tff-after .tff-thread');
+            var after = document.querySelector('.tff-after');
+            var r1 = document.getElementById('tff-mq1'), r2 = document.getElementById('tff-mq2');
+            if (!thread || !after || !r1 || !r2) return;
+            function upd() {
+                var base = after.getBoundingClientRect().top;
+                thread.style.setProperty('--gap-a', (r1.getBoundingClientRect().top - base - 24) + 'px');
+                thread.style.setProperty('--gap-b', (r2.getBoundingClientRect().bottom - base + 24) + 'px');
+                thread.classList.add('has-gap');
+            }
+            if (window.ResizeObserver) new ResizeObserver(upd).observe(after);
+            window.addEventListener('resize', upd);
+            upd();
+        })();
+
+        /* ── Profile rendering from tff-profile-data.js ── */
+        function renderProfile() {
+            if (typeof TFF_PROFILE === 'undefined') return;
+
+            var bio = document.getElementById('tff-bio');
+            if (bio && TFF_PROFILE.bio) bio.textContent = TFF_PROFILE.bio;
+
+            var hobbiesLine = document.getElementById('tff-hobbies-line');
+            if (hobbiesLine && TFF_PROFILE.hobbiesList) {
+                // 単語の途中で折り返さないよう、趣味ごとに inline-block で包む
+                hobbiesLine.innerHTML = TFF_PROFILE.hobbiesList.map(function (h) {
+                    return '<span class="inline-block">' + String(h).replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</span>';
+                }).join(' &nbsp;|&nbsp; ');
+            }
+
+            var hobbyDetail = document.getElementById('tff-hobby-detail');
+            if (hobbyDetail && TFF_PROFILE.hobbyDetail) hobbyDetail.textContent = TFF_PROFILE.hobbyDetail;
+
+            if (TFF_PROFILE.photos) {
+                TFF_PROFILE.photos.forEach(function (photo, i) {
+                    var container = document.getElementById('tff-photo-' + (i + 1));
+                    if (!container || !photo.src) return;
+                    container.innerHTML = '<img src="' + photo.src + '" alt="' + photo.alt + '" class="w-full h-full object-cover rounded-lg">';
+                });
+            }
+        }
+
+        /* ── Gallery: 保存済みの一覧（tff-gallery-data.js）＋ Flickr 公開フィード（JSONP・新しい20枚） ── */
+        var FLICKR_NSID = '59201489@N03';
+        var FLICKR_HOME = 'https://www.flickr.com/photos/kutakuta1001/';
+        var galleryDone = false;
+        var GALLERY_FIRST = 15;  // 最初に見せる枚数（PC 5 列・スマホ 3 列とも端数なし）。残りは「すべて見る」で開く
+
+        function galleryStatus(msg) {
+            var el = document.getElementById('tff-gallery-status');
+            if (!el) return;
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        // フィードの写真を一覧と同じ形にそろえる
+        function fromFeed(it) {
+            var m = it.media && it.media.m;
+            var hit = m && m.match(/^(https:\/\/live\.staticflickr\.com\/\d+\/(\d+)_[0-9a-f]+)_m\.jpg$/);
+            if (!hit) return null;
+            return { id: hit[2], base: hit[1], title: it.title || '' };
+        }
+
+        // フィード（新しい写真）を先に並べ、保存済みの一覧から重複を除いて後ろに続ける
+        function renderGallery(feedItems) {
+            if (galleryDone) return;
+            galleryDone = true;
+            var grid = document.getElementById('tff-gallery-grid');
+            if (!grid) return;
+            var seen = {}, list = [];
+            feedItems.concat(typeof TFF_GALLERY !== 'undefined' ? TFF_GALLERY : []).forEach(function (ph) {
+                if (!ph || seen[ph.id]) return;
+                seen[ph.id] = true;
+                list.push(ph);
+            });
+            if (list.length === 0) { galleryStatus('写真を読み込めませんでした。Flickr で直接ご覧ください。'); return; }
+            list.forEach(function (ph, n) {
+                var a = document.createElement('a');
+                a.className = 'tff-gallery-item' + (n >= GALLERY_FIRST ? ' is-extra' : '');
+                a.href = FLICKR_HOME + ph.id + '/';
+                a.target = '_blank';
+                a.rel = 'noopener';
+                var img = document.createElement('img');
+                img.src = ph.base + '_n.jpg';
+                img.alt = ph.title || 'Flickr photo';
+                img.loading = 'lazy';
+                img.decoding = 'async';
+                a.appendChild(img);
+                // 押したらページ内で拡大。新しいタブで開く操作（Cmd/Ctrl+クリック）はそのまま通す
+                var idx = galleryPhotos.length;
+                galleryPhotos.push({ src: ph.base + '_b.jpg', title: ph.title, link: a.href });
+                a.addEventListener('click', function (e) {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                    e.preventDefault();
+                    openLightbox(idx);
+                });
+                grid.appendChild(a);
+            });
+
+            var more = document.getElementById('tff-gallery-more');
+            if (more && list.length > GALLERY_FIRST) {
+                var label = function (open) { return open ? '閉じる ↑' : 'すべて見る（' + list.length + '枚）↓'; };
+                more.textContent = label(false);
+                more.classList.remove('hidden');
+                more.addEventListener('click', function () {
+                    var open = !grid.classList.contains('is-open');
+                    grid.classList.toggle('is-open', open);
+                    more.setAttribute('aria-expanded', String(open));
+                    more.textContent = label(open);
+                    if (!open) document.getElementById('gallery').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+        }
+
+        window.tffFlickrFeed = function (data) {
+            var items = ((data && data.items) || []).map(fromFeed).filter(Boolean);
+            renderGallery(items);
+        };
+
+        /* ── Gallery lightbox ── */
+        var galleryPhotos = [];
+        var lbIndex = 0;
+        var lb = document.getElementById('tff-lightbox');
+        var lbLastFocus = null;
+
+        var lbList = galleryPhotos;  // いま拡大している並び（Gallery の写真か、強みの図 1 枚）
+        function showLightbox(i) {
+            var n = lbList.length;
+            lbIndex = (i + n) % n;
+            var ph = lbList[lbIndex];
+            var img = document.getElementById('tff-lb-img');
+            img.src = ph.src;
+            img.alt = ph.alt || ph.title || 'Flickr photo';
+            document.getElementById('tff-lb-title').textContent = ph.title;
+            var link = document.getElementById('tff-lb-link');
+            link.hidden = !ph.link;
+            if (ph.link) link.href = ph.link;
+            lb.querySelector('.tff-lb-prev').hidden = n < 2;
+            lb.querySelector('.tff-lb-next').hidden = n < 2;
+        }
+        function openLightbox(i, list) {
+            lbLastFocus = document.activeElement;
+            lbList = list || galleryPhotos;
+            showLightbox(i);
+            lb.classList.add('open');
+            lb.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            lb.querySelector('.tff-lb-close').focus();
+        }
+        function closeLightbox() {
+            lb.classList.remove('open');
+            lb.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            if (lbLastFocus) lbLastFocus.focus();
+        }
+        lb.querySelector('.tff-lb-close').addEventListener('click', closeLightbox);
+        lb.querySelector('.tff-lb-prev').addEventListener('click', function () { showLightbox(lbIndex - 1); });
+        lb.querySelector('.tff-lb-next').addEventListener('click', function () { showLightbox(lbIndex + 1); });
+        lb.addEventListener('click', function (e) { if (e.target === lb) closeLightbox(); });
+        document.addEventListener('keydown', function (e) {
+            if (!lb.classList.contains('open')) return;
+            if (e.key === 'Escape') closeLightbox();
+            else if (lbList.length < 2) return;
+            else if (e.key === 'ArrowLeft') showLightbox(lbIndex - 1);
+            else if (e.key === 'ArrowRight') showLightbox(lbIndex + 1);
+        });
+        // スマホ: 左右スワイプで送る
+        var lbTouchX = null;
+        lb.addEventListener('touchstart', function (e) { lbTouchX = e.touches[0].clientX; }, { passive: true });
+        lb.addEventListener('touchend', function (e) {
+            if (lbTouchX === null) return;
+            var dx = e.changedTouches[0].clientX - lbTouchX;
+            if (Math.abs(dx) > 50 && lbList.length > 1) showLightbox(lbIndex + (dx < 0 ? 1 : -1));
+            lbTouchX = null;
+        });
+
+        function loadGallery() {
+            var s = document.createElement('script');
+            s.src = 'https://www.flickr.com/services/feeds/photos_public.gne?id=' +
+                encodeURIComponent(FLICKR_NSID) + '&format=json&jsoncallback=tffFlickrFeed';
+            s.async = true;
+            // フィードが失敗・遅延しても、保存済みの一覧だけで並べる
+            s.onerror = function () { renderGallery([]); };
+            setTimeout(function () { renderGallery([]); }, 6000);
+            document.body.appendChild(s);
+        }
+
+        /* ── 左の現在地ドット: 画面中央にある節を光らせる ── */
+        function initDots() {
+            var links = Array.prototype.slice.call(document.querySelectorAll('#tff-dots a'));
+            function update() {
+                var mid = window.innerHeight / 2, current = links[0];
+                links.forEach(function (a) {
+                    var sec = document.querySelector(a.getAttribute('href'));
+                    if (sec && sec.getBoundingClientRect().top <= mid) current = a;
+                });
+                links.forEach(function (a) {
+                    var on = a === current;
+                    a.classList.toggle('active', on);
+                    if (on) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current');
+                });
+            }
+            window.addEventListener('scroll', update, { passive: true });
+            window.addEventListener('resize', update);
+            update();
+        }
+
+        /* ── 縦書きの答え: 横にはみ出すときは右端（書き出し）を見せる ── */
+        var credoScroll = document.getElementById('tff-credo-scroll');
+        if (credoScroll) credoScroll.scrollLeft = credoScroll.scrollWidth;
+
+        /* ── Self Portrait: ストレングスの 6〜10 位、強みの図の拡大 ── */
+        var stMore = document.getElementById('tff-strengths-more');
+        if (stMore) stMore.addEventListener('click', function () {
+            var list = document.getElementById('tff-strengths');
+            var open = !list.classList.contains('is-open');
+            list.classList.toggle('is-open', open);
+            stMore.setAttribute('aria-expanded', String(open));
+            stMore.textContent = open ? '5 位までにする ↑' : '6〜10 位も見る ↓';
+        });
+        var mapOpen = document.getElementById('tff-map-open');
+        if (mapOpen) mapOpen.addEventListener('click', function () {
+            openLightbox(0, [{ src: 'img/strengths-map.jpg', title: '強みの全体像（自分のメモを ChatGPT で清書した図）', alt: mapOpen.querySelector('img').alt, link: '' }]);
+        });
+
+        /* ── スマホの節ナビ: 目次の一覧と、ボタンの「6 / 8」 ── */
+        function initToc() {
+            var btn = document.getElementById('tff-toc-btn'), toc = document.getElementById('tff-toc');
+            var scrim = document.getElementById('tff-toc-scrim'), pos = document.getElementById('tff-toc-pos');
+            if (!btn || !toc) return;
+            var links = Array.prototype.slice.call(toc.querySelectorAll('a'));
+            function isOpen() { return toc.classList.contains('is-open'); }
+            function setOpen(open) {
+                if (open === isOpen()) return;
+                toc.style.setProperty('--tff-hh', header.offsetHeight + 'px');
+                toc.classList.toggle('is-open', open);
+                scrim.classList.toggle('is-open', open);
+                btn.setAttribute('aria-expanded', String(open));
+                if (open) {
+                    var cur = toc.querySelector('a[aria-current]') || links[0];
+                    setTimeout(function () { if (isOpen()) cur.focus({ preventScroll: true }); }, 120);
+                } else if (toc.contains(document.activeElement)) {
+                    btn.focus({ preventScroll: true });
+                }
+            }
+            btn.addEventListener('click', function () { setOpen(!isOpen()); });
+            scrim.addEventListener('click', function () { setOpen(false); });
+            toc.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+            document.addEventListener('keydown', function (e) {
+                if (!isOpen()) return;
+                if (e.key === 'Escape') { setOpen(false); btn.focus({ preventScroll: true }); return; }
+                // 開いているあいだは、ボタンと一覧の中だけをフォーカスが回る
+                if (e.key === 'Tab') {
+                    var ring = [btn].concat(links), i = ring.indexOf(document.activeElement);
+                    var next = e.shiftKey ? (i <= 0 ? ring.length - 1 : i - 1) : (i === ring.length - 1 ? 0 : i + 1);
+                    e.preventDefault(); ring[next].focus();
+                }
+            });
+            function update() {
+                var mid = window.innerHeight * 0.4, n = 0;
+                links.forEach(function (a, k) {
+                    var sec = document.querySelector(a.getAttribute('href'));
+                    if (sec && sec.getBoundingClientRect().top <= mid) n = k;
+                });
+                links.forEach(function (a, k) { if (k === n) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+                pos.textContent = (n + 1) + ' / ' + links.length;
+                btn.setAttribute('aria-label', '目次 ' + (n + 1) + ' / ' + links.length + '（いまは ' + links[n].textContent.replace(/^\d+/, '') + '）');
+            }
+            window.addEventListener('scroll', update, { passive: true });
+            window.addEventListener('resize', function () { update(); if (window.innerWidth > 767) setOpen(false); });
+            update();
+        }
+
+        /* ── Init ── */
+        initDots();
+        initToc();
+        renderProfile();
+        loadGallery();
+        buildStream();
+        initReveal();
+
+    })();
+    </script>
+
+    <script>
+    /* ---- Profile Particle Canvas ---- */
+    (function () {
+        var canvas = document.getElementById('tff-profile-canvas');
+        if (!canvas) return;
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var ctx = canvas.getContext('2d');
+        var W, H, particles = [];
+        var COLS = [
+            'rgba(238,164,192,',  // rose
+            'rgba(253,217,217,',  // pink
+            'rgba(166,221,214,',  // teal
+            'rgba(184,227,183,',  // mint
+            'rgba(177,104,168,',  // purple
+            'rgba(255,255,255,'   // white
+        ];
+
+        function resize() {
+            W = canvas.width  = canvas.offsetWidth;
+            H = canvas.height = canvas.offsetHeight;
+        }
+
+        function Particle() {
+            this.reset = function () {
+                this.x       = Math.random() * W;
+                this.y       = H + 10;
+                this.vx      = (Math.random() - 0.5) * 0.35;
+                this.vy      = -(Math.random() * 0.45 + 0.18);
+                this.r       = Math.random() * 2.4 + 0.7;
+                this.col     = COLS[Math.floor(Math.random() * COLS.length)];
+                this.a       = Math.random() * 0.45 + 0.15;
+                this.life    = 0;
+                this.maxLife = Math.random() * 220 + 160;
+            };
+            this.reset();
+            this.y = Math.random() * H; // distribute at start
+
+            this.update = function () {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life++;
+                if (this.y < -10 || this.life > this.maxLife) this.reset();
+            };
+            this.draw = function () {
+                var fade = Math.min(this.life / 40, 1) * Math.min((this.maxLife - this.life) / 40, 1);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+                ctx.fillStyle = this.col + (this.a * fade) + ')';
+                ctx.fill();
+            };
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, W, H);
+            particles.forEach(function (p) { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        resize();
+        for (var i = 0; i < 70; i++) particles.push(new Particle());
+        animate();
+        window.addEventListener('resize', resize);
+    })();
+    </script>
+
+</body>
+</html>

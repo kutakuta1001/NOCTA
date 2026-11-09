@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#09090f">
+  <title>still — NOCTA</title>
+  <link rel="manifest" href="./manifest.json">
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="still">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@100;300&family=Noto+Sans+JP:wght@200&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html, body {
+      width:100%; height:100%; overflow:hidden;
+      background:#09090f;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      touch-action: none;
+    }
+    canvas { position:fixed; inset:0; width:100%; height:100%; cursor:none; }
+    .layer {
+      position:fixed; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center;
+      pointer-events:none;
+    }
+    .f-title {
+      font-family:'Josefin Sans',sans-serif; font-weight:100;
+      letter-spacing:0.58em; text-transform:uppercase; text-indent:0.58em;
+      color:rgba(255,255,255,0.85);
+    }
+    .f-label {
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      letter-spacing:0.22em; color:rgba(255,255,255,0.52);
+    }
+    .f-jp {
+      font-family:'Noto Sans JP',sans-serif; font-weight:200;
+      letter-spacing:0.13em; color:rgba(255,255,255,0.72);
+      transition:opacity 1.4s ease;
+    }
+    #intro {
+      justify-content:flex-start; padding-top:13vh;
+      opacity:1; transition:opacity 0.7s ease;
+    }
+    #intro.hidden { opacity:0; pointer-events:none; }
+    #intro .title  { font-size:clamp(2.4rem,9vw,3.8rem); }
+    #intro .tagline {
+      font-size:clamp(0.62rem,2.6vw,0.78rem); margin-top:0.45rem;
+      color:rgba(255,255,255,0.38);
+    }
+    .dur-row {
+      display:flex; gap:0.85rem; margin-top:1.9rem;
+      pointer-events:auto;
+    }
+    .dur-btn {
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      font-size:0.8rem; letter-spacing:0.14em;
+      color:rgba(255,255,255,0.52);
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:99px; padding:0.36rem 1.1rem;
+      cursor:pointer; transition:all 0.22s;
+    }
+    .dur-btn.sel, .dur-btn:hover {
+      background:rgba(255,255,255,0.17);
+      color:rgba(255,255,255,0.9);
+      border-color:rgba(255,255,255,0.42);
+    }
+    #bar {
+      justify-content:flex-start; padding-top:6.5vh;
+      opacity:0; transition:opacity 0.8s;
+    }
+    #bar.show { opacity:1; }
+    #bar-label { font-size:clamp(0.65rem,2.6vw,0.78rem); }
+    #bar-time  {
+      font-size:clamp(0.62rem,2.4vw,0.74rem);
+      margin-top:0.25rem; color:rgba(255,255,255,0.35);
+    }
+    #guide { justify-content:center; }
+    #guide-text { font-size:clamp(0.78rem,3.4vw,0.98rem); }
+    #done-overlay { justify-content:center; opacity:0; transition:opacity 0.9s; }
+    #done-overlay.show { opacity:1; pointer-events:auto; }
+    #done-overlay .title { font-size:clamp(1.8rem,7vw,3rem); }
+    #done-overlay .elapsed {
+      font-size:clamp(0.68rem,2.8vw,0.82rem);
+      margin-top:0.5rem; color:rgba(255,255,255,0.42);
+    }
+    .again-btn {
+      margin-top:2.4rem;
+      font-family:'Josefin Sans',sans-serif; font-weight:100;
+      font-size:0.76rem; letter-spacing:0.28em; text-indent:0.28em;
+      color:rgba(255,255,255,0.48);
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:99px; padding:0.44rem 1.6rem;
+      cursor:pointer; pointer-events:auto; transition:all 0.25s;
+    }
+    .again-btn:hover { background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.85); }
+
+    #gate {
+      position:fixed; inset:0; z-index:20;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      background:#09090f;
+      transition:opacity 0.6s ease;
+    }
+    #gate.hidden { opacity:0; pointer-events:none; }
+    #gate .title { font-size:clamp(2.4rem,9vw,3.8rem); }
+    #gate .tagline {
+      font-size:clamp(0.62rem,2.6vw,0.78rem); margin-top:0.45rem;
+      color:rgba(255,255,255,0.38);
+    }
+    #gate-msg {
+      font-size:clamp(0.75rem,3.2vw,0.9rem); margin-top:2.4rem;
+      transition:color 0.3s;
+    }
+    #gate-input {
+      margin-top:1.1rem;
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:99px; padding:0.52rem 1.4rem;
+      color:rgba(255,255,255,0.85);
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      letter-spacing:0.12em; font-size:0.82rem;
+      text-align:center; outline:none;
+      width:min(72vw,280px); transition:border-color 0.22s;
+    }
+    #gate-input:focus { border-color:rgba(255,255,255,0.42); }
+    #gate-input::placeholder { color:rgba(255,255,255,0.22); letter-spacing:0.08em; }
+    #gate-btn {
+      margin-top:1rem;
+      font-family:'Josefin Sans',sans-serif; font-weight:100;
+      font-size:0.76rem; letter-spacing:0.28em; text-indent:0.28em;
+      color:rgba(255,255,255,0.48);
+      background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.16);
+      border-radius:99px; padding:0.44rem 1.6rem;
+      cursor:pointer; transition:all 0.25s;
+    }
+    #gate-btn:hover { background:rgba(255,255,255,0.15); color:rgba(255,255,255,0.85); }
+    #gate-buy {
+      margin-top:3rem;
+      font-family:'Josefin Sans',sans-serif; font-weight:300;
+      font-size:0.68rem; letter-spacing:0.18em;
+      color:rgba(255,255,255,0.28); text-decoration:none;
+      transition:color 0.22s;
+    }
+    #gate-buy:hover { color:rgba(255,255,255,0.55); }
+  </style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="layer" id="intro">
+  <div class="f-title title">still</div>
+  <div class="f-label tagline">しずかな時間</div>
+  <div class="dur-row">
+    <button class="dur-btn" data-m="5">5</button>
+    <button class="dur-btn sel" data-m="10">10</button>
+    <button class="dur-btn" data-m="15">15</button>
+  </div>
+</div>
+
+<div class="layer" id="bar">
+  <div class="f-label" id="bar-label">10 分 still</div>
+  <div class="f-label" id="bar-time">00:00</div>
+</div>
+
+<div class="layer" id="guide">
+  <div class="f-jp" id="guide-text">ドットに触れてください</div>
+</div>
+
+<div class="layer" id="done-overlay">
+  <div class="f-title title">still</div>
+  <div class="f-label elapsed" id="done-time">00:00</div>
+  <button class="again-btn" id="again-btn">もう一度</button>
+</div>
+
+<div id="gate">
+  <div class="f-title title">still</div>
+  <div class="f-label tagline">しずかな時間</div>
+  <div class="f-jp" id="gate-msg">ライセンスキーを入力してください</div>
+  <input id="gate-input" type="text" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" autocomplete="off" spellcheck="false">
+  <button id="gate-btn">はじめる</button>
+  <a href="https://gumroad.com" id="gate-buy" target="_blank" rel="noopener">Gumroadで購入 →</a>
+</div>
+
+<script src="./nocta-license-gate.js"></script>
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const TRACKS = ['./audio/track-a.mp3', './audio/track-b.mp3'];
+
+// palette[0] = warm (blob + particles), palette[1] = cool (background)
+const PALETTES = [
+  [['#F5D76E','#C88010'], ['#1968A8','#052850']],
+  [['#FF9C7A','#C04A20'], ['#2ABFBF','#085858']],
+  [['#FFB347','#C06800'], ['#7B6BA5','#302060']],
+  [['#88DFC4','#38A880'], ['#E898A8','#A04060']],
+  [['#90CFEF','#3A88C0'], ['#F0C060','#B07800']],
+  [['#A8E0C0','#48A880'], ['#F0A0C8','#B04878']],
+  [['#D8A0E0','#9030A8'], ['#50B880','#185838']],
+  [['#F0B8A8','#C06050'], ['#7898D0','#2848A8']],
+];
+const BG_DARK = '#09090f';
+
+// Progress-based messages (blobScale threshold)
+// fadeMs: auto-hide after N ms, null = stay until next message
+const MSGS = [
+  { at: 0.08, text: 'ゆっくりつづけてください', fadeMs: 30000 },
+  { at: 0.50, text: 'そのまま続けてください',   fadeMs: 30000 },
+  { at: 0.95, text: 'もうすぐです',             fadeMs: null  },
+];
+// Absolute-time messages (ms since session start)
+const TIME_MSGS = [
+  { atMs: 120000, text: '目を閉じてください', fadeMs: 30000 },  // 2 minutes
+];
+
+// Liquid spring — velocity + damping (ぬるっと追従)
+const BLOB_K    = 0.007;   // spring stiffness  (低い = 遅い)
+const BLOB_DAMP = 0.80;    // damping           (低い = ゆっくり減衰・ぬるっと感)
+
+// Session end timers
+const RELEASE_END_MS = 5000;   // 5s after lifting finger → end
+const STILL_WARN_MS  = 5000;   // 5s without movement → show warning
+const STILL_END_MS   = 10000;  // 10s without movement → end session
+const MOVE_THRESHOLD = 3;      // px — min displacement to count as movement
+
+// Particle system
+const PARTICLE_COUNT = 44;
+const ATTRACT_K      = 0.00013;  // force = K × distance  (slow drift)
+const ATTRACT_MAXSPD = 2.0;      // px/frame cap
+const RIM_MIN_R      = 0.36;
+const RIM_MAX_R      = 0.66;
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let mode       = 'idle';
+let selMin     = 10;
+let totalMs    = 600000;
+
+let isHolding  = false;
+let activePtrId = null;
+let tx = 0, ty = 0;
+let bx = 0, by = 0;
+let lastTx = 0, lastTy = 0;   // for movement detection
+
+let blobScale      = 0;
+let bvx = 0, bvy = 0;   // blob center velocity (for liquid spring)
+let shownMsgs      = new Set();
+let shownTimeMsgs  = new Set();
+let sessionStart   = null;
+let sessionElapsed = 0;
+
+// End timers
+let releaseTimer      = null;
+let stillTimer        = null;
+let stillWarnTimer    = null;
+let stillWarningShown = false;  // true while "指が止まっています" is displayed
+let msgFadeTimer      = null;
+
+// Palette RGB cache
+let blobR=255,blobG=255,blobB=255, blobDR=200,blobDG=160,blobDB=20;
+let palette = PALETTES[0];
+
+// ══════════════════════════════════════════
+// CANVAS
+// ══════════════════════════════════════════
+const canvas = document.getElementById('c');
+const ctx    = canvas.getContext('2d');
+let W, H, dpr, lastTs = 0;
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width  = W*dpr; canvas.height = H*dpr;
+  canvas.style.width  = W+'px'; canvas.style.height = H+'px';
+  ctx.scale(dpr,dpr);
+  if (mode==='idle') { tx=W/2; ty=H*0.6; bx=tx; by=ty; }
+  spawnParticles();
+}
+window.addEventListener('resize', resize);
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+const lerp  = (a,b,t) => a+(b-a)*t;
+const clamp = (v,lo,hi) => Math.max(lo,Math.min(hi,v));
+const ease  = t => t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+const rand  = (lo,hi) => lo+Math.random()*(hi-lo);
+const fmt   = ms => {
+  const s=Math.floor(ms/1000);
+  return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+};
+function hexRgb(h) {
+  return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
+}
+function lerpHex(a,b,t) {
+  const [r1,g1,b1]=hexRgb(a),[r2,g2,b2]=hexRgb(b);
+  return `rgb(${~~lerp(r1,r2,t)},${~~lerp(g1,g2,t)},${~~lerp(b1,b2,t)})`;
+}
+function updateBlobColor() {
+  [blobR,blobG,blobB]   = hexRgb(palette[0][0]);
+  [blobDR,blobDG,blobDB] = hexRgb(palette[0][1]);
+}
+
+// ══════════════════════════════════════════
+// BLOB SHAPE
+// ══════════════════════════════════════════
+function drawBlob(cx,cy,r,t,turb,fill) {
+  const N=64, pts=[];
+  for (let i=0;i<N;i++) {
+    const a=(i/N)*Math.PI*2;
+    const d=turb*(Math.sin(a*2+t*.38)*.18+Math.sin(a*3-t*.56)*.12+
+                  Math.sin(a*5+t*.81)*.07+Math.sin(a*7-t*.27)*.04);
+    pts.push([cx+Math.cos(a)*r*(1+d),cy+Math.sin(a)*r*(1+d)]);
+  }
+  ctx.beginPath();
+  const s=[(pts[N-1][0]+pts[0][0])*.5,(pts[N-1][1]+pts[0][1])*.5];
+  ctx.moveTo(s[0],s[1]);
+  for (let i=0;i<N;i++){const p=pts[i],n=pts[(i+1)%N];ctx.quadraticCurveTo(p[0],p[1],(p[0]+n[0])*.5,(p[1]+n[1])*.5);}
+  ctx.closePath(); ctx.fillStyle=fill; ctx.fill();
+}
+
+// ══════════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════════
+let particles=[];
+
+function spawnParticles() {
+  particles=Array.from({length:PARTICLE_COUNT},()=>{
+    const x=rand(0,W),y=rand(0,H);
+    return {x,y,ox:x,oy:y,vx:rand(-.2,.2),vy:rand(-.2,.2),
+      r:rand(4,12),phase:rand(0,Math.PI*2),alpha:rand(.06,.18),
+      speedMul:1, pr:255,pg:255,pb:255};
+  });
+}
+
+function colorizeParticles() {
+  // All particles: same warm-light color as blob (slightly brightened)
+  const pr=~~lerp(blobR,255,.18), pg=~~lerp(blobG,255,.18), pb=~~lerp(blobB,255,.18);
+  particles.forEach(p=>{
+    p.pr=pr; p.pg=pg; p.pb=pb;
+    p.alpha    = rand(.20,.45);   // slightly higher alpha for tiny particles
+    p.speedMul = rand(.35,1.2);
+  });
+}
+
+function resetParticleToRim(p) {
+  const rim=Math.max(W,H);
+  const d=rand(rim*RIM_MIN_R,rim*RIM_MAX_R), a=rand(0,Math.PI*2);
+  p.x=W/2+Math.cos(a)*d; p.y=H/2+Math.sin(a)*d;
+  p.vx=rand(-.1,.1); p.vy=rand(-.1,.1);
+}
+
+function tickParticles() {
+  // Current blob radius (same formula as render loop)
+  const bR_now = lerp(Math.min(W,H)*.07, Math.max(W,H)*.78,
+                      ease(clamp(blobScale,0,1)));
+  // Particles absorbed at ~90% of blob radius (blob edge, not center)
+  const absorbR = Math.max(20, bR_now * 0.90);
+
+  particles.forEach(p=>{
+    p.phase+=.007;
+    if (isHolding && mode==='run') {
+      const dx=bx-p.x, dy=by-p.y;
+      const dist=Math.hypot(dx,dy)||1;
+      const force=ATTRACT_K*dist*p.speedMul;
+      p.vx+=(dx/dist)*force; p.vy+=(dy/dist)*force;
+      const maxSpd=ATTRACT_MAXSPD*p.speedMul;
+      const spd=Math.hypot(p.vx,p.vy);
+      if (spd>maxSpd){p.vx=p.vx/spd*maxSpd;p.vy=p.vy/spd*maxSpd;}
+      // Absorbed at blob boundary → respawn at rim
+      if (dist<absorbR) resetParticleToRim(p);
+    } else {
+      p.vx+=(p.ox-p.x)*.0016; p.vy+=(p.oy-p.y)*.0016;
+      p.vx*=0.92; p.vy*=0.92;
+    }
+    p.x+=p.vx; p.y+=p.vy;
+  });
+}
+
+function drawParticles(nowT) {
+  const attracting=isHolding&&mode==='run';
+  particles.forEach(p=>{
+    const pulse=1+Math.sin(p.phase)*.22;
+    let a=p.alpha*(.55+.45*Math.sin(p.phase));
+    if (attracting) {
+      const dist=Math.hypot(bx-p.x,by-p.y);
+      const t=clamp(1-dist/(Math.max(W,H)*.60),0,1);
+      a=Math.min(lerp(a,a*3.6,t*t),.70);
+    }
+    const r=(mode==='run'||mode==='done')?p.pr:255;
+    const g=(mode==='run'||mode==='done')?p.pg:255;
+    const b=(mode==='run'||mode==='done')?p.pb:255;
+    drawBlob(p.x,p.y,p.r*pulse,nowT+p.phase*2,.42,`rgba(${r},${g},${b},${a.toFixed(3)})`);
+  });
+}
+
+// ══════════════════════════════════════════
+// TAP DOT (idle)
+// ══════════════════════════════════════════
+let dotA=0;
+function drawTapDot() {
+  dotA+=.0065;
+  const dx=W*.5+Math.cos(dotA*.85)*W*.14, dy=H*.60+Math.sin(dotA*1.1)*H*.075;
+  ctx.beginPath();ctx.arc(dx,dy,18,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.07)';ctx.fill();
+  ctx.beginPath();ctx.arc(dx,dy,8,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.82)';ctx.fill();
+}
+
+// ══════════════════════════════════════════
+// TOUCH DOT (run — exact finger position)
+// ══════════════════════════════════════════
+function drawTouchDot() {
+  ctx.beginPath();ctx.arc(tx,ty,16,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.14)';ctx.fill();
+  ctx.beginPath();ctx.arc(tx,ty,7,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.88)';ctx.fill();
+}
+
+// ══════════════════════════════════════════
+// MESSAGES
+// ══════════════════════════════════════════
+const guideEl=document.getElementById('guide-text');
+
+// Show a message; optionally auto-fade it after fadeMs
+function showMessage(text, fadeMs) {
+  clearTimeout(msgFadeTimer); msgFadeTimer=null;
+  guideEl.style.opacity='0';
+  setTimeout(()=>{
+    guideEl.textContent=text;
+    if (text) {
+      guideEl.style.opacity='1';
+      if (fadeMs) {
+        msgFadeTimer=setTimeout(()=>{ guideEl.style.opacity='0'; }, fadeMs);
+      }
+    }
+  }, 900);
+}
+
+function checkMessages(scale, elapsed) {
+  // Progress-based
+  MSGS.forEach((m,i)=>{
+    if (scale>=m.at && !shownMsgs.has(i)) {
+      shownMsgs.add(i);
+      showMessage(m.text, m.fadeMs);
+    }
+  });
+  // Absolute-time-based
+  TIME_MSGS.forEach((m,i)=>{
+    if (elapsed>=m.atMs && !shownTimeMsgs.has(i)) {
+      shownTimeMsgs.add(i);
+      showMessage(m.text, m.fadeMs);
+    }
+  });
+}
+
+// ══════════════════════════════════════════
+// AUDIO (local capture fix)
+// ══════════════════════════════════════════
+let aud=null;
+function loadAudio() {
+  if (aud){aud.pause();aud.src='';aud=null;}
+  aud=new Audio(TRACKS[~~(Math.random()*TRACKS.length)]);
+  aud.loop=true; aud.volume=0; aud.load();
+}
+function fadeIn() {
+  if (!aud) return;
+  const target=aud;
+  target.play().catch(()=>{});
+  let v=0,id=setInterval(()=>{v=Math.min(v+.015,.55);target.volume=v;if(v>=.55)clearInterval(id);},110);
+}
+function fadeOut() {
+  if (!aud) return;
+  const target=aud;
+  const id=setInterval(()=>{target.volume=Math.max(0,target.volume-.02);if(target.volume<=0){target.pause();clearInterval(id);}},100);
+}
+
+// ══════════════════════════════════════════
+// END TIMERS
+// ══════════════════════════════════════════
+function clearEndTimers() {
+  clearTimeout(releaseTimer);   releaseTimer=null;
+  clearTimeout(stillTimer);     stillTimer=null;
+  clearTimeout(stillWarnTimer); stillWarnTimer=null;
+}
+
+// Show "指が止まっています" after 5s of stillness
+function showStillWarning() {
+  if (!isHolding || mode!=='run') return;
+  stillWarningShown=true;
+  clearTimeout(msgFadeTimer); msgFadeTimer=null;
+  guideEl.style.opacity='0';
+  setTimeout(()=>{
+    if (stillWarningShown) {
+      guideEl.textContent='指が止まっています';
+      guideEl.style.opacity='1';
+    }
+  }, 600);
+}
+
+// Hide warning when finger moves again
+function hideStillWarning() {
+  if (!stillWarningShown) return;
+  stillWarningShown=false;
+  guideEl.style.opacity='0';
+  setTimeout(()=>{
+    if (!stillWarningShown) guideEl.textContent='';
+  }, 1400);
+}
+
+// Start both warn (5s) and end (10s) stillness timers
+function startStillTimers() {
+  clearTimeout(stillWarnTimer);
+  clearTimeout(stillTimer);
+  stillWarnTimer = setTimeout(showStillWarning, STILL_WARN_MS);
+  stillTimer     = setTimeout(()=>{ if(mode==='run') finishSession(); }, STILL_END_MS);
+}
+
+// Called when movement is detected
+function onMovementDetected(nx, ny) {
+  if (Math.hypot(nx-lastTx, ny-lastTy) >= MOVE_THRESHOLD) {
+    lastTx=nx; lastTy=ny;
+    hideStillWarning();   // dismiss warning immediately
+    startStillTimers();   // reset both timers
+  }
+}
+
+// ══════════════════════════════════════════
+// SESSION FLOW
+// ══════════════════════════════════════════
+function startSession(clientX, clientY) {
+  if (mode==='run') return;
+  mode       = 'run';
+  palette    = PALETTES[~~(Math.random()*PALETTES.length)];
+  updateBlobColor();
+  sessionStart   = Date.now();
+  sessionElapsed = 0;
+  blobScale      = 0;
+  shownMsgs      = new Set();
+  shownTimeMsgs  = new Set();
+  isHolding      = true;
+
+  tx=clientX; ty=clientY; bx=tx; by=ty;
+  bvx=0; bvy=0;   // reset velocity at touch start
+  lastTx=tx; lastTy=ty;
+
+  colorizeParticles();
+  clearEndTimers();
+  startStillTimers();   // 10s still → end
+
+  document.getElementById('intro').classList.add('hidden');
+  guideEl.textContent=''; guideEl.style.opacity='0';
+  document.getElementById('bar-label').textContent=`${selMin} 分 still`;
+  setTimeout(()=>{ document.getElementById('bar').classList.add('show'); fadeIn(); }, 500);
+}
+
+function finishSession() {
+  if (mode==='done') return;
+  mode='done';
+  isHolding=false; activePtrId=null; stillWarningShown=false;
+  clearEndTimers();
+  clearTimeout(msgFadeTimer); msgFadeTimer=null;
+  fadeOut();
+  document.getElementById('bar').classList.remove('show');
+  guideEl.style.opacity='0';
+  document.getElementById('done-time').textContent=fmt(sessionElapsed);
+  setTimeout(()=>document.getElementById('done-overlay').classList.add('show'),400);
+}
+
+function restartSession() {
+  clearEndTimers();
+  clearTimeout(msgFadeTimer); msgFadeTimer=null;
+  mode='idle'; blobScale=0; sessionStart=null;
+  isHolding=false; activePtrId=null; stillWarningShown=false;
+  document.getElementById('done-overlay').classList.remove('show');
+  guideEl.textContent='ドットに触れてください'; guideEl.style.opacity='1';
+  setTimeout(()=>document.getElementById('intro').classList.remove('hidden'),300);
+  tx=W/2; ty=H*0.6; bx=tx; by=ty;
+  spawnParticles();
+  loadAudio();
+}
+
+// ══════════════════════════════════════════
+// RENDER LOOP
+// ══════════════════════════════════════════
+function frame(ts) {
+  requestAnimationFrame(frame);
+  const dt=Math.min(ts-lastTs,50); lastTs=ts;
+  const nowT=ts*.001;
+
+  if (mode==='run') {
+    if (isHolding) {
+      blobScale=Math.min(blobScale+dt/totalMs,1);
+      if (blobScale>=1){finishSession();return;}
+      // Liquid spring: velocity accumulates toward finger, then damps
+      bvx=(bvx+(tx-bx)*BLOB_K)*BLOB_DAMP;
+      bvy=(bvy+(ty-by)*BLOB_K)*BLOB_DAMP;
+    } else {
+      // 指が離れてもblobScaleはそのまま保持
+      // 5秒以内に再タッチすれば大きさを引き継いで継続
+      bvx*=BLOB_DAMP; bvy*=BLOB_DAMP;  // 慣性で流れてから停止
+    }
+    bx+=bvx; by+=bvy;
+    sessionElapsed=Date.now()-sessionStart;
+    document.getElementById('bar-time').textContent=fmt(sessionElapsed);
+    checkMessages(blobScale, sessionElapsed);
+  }
+
+  // Background
+  ctx.clearRect(0,0,W,H);
+  const te=ease(clamp(blobScale,0,1));
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,lerpHex(BG_DARK,palette[1][0],te*.88));
+  bg.addColorStop(1,lerpHex(BG_DARK,palette[1][1],te));
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // Particles
+  tickParticles();
+  drawParticles(nowT);
+
+  // Idle tap dot
+  if (mode==='idle') {
+    drawBlob(W*.5,H*.60,Math.min(W,H)*.055,nowT,.50,'rgba(255,255,255,0.07)');
+    drawTapDot();
+  }
+
+  // Main blob (warm color on cool background)
+  if ((mode==='run'||mode==='done') && blobScale>0.005) {
+    const minR=Math.min(W,H)*.07, maxR=Math.max(W,H)*.78;
+    const bR=lerp(minR,maxR,ease(blobScale));
+    const turb=lerp(.65,.16,ease(blobScale));
+    const cx=(mode==='run')?bx:W/2, cy=(mode==='run')?by:H/2;
+    const ba=lerp(.50,.78,ease(blobScale));
+
+    // Halo
+    drawBlob(cx,cy,bR*1.10,nowT,turb*.8,
+      `rgba(${blobR},${blobG},${blobB},${lerp(.04,.11,te).toFixed(3)})`);
+    // Core
+    const g2=ctx.createRadialGradient(cx-bR*.18,cy-bR*.18,bR*.02,cx,cy,bR*1.06);
+    g2.addColorStop(0,  `rgba(${blobR},${blobG},${blobB},${(ba*.90).toFixed(3)})`);
+    g2.addColorStop(.45,`rgba(${blobR},${blobG},${blobB},${(ba*.50).toFixed(3)})`);
+    g2.addColorStop(1,  `rgba(${blobDR},${blobDG},${blobDB},${(ba*.08).toFixed(3)})`);
+    drawBlob(cx,cy,bR,nowT,turb,g2);
+
+    if (mode==='run'&&isHolding) drawTouchDot();
+  }
+}
+
+// ══════════════════════════════════════════
+// AUTH GATE — 汎用モジュール NoctaLicenseGate に委譲
+// appId:'still' で従来と同じ localStorage キー（still-auth / still-owner）を使うため
+// 既存の解錠済みユーザーはそのまま維持される。初期化はスクリプト末尾の init() で行う。
+// ══════════════════════════════════════════
+
+function startApp() {
+  resize();
+  loadAudio();
+  requestAnimationFrame(frame);
+}
+
+// ゲートの解錠判定・入力ハンドリングは NoctaLicenseGate.init()（スクリプト末尾）に集約
+
+// ══════════════════════════════════════════
+// EVENTS
+// ══════════════════════════════════════════
+document.querySelectorAll('.dur-btn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.dur-btn').forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel');
+    selMin=+b.dataset.m; totalMs=selMin*60000;
+  });
+});
+
+canvas.addEventListener('pointerdown',e=>{
+  e.preventDefault();
+  if (mode==='idle'){
+    activePtrId=e.pointerId;
+    startSession(e.clientX,e.clientY);
+    return;
+  }
+  if (mode==='run'&&activePtrId===null){
+    activePtrId=e.pointerId;
+    isHolding=true;
+    tx=e.clientX; ty=e.clientY;
+    bvx=0; bvy=0;
+    lastTx=tx; lastTy=ty;
+    clearTimeout(releaseTimer); releaseTimer=null;
+    startStillTimers();
+  }
+},{passive:false});
+
+window.addEventListener('pointermove',e=>{
+  if (mode==='run'&&e.pointerId===activePtrId&&isHolding){
+    tx=e.clientX; ty=e.clientY;
+    onMovementDetected(tx,ty);
+  }
+});
+
+function onRelease(e){
+  if (e.pointerId===activePtrId){
+    activePtrId=null;
+    if (mode==='run'){
+      isHolding=false;
+      hideStillWarning();                          // dismiss if showing
+      clearTimeout(stillWarnTimer); stillWarnTimer=null;
+      clearTimeout(stillTimer);     stillTimer=null;
+      // Hard end after 5 seconds of non-touch
+      releaseTimer=setTimeout(()=>{ if(mode==='run') finishSession(); }, RELEASE_END_MS);
+    }
+  }
+}
+window.addEventListener('pointerup',    onRelease);
+window.addEventListener('pointercancel',onRelease);
+
+document.getElementById('again-btn').addEventListener('click',restartSession);
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+NoctaLicenseGate.init({
+  appId: 'still',                  // 従来と同じ localStorage キー（still-auth / still-owner）
+  buyUrl: 'https://gumroad.com',   // Gumroad 商品作成後に商品URLへ差し替え
+  onUnlock: startApp,              // 解錠後にアプリ起動
+});
+</script>
+</body>
+</html>
