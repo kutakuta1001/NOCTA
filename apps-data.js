@@ -65,6 +65,16 @@ const NOCTA_APP_COLLECTIONS = [
 
 const NOCTA_APPS = [
   {
+    title: "Pokeca Lab",
+    collection: "yori",
+    cat: "app",
+    url: "./pokeca-lab/index.html",
+    imgUrl: "./pokeca-lab/cover.svg",
+    thumbClass: "thumb-4",
+    descJa: "ポケモンカードの対戦を、CPU を相手に決着まで打って練習する。",
+    descEn: "Practise Pokémon card battles against the CPU, all the way to the end."
+  },
+  {
     title: "Spinebloom",
     collection: "yori",
     cat: "app",
