@@ -961,8 +961,8 @@
       dEn: 'A triangle. Shallow, wide facets spread light across the whole face.' },
     { k: 'step', ja: 'エメラルド', en: 'Emerald',
       nameJa: 'エメラルドカット', nameEn: 'Emerald cut',
-      dJa: '段（ステップ）状の大きな平面。きらめきより、鏡のような光の帯と色・透明感が際立つ。',
-      dEn: 'Broad, stepped facets. Less sparkle, more mirror-like flashes and clear, deep color.' },
+      dJa: '角を落とした長方形に、段（ステップ）状の大きな平面。きらめきより、鏡のような光の帯と色・透明感が際立つ。',
+      dEn: 'A rectangle with cut corners and broad, stepped facets. Less sparkle, more mirror-like flashes and clear, deep color.' },
     { k: 'oldmine', ja: 'オールドマイン', en: 'Old mine',
       nameJa: 'オールドマイン', nameEn: 'Old mine',
       dJa: '18〜19世紀の手磨きのカット。小さなテーブルと高いクラウン、底の大きな面。ろうそくの光の下で大粒にきらめく。',
@@ -1116,7 +1116,7 @@
       onReady = function () { cleanup(); resolve(window.NoctaGem3d); };
       timer = setTimeout(function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d load timeout')); }, 8000);
       window.addEventListener('noctagem3d-ready', onReady);
-      s.textContent = "import './gem3d.js?v=12'; window.dispatchEvent(new Event('noctagem3d-ready'));";
+      s.textContent = "import './gem3d.js?v=13'; window.dispatchEvent(new Event('noctagem3d-ready'));";
       s.onerror = function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d script error')); };
       document.head.appendChild(s);
     });

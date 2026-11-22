@@ -62,6 +62,26 @@ function makeRng(seed) {
   var s = (seed >>> 0) || 1;
   return function () { s = (Math.imul(s, 1664525) + 1013904223) >>> 0; return s / 4294967296; };
 }
+/* 凸な石の三角形を、すべて外向き（反時計回りに見える側が外）にそろえる。
+   法線は computeVertexNormals がこの向きから作り、現像（パストレーサー）の屈折もこれを使う */
+function orientOutward(positions) {
+  var n = positions.length / 3, cx = 0, cy = 0, cz = 0;
+  for (var i = 0; i < positions.length; i += 3) { cx += positions[i]; cy += positions[i + 1]; cz += positions[i + 2]; }
+  cx /= n; cy /= n; cz /= n;
+  for (var t = 0; t < positions.length; t += 9) {
+    var ax = positions[t], ay = positions[t + 1], az = positions[t + 2];
+    var ux = positions[t + 3] - ax, uy = positions[t + 4] - ay, uz = positions[t + 5] - az;
+    var vx = positions[t + 6] - ax, vy = positions[t + 7] - ay, vz = positions[t + 8] - az;
+    var nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    var mx = (ax + positions[t + 3] + positions[t + 6]) / 3 - cx;
+    var my = (ay + positions[t + 4] + positions[t + 7]) / 3 - cy;
+    var mz = (az + positions[t + 5] + positions[t + 8]) / 3 - cz;
+    if (nx * mx + ny * my + nz * mz < 0) {
+      for (var k = 0; k < 3; k++) { var tmp = positions[t + 3 + k]; positions[t + 3 + k] = positions[t + 6 + k]; positions[t + 6 + k] = tmp; }
+    }
+  }
+  return positions;
+}
 function hashSeed(str) {
   var h = 2166136261 >>> 0; str = String(str || '');
   for (var i = 0; i < str.length; i++) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
@@ -238,21 +258,24 @@ function brilliantGeometry(mains, opts) {
 /* エメラルドカット（ステップカット）: 八角柱を段状に面取り */
 function stepGeometry() {
   var positions = [];
+  /* 角を落とした長方形（縦横比 約1.4:1）の輪。8点を同じ向きに並べ、段どうしを帯でつなぐ */
+  var HX = 1.0, HZ = 0.7, CH = 0.2;
   function octRing(radius, y) {
-    var pts = [];
-    for (var i = 0; i < 8; i++) {
-      var a = (i / 8) * Math.PI * 2 + Math.PI / 8;
-      pts.push(new THREE.Vector3(Math.cos(a) * radius, y, Math.sin(a) * radius));
-    }
-    return pts;
+    var hx = HX * radius, hz = HZ * radius, c = CH * radius;
+    return [
+      [hx, -hz + c], [hx, hz - c], [hx - c, hz], [-hx + c, hz],
+      [-hx, hz - c], [-hx, -hz + c], [-hx + c, -hz], [hx - c, -hz]
+    ].map(function (q) { return new THREE.Vector3(q[0], y, q[1]); });
   }
-  /* 段: 上テーブル・上肩・腰・下肩・底 */
+  /* 段: テーブル・クラウン2段・ガードル・パビリオン3段・底の小さな面（段が多いほど光の帯が重なる） */
   var levels = [
-    { r: 0.6, y: 0.5 },
-    { r: 0.95, y: 0.32 },
+    { r: 0.62, y: 0.42 },
+    { r: 0.84, y: 0.30 },
+    { r: 0.97, y: 0.14 },
     { r: 1.0, y: 0.0 },
-    { r: 0.85, y: -0.4 },
-    { r: 0.4, y: -0.8 }
+    { r: 0.80, y: -0.28 },
+    { r: 0.56, y: -0.54 },
+    { r: 0.30, y: -0.76 }
   ];
   function pushTri(a, b, c) { positions.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z); }
   var rings = levels.map(function (l) { return octRing(l.r, l.y); });
@@ -272,6 +295,7 @@ function stepGeometry() {
     pushTri(topRing[i2], topC, topRing[n2]);
     pushTri(botRing[i2], botRing[n2], botC);
   }
+  orientOutward(positions);
   var geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geo.computeVertexNormals();
@@ -336,6 +360,7 @@ function crystalGeometry() {
     pushTri(mid1[i], mid1[n], top);           /* 上錐 */
     pushTri(mid2[n], mid2[i], bot);           /* 下錐 */
   }
+  orientOutward(positions);
   var geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geo.computeVertexNormals();
@@ -370,6 +395,7 @@ function roseGeometry(seed) {
     /* 上段: 中段→頂点 */
     pushTri(mid[i], mid[nx], apex);
   }
+  orientOutward(positions);
   var geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geo.computeVertexNormals();
