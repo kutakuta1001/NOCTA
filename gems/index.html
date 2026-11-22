@@ -330,6 +330,68 @@
   }
   .gyu-env-btn.active{ color:#0A0906; background:#B8B4AE; }
   .gyu-mode-btn:focus-visible, .gyu-env-btn:focus-visible{ outline:1px solid #E8E0D0; outline-offset:2px; }
+  /* カット選択（3Dジェム表示中のみ）: 13種を横スクロールの1行に並べ、下に光り方を1〜2行で示す。
+     はみ出したときに端を薄くして「まだ続く」ことを示す。中央寄せは auto margin で行う
+     （justify-content:center だと、はみ出したとき左端の項目へスクロールで届かなくなるため） */
+  .gyu-fx{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin-top:10px; flex:none; max-width:min(92vw, 680px); }
+  .gyu-fx .gyu-env-toggle, .gyu-fx .gyu-aura-toggle{ margin-top:0; }
+  /* 背の低い画面（小さめのスマホ・横向き）では余白と説明の行間を詰めて、宝石の表示を残す */
+  @media (max-height:760px){
+    /* 後ろに書かれた通常のスタイルより優先させるため #lightbox を前置する */
+    #lightbox .gyu-mode-toggle{ margin-top:12px; }
+    #lightbox .gyu-cut{ margin-top:8px; }
+    #lightbox .gyu-cut-desc{ margin-top:4px; min-height:0; line-height:1.5; }
+    #lightbox .gyu-fx{ margin-top:6px; gap:6px; }
+    body #lightbox .lb-caption{ margin-top:14px; }
+  }
+  .gyu-cut{ margin-top:12px; flex:none; width:min(92vw, 680px); display:flex; flex-direction:column; align-items:center; }
+  .gyu-cut[hidden]{ display:none; }
+  .gyu-cut-row{
+    display:flex; gap:6px; max-width:100%; overflow-x:auto; overflow-y:hidden;
+    padding:2px 14px 4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity;
+    -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+            mask-image:linear-gradient(90deg, transparent 0, #000 14px, #000 calc(100% - 14px), transparent 100%);
+  }
+  .gyu-cut-row::-webkit-scrollbar{ display:none; }
+  .gyu-cut-row > :first-child{ margin-left:auto; }
+  .gyu-cut-row > :last-child{ margin-right:auto; }
+  .gyu-cut-btn{
+    flex:none; scroll-snap-align:center; position:relative;
+    font-family:'Syne','Noto Sans JP',sans-serif; font-size:10px; letter-spacing:0.06em; font-weight:700;
+    color:#8A7C6C; background:transparent; border:1px solid rgba(184,180,174,0.18); border-radius:999px;
+    padding:7px 13px; min-height:32px; line-height:1; white-space:nowrap; cursor:pointer;
+    transition:color 0.3s, background 0.3s, border-color 0.3s;
+  }
+  .gyu-cut-btn.active{ color:#0A0906; background:#B8B4AE; border-color:#B8B4AE; }
+  /* この石の本来のカット: 右上に石の色の小さな点 */
+  .gyu-cut-btn.native::after{
+    content:''; position:absolute; top:4px; right:5px; width:4px; height:4px; border-radius:50%;
+    background:var(--gem, #E8E0D0);
+  }
+  .gyu-cut-btn:focus-visible{ outline:1px solid #E8E0D0; outline-offset:2px; }
+  .gyu-cut-desc{
+    margin-top:6px; min-height:3.2em; max-width:560px; padding:0 16px;
+    font-size:11px; line-height:1.6; color:rgba(232,224,208,0.62); text-align:center;
+  }
+  .gyu-cut-desc-name{ color:#E8E0D0; }
+  /* スマホ幅では説明を名前だけにたたみ、タップで本文を開く（宝石の表示を広く残すため） */
+  .gyu-cut-desc.collapsible{ min-height:0; }
+  .gyu-cut-desc-toggle{
+    font:inherit; color:inherit; background:none; border:0; padding:6px 4px; margin:-6px 0 0; cursor:pointer;
+    display:inline-flex; align-items:center; gap:6px; min-height:32px;
+  }
+  .gyu-cut-desc-toggle::after{
+    content:''; width:5px; height:5px; border-right:1px solid currentColor; border-bottom:1px solid currentColor;
+    transform:translateY(-2px) rotate(45deg); transition:transform 0.25s; opacity:0.7;
+  }
+  .gyu-cut-desc.open .gyu-cut-desc-toggle::after{ transform:translateY(1px) rotate(-135deg); }
+  .gyu-cut-desc-toggle:focus-visible{ outline:1px solid #E8E0D0; outline-offset:2px; }
+  .gyu-cut-desc.collapsible .gyu-cut-desc-body{ display:block; }
+  .gyu-cut-desc.collapsible:not(.open) .gyu-cut-desc-body{ display:none; }
+  #lightbox.gyu-bg-light .gyu-cut-btn{ color:#6A5D4C; border-color:rgba(106,93,76,0.25); }
+  #lightbox.gyu-bg-light .gyu-cut-btn.active{ background:#8A7C6C; border-color:#8A7C6C; color:#F2EEE7; }
+  #lightbox.gyu-bg-light .gyu-cut-desc{ color:rgba(42,33,24,0.66); }
+  #lightbox.gyu-bg-light .gyu-cut-desc-name{ color:#2A2118; }
   #lightbox .lb-caption{ text-align:center; margin-top:22px; max-width:640px; }
   /* 白スタジオ背景（3Dジェムモードで背景=白を選択時） */
   #lightbox.gyu-bg-light{
@@ -483,6 +545,13 @@
     <button type="button" class="gyu-mode-btn active" data-mode="gem" aria-pressed="true">3Dジェム</button>
     <button type="button" class="gyu-mode-btn" data-mode="photo" aria-pressed="false">写真</button>
   </div>
+  <!-- カット（3Dジェム表示中のみ）: ボタンは JS が CUTS から作る。下に選んだカットの光り方を出す -->
+  <div class="gyu-cut" id="gyu-cut" hidden>
+    <div class="gyu-cut-row" id="gyu-cut-row" role="group" aria-label="カット"></div>
+    <p class="gyu-cut-desc font-jp" id="gyu-cut-desc" aria-live="polite"></p>
+  </div>
+  <!-- 演出の3トグル: 入る幅なら横に並べ、狭い画面では折り返す（カット欄を足したぶん宝石が縮みすぎないように） -->
+  <div class="gyu-fx">
   <!-- 光の向き（3Dジェム表示中のみ）: 中央/左/右。still・aurora・PT静止画すべてに反映 -->
   <div class="gyu-env-toggle" id="gyu-dir-toggle" role="group" aria-label="光の向き" hidden>
     <button type="button" class="gyu-env-btn active" data-dir="center" aria-pressed="true" data-i18n="lightbox.dirCenter">中央</button>
@@ -499,6 +568,7 @@
   <div class="gyu-env-toggle gyu-aura-toggle" id="gyu-bg-toggle" role="group" aria-label="背景" hidden>
     <button type="button" class="gyu-env-btn active" data-bg="dark" aria-pressed="true" data-i18n="lightbox.bgDark">黒</button>
     <button type="button" class="gyu-env-btn" data-bg="light" aria-pressed="false" data-i18n="lightbox.bgLight">白</button>
+  </div>
   </div>
   <div class="lb-caption">
     <p class="font-heading text-[11px] tracking-[2px] uppercase" id="lightbox-en" style="color:var(--gem);"></p>
@@ -609,6 +679,7 @@
     coverTrail: { type: 'glint', colors: COVER_TRAIL_COLORS },
     inertIds: ['site-nav', 'cover', 'gems-root', 'gem-rail', 'index-btn', 'site-footer'],
     onLangApply: function (lang) {
+      updateCutUI();   /* カットの説明は名前と本文を分けて組むので、言語切替時に組み直す */
       if (lightbox && lightbox.isOpen() && lightboxIdx >= 0 && typeof NOCTA_GEMS !== 'undefined') {
         var lg = NOCTA_GEMS[lightboxIdx];
         if (lg) document.getElementById('lightbox-img').alt = lang === 'ja' ? lg.title : lg.titleEn;
@@ -856,6 +927,134 @@
   var currentAuraIntensity = 0;    /* 0=なし(しっとり=現状)|1=弱|2=強。新規mount時は常に0へ戻る */
   var currentAuraDirection = 'center'; /* 'center'|'left'|'right'。新規mount時は常にcenterへ戻る */
   var currentBg = 'dark';  /* 'dark'|'light'。新規mount・写真・閉時は必ず dark */
+
+  /* カット（3Dジェムの形）。並びは gem3d.js の CUT_KEYS と同じ。どの石でもすべて選べる（CEO 決定 2026-11-22）。
+     光り方の説明は叩き台。'round' は 'brilliant' と同じ形なので一覧では brilliant に寄せる。 */
+  var CUTS = [
+    { k: 'brilliant', ja: 'ラウンド', en: 'Round',
+      nameJa: 'ラウンドブリリアント', nameEn: 'Round brilliant',
+      dJa: '円形に58面。入った光を正面へ返す角度で組まれ、強いきらめきと虹色のファイアがいちばん出るカット。',
+      dEn: '58 facets on a circle, angled to send light back out the top. The strongest sparkle and rainbow fire of any cut.' },
+    { k: 'princess', ja: 'プリンセス', en: 'Princess',
+      nameJa: 'プリンセス', nameEn: 'Princess',
+      dJa: '正方形のブリリアント。四隅まで細かな面が走り、シャープで鋭い輝き。',
+      dEn: 'A square brilliant. Fine facets run into the corners for a crisp, sharp sparkle.' },
+    { k: 'oval', ja: 'オーバル', en: 'Oval',
+      nameJa: 'オーバル', nameEn: 'Oval',
+      dJa: '楕円形のブリリアント。ラウンドに近い輝きのまま、縦に長く見える。',
+      dEn: 'An elongated brilliant. Nearly the sparkle of a round, in a longer shape.' },
+    { k: 'cushion', ja: 'クッション', en: 'Cushion',
+      nameJa: 'クッション', nameEn: 'Cushion',
+      dJa: '角の丸い四角。大きめの面がやわらかく光る、ヴィンテージな表情。',
+      dEn: 'A square with rounded corners. Larger facets give a soft, vintage glow.' },
+    { k: 'pear', ja: 'ペア', en: 'Pear',
+      nameJa: 'ペアシェイプ', nameEn: 'Pear',
+      dJa: 'しずく型。丸い側はブリリアントの輝き、尖った先へ光が流れる。',
+      dEn: 'A teardrop. Brilliant sparkle on the round end, with light flowing toward the point.' },
+    { k: 'marquise', ja: 'マーキス', en: 'Marquise',
+      nameJa: 'マーキス', nameEn: 'Marquise',
+      dJa: '舟型。両端が尖り、同じ重さでも大きく見える。',
+      dEn: 'A boat shape with two points. It looks larger than its weight suggests.' },
+    { k: 'trillion', ja: 'トリリアント', en: 'Trillion',
+      nameJa: 'トリリアント', nameEn: 'Trillion',
+      dJa: '三角形。浅く広い面で、表面いっぱいに光が広がる。',
+      dEn: 'A triangle. Shallow, wide facets spread light across the whole face.' },
+    { k: 'step', ja: 'エメラルド', en: 'Emerald',
+      nameJa: 'エメラルドカット', nameEn: 'Emerald cut',
+      dJa: '段（ステップ）状の大きな平面。きらめきより、鏡のような光の帯と色・透明感が際立つ。',
+      dEn: 'Broad, stepped facets. Less sparkle, more mirror-like flashes and clear, deep color.' },
+    { k: 'oldmine', ja: 'オールドマイン', en: 'Old mine',
+      nameJa: 'オールドマイン', nameEn: 'Old mine',
+      dJa: '18〜19世紀の手磨きのカット。小さなテーブルと高いクラウン、底の大きな面。ろうそくの光の下で大粒にきらめく。',
+      dEn: 'A hand-cut style of the 18th–19th centuries. Small table, tall crown, an open culet; big, slow flashes made for candlelight.' },
+    { k: 'rose', ja: 'ローズ', en: 'Rose',
+      nameJa: 'ローズカット', nameEn: 'Rose cut',
+      dJa: '16世紀に広まった、底の平らなドーム。三角の面が頂点に集まり、やわらかく揺らめく光。',
+      dEn: 'A flat-backed dome that spread in the 16th century. Triangular facets meet at the top for a soft, flickering glow.' },
+    { k: 'table', ja: 'テーブル', en: 'Table',
+      nameJa: 'テーブルカット', nameEn: 'Table cut',
+      dJa: '中世の最初期のカット。八面体の頂点を平らに落としただけで面が少なく、大きな天面越しに石の色がそのまま見える。',
+      dEn: 'One of the earliest cuts, from the Middle Ages. The tip of an octahedron is simply flattened; with few facets, the color shows plainly through the wide top.' },
+    { k: 'cabochon', ja: 'カボション', en: 'Cabochon',
+      nameJa: 'カボション', nameEn: 'Cabochon',
+      dJa: '面を作らず丸く磨く、もっとも古い仕上げ。きらめきの代わりに、遊色や色の深さを見せる。',
+      dEn: 'Polished smooth and round — the oldest finish. Instead of sparkle, it shows play-of-color and depth.' },
+    { k: 'crystal', ja: '原石', en: 'Rough',
+      nameJa: '原石', nameEn: 'Rough crystal',
+      dJa: '磨く前の六角柱の結晶。カットした石との光り方の違いを比べられる。',
+      dEn: 'The natural hexagonal crystal before cutting. Compare how it catches light against the cut stones.' }
+  ];
+  var currentCut = null;   /* 選択中のカット。石を開くたびにその石の本来のカットへ戻る */
+  var nativeCut = null;    /* 開いている石の本来のカット（gems-data.js の cut） */
+  function normCut(c) { return c === 'round' ? 'brilliant' : c; }
+  function findCut(k) { for (var i = 0; i < CUTS.length; i++) if (CUTS[i].k === k) return CUTS[i]; return null; }
+
+  /* カットのボタンを作り直す（石を開くたび。本来のカットに印を付けるため） */
+  function renderCutRow() {
+    var row = document.getElementById('gyu-cut-row');
+    if (!row) return;
+    row.innerHTML = CUTS.map(function (c) {
+      var isNative = c.k === nativeCut;
+      var title = isNative ? ' title="' + escAttr(app.lang() === 'ja' ? 'この石の本来のカット' : "This stone's own cut") + '"' : '';
+      return '<button type="button" class="gyu-cut-btn' + (isNative ? ' native' : '') + '" data-cut="' + escAttr(c.k) + '"' +
+        ' aria-pressed="false" data-ja="' + escAttr(c.ja) + '" data-en="' + escAttr(c.en) + '"' + title + '>' +
+        escHtml(app.lang() === 'ja' ? c.ja : c.en) + '</button>';
+    }).join('');
+    updateCutUI();
+  }
+
+  /* 選択状態と説明文を現在のカット・言語に合わせる */
+  function updateCutUI() {
+    /* createApp の初回言語適用は CUTS の定義より前に走るので、そのときは何もしない */
+    if (typeof CUTS === 'undefined' || !CUTS) return;
+    var row = document.getElementById('gyu-cut-row');
+    var desc = document.getElementById('gyu-cut-desc');
+    if (!row || !desc) return;
+    var ja = app.lang() === 'ja';
+    row.querySelectorAll('.gyu-cut-btn').forEach(function (b) {
+      var on = b.getAttribute('data-cut') === currentCut;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (b.classList.contains('native')) b.title = ja ? 'この石の本来のカット' : "This stone's own cut";
+    });
+    var c = findCut(currentCut);
+    if (!c) { desc.innerHTML = ''; return; }
+    var prefix = (currentCut === nativeCut) ? (ja ? 'この石の本来のカット · ' : "This stone's own cut · ") : '';
+    var name = escHtml(prefix + (ja ? c.nameJa : c.nameEn));
+    var body = escHtml(ja ? c.dJa : c.dEn);
+    var collapsible = !!(cutDescMq && cutDescMq.matches);
+    desc.classList.toggle('collapsible', collapsible);
+    desc.classList.toggle('open', collapsible && cutDescOpen);
+    if (collapsible) {
+      desc.innerHTML = '<button type="button" class="gyu-cut-desc-toggle" aria-controls="gyu-cut-desc-body" aria-expanded="' +
+        (cutDescOpen ? 'true' : 'false') + '" aria-label="' + escAttr((ja ? '光り方の説明: ' : 'How it shines: ') + prefix + (ja ? c.nameJa : c.nameEn)) + '">' +
+        '<span class="gyu-cut-desc-name">' + name + '</span></button>' +
+        '<span class="gyu-cut-desc-body" id="gyu-cut-desc-body">' + body + '</span>';
+    } else {
+      desc.innerHTML = '<span class="gyu-cut-desc-name">' + name + '</span> — <span class="gyu-cut-desc-body">' + body + '</span>';
+    }
+  }
+  /* スマホ幅（640px以下）では説明をたたむ。開いた状態はカットを変えても保つ */
+  var cutDescMq = window.matchMedia('(max-width:640px)');
+  var cutDescOpen = false;
+  function onCutDescLayoutChange() {
+    /* 説明の開閉で宝石の表示の高さが変わるので、描画サイズを合わせ直す */
+    if (gem3dInstance && gem3dInstance.resize) requestAnimationFrame(function () { gem3dInstance.resize(); });
+  }
+  if (cutDescMq.addEventListener) cutDescMq.addEventListener('change', function () { updateCutUI(); onCutDescLayoutChange(); });
+
+  /* カットを切替（gem3dInstance があれば形も差し替える）。選んだボタンを横スクロールの中央へ寄せる */
+  function setCutUI(cut) {
+    if (!findCut(cut)) return;
+    currentCut = cut;
+    updateCutUI();
+    if (gem3dInstance && gem3dInstance.setCut) gem3dInstance.setCut(cut);
+    var row = document.getElementById('gyu-cut-row');
+    var btn = row && row.querySelector('.gyu-cut-btn[data-cut="' + cut + '"]');
+    if (btn && btn.scrollIntoView) {
+      try { btn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' }); } catch (e) {}
+    }
+  }
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   /* ?nopt=1 で静止時パストレース現像を明示的に無効化（PBRのみ・デバッグ/非対応確認用） */
   var noPt = false;
@@ -917,7 +1116,7 @@
       onReady = function () { cleanup(); resolve(window.NoctaGem3d); };
       timer = setTimeout(function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d load timeout')); }, 8000);
       window.addEventListener('noctagem3d-ready', onReady);
-      s.textContent = "import './gem3d.js?v=10'; window.dispatchEvent(new Event('noctagem3d-ready'));";
+      s.textContent = "import './gem3d.js?v=12'; window.dispatchEvent(new Event('noctagem3d-ready'));";
       s.onerror = function () { cleanup(); gem3dModulePromise = null; reject(new Error('gem3d script error')); };
       document.head.appendChild(s);
     });
@@ -995,7 +1194,8 @@
       if (stale()) return;
       teardownGem3d();
       var inst = mod.mount(host, {
-        cut: g.cut, gem3d: g.gem3d, ior: g.ior, accentColor: g.accentColor, name: g.title,
+        /* 写真↔3D を往復しても、この石で選んだカットのまま開く */
+        cut: currentCut || g.cut, gem3d: g.gem3d, ior: g.ior, accentColor: g.accentColor, name: g.title,
         roughness: g.roughness, dispersion: g.dispersion   /* 研磨面の粗さと石別の分散 */
       }, { reduce: reduceMotion, noPt: noPt });
       if (stale()) { if (inst) inst.detach(); return; }   /* mount中にstale化したら即破棄 */
@@ -1025,6 +1225,7 @@
     var auraToggle = document.getElementById('gyu-aura-toggle');
     var dirToggle = document.getElementById('gyu-dir-toggle');
     var bgToggle = document.getElementById('gyu-bg-toggle');
+    var cutBox = document.getElementById('gyu-cut');
     if (wrap) wrap.classList.toggle('mode-gem', mode === 'gem');
     if (toggle) {
       toggle.querySelectorAll('.gyu-mode-btn').forEach(function (b) {
@@ -1037,6 +1238,7 @@
     if (auraToggle) auraToggle.hidden = (mode !== 'gem');
     if (dirToggle) dirToggle.hidden = (mode !== 'gem');
     if (bgToggle) bgToggle.hidden = (mode !== 'gem');
+    if (cutBox) cutBox.hidden = (mode !== 'gem');
     if (mode === 'gem') {
       var g = NOCTA_GEMS[lightboxIdx];
       if (has3d(g) && !gem3dInstance) mountGem3d(g, kazasuGen);
@@ -1112,6 +1314,12 @@
     /* 3Dデータを持つ石はトグル表示＋初期3Dモード。持たない石は写真のみ */
     var toggle = document.getElementById('gyu-mode-toggle');
     if (has3d(g)) {
+      /* 石を開くたびに、その石の本来のカットから始める */
+      nativeCut = normCut(g.cut);
+      currentCut = nativeCut;
+      renderCutRow();
+      var cutRowEl = document.getElementById('gyu-cut-row');
+      if (cutRowEl) cutRowEl.scrollLeft = 0;
       if (toggle) toggle.hidden = false;
       setMode('gem');
     } else {
@@ -1186,6 +1394,28 @@
         var btn = e.target.closest('.gyu-env-btn');
         if (!btn) return;
         setAuraUI({ direction: btn.getAttribute('data-dir') });
+      });
+    }
+
+    /* カットのクリック（ボタンは石を開くたびに作り直すので、親で受ける） */
+    var cutRowClick = document.getElementById('gyu-cut-row');
+    if (cutRowClick) {
+      cutRowClick.addEventListener('click', function (e) {
+        var btn = e.target.closest('.gyu-cut-btn');
+        if (!btn) return;
+        setCutUI(btn.getAttribute('data-cut'));
+      });
+    }
+    /* カットの説明の開閉（スマホ幅のみボタンになる） */
+    var cutDescClick = document.getElementById('gyu-cut-desc');
+    if (cutDescClick) {
+      cutDescClick.addEventListener('click', function (e) {
+        if (!e.target.closest('.gyu-cut-desc-toggle')) return;
+        cutDescOpen = !cutDescOpen;
+        updateCutUI();
+        var t = cutDescClick.querySelector('.gyu-cut-desc-toggle');
+        if (t) t.focus();
+        onCutDescLayoutChange();
       });
     }
 

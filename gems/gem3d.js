@@ -85,7 +85,12 @@ var OUTLINES = {
   /* クッション（角丸四角）: スーパー楕円。軸方向が辺、45°方向が丸い角 */
   cushion: function (a) { var n = 3.0, c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a)); return 0.92 / Math.pow(Math.pow(c, n) + Math.pow(s, n), 1 / n); },
   /* トリリアント（三角）: cos(3θ)で3つの角を持つ丸みのある三角。tsumuri参照石と同型 */
-  trillion: function (a) { return 0.92 * (1 + 0.24 * Math.cos(3 * (a - Math.PI / 2))); }
+  trillion: function (a) { return 0.92 * (1 + 0.24 * Math.cos(3 * (a - Math.PI / 2))); },
+  /* プリンセス（正方形）: 角の尖った正方形。頂点は 22.5° 刻みなので、角(45°)と辺の上の点が
+     すべて正方形の辺に乗り、辺がまっすぐになる */
+  princess: function (a) { return 0.8 / Math.max(Math.abs(Math.cos(a)), Math.abs(Math.sin(a))); },
+  /* オールドマイン（丸みの強い四角）: クッションよりさらに丸い、18〜19世紀の手磨きの輪郭 */
+  oldmine: function (a) { var n = 2.5, c = Math.abs(Math.cos(a)), s = Math.abs(Math.sin(a)); return 0.95 / Math.pow(Math.pow(c, n) + Math.pow(s, n), 1 / n); }
 };
 
 /* ラウンドブリリアントカット（本物の58面構造に近づけたモデル）
@@ -115,14 +120,18 @@ function brilliantGeometry(mains, opts) {
        パビリオン角 40.75°     → パビリオン深 = 1.0*tan(40.75°) = 0.862（全反射で光が返る鍵）
        ガードル厚 ~3%          → 帯を薄く
      パビリオンを浅く正確にすることで、光がキュレットへ抜けず正面に返る（ライトリターン）。 */
+  /* opts.prop で比率を上書きできる（プリンセス=広いテーブルと深いパビリオン、
+     オールドマイン=小さなテーブル・高いクラウン・大きなキューレット）。未指定は理想ラウンドの値 */
+  var pr = opts.prop || {};
   var girdleR = 1.0;
   var girdleTopY = 0.03, girdleBotY = -0.03;  /* ガードル帯の厚み（薄く） */
-  var tableR = 0.53;
-  var crownY = 0.323;     /* クラウン角34.5°に対応するテーブル面の高さ */
-  var starMidY = 0.16;    /* スターとベゼルの境の高さ */
-  var pavilionY = -0.862; /* パビリオン角40.75°のキュレット深さ（全反射角） */
-  var pavMidR = 0.55;     /* パビリオンメインとロウワーガードルの境の半径 */
-  var pavMidY = -0.38;
+  var tableR = (typeof pr.tableR === 'number') ? pr.tableR : 0.53;
+  var crownY = (typeof pr.crownY === 'number') ? pr.crownY : 0.323;       /* クラウン角34.5°に対応するテーブル面の高さ */
+  var starMidY = (typeof pr.starMidY === 'number') ? pr.starMidY : 0.16;  /* スターとベゼルの境の高さ */
+  var pavilionY = (typeof pr.pavilionY === 'number') ? pr.pavilionY : -0.862; /* パビリオン角40.75°のキュレット深さ（全反射角） */
+  var pavMidR = (typeof pr.pavMidR === 'number') ? pr.pavMidR : 0.55;     /* パビリオンメインとロウワーガードルの境の半径 */
+  var pavMidY = (typeof pr.pavMidY === 'number') ? pr.pavMidY : -0.38;
+  var culetR = (typeof pr.culetR === 'number') ? pr.culetR : 0;           /* 0=点のキューレット。>0 で底に平らな面（オールドマイン） */
 
   /* outline(angle)で断面形を変形。半径は角度依存スケールで乗算する */
   function P(radius, y, angle) {
@@ -205,7 +214,16 @@ function brilliantGeometry(mains, opts) {
     pushTri(gbHalf, gbNext, pavMid);
     /* パビリオンメインファセット: 中段からキュレットへ（隣の中段と共有）・外向きwinding */
     var pavMidNext = P(pavMidR, pavMidY, ((p + 1) % mains) * 2 * da);
-    pushTri(pavMid, pavMidNext, culet);
+    if (culetR > 0) {
+      /* 平らなキューレット: 点に収束させず、底の小さな多角形の辺へ降ろす（台形=三角2枚） */
+      var cThis = P(culetR, pavilionY, aMainP);
+      var cNext = P(culetR, pavilionY, ((p + 1) % mains) * 2 * da);
+      pushTri(pavMid, pavMidNext, cNext);
+      pushTri(pavMid, cNext, cThis);
+      pushTri(cThis, cNext, culet);   /* 底面（下向き） */
+    } else {
+      pushTri(pavMid, pavMidNext, culet);
+    }
   }
 
   var geo = new THREE.BufferGeometry();
@@ -360,7 +378,55 @@ function roseGeometry(seed) {
   return geo;
 }
 
-/* ブリリアント系（同一トポロジーをアウトラインで変形）のカット定義 */
+/* テーブルカット（14〜15世紀）: 天然の八面体の上の頂点を平らに落とし、下は小さな面で止めただけの
+   最初期のファセットカット。正方形のテーブル・4枚のクラウン・薄いガードル・4枚のパビリオン・
+   小さなキューレットで、面が少ないぶん大きな天面越しに石の色がそのまま見える。 */
+function tableGeometry() {
+  var positions = [];
+  function sqRing(half, y) {
+    /* 辺が軸に沿う正方形（頂点は 45° 方向）。half=中心から辺までの距離 */
+    var pts = [];
+    for (var i = 0; i < 4; i++) {
+      var a = (i / 4) * Math.PI * 2 + Math.PI / 4;
+      pts.push(new THREE.Vector3(Math.cos(a) * half * Math.SQRT2, y, Math.sin(a) * half * Math.SQRT2));
+    }
+    return pts;
+  }
+  function pushTri(a, b, c) { positions.push(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z); }
+  var levels = [
+    { h: 0.50, y: 0.40 },    /* テーブル（広い） */
+    { h: 0.80, y: 0.04 },    /* ガードル上 */
+    { h: 0.80, y: -0.04 },   /* ガードル下 */
+    { h: 0.14, y: -0.78 }    /* キューレット（小さな平面） */
+  ];
+  var rings = levels.map(function (l) { return sqRing(l.h, l.y); });
+  for (var lv = 0; lv < rings.length - 1; lv++) {
+    var top = rings[lv], bot = rings[lv + 1];
+    for (var i = 0; i < 4; i++) {
+      var n = (i + 1) % 4;
+      /* 外向きwinding（ブリリアントのガードル帯と同じ向き） */
+      pushTri(top[i], top[n], bot[i]);
+      pushTri(top[n], bot[n], bot[i]);
+    }
+  }
+  var topC = new THREE.Vector3(0, levels[0].y, 0);
+  var botC = new THREE.Vector3(0, levels[levels.length - 1].y, 0);
+  var topRing = rings[0], botRing = rings[rings.length - 1];
+  for (var j = 0; j < 4; j++) {
+    var m = (j + 1) % 4;
+    pushTri(topRing[j], topC, topRing[m]);
+    pushTri(botRing[j], botRing[m], botC);
+  }
+  var geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.computeVertexNormals();
+  geo.rotateY(Math.PI / 4);   /* 正面から見て菱形でなく四角に見える向き */
+  geo.computeBoundingSphere();
+  return geo;
+}
+
+/* ブリリアント系（同一トポロジーをアウトラインで変形）のカット定義
+   prop は brilliantGeometry の比率上書き（未指定は理想ラウンド）。 */
 var BRILLIANT_SHAPES = {
   brilliant: { mains: 8, outline: OUTLINES.round },
   round: { mains: 8, outline: OUTLINES.round },
@@ -368,16 +434,28 @@ var BRILLIANT_SHAPES = {
   pear: { mains: 9, outline: OUTLINES.pear },
   marquise: { mains: 9, outline: OUTLINES.marquise },
   cushion: { mains: 8, outline: OUTLINES.cushion },
-  trillion: { mains: 9, outline: OUTLINES.trillion }
+  trillion: { mains: 9, outline: OUTLINES.trillion },
+  /* プリンセス: 正方形・広いテーブル・低めのクラウン・深いパビリオン（四隅まで光を返すため） */
+  princess: { mains: 8, outline: OUTLINES.princess,
+    prop: { tableR: 0.70, crownY: 0.17, starMidY: 0.10, pavilionY: -0.98, pavMidR: 0.60, pavMidY: -0.44 } },
+  /* オールドマイン: 小さなテーブル・高いクラウン・浅めのパビリオン・大きく平らなキューレット */
+  oldmine: { mains: 8, outline: OUTLINES.oldmine,
+    prop: { tableR: 0.40, crownY: 0.46, starMidY: 0.24, pavilionY: -0.74, pavMidR: 0.52, pavMidY: -0.34, culetR: 0.17 } }
 };
+
+/* 選べるカットの一覧（UI の並び順）。'round' は 'brilliant' と同じ形なので一覧には出さない */
+var CUT_KEYS = ['brilliant', 'princess', 'oval', 'cushion', 'pear', 'marquise', 'trillion', 'step', 'oldmine', 'rose', 'table', 'cabochon', 'crystal'];
+/* 上面が主役でないカット（見下ろし角を浅くする） */
+function isFlatTopCut(cut) { return cut === 'cabochon' || cut === 'rose' || cut === 'crystal'; }
 
 function makeGeometry(cut, seed) {
   if (BRILLIANT_SHAPES[cut]) {
     var sh = BRILLIANT_SHAPES[cut];
-    return brilliantGeometry(sh.mains, { outline: sh.outline, seed: seed });
+    return brilliantGeometry(sh.mains, { outline: sh.outline, seed: seed, prop: sh.prop });
   }
   switch (cut) {
     case 'step': return stepGeometry();
+    case 'table': return tableGeometry();
     case 'cabochon': return cabochonGeometry();
     case 'crystal': return crystalGeometry();
     case 'rose': return roseGeometry(seed);
@@ -978,8 +1056,8 @@ function mount(container, gemData, opts) {
   /* 基準の見下ろし角: テーブル（上面）を手前に倒し、カットの輪郭（ペアの尖り/マーキスの舟型/
      トリリアントの三角/クッションの角丸）が一目で分かるようにする。きらめきも増える。
      カボション/ローズ/原石は上面が主役ではないので浅めにする */
-  var flatTop = (gemData.cut === 'cabochon' || gemData.cut === 'rose' || gemData.cut === 'crystal');
-  var baseTiltX = flatTop ? 0.12 : 0.32;
+  var currentCut = gemData.cut;
+  var baseTiltX = isFlatTopCut(currentCut) ? 0.12 : 0.32;
   var targetRX = 0, targetRY = 0;
   var curRX = 0, curRY = 0;
   var autoSpin = !reduce;
@@ -1107,6 +1185,32 @@ function mount(container, gemData, opts) {
     }).catch(function () { devReq = false; ptAllowed = false; renderMode = 'pbr'; if (ptLightGroup) ptLightGroup.visible = false; publishMode(); });
   }
 
+  /* カットの切り替え（公開API）。mesh の geometry だけを差し替え、材質・回転・虹/光の向き/背景は保つ。
+     現像中・現像済みなら PBR に戻し、傾けたときと同じく 500ms 静止で新しい形を再現像する
+     （beginDevelop の resync が現在の scene から BVH を作り直すので、新しい geometry が反映される）。 */
+  function setCut(cut) {
+    if (!mesh || !cut || cut === currentCut) return false;
+    var seed = hashSeed(gemData.name || gemData.title || cut || 'gem');
+    var geo;
+    try { geo = makeGeometry(cut, seed); } catch (e) { return false; }
+    var old = mesh.geometry;
+    mesh.geometry = geo;
+    if (old) old.dispose();
+    var rr = geo.boundingSphere ? geo.boundingSphere.radius : 1;
+    mesh.scale.setScalar(1.35 / rr);
+    currentCut = cut;
+    baseTiltX = isFlatTopCut(cut) ? 0.12 : 0.32;
+    /* 透明石の材質だけ flatShading をカットに合わせる（カボションの丸みは滑らかに、面のあるカットは鋭く） */
+    var mm = mesh.material;
+    if (mm && mm.transmission > 0) {
+      var wantFlat = (cut !== 'cabochon');
+      if (mm.flatShading !== wantFlat) { mm.flatShading = wantFlat; mm.needsUpdate = true; }
+    }
+    lastTiltMs = nowMs();
+    if (renderMode !== 'pbr') switchToPbr();
+    return true;
+  }
+
   function setTilt(nx, ny) {
     /* nx,ny: -1〜1（kazasuの正規化座標） */
     stopAutoSpin();         /* 触ったら自動回転を止める（スピン角を curRY に畳み込み、瞬間回転を防ぐ） */
@@ -1222,7 +1326,10 @@ function mount(container, gemData, opts) {
   function resize() {
     var w = container.clientWidth || width;
     var h = container.clientHeight || height;
+    var changed = (w !== width || h !== height);
     width = w; height = h;   /* 次回fallback用に保持値を更新 */
+    /* 現像済みの画像は旧サイズの縦横比のまま引き伸ばされるので、PBRに戻して次の静止で撮り直す */
+    if (changed && renderMode !== 'pbr') switchToPbr();
     renderer.setSize(w, h);
     if (composer) composer.setSize(w, h);
     camera.aspect = w / h;
@@ -1236,6 +1343,8 @@ function mount(container, gemData, opts) {
     setEnv: setEnv,
     setAura: setAura,
     setBackground: setBackground,
+    setCut: setCut,
+    getCut: function () { return currentCut; },   /* テスト・診断用 */
     resize: resize,
     isReady: function () { return true; },
     getRenderMode: function () { return renderMode; },   /* テスト・診断用 */
@@ -1282,4 +1391,4 @@ function mount(container, gemData, opts) {
   };
 }
 
-window.NoctaGem3d = { mount: mount };
+window.NoctaGem3d = { mount: mount, CUT_KEYS: CUT_KEYS.slice() };

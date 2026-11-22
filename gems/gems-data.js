@@ -20,7 +20,7 @@
  * descEn      : 英語の短い鑑賞的説明文（言語トグル用）
  *
  * 【3D宝石（Gyu「光にかざす」）用の任意フィールド・website/gems/gem3d.js が使用】
- * cut         : "round"|"brilliant"|"oval"|"pear"|"marquise"|"cushion"|"trillion"|"step"|"cabochon"|"crystal"|"rose"（カット形状）。未指定=写真のみ
+ * cut         : "round"|"brilliant"|"princess"|"oval"|"pear"|"marquise"|"cushion"|"trillion"|"step"|"oldmine"|"rose"|"table"|"cabochon"|"crystal"（その石の本来のカット形状。3D 画面ではほかのカットにも切り替えられる）。未指定=写真のみ
  * gem3d       : "transparent"|"opaque"|"iridescent"（マテリアルプリセット）
  * ior         : 屈折率（実物値。ダイヤ2.42/コランダム1.77/ベリル1.58/水晶1.55…）
  * dispersion  : 分散（ファイア）の視覚強度 0〜1（任意・省略時0.5）。ダイヤは分散が強いので高め
