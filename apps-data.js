@@ -65,6 +65,16 @@ const NOCTA_APP_COLLECTIONS = [
 
 const NOCTA_APPS = [
   {
+    title: "Bar Timer",
+    collection: "yori",
+    cat: "app",
+    url: "./bar-timer/index.html",
+    imgUrl: "./bar-timer/cover.svg",
+    thumbClass: "thumb-4",
+    descJa: "残り時間を 4 色の目盛りで見せるタイマー。",
+    descEn: "A timer that shows the time left as a bar in four colours."
+  },
+  {
     title: "Pokeca Lab",
     collection: "yori",
     cat: "app",
